@@ -571,7 +571,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
                                   color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Padding(
                                   padding:

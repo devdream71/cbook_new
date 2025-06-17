@@ -204,7 +204,7 @@ class LayoutState extends State<Layout> {
                                             decoration: BoxDecoration(
                                               color: AppColors.primaryColor,
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                                  BorderRadius.circular(5),
                                             ),
                                             child: Padding(
                                               padding:
@@ -1298,6 +1298,7 @@ class LayoutState extends State<Layout> {
                                                               //setState(() {});
                                                             },
                                                             child: DecoratedBox(
+                                                              
                                                                 decoration: BoxDecoration(
                                                                     // boxShadow: [
                                                                     //   BoxShadow(
@@ -1369,7 +1370,7 @@ class LayoutState extends State<Layout> {
                                                                           ],
                                                                         ),
                                                                       ),
-
+                                                            
                                                                       // Column(
                                                                       //   crossAxisAlignment:
                                                                       //       CrossAxisAlignment.start,
@@ -1386,7 +1387,7 @@ class LayoutState extends State<Layout> {
                                                                       //             // "${item.itemName!} ${item.category!}",
                                                                       //             // "${item.itemName!}",
                                                                       //             "${index + 1}. ${item.itemName!}",
-
+                                                            
                                                                       //             style: const TextStyle(overflow: TextOverflow.ellipsis, color: Colors.black, fontWeight: FontWeight.w600, fontSize: 14),
                                                                       //           ),
                                                                       //         ],
@@ -1407,7 +1408,7 @@ class LayoutState extends State<Layout> {
                                                                       //         FontWeight.w600,
                                                                       //   ),
                                                                       // ),
-
+                                                            
                                                                       ///close
                                                                       InkWell(
                                                                         onTap:
@@ -1457,20 +1458,34 @@ class LayoutState extends State<Layout> {
                                                                           });
                                                                         },
                                                                         child:
-                                                                            const CircleAvatar(
-                                                                          radius:
-                                                                              12,
-                                                                          backgroundColor:
-                                                                              Colors.grey,
-                                                                          child:
-                                                                              Icon(
-                                                                            Icons.close,
-                                                                            color:
-                                                                                Colors.white,
-                                                                            size:
-                                                                                20,
-                                                                          ),
-                                                                        ),
+                                                                        Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey.shade500,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                             
+                                            ),
+                                            child: const Icon(Icons.remove,
+                                                color: Colors.green, size: 18),
+                                          ),
+                                                                        //     const CircleAvatar(
+                                                                        //   radius:
+                                                                        //       12,
+                                                                        //   backgroundColor:
+                                                                        //       Colors.grey,
+                                                                        //   child:
+                                                                        //       Icon(
+                                                                        //     Icons.close,
+                                                                        //     color:
+                                                                        //         Colors.white,
+                                                                        //     size:
+                                                                        //         20,
+                                                                        //   ),
+                                                                        // ),
                                                                       )
                                                                     ],
                                                                   ),

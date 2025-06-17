@@ -159,7 +159,7 @@ class _LayoutState extends State<_Layout> {
                                     child: DecoratedBox(
                                       decoration: BoxDecoration(
                                         color: AppColors.primaryColor,
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(5),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(

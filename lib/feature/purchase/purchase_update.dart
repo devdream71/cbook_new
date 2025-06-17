@@ -426,7 +426,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
                                   color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Padding(
                                   padding:

@@ -46,7 +46,6 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
 
   String? selectedDropdownValue;
 
-  
   Future<Uint8List> loadLogoImage() async {
     final data = await rootBundle.load('assets/image/cbook_logo.png');
     return data.buffer.asUint8List();
@@ -54,9 +53,6 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
 
   ///=======>share pdf
   Future<void> _viewPDF() async {
-
-    
-    
     ///discount text , left right
     pw.Widget customDiscount(String text, String text2) {
       return pw.Container(
@@ -74,7 +70,6 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
         ),
       );
     }
-
 
     // Calculate total quantity
     final totalQuantity = widget.items.fold<int>(
@@ -125,75 +120,72 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
 
     final pdf = pw.Document();
 
-     final pw.TextStyle headerStyle = pw.TextStyle(
-    fontWeight: pw.FontWeight.bold,
-    fontSize: 8,
-  );
+    final pw.TextStyle headerStyle = pw.TextStyle(
+      fontWeight: pw.FontWeight.bold,
+      fontSize: 8,
+    );
 
-  final pw.TextStyle cellStyle = pw.TextStyle(
-    fontSize: 8,
-  );
-
-
-  
+    final pw.TextStyle cellStyle = pw.TextStyle(
+      fontSize: 8,
+    );
 
     bool showCompanyPhoneNumber = false;
     bool showMRP = false;
     bool showQRCode = false;
     bool showbodyWaterMarkLogo = false;
     bool showItemDiscountAndPercentance = false;
-   bool showItemVatTaxAmountAndPercentance =  false;
-   bool showItemCode =  false;
-   bool showSlNo = false;
-   bool showBillDiscountAmountAndPercentance = false;
-   bool showBillVatTaxAmountAndPercentance = false;
-   bool showAmountinWord = false;
-   bool showNarration = false;
-  bool showSignatureRightShow = false;
-  
+    bool showItemVatTaxAmountAndPercentance = false;
+    bool showItemCode = false;
+    bool showSlNo = false;
+    bool showBillDiscountAmountAndPercentance = false;
+    bool showBillVatTaxAmountAndPercentance = false;
+    bool showAmountinWord = false;
+    bool showNarration = false;
+    bool showSignatureRightShow = false;
 
-  Future<void> _loadCheckboxState() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool? isChecked = prefs.getBool('checkbox_Company Phone Number');
-    final mrpChecked = prefs.getBool('checkbox_MRP');
-    final qrCodeChecked = prefs.getBool('checkbox_QR Code');
-    final bodyWaterMarkLogo = prefs.getBool('checkbox_Body Watermark logo');
-    final itemDiscountAndPercentance = prefs.getBool('checkbox_Item Discount Amount & Percentance');
-    final itemVatTaxAmountAndPercentance = prefs.getBool('checkbox_ItemVatTaxAmountAndPercentance');
-    final itemCode = prefs.getBool('checkbox_Item Code');
-    final siNo = prefs.getBool('checkbox_S.l No');
-    final billDiscountAmountAndPercentance = prefs.getBool('checkbox_Bill Discount Amount & Percentance');
-    final billVatTaxAmountAndPercentance = prefs.getBool('checkbox_Bill Vat/Tax Amount & Percentance');
-    final amountinWord = prefs.getBool('checkbox_Amount in Word');
-    final narrationNote = prefs.getBool('checkbox_Narration');
-    final signatureRightShow = prefs.getBool('checkbox_Signature Right Show');
+    Future<void> _loadCheckboxState() async {
+      final prefs = await SharedPreferences.getInstance();
+      bool? isChecked = prefs.getBool('checkbox_Company Phone Number');
+      final mrpChecked = prefs.getBool('checkbox_MRP');
+      final qrCodeChecked = prefs.getBool('checkbox_QR Code');
+      final bodyWaterMarkLogo = prefs.getBool('checkbox_Body Watermark logo');
+      final itemDiscountAndPercentance =
+          prefs.getBool('checkbox_Item Discount Amount & Percentance');
+      final itemVatTaxAmountAndPercentance =
+          prefs.getBool('checkbox_ItemVatTaxAmountAndPercentance');
+      final itemCode = prefs.getBool('checkbox_Item Code');
+      final siNo = prefs.getBool('checkbox_S.l No');
+      final billDiscountAmountAndPercentance =
+          prefs.getBool('checkbox_Bill Discount Amount & Percentance');
+      final billVatTaxAmountAndPercentance =
+          prefs.getBool('checkbox_Bill Vat/Tax Amount & Percentance');
+      final amountinWord = prefs.getBool('checkbox_Amount in Word');
+      final narrationNote = prefs.getBool('checkbox_Narration');
+      final signatureRightShow = prefs.getBool('checkbox_Signature Right Show');
 
+      setState(() {
+        showCompanyPhoneNumber = isChecked ?? false;
+        showMRP = mrpChecked ?? false;
+        showQRCode = qrCodeChecked ?? false;
+        showbodyWaterMarkLogo = bodyWaterMarkLogo ?? false;
 
-
-    setState(() {
-      showCompanyPhoneNumber = isChecked ?? false;
-      showMRP = mrpChecked ?? false;
-      showQRCode = qrCodeChecked ?? false;
-      showbodyWaterMarkLogo = bodyWaterMarkLogo ?? false;
-
-      showItemDiscountAndPercentance = itemDiscountAndPercentance ?? false;
-      showItemVatTaxAmountAndPercentance = itemVatTaxAmountAndPercentance ?? false;
-      showItemCode = itemCode ?? false;
-      showSlNo = siNo ?? false;
-      showBillDiscountAmountAndPercentance = billDiscountAmountAndPercentance ?? false;
-      showBillVatTaxAmountAndPercentance = billVatTaxAmountAndPercentance ?? false;
-      showAmountinWord = amountinWord ?? false;
-      showNarration = narrationNote ?? false;
-      showSignatureRightShow = signatureRightShow ?? false;
-
-    });
-  }
+        showItemDiscountAndPercentance = itemDiscountAndPercentance ?? false;
+        showItemVatTaxAmountAndPercentance =
+            itemVatTaxAmountAndPercentance ?? false;
+        showItemCode = itemCode ?? false;
+        showSlNo = siNo ?? false;
+        showBillDiscountAmountAndPercentance =
+            billDiscountAmountAndPercentance ?? false;
+        showBillVatTaxAmountAndPercentance =
+            billVatTaxAmountAndPercentance ?? false;
+        showAmountinWord = amountinWord ?? false;
+        showNarration = narrationNote ?? false;
+        showSignatureRightShow = signatureRightShow ?? false;
+      });
+    }
 
     final logoBytes = await loadLogoImage();
     final logoImage = pw.MemoryImage(logoBytes);
-
-  
-
 
     final columnAlignments = {
       0: pw.Alignment.center, // SL
@@ -209,451 +201,354 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
     };
 
     pdf.addPage(
-
       // Define styles (place this at the top of your _viewPDF method)
- 
 
       // Define these styles at the top of your method or widget
 
       // Define styles (place this at the top of your _viewPDF method)
- 
 
       pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        margin:
-            const pw.EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 1),
-        build: (pw.Context context) => 
-        
-        pw.Stack(
-          children: [
-            
-  if (showbodyWaterMarkLogo)
-      pw.Positioned.fill(
-        child: pw.Opacity(
-          opacity: 0.09,
-          child: pw.Center(
-            child: pw.Image(
-              logoImage,
-              width: 300,
-              fit: pw.BoxFit.contain,
-            ),
-          ),
-        ),
-      ),
-           
-
-            pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  //left
-                  pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text("Dream Tech International",
-                            style: pw.TextStyle(
-                                fontSize: 14, fontWeight: pw.FontWeight.bold)),
-                        pw.Text("84/8 Naya Paltan, Dhaka",
-                            style: const pw.TextStyle(fontSize: 9)),
-                        // pw.Text("0198994406",
-                        //     style: const pw.TextStyle(fontSize: 9)),
-                         if (showCompanyPhoneNumber) 
-      pw.Text('Phone: 01759546853', style: pw.TextStyle(fontSize: 9)),
-                      ]),
-
-                  //right image
-                  pw.SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: pw.Image(logoImage),
-                  ),
-                ]),
-            pw.SizedBox(height: 8),
-            pw.Align(
-              alignment: pw.Alignment.centerRight,
-              child: pw.Text("Invoice",
-                  style: pw.TextStyle(
-                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
-            ),
-            pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Column(
-                    mainAxisAlignment: pw.MainAxisAlignment.start,
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text('Bill to:',
-                          style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold, fontSize: 9)),
-                      pw.Text("${widget.customerName}",
-                          style: pw.TextStyle(
-                              fontSize: 9, fontWeight: pw.FontWeight.bold))
-                    ],
-                  ),
-                  pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.end,
-                      children: [
-                        pw.Text("Bill No: inv542",
-                            style: pw.TextStyle(fontSize: 9)),
-                        pw.Text(
-                          "Date: ${DateFormat('dd/MM/yyyy').format(DateTime.now())}",
-                          style:
-                              pw.TextStyle(color: PdfColors.black, fontSize: 9),
+          pageFormat: PdfPageFormat.a4,
+          margin:
+              const pw.EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 1),
+          build: (pw.Context context) => pw.Stack(children: [
+                if (showbodyWaterMarkLogo)
+                  pw.Positioned.fill(
+                    child: pw.Opacity(
+                      opacity: 0.09,
+                      child: pw.Center(
+                        child: pw.Image(
+                          logoImage,
+                          width: 300,
+                          fit: pw.BoxFit.contain,
                         ),
-                        pw.Text(
-                            "Bill Person:  ${widget.billPersion != null && widget.billPersion!.trim().isNotEmpty ? widget.billPersion : "No Bill Person"}",
-                            style: pw.TextStyle(fontSize: 9))
-                      ]),
-                ]),
-            pw.Align(
-              alignment: pw.Alignment.centerRight,
-              child: pw.Text(
-                "Paid",
-                style: pw.TextStyle(
-                  fontSize: 14,
-                  fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.green, // ✅ Set text color here
-                ),
-              ),
-            ),
-            
-            ///table data
-            // pw.Table(
-            //   border: pw.TableBorder(
-            //     bottom: pw.BorderSide(
-            //       color: PdfColor.fromHex('#f5f5f5'),
-            //       width: 0.5,
-            //     ),
-            //   ),
-            //   columnWidths: {
-            //     0: const pw.FlexColumnWidth(1), // SL
-            //     1: const pw.FlexColumnWidth(4), // Product
-            //     2: const pw.FlexColumnWidth(2), // Code
-            //     //3: const pw.FlexColumnWidth(2), // MRP
-            //      if (showMRP) 3: const pw.FlexColumnWidth(2), // MRP
-            //     4: const pw.FlexColumnWidth(2), // Qty
-            //     5: const pw.FlexColumnWidth(2), // Unit
-            //     6: const pw.FlexColumnWidth(2), // Price
-            //     7: const pw.FlexColumnWidth(2), // dis
-            //     8: const pw.FlexColumnWidth(2), // vat
-            //     9: const pw.FlexColumnWidth(2), // Amount
-            //   },
-            //   children: [
-            //     // Header Row
-            //     pw.TableRow(
-            //       decoration: pw.BoxDecoration(
-            //         color: PdfColor.fromHex('E0E0E0'),
-            //       ),
-            //       children: List.generate(10, (j) {
-            //         final headers = [
-            //           "S.L",
-            //           "Product",
-            //           "Code",
-            //           //"MRP",
-            //           if (showMRP) "MRP",
-            //           "Qty",
-            //           "Unit",
-            //           "Price",
-            //           "Discount",
-            //           "Vat/Tax",
-            //           "Amount"
-            //         ];
-            //         return pw.Padding(
-            //           padding: const pw.EdgeInsets.all(4),
-            //           child: pw.Align(
-            //             alignment:
-            //                 columnAlignments[j] ?? pw.Alignment.centerLeft,
-            //             child: pw.Text(
-            //               headers[j],
-            //               style: pw.TextStyle(
-            //                 fontWeight: pw.FontWeight.bold,
-            //                 fontSize: 8,
-            //               ),
-            //             ),
-            //           ),
-            //         );
-            //       }),
-            //     ),
-
-            //     // Data Rows
-            //     for (int i = 0; i < widget.items.length; i++)
-            //       pw.TableRow(
-            //         decoration: const pw.BoxDecoration(
-            //           border: pw.Border(
-            //             bottom:
-            //                 pw.BorderSide(color: PdfColors.black, width: 0.3),
-            //           ),
-            //         ),
-            //         children: List.generate(10, (j) {
-            //           final item = widget.items[i];
-            //           final rowData = [
-            //             '${i + 1}', // SL
-            //             item.itemName ?? '',
-            //             '-' ?? '0', // code
-            //             // '0' ?? '0', // mrp
-            //               if (showMRP) '0',
-            //             item.quantity.toString(),
-            //             item.unit ?? '',
-            //             ((item.amount /
-            //                     (item.quantity > 0 ? item.quantity : 1)))
-            //                 .toStringAsFixed(2),
-
-            //             '${item.itemDiscountPercentace?.toStringAsFixed(0) ?? '0'}% ${item.itemDiscountAmount?.toStringAsFixed(2) ?? '0.00'}',
-            //             '${item.itemvatTaxPercentace?.toStringAsFixed(0) ?? '0'}% ${item.itemVatTaxAmount?.toStringAsFixed(2) ?? '0.00'}',
-
-            //             item.amount.toStringAsFixed(2),
-            //           ];
-
-            //           return pw.Padding(
-            //             padding: const pw.EdgeInsets.all(4),
-            //             child: pw.Align(
-            //               alignment:
-            //                   columnAlignments[j] ?? pw.Alignment.centerLeft,
-            //               child: pw.Text(
-            //                 rowData[j],
-            //                 style: const pw.TextStyle(fontSize: 8),
-            //               ),
-            //             ),
-            //           );
-            //         }),
-            //       ),
-            //   ],
-            // ),
-           
-
-
- pw.Table(
-              border: pw.TableBorder(
-                bottom: pw.BorderSide(
-                  color: PdfColor.fromHex('#f5f5f5'),
-                  width: 0.5,
-                ),
-              ),
-              columnWidths: {
-                0: const pw.FlexColumnWidth(1), // SL
-                1: const pw.FlexColumnWidth(4), // Product
-                if (showItemCode) 2: const pw.FlexColumnWidth(2), // Code
-                if (showMRP) 3: const pw.FlexColumnWidth(2), // MRP
-                /* (showMRP ? 4 : 3)*/ 4: const pw.FlexColumnWidth(2), // Qty
-                /*(showMRP ? 5 : 4)*/ 5: const pw.FlexColumnWidth(2), // Unit
-                /*(showMRP ? 6 : 5)*/ 6: const pw.FlexColumnWidth(2), // Price
-                /*(showItemDiscountAndPercentance ? 7 : 6)*/ 7: const pw.FlexColumnWidth(2), // Discount
-                /*(showItemVatTaxAmountAndPercentance ? 8 : 7)*/ 8: const pw.FlexColumnWidth(2), // VAT
-                /*(showMRP ? 9 : 8)*/ 9: const pw.FlexColumnWidth(2), // Amount
-              },
-              children: [
-                // Header Row
-                pw.TableRow(
-                  decoration: pw.BoxDecoration(
-                    color: PdfColor.fromHex('E0E0E0'),
-                  ),
-                  children: [
-                    pw.Text("S.L", style: headerStyle),
-                    pw.Text("Product", style: headerStyle),
-                    if (showItemCode) pw.Text("Code", style: headerStyle),
-                    if (showMRP) pw.Text("MRP", style: headerStyle),
-                    pw.Text("Qty", style: headerStyle),
-                    pw.Text("Unit", style: headerStyle),
-                    pw.Text("Price", style: headerStyle),
-                    if(showItemDiscountAndPercentance) pw.Text("Discount", style: headerStyle),
-                    if(showItemVatTaxAmountAndPercentance) pw.Text("Vat/Tax", style: headerStyle),
-                    pw.Text("Amount", style: headerStyle),
-                  ].map((cell) => pw.Padding(
-                    padding: const pw.EdgeInsets.all(4),
-                    child: pw.Align(
-                      alignment: pw.Alignment.centerLeft,
-                      child: cell,
-                    ),
-                  )).toList(),
-                ),
-
-                // Data Rows
-                for (int i = 0; i < widget.items.length; i++)
-                  pw.TableRow(
-                    decoration: const pw.BoxDecoration(
-                      border: pw.Border(
-                        bottom: pw.BorderSide(color: PdfColors.black, width: 0.3),
-                      ),
-                    ),
-                    children: [
-                      pw.Text('${i + 1}', style: cellStyle),
-                      pw.Text(widget.items[i].itemName ?? '', style: cellStyle),
-                      if (showItemCode) pw.Text('-', style: cellStyle),
-                      if (showMRP) pw.Text('0', style: cellStyle),
-                      pw.Text(widget.items[i].quantity.toString(), style: cellStyle),
-                      pw.Text(widget.items[i].unit ?? '', style: cellStyle),
-                      pw.Text(
-                        ((widget.items[i].amount /
-                                (widget.items[i].quantity > 0
-                                    ? widget.items[i].quantity
-                                    : 1)))
-                            .toStringAsFixed(2),
-                        style: cellStyle,
-                      ),
-                      if(showItemDiscountAndPercentance) pw.Text(
-                        '${widget.items[i].itemDiscountPercentace?.toStringAsFixed(0) ?? '0'}% '
-                        '${widget.items[i].itemDiscountAmount?.toStringAsFixed(2) ?? '0.00'}',
-                        style: cellStyle,
-                      ),
-                      if(showItemVatTaxAmountAndPercentance) pw.Text(
-                        '${widget.items[i].itemvatTaxPercentace?.toStringAsFixed(0) ?? '0'}% '
-                        '${widget.items[i].itemVatTaxAmount?.toStringAsFixed(2) ?? '0.00'}',
-                        style: cellStyle,
-                      ),
-                      pw.Text(
-                        widget.items[i].amount.toStringAsFixed(2),
-                        style: cellStyle,
-                      ),
-                    ].map((cell) => pw.Padding(
-                      padding: const pw.EdgeInsets.all(4),
-                      child: pw.Align(
-                        alignment: pw.Alignment.centerLeft,
-                        child: cell,
-                      ),
-                    )).toList(),
-                  ),
-              ],
-            ),
-           
-            pw.SizedBox(height: 10),
-            pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.end,
-              crossAxisAlignment: pw.CrossAxisAlignment.end,
-              children: [
-                pw.Align(
-                  alignment: pw.Alignment.centerRight,
-                  child: pw.Text("Total: $totalQuantity",
-                      style: pw.TextStyle(
-                          fontSize: 9, fontWeight: pw.FontWeight.bold)),
-                ),
-                pw.SizedBox(
-                  width: 20,
-                ),
-                pw.Align(
-                  alignment: pw.Alignment.centerRight,
-                  child: pw.Text("$formattedTotalAmount",
-                      style: pw.TextStyle(
-                          fontSize: 9, fontWeight: pw.FontWeight.bold)),
-                ),
-              ],
-            ),
-            pw.Spacer(),
-            pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                //left
-                pw.SizedBox(
-                  width: 150,
-                  child: pw.Padding(
-                    padding: const pw.EdgeInsets.only(left: 4.0),
-                    child: pw.Text(
-                      "The Right Place for Online Trading on Financial Markets.",
-                      style: const pw.TextStyle(
-                        fontSize: 10,
                       ),
                     ),
                   ),
-                ),
-
-                pw.SizedBox(width: 10),
-
-                // pw.SizedBox(
-                //   width: 70,
-                //   height: 70,
-                //   child: pw.BarcodeWidget(
-                //     barcode: pw.Barcode.qrCode(),
-                //     data: 'Invoice#Inv542',
-                //     width: 50,
-                //     height: 50,
-                //   ),
-                // ),
-
-               if (showQRCode) 
-      pw.SizedBox(
-        width: 70,
-        height: 70,
-        child: pw.BarcodeWidget(
-          barcode: pw.Barcode.qrCode(),
-          data: 'Invoice#Inv542',
-          width: 50,
-          height: 50,
-        ),
-      ),
-
-                pw.SizedBox(width: 10),
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  mainAxisAlignment: pw.MainAxisAlignment.center,
                   children: [
-                    //discount
-                    if(showBillDiscountAmountAndPercentance) buildDottedLine(),
-                    if(showBillDiscountAmountAndPercentance) customDiscount("Discount ${widget.discountPercent}%",
-                        "${widget.discountAmount}"),
-                    if(showBillVatTaxAmountAndPercentance)buildDottedLine(),
-                    if(showBillVatTaxAmountAndPercentance)customDiscount("Vat/Tax ${widget.discountPercent}%",
-                        "${widget.discountAmount}"),
-                    buildDottedLine(),
-                    customDiscount("Total Amount", "$formattedTotalAmount"),
-                    buildDottedLine(),
-                    customDiscount("Due", "0"),
-                    buildDottedLine(),
-                    customDiscount("Paid", ""),
-                    buildDottedLine(),
+                    pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          //left
+                          pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Text("Dream Tech International",
+                                    style: pw.TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: pw.FontWeight.bold)),
+                                pw.Text("84/8 Naya Paltan, Dhaka",
+                                    style: const pw.TextStyle(fontSize: 9)),
+                                // pw.Text("0198994406",
+                                //     style: const pw.TextStyle(fontSize: 9)),
+                                if (showCompanyPhoneNumber)
+                                  pw.Text('Phone: 01759546853',
+                                      style: pw.TextStyle(fontSize: 9)),
+                              ]),
+
+                          //right image
+                          pw.SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: pw.Image(logoImage),
+                          ),
+                        ]),
+                    pw.SizedBox(height: 8),
+                    pw.Align(
+                      alignment: pw.Alignment.centerRight,
+                      child: pw.Text("Invoice",
+                          style: pw.TextStyle(
+                              fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                    ),
+                    pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Column(
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('Bill to:',
+                                  style: pw.TextStyle(
+                                      fontWeight: pw.FontWeight.bold,
+                                      fontSize: 9)),
+                              pw.Text("${widget.customerName}",
+                                  style: pw.TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: pw.FontWeight.bold))
+                            ],
+                          ),
+                          pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.end,
+                              children: [
+                                pw.Text("Bill No: inv542",
+                                    style: pw.TextStyle(fontSize: 9)),
+                                pw.Text(
+                                  "Date: ${DateFormat('dd/MM/yyyy').format(DateTime.now())}",
+                                  style: pw.TextStyle(
+                                      color: PdfColors.black, fontSize: 9),
+                                ),
+                                pw.Text(
+                                    "Bill Person:  ${widget.billPersion != null && widget.billPersion!.trim().isNotEmpty ? widget.billPersion : "No Bill Person"}",
+                                    style: pw.TextStyle(fontSize: 9))
+                              ]),
+                        ]),
+                    pw.Align(
+                      alignment: pw.Alignment.centerRight,
+                      child: pw.Text(
+                        "Paid",
+                        style: pw.TextStyle(
+                          fontSize: 14,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.green, // ✅ Set text color here
+                        ),
+                      ),
+                    ),
+                    pw.Table(
+                      border: pw.TableBorder(
+                        bottom: pw.BorderSide(
+                          color: PdfColor.fromHex('#f5f5f5'),
+                          width: 0.5,
+                        ),
+                      ),
+                      columnWidths: {
+                        0: const pw.FlexColumnWidth(1), // SL
+                        1: const pw.FlexColumnWidth(4), // Product
+                        if (showItemCode)
+                          2: const pw.FlexColumnWidth(2), // Code
+                        if (showMRP) 3: const pw.FlexColumnWidth(2), // MRP
+                        /* (showMRP ? 4 : 3)*/ 4:
+                            const pw.FlexColumnWidth(2), // Qty
+                        /*(showMRP ? 5 : 4)*/ 5:
+                            const pw.FlexColumnWidth(2), // Unit
+                        /*(showMRP ? 6 : 5)*/ 6:
+                            const pw.FlexColumnWidth(2), // Price
+                        /*(showItemDiscountAndPercentance ? 7 : 6)*/ 7:
+                            const pw.FlexColumnWidth(2), // Discount
+                        /*(showItemVatTaxAmountAndPercentance ? 8 : 7)*/ 8:
+                            const pw.FlexColumnWidth(2), // VAT
+                        /*(showMRP ? 9 : 8)*/ 9:
+                            const pw.FlexColumnWidth(2), // Amount
+                      },
+                      children: [
+                        // Header Row
+                        pw.TableRow(
+                          decoration: pw.BoxDecoration(
+                            color: PdfColor.fromHex('E0E0E0'),
+                          ),
+                          children: [
+                            pw.Text("S.L", style: headerStyle),
+                            pw.Text("Product", style: headerStyle),
+                            if (showItemCode)
+                              pw.Text("Code", style: headerStyle),
+                            if (showMRP) pw.Text("MRP", style: headerStyle),
+                            pw.Text("Qty", style: headerStyle),
+                            pw.Text("Unit", style: headerStyle),
+                            pw.Text("Price", style: headerStyle),
+                            if (showItemDiscountAndPercentance)
+                              pw.Text("Discount", style: headerStyle),
+                            if (showItemVatTaxAmountAndPercentance)
+                              pw.Text("Vat/Tax", style: headerStyle),
+                            pw.Text("Amount", style: headerStyle),
+                          ]
+                              .map((cell) => pw.Padding(
+                                    padding: const pw.EdgeInsets.all(4),
+                                    child: pw.Align(
+                                      alignment: pw.Alignment.centerLeft,
+                                      child: cell,
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+
+                        // Data Rows
+                        for (int i = 0; i < widget.items.length; i++)
+                          pw.TableRow(
+                            decoration: const pw.BoxDecoration(
+                              border: pw.Border(
+                                bottom: pw.BorderSide(
+                                    color: PdfColors.black, width: 0.3),
+                              ),
+                            ),
+                            children: [
+                              pw.Text('${i + 1}', style: cellStyle),
+                              pw.Text(widget.items[i].itemName ?? '',
+                                  style: cellStyle),
+                              if (showItemCode) pw.Text('-', style: cellStyle),
+                              if (showMRP) pw.Text('0', style: cellStyle),
+                              pw.Text(widget.items[i].quantity.toString(),
+                                  style: cellStyle),
+                              pw.Text(widget.items[i].unit ?? '',
+                                  style: cellStyle),
+                              pw.Text(
+                                ((widget.items[i].amount /
+                                        (widget.items[i].quantity > 0
+                                            ? widget.items[i].quantity
+                                            : 1)))
+                                    .toStringAsFixed(2),
+                                style: cellStyle,
+                              ),
+                              if (showItemDiscountAndPercentance)
+                                pw.Text(
+                                  '${widget.items[i].itemDiscountPercentace?.toStringAsFixed(0) ?? '0'}% '
+                                  '${widget.items[i].itemDiscountAmount?.toStringAsFixed(2) ?? '0.00'}',
+                                  style: cellStyle,
+                                ),
+                              if (showItemVatTaxAmountAndPercentance)
+                                pw.Text(
+                                  '${widget.items[i].itemvatTaxPercentace?.toStringAsFixed(0) ?? '0'}% '
+                                  '${widget.items[i].itemVatTaxAmount?.toStringAsFixed(2) ?? '0.00'}',
+                                  style: cellStyle,
+                                ),
+                              pw.Text(
+                                widget.items[i].amount.toStringAsFixed(2),
+                                style: cellStyle,
+                              ),
+                            ]
+                                .map((cell) => pw.Padding(
+                                      padding: const pw.EdgeInsets.all(4),
+                                      child: pw.Align(
+                                        alignment: pw.Alignment.centerLeft,
+                                        child: cell,
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                      ],
+                    ),
+                    pw.SizedBox(height: 10),
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                      crossAxisAlignment: pw.CrossAxisAlignment.end,
+                      children: [
+                        pw.Align(
+                          alignment: pw.Alignment.centerRight,
+                          child: pw.Text("Total: $totalQuantity",
+                              style: pw.TextStyle(
+                                  fontSize: 9, fontWeight: pw.FontWeight.bold)),
+                        ),
+                        pw.SizedBox(
+                          width: 20,
+                        ),
+                        pw.Align(
+                          alignment: pw.Alignment.centerRight,
+                          child: pw.Text("$formattedTotalAmount",
+                              style: pw.TextStyle(
+                                  fontSize: 9, fontWeight: pw.FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                    pw.Spacer(),
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        //left
+                        pw.SizedBox(
+                          width: 150,
+                          child: pw.Padding(
+                            padding: const pw.EdgeInsets.only(left: 4.0),
+                            child: pw.Text(
+                              "The Right Place for Online Trading on Financial Markets.",
+                              style: const pw.TextStyle(
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        pw.SizedBox(width: 10),
+
+                        if (showQRCode)
+                          pw.SizedBox(
+                            width: 70,
+                            height: 70,
+                            child: pw.BarcodeWidget(
+                              barcode: pw.Barcode.qrCode(),
+                              data: 'Invoice#Inv542',
+                              width: 50,
+                              height: 50,
+                            ),
+                          ),
+
+                        pw.SizedBox(width: 10),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          mainAxisAlignment: pw.MainAxisAlignment.center,
+                          children: [
+                            //discount
+                            if (showBillDiscountAmountAndPercentance)
+                              buildDottedLine(),
+                            if (showBillDiscountAmountAndPercentance)
+                              customDiscount(
+                                  "Discount ${widget.discountPercent}%",
+                                  "${widget.discountAmount}"),
+                            if (showBillVatTaxAmountAndPercentance)
+                              buildDottedLine(),
+                            if (showBillVatTaxAmountAndPercentance)
+                              customDiscount(
+                                  "Vat/Tax ${widget.discountPercent}%",
+                                  "${widget.discountAmount}"),
+                            buildDottedLine(),
+                            customDiscount(
+                                "Total Amount", "$formattedTotalAmount"),
+                            buildDottedLine(),
+                            customDiscount("Due", "0"),
+                            buildDottedLine(),
+                            customDiscount("Paid", ""),
+                            buildDottedLine(),
+                          ],
+                        ),
+                      ],
+                    ),
+                    pw.SizedBox(height: 10),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.only(right: 20),
+                      child: pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.center,
+                        crossAxisAlignment: pw.CrossAxisAlignment.center,
+                        children: [
+                          if (showAmountinWord)
+                            pw.Align(
+                              alignment: pw.Alignment.center,
+                              child: pw.Text(
+                                  "${convertDoubleToWords(totalAmount)}"),
+                            ),
+                        ],
+                      ),
+                    ),
+                    pw.SizedBox(height: 40),
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Column(children: [
+                          pw.Container(width: 100, child: pw.Divider()),
+                          pw.Text("Receiver/Customer",
+                              style: const pw.TextStyle(fontSize: 10))
+                        ]),
+                        pw.Column(children: [
+                          pw.Container(width: 100, child: pw.Divider()),
+                          pw.Text("Sales Person",
+                              style: const pw.TextStyle(fontSize: 10))
+                        ]),
+                        pw.Column(children: [
+                          pw.Container(width: 100, child: pw.Divider()),
+                          pw.Text("Manager",
+                              style: const pw.TextStyle(fontSize: 10))
+                        ]),
+                      ],
+                    ),
+                    pw.Container(
+                        height: 20,
+                        width: double.infinity,
+                        decoration:
+                            const pw.BoxDecoration(color: PdfColors.grey200))
                   ],
                 ),
-              ],
-            ),
-            pw.SizedBox(height: 10),
-            pw.Padding(
-              padding: const pw.EdgeInsets.only(right: 20),
-              child: pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.center,
-                crossAxisAlignment: pw.CrossAxisAlignment.center,
-                children: [
-                 if(showAmountinWord) pw.Align(
-                    alignment: pw.Alignment.center,
-                    child:
-                        pw.Text("${convertDoubleToWords(totalAmount)}"),
-                  ),
-                ],
-              ),
-            ),
-            pw.SizedBox(height: 40),
-            pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-              children: [
-                pw.Column(children: [
-                  pw.Container(width: 100, child: pw.Divider()),
-                  pw.Text("Receiver/Customer",
-                      style: const pw.TextStyle(fontSize: 10))
-                ]),
-                pw.Column(children: [
-                  pw.Container(width: 100, child: pw.Divider()),
-                  pw.Text("Sales Person",
-                      style: const pw.TextStyle(fontSize: 10))
-                ]),
-                pw.Column(children: [
-                  pw.Container(width: 100, child: pw.Divider()),
-                  pw.Text("Manager", style: const pw.TextStyle(fontSize: 10))
-                ]),
-              ],
-            ),
-            pw.Container(
-                height: 20,
-                width: double.infinity,
-                decoration: const pw.BoxDecoration(color: PdfColors.grey200))
-          ],
-        ),
-     
-          ]
-        )
-     
-      ),
+              ])),
     );
 
     // Save PDF to bytes
@@ -747,37 +642,34 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
 
     final pdf = pw.Document();
 
-    
-     final pw.TextStyle headerStyle = pw.TextStyle(
-    fontWeight: pw.FontWeight.bold,
-    fontSize: 8,
-  );
+    final pw.TextStyle headerStyle = pw.TextStyle(
+      fontWeight: pw.FontWeight.bold,
+      fontSize: 8,
+    );
 
-  const pw.TextStyle cellStyle = pw.TextStyle(
-    fontSize: 8,
-  );
+    const pw.TextStyle cellStyle = pw.TextStyle(
+      fontSize: 8,
+    );
 
-    
     bool showCompanyPhoneNumber = false;
     bool showMRP = false;
     bool showQRCode = false;
     bool showbodyWaterMarkLogo = false;
-  
 
-  Future<void> _loadCheckboxState() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool? isChecked = prefs.getBool('checkbox_Company Phone Number');
-    final mrpChecked = prefs.getBool('checkbox_MRP');
-    final qrCodeChecked = prefs.getBool('checkbox_QR Code');
-    final bodyWaterMarkLogo = prefs.getBool('checkbox_Body Watermark logo');
+    Future<void> _loadCheckboxState() async {
+      final prefs = await SharedPreferences.getInstance();
+      bool? isChecked = prefs.getBool('checkbox_Company Phone Number');
+      final mrpChecked = prefs.getBool('checkbox_MRP');
+      final qrCodeChecked = prefs.getBool('checkbox_QR Code');
+      final bodyWaterMarkLogo = prefs.getBool('checkbox_Body Watermark logo');
 
-    setState(() {
-      showCompanyPhoneNumber = isChecked ?? false;
-      showMRP = mrpChecked ?? false;
-      showQRCode = qrCodeChecked ?? false;
-      showbodyWaterMarkLogo = bodyWaterMarkLogo ?? false;
-    });
-  }
+      setState(() {
+        showCompanyPhoneNumber = isChecked ?? false;
+        showMRP = mrpChecked ?? false;
+        showQRCode = qrCodeChecked ?? false;
+        showbodyWaterMarkLogo = bodyWaterMarkLogo ?? false;
+      });
+    }
 
     final logoBytes = await loadLogoImage();
     final logoImage = pw.MemoryImage(logoBytes);
@@ -816,10 +708,8 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                 fontSize: 14, fontWeight: pw.FontWeight.bold)),
                         pw.Text("84/8 Naya Paltan, Dhaka",
                             style: const pw.TextStyle(fontSize: 9)),
-                        
-                        if(showCompanyPhoneNumber)pw.Text("phone: 01759546853")
-                        
-                        
+                        if (showCompanyPhoneNumber)
+                          pw.Text("phone: 01759546853")
                       ]),
 
                   //right image
@@ -878,8 +768,6 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                 ),
               ),
             ),
-            
-
 
             pw.Table(
               border: pw.TableBorder(
@@ -917,13 +805,15 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                     pw.Text("Discount", style: headerStyle),
                     pw.Text("Vat/Tax", style: headerStyle),
                     pw.Text("Amount", style: headerStyle),
-                  ].map((cell) => pw.Padding(
-                    padding: const pw.EdgeInsets.all(4),
-                    child: pw.Align(
-                      alignment: pw.Alignment.centerLeft,
-                      child: cell,
-                    ),
-                  )).toList(),
+                  ]
+                      .map((cell) => pw.Padding(
+                            padding: const pw.EdgeInsets.all(4),
+                            child: pw.Align(
+                              alignment: pw.Alignment.centerLeft,
+                              child: cell,
+                            ),
+                          ))
+                      .toList(),
                 ),
 
                 // Data Rows
@@ -931,7 +821,8 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                   pw.TableRow(
                     decoration: const pw.BoxDecoration(
                       border: pw.Border(
-                        bottom: pw.BorderSide(color: PdfColors.black, width: 0.3),
+                        bottom:
+                            pw.BorderSide(color: PdfColors.black, width: 0.3),
                       ),
                     ),
                     children: [
@@ -939,7 +830,8 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                       pw.Text(widget.items[i].itemName ?? '', style: cellStyle),
                       pw.Text('-', style: cellStyle),
                       if (showMRP) pw.Text('0', style: cellStyle),
-                      pw.Text(widget.items[i].quantity.toString(), style: cellStyle),
+                      pw.Text(widget.items[i].quantity.toString(),
+                          style: cellStyle),
                       pw.Text(widget.items[i].unit ?? '', style: cellStyle),
                       pw.Text(
                         ((widget.items[i].amount /
@@ -963,18 +855,18 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                         widget.items[i].amount.toStringAsFixed(2),
                         style: cellStyle,
                       ),
-                    ].map((cell) => pw.Padding(
-                      padding: const pw.EdgeInsets.all(4),
-                      child: pw.Align(
-                        alignment: pw.Alignment.centerLeft,
-                        child: cell,
-                      ),
-                    )).toList(),
+                    ]
+                        .map((cell) => pw.Padding(
+                              padding: const pw.EdgeInsets.all(4),
+                              child: pw.Align(
+                                alignment: pw.Alignment.centerLeft,
+                                child: cell,
+                              ),
+                            ))
+                        .toList(),
                   ),
               ],
             ),
-      
-
 
             // pw.Table(
             //   border: pw.TableBorder(
@@ -1075,9 +967,6 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
             //   ],
             // ),
 
-
-
-
             pw.SizedBox(height: 10),
 
             ///toatl section.
@@ -1123,17 +1012,15 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
 
                 pw.SizedBox(width: 10),
 
-                if(showQRCode)
-                pw.SizedBox(
-                  width: 70,
-                  height: 70,
-                  child: pw.BarcodeWidget(
-                    data: 'Invoice#Inv542', 
-                    barcode: pw.Barcode.qrCode(),
-                    width: 50,
-                    height: 50
-                    )
-                ),
+                if (showQRCode)
+                  pw.SizedBox(
+                      width: 70,
+                      height: 70,
+                      child: pw.BarcodeWidget(
+                          data: 'Invoice#Inv542',
+                          barcode: pw.Barcode.qrCode(),
+                          width: 50,
+                          height: 50)),
 
                 // pw.SizedBox(
                 //   width: 70,
@@ -1678,8 +1565,8 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
   bool showQRCode = false;
   bool showbodyWaterMarkLogo = false;
   bool showItemDiscountAndPercentance = false;
-  bool showItemVatTaxAmountAndPercentance =  false;
-  bool showItemCode =  false;
+  bool showItemVatTaxAmountAndPercentance = false;
+  bool showItemCode = false;
   bool showSlNo = false;
   bool showBillDiscountAmountAndPercentance = false;
   bool showBillVatTaxAmountAndPercentance = false;
@@ -1698,29 +1585,35 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
     final mrpChecked = prefs.getBool('checkbox_MRP');
     final qrCodeChecked = prefs.getBool('checkbox_QR Code');
     final bodyWaterMarkLogo = prefs.getBool('checkbox_Body Watermark logo');
-    final itemDiscountAndPercentance = prefs.getBool('checkbox_Item Discount Amount & Percentance');
-    final itemVatTaxAmountAndPercentance = prefs.getBool('checkbox_ItemVatTaxAmountAndPercentance');
+    final itemDiscountAndPercentance =
+        prefs.getBool('checkbox_Item Discount Amount & Percentance');
+    final itemVatTaxAmountAndPercentance =
+        prefs.getBool('checkbox_ItemVatTaxAmountAndPercentance');
     final itemCode = prefs.getBool('checkbox_Item Code');
     final siNo = prefs.getBool('checkbox_S.l No');
-    final billDiscountAmountAndPercentance = prefs.getBool('checkbox_Bill Discount Amount & Percentance');
-    final billVatTaxAmountAndPercentance = prefs.getBool('checkbox_Bill Vat/Tax Amount & Percentance');
+    final billDiscountAmountAndPercentance =
+        prefs.getBool('checkbox_Bill Discount Amount & Percentance');
+    final billVatTaxAmountAndPercentance =
+        prefs.getBool('checkbox_Bill Vat/Tax Amount & Percentance');
     final amountinWord = prefs.getBool('checkbox_Amount in Word');
     final narrationNote = prefs.getBool('checkbox_Narration');
- 
+
     setState(() {
       showCompanyPhoneNumber = isChecked ?? false;
       showMRP = mrpChecked ?? false;
       showQRCode = qrCodeChecked ?? false;
       showbodyWaterMarkLogo = bodyWaterMarkLogo ?? false;
       showItemDiscountAndPercentance = itemDiscountAndPercentance ?? false;
-      showItemVatTaxAmountAndPercentance = itemVatTaxAmountAndPercentance ?? false;
+      showItemVatTaxAmountAndPercentance =
+          itemVatTaxAmountAndPercentance ?? false;
       showItemCode = itemCode ?? false;
       showSlNo = siNo ?? false;
-      showBillDiscountAmountAndPercentance = billDiscountAmountAndPercentance ?? false;
-      showBillVatTaxAmountAndPercentance = billVatTaxAmountAndPercentance ?? false;
+      showBillDiscountAmountAndPercentance =
+          billDiscountAmountAndPercentance ?? false;
+      showBillVatTaxAmountAndPercentance =
+          billVatTaxAmountAndPercentance ?? false;
       showAmountinWord = amountinWord ?? false;
       showNarration = narrationNote ?? false;
-
     });
   }
 
@@ -1796,24 +1689,24 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
       ),
       body: Stack(
         children: [
-
-         if (showbodyWaterMarkLogo) Opacity(
-      opacity: 0.09, // adjust this value as needed for transparency
-      child: Center(
-        child: Image.asset(
-          'assets/image/cbook_logo.png',   //assets\image\cbook_logo.png
-          width: 300,  
-          fit: BoxFit.contain,
-        ),
-      ),
-    ),
-
+          if (showbodyWaterMarkLogo)
+            Opacity(
+              opacity: 0.09, // adjust this value as needed for transparency
+              child: Center(
+                child: Image.asset(
+                  'assets/image/cbook_logo.png', //assets\image\cbook_logo.png
+                  width: 300,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
                     child: IntrinsicHeight(
                       child: Padding(
                         padding: const EdgeInsets.only(
@@ -1824,12 +1717,15 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                           children: [
                             // Header section
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text("Dream Tech International",
                                           style: TextStyle(
@@ -1838,14 +1734,16 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                               color: Colors.black)),
                                       Text("84/8 Naya Paltan, Dhaka",
                                           style: TextStyle(
-                                              color: Colors.black, fontSize: 11)),
-          
+                                              color: Colors.black,
+                                              fontSize: 11)),
+
                                       // ✅ Conditionally show Company Phone Number
                                       if (showCompanyPhoneNumber)
                                         const Text(
                                           "0198994406",
                                           style: TextStyle(
-                                              color: Colors.black, fontSize: 11),
+                                              color: Colors.black,
+                                              fontSize: 11),
                                         ),
                                       // Text("0198994406",
                                       //     style: TextStyle(
@@ -1862,7 +1760,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                               ),
                             ),
                             const SizedBox(height: 1),
-          
+
                             //invoice
                             Padding(
                               padding: const EdgeInsets.only(right: 4.0),
@@ -1875,12 +1773,14 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                         fontWeight: FontWeight.bold)),
                               ),
                             ),
-          
+
                             const SizedBox(height: 1),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text("Bill To:\n${widget.customerName}",
@@ -1893,25 +1793,27 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                     children: [
                                       const Text("Bill No: Inv542",
                                           style: TextStyle(
-                                              color: Colors.black, fontSize: 10)),
+                                              color: Colors.black,
+                                              fontSize: 10)),
                                       Text(
                                         "Date: ${DateFormat('dd/MM/yyyy').format(DateTime.now())}",
                                         style: const TextStyle(
                                             color: Colors.black, fontSize: 10),
                                       ),
-          
+
                                       //  "Bill Person: ${widget.billPersion != null && widget.billPersion!.trim().isNotEmpty ? widget.billPersion : "No Bill Person"}",
                                       Text(
                                           "Bill Person: ${widget.billPersion != null && widget.billPersion!.trim().isNotEmpty ? widget.billPersion : "N/A"}",
                                           style: TextStyle(
-                                              color: Colors.black, fontSize: 10)),
+                                              color: Colors.black,
+                                              fontSize: 10)),
                                     ],
                                   )
                                 ],
                               ),
                             ),
                             const SizedBox(height: 1),
-          
+
                             const Padding(
                               padding: EdgeInsets.only(right: 4.0),
                               child: Align(
@@ -1923,9 +1825,9 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                         fontSize: 14)),
                               ),
                             ),
-          
+
                             const SizedBox(height: 6),
-          
+
                             ///table list.
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
@@ -1934,8 +1836,9 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                 child: Table(
                                   border: TableBorder.all(
                                       color: Colors.transparent), //black12
-          
-                                  defaultColumnWidth: const IntrinsicColumnWidth(),
+
+                                  defaultColumnWidth:
+                                      const IntrinsicColumnWidth(),
                                   children: [
                                     // Header Row
                                     TableRow(
@@ -1944,106 +1847,96 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                         0xfff2f2f2,
                                       )),
                                       children: [
-                                        if (showSlNo) tableCell(
-                                          "SL",
-                                          tableHeaderStyle,
-                                        ),
-                                        tableCell("Product name", tableHeaderStyle),
-                                        if (showItemCode) tableCell("Code", tableHeaderStyle),
+                                        if (showSlNo)
+                                          tableCell(
+                                            "SL",
+                                            tableHeaderStyle,
+                                          ),
+                                        tableCell(
+                                            "Product name", tableHeaderStyle),
+                                        if (showItemCode)
+                                          tableCell("Code", tableHeaderStyle),
                                         if (showMRP)
                                           tableCell("MRP", tableHeaderStyle),
                                         //tableCell("MRP", tableHeaderStyle),
                                         tableCell("Qty", tableHeaderStyle),
                                         tableCell("Unit", tableHeaderStyle),
                                         tableCell("Price", tableHeaderStyle),
-                                        if(showItemDiscountAndPercentance) tableCell("Discount", tableHeaderStyle),
-                                        if(showItemVatTaxAmountAndPercentance) tableCell("Vat/Tax", tableHeaderStyle),
+                                        if (showItemDiscountAndPercentance)
+                                          tableCell(
+                                              "Discount", tableHeaderStyle),
+                                        if (showItemVatTaxAmountAndPercentance)
+                                          tableCell(
+                                              "Vat/Tax", tableHeaderStyle),
                                         tableCell("Amount", tableHeaderStyle),
                                       ],
                                     ),
-          
-                                    // Table Rows
-                                    // ...List.generate(widget.items.length, (index) {
-                                    //   final item = widget.items[index];
-                                    //   return tableRow(
-                                    //     sl: "${index + 1}",
-                                    //     productName: item.itemName,
-                                    //     code: "-",
-                                    //     mrp: "0",
-                                    //     //if (showMRP) tableCell("0", tableCellStyle),
-                                    //     qty: item.quantity
-                                    //         .toString(), //item.quantity.toString()
-                                    //     unit: '${item.unit}',
-                                    //     price:
-                                    //         "${(item.amount / (item.quantity > 0 ? item.quantity : 1)).toStringAsFixed(2)}",
-                                    //     discount:
-                                    //         '${item.itemDiscountPercentace}% ${item.itemDiscountAmount}', //${item.itemDiscountPercentace}%
-                                    //     vatTax:
-                                    //         '${item.itemvatTaxPercentace}% ${item.itemVatTaxAmount}', //${item.itemvatTaxPercentace}%
-                                    //     // discount: '${item.itemDiscountAmount} ${item.itemDiscountPercentace}',
-                                    //     // vatTax: '5',
-                                    //     // discount: '0',
-                                    //     amount: formattedTotalAmount,
-                                    //   );
-                                    // }),
-          
-                                    ...List.generate(widget.items.length, (index) {
+
+                                    ...List.generate(widget.items.length,
+                                        (index) {
                                       final item = widget.items[index];
                                       return TableRow(
                                         children: [
-                                          if(showSlNo) tableCell("${index + 1}", tableCellStyle),
-                                          tableCell(item.itemName, tableCellStyle),
-                                          if (showItemCode) tableCell("-", tableCellStyle),
+                                          if (showSlNo)
+                                            tableCell(
+                                                "${index + 1}", tableCellStyle),
+                                          tableCell(
+                                              item.itemName, tableCellStyle),
+                                          if (showItemCode)
+                                            tableCell("-", tableCellStyle),
                                           if (showMRP)
                                             tableCell("0", tableCellStyle),
                                           tableCell(item.quantity.toString(),
                                               tableCellStyle),
-                                          tableCell('${item.unit}', tableCellStyle),
+                                          tableCell(
+                                              '${item.unit}', tableCellStyle),
                                           tableCell(
                                             "${(item.amount / (item.quantity > 0 ? item.quantity : 1)).toStringAsFixed(2)}",
                                             tableCellStyle,
                                           ),
-                                          if(showItemDiscountAndPercentance) tableCell(
-                                            '${item.itemDiscountPercentace}% ${item.itemDiscountAmount}',
-                                            tableCellStyle,
-                                          ),
-                                          if(showItemVatTaxAmountAndPercentance) tableCell(
-                                            '${item.itemvatTaxPercentace}% ${item.itemVatTaxAmount}',
-                                            tableCellStyle,
-                                          ),
-                                          tableCell(
-                                              formattedTotalAmount, tableCellStyle),
+                                          if (showItemDiscountAndPercentance)
+                                            tableCell(
+                                              '${item.itemDiscountPercentace}% ${item.itemDiscountAmount}',
+                                              tableCellStyle,
+                                            ),
+                                          if (showItemVatTaxAmountAndPercentance)
+                                            tableCell(
+                                              '${item.itemvatTaxPercentace}% ${item.itemVatTaxAmount}',
+                                              tableCellStyle,
+                                            ),
+                                          tableCell(formattedTotalAmount,
+                                              tableCellStyle),
                                         ],
                                       );
                                     }),
-          
+
                                     // Data Row 1
                                   ],
                                 ),
                               ),
                             ),
-          
+
                             const SizedBox(height: 6),
-          
+
                             const Spacer(),
-          
+
                             // Bottom Info (with all text color black)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if(showNarration) const Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 4.0),
-                                    child: Text(
-                                      "The Right Place for Online Trading on Financial Markets.",
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.black),
+                                if (showNarration)
+                                  const Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 4.0),
+                                      child: Text(
+                                        "The Right Place for Online Trading on Financial Markets.",
+                                        style: TextStyle(
+                                            fontSize: 10, color: Colors.black),
+                                      ),
                                     ),
                                   ),
-                                ),
                                 const SizedBox(width: 10),
-                                
                                 if (showQRCode)
                                   SizedBox(
                                     width: 60,
@@ -2054,45 +1947,44 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                       size: 60.0,
                                     ),
                                   ),
-          
                                 const SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    
-                                    
-                                   if(showBillDiscountAmountAndPercentance) const SizedBox(
-                                      width: 150,
-                                      child: DottedLine(
-                                        dashColor: Colors.black12,
-                                        lineThickness: 1.0,
-                                        dashLength: 3.0,
-                                        dashGapLength: 1.0,
+                                    if (showBillDiscountAmountAndPercentance)
+                                      const SizedBox(
+                                        width: 150,
+                                        child: DottedLine(
+                                          dashColor: Colors.black12,
+                                          lineThickness: 1.0,
+                                          dashLength: 3.0,
+                                          dashGapLength: 1.0,
+                                        ),
                                       ),
-                                    ),
                                     //"${(widget.discountAmount == null || widget.discountAmount.trim().isEmpty || widget.discountAmount.toLowerCase() == 'n/a') ? '0.00' : widget.discountAmount}"
                                     //${widget.discountAmount}
-                                   
-                                   
-                                   if(showBillDiscountAmountAndPercentance) customDiscount(
-                                        "Discount ${widget.discountPercent}%",
-                                        "${(widget.discountAmount == null || widget.discountAmount.trim().isEmpty || widget.discountAmount.toLowerCase() == 'n/a') ? '0.00' : widget.discountAmount}"),
-                                   
-                                   
-                                   if(showBillVatTaxAmountAndPercentance) const SizedBox(
-                                      width: 150,
-                                      child: DottedLine(
-                                        dashColor: Colors.black12,
-                                        lineThickness: 1.0,
-                                        dashLength: 3.0,
-                                        dashGapLength: 1.0,
+
+                                    if (showBillDiscountAmountAndPercentance)
+                                      customDiscount(
+                                          "Discount ${widget.discountPercent}%",
+                                          "${(widget.discountAmount == null || widget.discountAmount.trim().isEmpty || widget.discountAmount.toLowerCase() == 'n/a') ? '0.00' : widget.discountAmount}"),
+
+                                    if (showBillVatTaxAmountAndPercentance)
+                                      const SizedBox(
+                                        width: 150,
+                                        child: DottedLine(
+                                          dashColor: Colors.black12,
+                                          lineThickness: 1.0,
+                                          dashLength: 3.0,
+                                          dashGapLength: 1.0,
+                                        ),
                                       ),
-                                    ),
-                                    
-                                    
-                                   if(showBillVatTaxAmountAndPercentance) customDiscount("Vat/Tax ${taxPercentOnly}%",
-                                        "${widget.taxAmount}"),
+
+                                    if (showBillVatTaxAmountAndPercentance)
+                                      customDiscount(
+                                          "Vat/Tax ${taxPercentOnly}%",
+                                          "${widget.taxAmount}"),
                                     const SizedBox(
                                       width: 150,
                                       child: DottedLine(
@@ -2138,34 +2030,33 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                 ),
                               ],
                             ),
-          
+
                             //Text("${convertDoubleToWords(totalAmount)}"),
-          
-                           if(showAmountinWord) Padding(
-                              padding: const EdgeInsets.only(right: 4.0),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: SizedBox(
-                                  width: 220,
-                                  child:
-                                 
-                                      Text(
-                                    "In Word: ${convertDoubleToWords(totalAmount)}",
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 10),
+
+                            if (showAmountinWord)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 4.0),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: SizedBox(
+                                    width: 220,
+                                    child: Text(
+                                      "In Word: ${convertDoubleToWords(totalAmount)}",
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 10),
+                                    ),
                                   ),
-        
                                 ),
                               ),
-                            ),
-          
+
                             const SizedBox(height: 30),
-          
+
                             // Footer Signatures
                             const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 6.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     children: [
@@ -2175,7 +2066,8 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                       ),
                                       Text("Receiver/Customer",
                                           style: TextStyle(
-                                              color: Colors.black, fontSize: 11)),
+                                              color: Colors.black,
+                                              fontSize: 11)),
                                     ],
                                   ),
                                   Column(
@@ -2186,7 +2078,8 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                       ),
                                       Text("Sales Person",
                                           style: TextStyle(
-                                              color: Colors.black, fontSize: 11)),
+                                              color: Colors.black,
+                                              fontSize: 11)),
                                     ],
                                   ),
                                   Column(
@@ -2197,24 +2090,25 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                       ),
                                       Text("Manager",
                                           style: TextStyle(
-                                              color: Colors.black, fontSize: 11)),
+                                              color: Colors.black,
+                                              fontSize: 11)),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
-          
+
                             SizedBox(
                               height: 6,
                             ),
-          
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const SizedBox(
                                   width: 5,
                                 ),
-          
+
                                 //pdf share =====>
                                 ElevatedButton.icon(
                                   onPressed: () {
@@ -2231,25 +2125,27 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 6),
                                     minimumSize: const Size(0, 0),
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           5), // Rounded corners
                                     ),
                                   ),
                                 ),
-          
+
                                 const SizedBox(
                                   width: 3,
                                 ),
-          
+
                                 //printing pdf
                                 ElevatedButton.icon(
                                   onPressed: () {
                                     _viewPDFGenPrinting();
                                     print('vieww pdf called');
                                   }, //_viewPDF
-                                  icon: const Icon(Icons.picture_as_pdf, size: 18),
+                                  icon: const Icon(Icons.picture_as_pdf,
+                                      size: 18),
                                   label: const Text(
                                     "View PDF",
                                     style: TextStyle(fontSize: 12),
@@ -2260,7 +2156,8 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 6),
                                     minimumSize: const Size(0, 0),
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           5), // Rounded corners
@@ -2270,7 +2167,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                 const SizedBox(
                                   width: 3,
                                 ),
-          
+
                                 //download
                                 ElevatedButton.icon(
                                   onPressed: () {
@@ -2290,70 +2187,19 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 6),
                                     minimumSize: Size(0, 0),
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           5), // Rounded corners
                                     ),
                                   ),
                                 ),
-          
+
                                 //settings
                                 const SizedBox(
                                   width: 3,
                                 ),
-          
-                                // Dropdown
-                                // SizedBox(
-                                //   width: 70,
-                                //   child: SizedBox(
-                                //     height: 30,
-                                //     child: DropdownButtonFormField<String>(
-                                //       decoration: InputDecoration(
-                                //         contentPadding:
-                                //             const EdgeInsets.symmetric(
-                                //                 horizontal: 0),
-                                //         enabledBorder: OutlineInputBorder(
-                                //           borderSide: BorderSide(
-                                //               color: Colors.grey.shade300),
-                                //         ),
-                                //         focusedBorder: OutlineInputBorder(
-                                //             borderSide: BorderSide(
-                                //                 color: Colors.grey.shade300)),
-                                //         border: OutlineInputBorder(
-                                //           borderRadius: BorderRadius.circular(4),
-                                //           borderSide: BorderSide(
-                                //               color: Colors.grey.shade400),
-                                //         ),
-                                //       ),
-                                //       value: selectedDropdownValue,
-                                //       hint: const Text(""),
-                                //       onChanged: (String? newValue) {
-                                //         setState(() {
-                                //           selectedDropdownValue = newValue;
-                                //         });
-                                //       },
-                                //       items: [
-                                //         "A 4",
-                                //         "A 5",
-                                //       ].map<DropdownMenuItem<String>>(
-                                //           (String value) {
-                                //         return DropdownMenuItem<String>(
-                                //           value: value,
-                                //           child: Padding(
-                                //             padding: const EdgeInsets.symmetric(
-                                //                 horizontal: 4.0),
-                                //             child: Text(value,
-                                //                 style:
-                                //                     GoogleFonts.notoSansPhagsPa(
-                                //                         fontSize: 12,
-                                //                         color: Colors.black)),
-                                //           ),
-                                //         );
-                                //       }).toList(),
-                                //     ),
-                                //   ),
-                                // ),
                               ],
                             ),
                           ],
@@ -2463,17 +2309,4 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
       }),
     );
   }
-
-  // TableRow tableRow(List<String> cells) {
-  //   return TableRow(
-  //     children: cells.map((cell) {
-  //       return Padding(
-  //         padding: const EdgeInsets.all(6),
-  //         child: Text(cell,
-  //             textAlign: TextAlign.center,
-  //             style: const TextStyle(color: Colors.black, fontSize: 8)),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
 }

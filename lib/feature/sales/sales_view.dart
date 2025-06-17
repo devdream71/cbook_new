@@ -238,7 +238,7 @@ class _LayoutState extends State<_Layout> {
                                                 decoration: BoxDecoration(
                                                   color: AppColors.primaryColor,
                                                   borderRadius:
-                                                      BorderRadius.circular(10),
+                                                      BorderRadius.circular(5),
                                                 ),
                                                 child: Padding(
                                                   padding: const EdgeInsets
@@ -1320,6 +1320,7 @@ class _LayoutState extends State<_Layout> {
                                         controller.itemsCash.isEmpty
                                             ? const SizedBox.shrink()
                                             : Column(
+                                               
                                                 children: List.generate(
                                                     controller.itemsCash.length,
                                                     (index) {
@@ -1329,6 +1330,7 @@ class _LayoutState extends State<_Layout> {
                                                     padding: const EdgeInsets
                                                         .symmetric(vertical: 3),
                                                     child: Row(
+                                                    
                                                       children: [
                                                         Expanded(
                                                           child: InkWell(
@@ -1345,152 +1347,170 @@ class _LayoutState extends State<_Layout> {
                                                             },
                                                             child:
                                                                 //cash item list show, index, itam name, unit, qty, and total price
-                                                                DecoratedBox(
-                                                              decoration: BoxDecoration(
-                                                                  //border: Border.all(color: Colors.grey),
-                                                                  //   boxShadow: [
-                                                                  // BoxShadow(
-                                                                  //   color: Colors
-                                                                  //       .black
-                                                                  //       .withOpacity(
-                                                                  //           0.1),
-                                                                  //   blurRadius:
-                                                                  //       1,
-                                                                  //   offset:
-                                                                  //       const Offset(
-                                                                  //           0,
-                                                                  //           1),
-                                                                  // ),
-                                                                  //],
-                                                                  color: const Color(0xfff4f6ff), //f4f6ff
+                                                                SizedBox(
+                                                              height: 42,
+                                                              child:
+                                                                  DecoratedBox(
+                                                                decoration: BoxDecoration(
+                                                                    //border: Border.all(color: Colors.grey),
+                                                                    //   boxShadow: [
+                                                                    // BoxShadow(
+                                                                    //   color: Colors
+                                                                    //       .black
+                                                                    //       .withOpacity(
+                                                                    //           0.1),
+                                                                    //   blurRadius:
+                                                                    //       1,
+                                                                    //   offset:
+                                                                    //       const Offset(
+                                                                    //           0,
+                                                                    //           1),
+                                                                    // ),
+                                                                    //],
+                                                                    color: const Color(0xfff4f6ff), //f4f6ff
 
-                                                                  ///f4f6ff, dddefa
-                                                                  borderRadius: BorderRadius.circular(5)),
-                                                              child: Padding(
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        2,
-                                                                    vertical:
-                                                                        2),
-                                                                child:
-                                                                    Container(
+                                                                    ///f4f6ff, dddefa
+                                                                    borderRadius: BorderRadius.circular(5)),
+                                                                child: Padding(
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
+                                                                      horizontal:
+                                                                          2,
                                                                       vertical:
-                                                                          0),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center, // <--- Center vertically
-                                                                    children: [
-                                                                      /// Left Side: Index + Item Info
-                                                                      Expanded(
-                                                                        child:
-                                                                            Row(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.center, // <--- Center vertically
-                                                                          children: [
-                                                                            Text(
-                                                                              "${index + 1}.",
-                                                                              style: const TextStyle(
-                                                                                overflow: TextOverflow.ellipsis,
-                                                                                color: Colors.black,
-                                                                                fontWeight: FontWeight.w600,
-                                                                                fontSize: 10,
-                                                                              ),
-                                                                            ),
-                                                                            const SizedBox(width: 5),
-                                                                            Expanded(
-                                                                              child: Column(
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    "${item.itemName!}",
-                                                                                    style: const TextStyle(
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                      color: Colors.black,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      fontSize: 10,
-                                                                                    ),
-                                                                                  ),
-                                                                                  Text(
-                                                                                    "৳ ${item.mrp!} x ${item.quantity!} ${item.unit} = ${item.total}",
-                                                                                    style: const TextStyle(
-                                                                                      color: Colors.grey,
-                                                                                      fontSize: 9,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-
-                                                                      /// Right Side: Close Button
-                                                                      InkWell(
-                                                                        onTap:
-                                                                            () {
-                                                                          showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (BuildContext dialogContext) {
-                                                                              return AlertDialog(
-                                                                                title: const Text("Remove Item"),
-                                                                                content: const Text(
-                                                                                  "Are you sure you want to remove this item?",
-                                                                                  style: TextStyle(color: Colors.black),
-                                                                                ),
-                                                                                actions: [
-                                                                                  TextButton(
-                                                                                    onPressed: () {
-                                                                                      Navigator.pop(dialogContext);
-                                                                                    },
-                                                                                    child: const Text("Cancel"),
-                                                                                  ),
-                                                                                  ElevatedButton(
-                                                                                    onPressed: () {
-                                                                                      controller.removeCashItem(index);
-                                                                                      Navigator.pop(dialogContext);
-                                                                                    },
-                                                                                    style: ElevatedButton.styleFrom(
-                                                                                      backgroundColor: colorScheme.primary,
-                                                                                    ),
-                                                                                    child: const Text(
-                                                                                      "Remove",
-                                                                                      style: TextStyle(color: Colors.white),
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              );
-                                                                            },
-                                                                          );
-                                                                          setState(
-                                                                              () {});
-                                                                        },
-                                                                        child:
-                                                                            const CircleAvatar(
-                                                                          radius:
-                                                                              12,
-                                                                          backgroundColor:
-                                                                              Colors.grey,
+                                                                          2),
+                                                                  child:
+                                                                      Container(
+                                                                    padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                            0),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center, // <--- Center vertically
+                                                                      children: [
+                                                                        /// Left Side: Index + Item Info
+                                                                        Expanded(
                                                                           child:
-                                                                              Icon(
-                                                                            Icons.close,
-                                                                            color:
-                                                                                Colors.white,
-                                                                            size:
-                                                                                20,
+                                                                              Row(
+                                                                                 
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.center, // <--- Center vertically
+                                                                            children: [
+                                                                              
+                                                                               
+                                                                              Text(
+                                                                                "${index + 1}.",
+                                                                                style: const TextStyle(
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  color: Colors.black,
+                                                                                  fontWeight: FontWeight.w600,
+                                                                                  fontSize: 10,
+                                                                                ),
+                                                                              ),
+                                                                              const SizedBox(width: 5),
+                                                                              Expanded(
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    SizedBox(height: 4,
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "${item.itemName!}",
+                                                                                      style: const TextStyle(
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                        color: Colors.black,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        fontSize: 10,
+                                                                                      ),
+                                                                                    ),
+                                                                                    Text(
+                                                                                      "৳ ${item.mrp!} x ${item.quantity!} ${item.unit} = ${item.total}",
+                                                                                      style: const TextStyle(
+                                                                                        color: Colors.grey,
+                                                                                        fontSize: 9,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ],
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                    ],
+
+                                                                        /// Right Side: Close Button
+                                                                        InkWell(
+                                                                          onTap:
+                                                                              () {
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext dialogContext) {
+                                                                                return AlertDialog(
+                                                                                  title: const Text("Remove Item"),
+                                                                                  content: const Text(
+                                                                                    "Are you sure you want to remove this item?",
+                                                                                    style: TextStyle(color: Colors.black),
+                                                                                  ),
+                                                                                  actions: [
+                                                                                    TextButton(
+                                                                                      onPressed: () {
+                                                                                        Navigator.pop(dialogContext);
+                                                                                      },
+                                                                                      child: const Text("Cancel"),
+                                                                                    ),
+                                                                                    ElevatedButton(
+                                                                                      onPressed: () {
+                                                                                        controller.removeCashItem(index);
+                                                                                        Navigator.pop(dialogContext);
+                                                                                      },
+                                                                                      style: ElevatedButton.styleFrom(
+                                                                                        backgroundColor: colorScheme.primary,
+                                                                                      ),
+                                                                                      child: const Text(
+                                                                                        "Remove",
+                                                                                        style: TextStyle(color: Colors.white),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                            setState(() {});
+                                                                          },
+                                                                          child:
+                                                                          Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey.shade500,
+                                                  width: 1),
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                             
+                                            ),
+                                            child: const Icon(Icons.remove,
+                                                color: Colors.green, size: 18),
+                                          ),
+                                                                          //     const CircleAvatar(
+                                                                          //   radius:
+                                                                          //       12,
+                                                                          //   backgroundColor:
+                                                                          //       Colors.grey,
+                                                                          //   child:
+                                                                          //       Icon(
+                                                                          //     Icons.close,
+                                                                          //     color: Colors.white,
+                                                                          //     size: 20,
+                                                                          //   ),
+                                                                          // ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),

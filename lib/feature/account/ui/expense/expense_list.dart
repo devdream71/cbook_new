@@ -1,3 +1,4 @@
+import 'package:cbook_dt/feature/account/ui/expense/add_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -51,6 +52,21 @@ class _ExpanseState extends State<Expanse> {
               ),
             ],
           ),
+          actions: [
+            InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ExpenseCreate()));
+              },
+              child: CircleAvatar(
+                  radius: 12,
+                  backgroundColor: Colors.yellow,
+                  child: Icon(
+                    Icons.add,
+                    color: colorScheme.primary,
+                  )),
+            ),
+          ],
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

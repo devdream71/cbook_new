@@ -1,3 +1,5 @@
+import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
+import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:cbook_dt/feature/authentication/provider/login_provider.dart';
 import 'package:cbook_dt/feature/authentication/provider/otp_provider.dart';
 import 'package:cbook_dt/feature/authentication/provider/reg_provider.dart';
@@ -108,7 +110,10 @@ void main() async {
           ChangeNotifierProvider(create: (_) => TaxProvider()..fetchTaxes()),
           ChangeNotifierProvider(
               create: (_) => SettingUserProvider()..fetchUsers()),
-        ],
+            ChangeNotifierProvider(create: (_) => IncomeProvider()),
+            ChangeNotifierProvider(create: (_) => ExpenseProvider()),
+          
+          ],
         child: const MyApp(),
       ),
     ),

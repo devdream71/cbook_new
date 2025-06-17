@@ -441,12 +441,12 @@ class _SalesScreenState extends State<SalesScreen> {
 
                         return InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SalesDetails(sale: sale),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => SalesDetails(sale: sale),
+                            //   ),
+                            // );
                           },
                           child: Card(
                             color: Color(0xfff4f6ff),
@@ -468,75 +468,85 @@ class _SalesScreenState extends State<SalesScreen> {
                                   ),
                                   // Left Side Info
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ///date, bill qty
-                                        ///
-                                        Row(
-                                          children: [
-                                            ///date and invoice number
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  formatDate(sale.purchaseDate),
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "${sale.billNumber}",
-                                                  style: const TextStyle(
+                                    child: InkWell(
+                                      onTap: (){
+                                         Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SalesDetails(sale: sale),
+                              ),
+                            );
+                                      },
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ///date, bill qty
+                                          ///
+                                          Row(
+                                            children: [
+                                              ///date and invoice number
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    formatDate(sale.purchaseDate),
+                                                    style: const TextStyle(
                                                       fontSize: 12,
                                                       color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-
-                                            ///horozontal divider
-                                            //Divider (horizontal line)
-                                            Container(
-                                              height: 30,
-                                              width: 2,
-                                              color: Colors.green.shade200,
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 6),
-                                            ),
-
-                                            //cash andf amount
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                ///cash
-                                                Text(
-                                                  sale.customerName == "N/A"
-                                                      ? "Cash"
-                                                      : sale.customerName,
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 12),
-                                                ),
-
-                                                //amount
-                                                Text(
-                                                  '${sale.grossTotal} TK',
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 12),
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ],
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "${sale.billNumber}",
+                                                    style: const TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
+                                      
+                                              ///horozontal divider
+                                              //Divider (horizontal line)
+                                              Container(
+                                                height: 30,
+                                                width: 2,
+                                                color: Colors.green.shade200,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 6),
+                                              ),
+                                      
+                                              //cash andf amount
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  ///cash
+                                                  Text(
+                                                    sale.customerName == "N/A"
+                                                        ? "Cash"
+                                                        : sale.customerName,
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12),
+                                                  ),
+                                      
+                                                  //amount
+                                                  Text(
+                                                    '${sale.grossTotal} TK',
+                                                    style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
 

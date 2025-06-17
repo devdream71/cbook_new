@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomDropdownTwo extends StatefulWidget {
   final List<String> items;
-  final String hint;
+  final String  ? hint;
   final String? labelText;
   final Function(String) onChanged;
   final double width;
@@ -13,7 +13,7 @@ class CustomDropdownTwo extends StatefulWidget {
   const CustomDropdownTwo({
     super.key,
     required this.items,
-    required this.hint,
+    this.hint,
     this.labelText,
     required this.onChanged,
     required this.width,
@@ -179,7 +179,8 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
                 children: [
                   Expanded(
                     child: Text(
-                      hasValue ? selectedItem! : widget.hint,
+                      // hasValue ? selectedItem! : widget.hint,
+                      hasValue ? selectedItem! : widget.hint ?? '',
                       style: TextStyle(
                         fontSize: 13,
                         color: hasValue ? Colors.black : Colors.grey.shade600,

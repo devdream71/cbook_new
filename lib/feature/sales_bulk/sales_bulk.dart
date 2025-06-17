@@ -1,6 +1,7 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/common/item_dropdown_custom.dart';
+import 'package:cbook_dt/common/new_pdfview.dart';
 import 'package:cbook_dt/feature/customer_create/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/item/model/items_show.dart';
@@ -31,7 +32,10 @@ class _ItemListPageState extends State<ItemListPage> {
 
   final String base_url = "https://commercebook.site/";
 
-  String? selectedItem;
+  //String? selectedItem;
+  // ItemsModel selectedItem;
+  ItemsModel? selectedItem;
+  int? selectedItemIndex;
 
   @override
   void initState() {
@@ -72,11 +76,10 @@ class _ItemListPageState extends State<ItemListPage> {
   int get totalItems {
     return quantities.where((qty) => qty > 0).length;
   }
-    
-    DateTime _selectedDate = DateTime.now();
-    
-    String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
 
+  DateTime _selectedDate = DateTime.now();
+
+  String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
 
   @override
   Widget build(BuildContext context) {
@@ -126,10 +129,10 @@ class _ItemListPageState extends State<ItemListPage> {
                   color: Colors.white,
                 ))
           ],
-          title:   Column(
+          title: Column(
             children: [
               const Text(
-                'Item List',
+                'Bulk Sales/ Invoice',
                 style: TextStyle(
                     color: Colors.yellow,
                     fontSize: 16,
@@ -193,7 +196,7 @@ class _ItemListPageState extends State<ItemListPage> {
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(5),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -227,7 +230,9 @@ class _ItemListPageState extends State<ItemListPage> {
 
                 //customer list.
                 controller.isCash
-                    ? const SizedBox()
+                    ? const SizedBox(
+                        height: 53,
+                      )
                     : Padding(
                         padding: const EdgeInsets.only(top: 0.0),
                         child: SizedBox(
@@ -320,9 +325,9 @@ class _ItemListPageState extends State<ItemListPage> {
             ),
           ),
 
-          ///category and subcategory section.
+          /// Category and Subcategory Section - Full Width, Equal Size, No Padding
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Row(
               children: [
                 // CATEGORY Dropdown
@@ -339,41 +344,38 @@ class _ItemListPageState extends State<ItemListPage> {
                           fontSize: 12,
                         ),
                       ),
-                      SizedBox(
-                        width: 180,
-                        child: categoryProvider.isLoading
-                            ? const SizedBox()
-                            : CustomDropdownTwo(
-                                items: categoryProvider.categories
-                                    .map((category) => category.name)
-                                    .toList(),
-                                hint: '',
-                                width: double.infinity,
-                                height: 30,
-                                onChanged: (value) {
-                                  final selectedCategory = categoryProvider
-                                      .categories
-                                      .firstWhere((cat) => cat.name == value);
+                      categoryProvider.isLoading
+                          ? const SizedBox()
+                          : CustomDropdownTwo(
+                              items: categoryProvider.categories
+                                  .map((category) => category.name)
+                                  .toList(),
+                              hint: '',
+                              width: double.infinity,
+                              height: 30,
+                              onChanged: (value) {
+                                final selectedCategory = categoryProvider
+                                    .categories
+                                    .firstWhere((cat) => cat.name == value);
 
-                                  setState(() {
-                                    selectedCategoryId = selectedCategory.id;
-                                    selectedSubCategoryId = null;
-                                  });
+                                setState(() {
+                                  selectedCategoryId = selectedCategory.id;
+                                  selectedSubCategoryId = null;
+                                });
 
-                                  categoryProvider
-                                      .fetchSubCategories(selectedCategory.id);
+                                categoryProvider
+                                    .fetchSubCategories(selectedCategory.id);
 
-                                  Provider.of<AddItemProvider>(context,
-                                          listen: false)
-                                      .filterItems(selectedCategoryId, null);
-                                },
-                              ),
-                      ),
+                                Provider.of<AddItemProvider>(context,
+                                        listen: false)
+                                    .filterItems(selectedCategoryId, null);
+                              },
+                            ),
                     ],
                   ),
                 ),
 
-                const SizedBox(width: 10),
+                const SizedBox(width: 4),
 
                 // SUBCATEGORY Dropdown
                 Expanded(
@@ -381,60 +383,57 @@ class _ItemListPageState extends State<ItemListPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        width: 180,
-                        child: categoryProvider.isSubCategoryLoading
-                            ? const Center(
-                                child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
-                                ),
-                              )
-                            : categoryProvider.subCategories.isNotEmpty
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Sub Category",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12,
-                                        ),
+                      categoryProvider.isSubCategoryLoading
+                          ? const Center(
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            )
+                          : categoryProvider.subCategories.isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Sub Category",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12,
                                       ),
-                                      CustomDropdownTwo(
-                                        items: categoryProvider.subCategories
-                                            .map((subCategory) =>
-                                                subCategory.name)
-                                            .toList(),
-                                        hint: '',
-                                        width: double.infinity,
-                                        height: 30,
-                                        onChanged: (value) {
-                                          final selectedSubCategory =
-                                              categoryProvider.subCategories
-                                                  .firstWhere((subCat) =>
-                                                      subCat.name == value);
+                                    ),
+                                    CustomDropdownTwo(
+                                      items: categoryProvider.subCategories
+                                          .map(
+                                              (subCategory) => subCategory.name)
+                                          .toList(),
+                                      hint: '',
+                                      width: double.infinity,
+                                      height: 30,
+                                      onChanged: (value) {
+                                        final selectedSubCategory =
+                                            categoryProvider
+                                                .subCategories
+                                                .firstWhere((subCat) =>
+                                                    subCat.name == value);
 
-                                          setState(() {
-                                            selectedSubCategoryId =
-                                                selectedSubCategory.id;
-                                          });
-                                          debugPrint(
-                                              "Selected SubCategory: $selectedSubCategoryId");
-                                          Provider.of<AddItemProvider>(context,
-                                                  listen: false)
-                                              .filterItems(selectedCategoryId,
-                                                  selectedSubCategoryId);
-                                        },
-                                      ),
-                                    ],
-                                  )
-                                : const SizedBox.shrink(),
-                      ),
+                                        setState(() {
+                                          selectedSubCategoryId =
+                                              selectedSubCategory.id;
+                                        });
+                                        debugPrint(
+                                            "Selected SubCategory: $selectedSubCategoryId");
+                                        Provider.of<AddItemProvider>(context,
+                                                listen: false)
+                                            .filterItems(selectedCategoryId,
+                                                selectedSubCategoryId);
+                                      },
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                     ],
                   ),
                 ),
@@ -473,8 +472,8 @@ class _ItemListPageState extends State<ItemListPage> {
 
                     return InkWell(
                       onTap: () {
-                        showSalesDialog(context, controller,
-                            selectedItem: item);
+                        // showSalesDialog(context, controller,
+                        //     selectedItem: item);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -485,59 +484,88 @@ class _ItemListPageState extends State<ItemListPage> {
                             vertical: 1.0, horizontal: 1),
                         child: ListTile(
                           contentPadding:
-                              const EdgeInsets.only(left: 16, right: 2),
+                              const EdgeInsets.only(left: 4, right: 2),
                           title: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: Colors.grey.shade200,
-                                ),
-                                child: Image.network(
-                                  "$base_url${item.image}",
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset(
-                                      "assets/image/cbook_logo.png",
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
+                              ///image
+                              InkWell(
+                                onTap: () {
+                                  showSalesDialog(context, controller,
+                                      selectedItem: item);
+                                },
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    color: Colors.grey.shade200,
+                                  ),
+                                  child: Image.network(
+                                    "$base_url${item.image}",
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        "assets/image/cbook_logo.png",
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 10),
+
+                              ///product name
                               Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.name,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                        'pp: ${item.purchasePrice}   sp: ${item.salesPrice}   Stock: ${item.openingStock}',
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedItem =
+                                          item; // ✅ Save the entire item
+                                      selectedItemIndex = index;
+                                    });
+
+                                    showSalesDialog(
+                                      context,
+                                      controller,
+                                      selectedItem: item,
+                                    );
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.name,
+                                        overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
                                           fontSize: 12,
-                                        )),
-                                  ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                          'pp: ${item.purchasePrice}   sp: ${item.salesPrice}   Stock: ${item.openingStock}',
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 12,
+                                          )),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
 
-                              /// add item and remove item.
+                              /// add item qty and remove item qty.
                               Row(
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
+                                        horizontal: 4, vertical: 4),
                                     // decoration: BoxDecoration(
                                     //   border: Border.all(
                                     //       color: Colors.green, width: 1),
@@ -562,8 +590,6 @@ class _ItemListPageState extends State<ItemListPage> {
                                                   width: 1),
                                               borderRadius:
                                                   BorderRadius.circular(30),
-                                              //color: Colors.grey,
-                                              //shape: BoxShape.circle,
                                             ),
                                             child: const Icon(Icons.remove,
                                                 color: Colors.green, size: 18),
@@ -616,52 +642,6 @@ class _ItemListPageState extends State<ItemListPage> {
               );
             },
           ),
-
-          // Container(
-          //   decoration: BoxDecoration(
-          //       color: Colors.purple,
-          //       border: Border.all(),
-          //       borderRadius: BorderRadius.circular(4)),
-          //   child: Row(
-          //     children: [
-          //       const Icon(
-          //         Icons.shopping_bag,
-          //         size: 24,
-          //         color: Colors.white,
-          //       ),
-          //       Text('Item: $totalItems',
-          //           style: const TextStyle(
-          //               fontSize: 12,
-          //               color: Colors.white,
-          //               fontFamily: 'Calibri')),
-          //       Text(
-          //         'Amount $totalAmount',
-          //         style: const TextStyle(
-          //             fontSize: 12, color: Colors.white, fontFamily: 'Calibri'),
-          //       ),
-          //       Row(
-          //         children: [
-          //           GestureDetector(
-          //             onTap: () {},
-          //             child: const Icon(
-          //               Icons.document_scanner,
-          //               size: 24,
-          //               color: Colors.white,
-          //             ),
-          //           ),
-          //           GestureDetector(
-          //             onTap: () {},
-          //             child: const Icon(
-          //               Icons.save,
-          //               size: 24,
-          //               color: Colors.white,
-          //             ),
-          //           ),
-          //         ],
-          //       )
-          //     ],
-          //   ),
-          // )
         ],
       ),
       bottomNavigationBar: Padding(
@@ -678,21 +658,51 @@ class _ItemListPageState extends State<ItemListPage> {
             children: [
               const Icon(Icons.add_shopping_cart,
                   color: Colors.white, size: 24),
+              //total item
               Text('Item: $totalItems',
                   style: const TextStyle(color: Colors.white, fontSize: 16)),
+              //total amount
               Text('Amount: $totalAmount',
                   style: const TextStyle(color: Colors.white, fontSize: 16)),
               Row(
                 children: [
+                  //item view pop up
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      final items =
+                          Provider.of<AddItemProvider>(context, listen: false)
+                              .items;
+
+                      showBulkSalesDialog(
+                        context,
+                        controller,
+                        items: items,
+                        quantities: quantities,
+                      );
+                    },
                     child: const SizedBox(
                       width: 32,
                       height: 32,
                       child: Icon(Icons.receipt, color: Colors.white, size: 24),
                     ),
                   ),
+
                   const SizedBox(width: 8),
+
+                  //invoice view
+                  GestureDetector(
+                    onTap: () {},
+                    child: const SizedBox(
+                      width: 38,
+                      height: 38,
+                      child: Icon(Icons.description,
+                          color: Colors.white, size: 24),
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  //item save.
                   GestureDetector(
                     onTap: () {},
                     child: const SizedBox(
@@ -710,6 +720,140 @@ class _ItemListPageState extends State<ItemListPage> {
     );
   }
 
+  ///bulk sales diolog , items
+  void showBulkSalesDialog(
+    BuildContext context,
+    SalesController controller, {
+    required List<ItemsModel> items,
+    required List<int> quantities,
+  }) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            // Filter items where qty > 0
+            final filteredItems = items
+                .asMap()
+                .entries
+                .where((entry) => quantities[entry.key] > 0)
+                .toList();
+
+            return Dialog(
+              insetPadding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.all(6.0),
+                color: Colors.white,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Selected Item Details',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    const SizedBox(height: 12),
+                    if (filteredItems.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Center(
+                          child: Text(
+                            'No item selected',
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
+                        ),
+                      )
+                    else
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredItems.length,
+                        itemBuilder: (context, index) {
+                          final item = filteredItems[index].value;
+                          final itemIndex = filteredItems[index].key;
+                          final qty = quantities[itemIndex];
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Text('${index + 1}. ',
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 14)),
+                                    const SizedBox(width: 3),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(item.name,
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500)),
+                                        Text(
+                                          "${item.salesPrice} x $qty Pc = ${item.salesPrice * qty}",
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          quantities[itemIndex] = 0;
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey.shade500,
+                                              width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        child: const Icon(Icons.close,
+                                            color: Colors.green, size: 18),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Close'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   void showSalesDialog(BuildContext context, SalesController controller,
       {required ItemsModel selectedItem}) async {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -724,9 +868,10 @@ class _ItemListPageState extends State<ItemListPage> {
 
     final controller = Provider.of<SalesController>(context, listen: false);
 
-    //final TextEditingController itemController = TextEditingController();
+    await fetchStockQuantity.fetchStockQuantity(selectedItem.id.toString());
 
-    //final TextEditingController itemController = TextEditingController(text: selectedItem.name);
+    // ✅ Fetch stock for the pre-selected item
+    await fetchStockQuantity.fetchStockQuantity(selectedItem.id.toString());
 
     final TextEditingController itemController =
         TextEditingController(text: selectedItem.name);
@@ -749,18 +894,29 @@ class _ItemListPageState extends State<ItemListPage> {
       await taxProvider.fetchTaxes();
     }
 
-    Provider.of<AddItemProvider>(context, listen: false).clearStockData();
+    // Fetch units if not loaded
+    if (unitProvider.units.isEmpty) {
+      await unitProvider.fetchUnits();
+    }
+
+    //Provider.of<AddItemProvider>(context, listen: false).clearStockData();
+
+    // ✅ Fetch stock for the pre-selected item
+    await Provider.of<AddItemProvider>(context, listen: false)
+        .fetchStockQuantity(selectedItem.id.toString());
+
+    await fetchStockQuantity.fetchStockQuantity(selectedItem.id.toString());
+
+    /// ✅ Prefill qtyController with item quantity (default to 1 if not found)
+
     controller.clearFields();
 
     // ✅ Pop the loading dialog
     Navigator.of(context).pop();
 
     // Define local state variables
-    String? selectedCategoryId;
-    String? selectedSubCategoryId;
-
-    //String? selectedItemNameInvoice;
-    List<String> unitIdsList = [];
+    // String? selectedCategoryId;
+    // String? selectedSubCategoryId;
 
     @override
     void dispose() {
@@ -786,11 +942,60 @@ class _ItemListPageState extends State<ItemListPage> {
             bool isLoading =
                 categoryProvider.isLoading || fetchStockQuantity.isLoading;
 
+           
+
+            //int initialQty = 1;
+
+            // if (selectedItem.unitQty != null && selectedItem.unitQty != 0) {
+            //   initialQty = selectedItem.unitQty!;
+            // } else if (selectedItem.secondaryUnitQty != null &&
+            //     selectedItem.secondaryUnitQty != 0) {
+            //   initialQty = selectedItem.secondaryUnitQty!;
+            // }
+
+            //controller.qtyController.text = initialQty.toString();
+
+            List<String> unitIdsList = [];
+
+            final unit = unitProvider.units.firstWhere(
+              (unit) => unit.id.toString() == selectedItem.unitId.toString(),
+              orElse: () =>
+                  Unit(id: 0, name: 'Unknown Unit', symbol: '', status: 0),
+            );
+
+            if (unit.id != 0) {
+              unitIdsList.add(unit.name);
+              controller.selectedUnit = unit.name;
+
+              String finalUnitString = "${unit.id}_${unit.name}_1";
+              controller.selectedUnitIdWithNameFunction(finalUnitString);
+            }
+
+            if (selectedItem.secondaryUnitId != null &&
+                selectedItem.secondaryUnitId != '') {
+              final secondaryUnit = unitProvider.units.firstWhere(
+                (unit) =>
+                    unit.id.toString() ==
+                    selectedItem.secondaryUnitId.toString(),
+                orElse: () =>
+                    Unit(id: 0, name: 'Unknown Unit', symbol: '', status: 0),
+              );
+              if (secondaryUnit.id != 0) {
+                unitIdsList.add(secondaryUnit.name);
+              }
+            }
+
+            if (unitIdsList.isEmpty) {
+              print("No valid units found for this item.");
+            } else {
+              print("Units Available: $unitIdsList");
+            }
+
             return Dialog(
               backgroundColor: Colors.grey.shade400,
               child: LayoutBuilder(builder: (context, constraints) {
                 return Container(
-                  height: 380,
+                  height: 340,
                   width: constraints.maxWidth,
                   decoration: BoxDecoration(
                     color: const Color(0xffe7edf4),
@@ -847,6 +1052,7 @@ class _ItemListPageState extends State<ItemListPage> {
                           ],
                         ),
                       ),
+
                       Padding(
                         padding: const EdgeInsets.only(
                             left: 10.0, right: 10.0, top: 1),
@@ -859,99 +1065,115 @@ class _ItemListPageState extends State<ItemListPage> {
                             ),
 
                             ///new item search <<<<<<==========
+                            ///
+
+                            //item
                             Container(
-                              //color: Colors.red,
-                              child: ItemCustomDropDownTextField(
+                              //color: Colors.blueGrey,
+                              child: AddSalesFormfield(
+                                height: 30,
+                                label: "", //price
+                                labelText: "Item",
                                 controller: itemController,
-                                //label: "Select Item",
-
-                                onItemSelected: (selectedItem) async {
-                                  // This will print the id and name when item is selected
-                                  debugPrint(
-                                      "=======> Selected Item: ${selectedItem.name} (ID: ${selectedItem.id})");
-
-                                  setState(() {
-                                    // Save selected item name and id in controller
-                                    controller.seletedItemName =
-                                        selectedItem.name;
-                                    controller.selcetedItemId =
-                                        selectedItem.id.toString();
-
-                                    // Fetch stock quantity
-                                    if (controller.selcetedItemId != null) {
-                                      fetchStockQuantity.fetchStockQuantity(
-                                          controller.selcetedItemId!);
-                                    }
-                                  });
-
-                                  // Ensure unitProvider is loaded
-                                  if (unitProvider.units.isEmpty) {
-                                    await unitProvider
-                                        .fetchUnits(); // Ensure units are fetched
-                                  }
-
-                                  // Clear previous units
-                                  unitIdsList.clear();
-
-                                  print(
-                                      "Selected item unitId: ${selectedItem.unitId}");
-                                  print(
-                                      "Selected item secondaryUnitId: ${selectedItem.secondaryUnitId}");
-
-                                  // Base unit
-                                  if (selectedItem.unitId != null &&
-                                      selectedItem.unitId != '') {
-                                    final unit = unitProvider.units.firstWhere(
-                                      (unit) =>
-                                          unit.id.toString() ==
-                                          selectedItem.unitId.toString(),
-                                      orElse: () => Unit(
-                                          id: 0,
-                                          name: 'Unknown Unit',
-                                          symbol: '',
-                                          status: 0),
-                                    );
-                                    if (unit.id != 0) {
-                                      unitIdsList.add(unit.name);
-                                      controller.selectedUnit = unit.name;
-
-                                      // Create final unit string like: "24_Pces_1"
-                                      String finalUnitString =
-                                          "${unit.id}_${unit.name}_1";
-                                      controller.selectedUnitIdWithNameFunction(
-                                          finalUnitString);
-                                    }
-                                  }
-
-                                  // Secondary unit
-                                  if (selectedItem.secondaryUnitId != null &&
-                                      selectedItem.secondaryUnitId != '') {
-                                    final secondaryUnit =
-                                        unitProvider.units.firstWhere(
-                                      (unit) =>
-                                          unit.id.toString() ==
-                                          selectedItem.secondaryUnitId
-                                              .toString(),
-                                      orElse: () => Unit(
-                                          id: 0,
-                                          name: 'Unknown Unit',
-                                          symbol: '',
-                                          status: 0),
-                                    );
-                                    if (secondaryUnit.id != 0) {
-                                      unitIdsList.add(secondaryUnit.name);
-                                    }
-                                  }
-
-                                  if (unitIdsList.isEmpty) {
-                                    print(
-                                        "No valid units found for this item.");
-                                  } else {
-                                    print("Units Available: $unitIdsList");
-                                  }
-                                },
+                                keyboardType: TextInputType.number,
+                                readOnly: true,
+                                onChanged: (value) {},
                               ),
                             ),
+
+                            ///item working, with dropdown
+                            // Container(
+                            //   //color: Colors.red,
+                            //   child: ItemCustomDropDownTextField(
+                            //     controller: itemController,
+                            //     //label: "Select Item",
+                            //     onItemSelected: (selectedItem) async {
+                            //       // This will print the id and name when item is selected
+                            //       debugPrint(
+                            //           "=======> Selected Item: ${selectedItem.name} (ID: ${selectedItem.id})");
+
+                            //       setState(() {
+                            //         // Save selected item name and id in controller
+                            //         controller.seletedItemName =
+                            //             selectedItem.name;
+                            //         controller.selcetedItemId =
+                            //             selectedItem.id.toString();
+
+                            //         // Fetch stock quantity
+                            //         if (controller.selcetedItemId != null) {
+                            //           fetchStockQuantity.fetchStockQuantity(
+                            //               controller.selcetedItemId!);
+                            //         }
+                            //       });
+
+                            //       // Ensure unitProvider is loaded
+                            //       if (unitProvider.units.isEmpty) {
+                            //         await unitProvider
+                            //             .fetchUnits(); // Ensure units are fetched
+                            //       }
+
+                            //       // Clear previous units
+                            //       unitIdsList.clear();
+
+                            //       print(
+                            //           "Selected item unitId: ${selectedItem.unitId}");
+                            //       print(
+                            //           "Selected item secondaryUnitId: ${selectedItem.secondaryUnitId}");
+
+                            //       // Base unit
+                            //       if (selectedItem.unitId != null &&
+                            //           selectedItem.unitId != '') {
+                            //         final unit = unitProvider.units.firstWhere(
+                            //           (unit) =>
+                            //               unit.id.toString() ==
+                            //               selectedItem.unitId.toString(),
+                            //           orElse: () => Unit(
+                            //               id: 0,
+                            //               name: 'Unknown Unit',
+                            //               symbol: '',
+                            //               status: 0),
+                            //         );
+                            //         if (unit.id != 0) {
+                            //           unitIdsList.add(unit.name);
+                            //           controller.selectedUnit = unit.name;
+
+                            //           // Create final unit string like: "24_Pces_1"
+                            //           String finalUnitString =
+                            //               "${unit.id}_${unit.name}_1";
+                            //           controller.selectedUnitIdWithNameFunction(
+                            //               finalUnitString);
+                            //         }
+                            //       }
+
+                            //       // Secondary unit
+                            //       if (selectedItem.secondaryUnitId != null &&
+                            //           selectedItem.secondaryUnitId != '') {
+                            //         final secondaryUnit =
+                            //             unitProvider.units.firstWhere(
+                            //           (unit) =>
+                            //               unit.id.toString() ==
+                            //               selectedItem.secondaryUnitId
+                            //                   .toString(),
+                            //           orElse: () => Unit(
+                            //               id: 0,
+                            //               name: 'Unknown Unit',
+                            //               symbol: '',
+                            //               status: 0),
+                            //         );
+                            //         if (secondaryUnit.id != 0) {
+                            //           unitIdsList.add(secondaryUnit.name);
+                            //         }
+                            //       }
+
+                            //       if (unitIdsList.isEmpty) {
+                            //         print(
+                            //             "No valid units found for this item.");
+                            //       } else {
+                            //         print("Units Available: $unitIdsList");
+                            //       }
+                            //     },
+                            //   ),
+                            // ),
 
                             ///update stock code , for custome price input
                             SizedBox(
@@ -987,6 +1209,10 @@ class _ItemListPageState extends State<ItemListPage> {
                               ),
                             ),
 
+                            SizedBox(
+                              height: 6,
+                            ),
+
                             ///qty , unit
                             Container(
                               //color: Colors.yellow,
@@ -1004,7 +1230,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                           child: SizedBox(
                                             width: 150,
                                             child: AddSalesFormfield(
-                                              label: "", //Qty
+                                              //label: "", //Qty
                                               labelText: "Item Qty",
 
                                               controller:
@@ -1013,6 +1239,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                                   TextInputType.number,
                                               onChanged: (value) {
                                                 setState(() {
+                                                  
                                                   controller
                                                       .calculateSubtotal();
                                                 });
@@ -1023,127 +1250,207 @@ class _ItemListPageState extends State<ItemListPage> {
                                             ),
                                           ),
                                         ),
+
+                                        /// Qty Field (✅ Pre-filled here)
                                       ],
                                     ),
 
                                     ///===>>>unit
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
+                                    // Column(
+                                    //   mainAxisAlignment:
+                                    //       MainAxisAlignment.start,
+                                    //   crossAxisAlignment:
+                                    //       CrossAxisAlignment.start,
+                                    //   children: [
+                                    //     ///unit dropdown
+                                    //     SizedBox(
+                                    //       height: 30,
+                                    //       width: 150,
+                                    //       child: CustomDropdownTwo(
+                                    //         //hint: '',
+                                    //         items:
+                                    //             unitIdsList, // Holds unit names like ["Pces", "Packet"]
+                                    //         width: double.infinity,
+                                    //         height: 30,
+                                    //         //labelText: 'Vat/Tax',
+                                    //         labelText: 'Unit',
+                                    //         selectedItem:
+                                    //             controller.selectedUnit,
+                                    //         onChanged: (selectedUnit) {
+                                    //           print(
+                                    //               "Selected Unit: $selectedUnit");
 
-                                        ///unit dropdown
-                                        SizedBox(
-                                          height: 30,
-                                          width: 150,
-                                          child: CustomDropdownTwo(
-                                            hint: '',
-                                            items:
-                                                unitIdsList, // Holds unit names like ["Pces", "Packet"]
-                                            width: double.infinity,
-                                            height: 30,
-                                            //labelText: 'Vat/Tax',
-                                            labelText: 'Unit',
-                                            selectedItem:
-                                                controller.selectedUnit,
-                                            onChanged: (selectedUnit) {
-                                              print(
-                                                  "Selected Unit: $selectedUnit");
+                                    //           // Update the selected unit in controller
+                                    //           controller.selectedUnit =
+                                    //               selectedUnit;
 
-                                              // Update the selected unit in controller
-                                              controller.selectedUnit =
-                                                  selectedUnit;
+                                    //           final selectedUnitObj =
+                                    //               unitProvider.units.firstWhere(
+                                    //             (unit) =>
+                                    //                 unit.name == selectedUnit,
+                                    //             orElse: () => Unit(
+                                    //               id: 0,
+                                    //               name: "Unknown Unit",
+                                    //               symbol: "",
+                                    //               status: 0,
+                                    //             ),
+                                    //           );
 
-                                              final selectedUnitObj =
-                                                  unitProvider.units.firstWhere(
-                                                (unit) =>
-                                                    unit.name == selectedUnit,
-                                                orElse: () => Unit(
-                                                  id: 0,
-                                                  name: "Unknown Unit",
-                                                  symbol: "",
-                                                  status: 0,
-                                                ),
-                                              );
+                                    //           //String finalUnitStringID = '';
 
-                                              //String finalUnitStringID = '';
+                                    //           String finalUnitString = '';
+                                    //           int qty = 1; // Default qty
 
-                                              String finalUnitString = '';
-                                              int qty = 1; // Default qty
+                                    //           // Search through fetchStockQuantity items to find unit ID and qty
+                                    //           for (var item
+                                    //               in fetchStockQuantity.items) {
+                                    //             if (item.id.toString() ==
+                                    //                 controller.selcetedItemId) {
+                                    //               String unitId =
+                                    //                   selectedUnitObj.id
+                                    //                       .toString();
+                                    //               String unitName =
+                                    //                   selectedUnit;
 
-                                              // Search through fetchStockQuantity items to find unit ID and qty
-                                              for (var item
-                                                  in fetchStockQuantity.items) {
-                                                if (item.id.toString() ==
-                                                    controller.selcetedItemId) {
-                                                  String unitId =
-                                                      selectedUnitObj.id
-                                                          .toString();
-                                                  String unitName =
-                                                      selectedUnit;
+                                    //               // Check if selected unit is the primary or secondary unit and set the correct quantity
+                                    //               if (unitId ==
+                                    //                   item.secondaryUnitId
+                                    //                       .toString()) {
+                                    //                 qty = item
+                                    //                         .secondaryUnitQty ??
+                                    //                     item.unitQty ??
+                                    //                     1; // Use secondaryUnitQty, fallback to unitQty or default to 1
+                                    //               } else if (unitId ==
+                                    //                   item.unitId.toString()) {
+                                    //                 qty = item.unitQty ??
+                                    //                     1; // Use unitQty or fallback to 1
+                                    //               }
 
-                                                  // Check if selected unit is the primary or secondary unit and set the correct quantity
-                                                  if (unitId ==
-                                                      item.secondaryUnitId
-                                                          .toString()) {
-                                                    qty = item
-                                                            .secondaryUnitQty ??
-                                                        item.unitQty ??
-                                                        1; // Use secondaryUnitQty, fallback to unitQty or default to 1
-                                                  } else if (unitId ==
-                                                      item.unitId.toString()) {
-                                                    qty = item.unitQty ??
-                                                        1; // Use unitQty or fallback to 1
-                                                  }
+                                    //               // Build the final unit string in the required format (e.g., 24_Pces_1)
+                                    //               finalUnitString =
+                                    //                   "${unitId}_${unitName}_$qty";
+                                    //               controller
+                                    //                   .selectedUnitIdWithNameFunction(
+                                    //                       finalUnitString);
+                                    //               break;
+                                    //             }
+                                    //           }
 
-                                                  // Build the final unit string in the required format (e.g., 24_Pces_1)
-                                                  finalUnitString =
-                                                      "${unitId}_${unitName}_$qty";
-                                                  controller
-                                                      .selectedUnitIdWithNameFunction(
-                                                          finalUnitString);
-                                                  break;
-                                                }
+                                    //           // Fallback if no valid unit string was found
+                                    //           if (finalUnitString.isEmpty) {
+                                    //             finalUnitString =
+                                    //                 "${selectedUnitObj.id}_${selectedUnit}_1"; // Default to 1 if no match
+                                    //             controller
+                                    //                 .selectedUnitIdWithNameFunction(
+                                    //                     finalUnitString);
+                                    //           }
+
+                                    //           // Debug print to show final unit ID selected
+                                    //           print(
+                                    //               "🆔 Final Unit ID: $finalUnitString");
+
+                                    //           // Notify listeners to update the UI
+                                    //           controller.notifyListeners();
+                                    //         },
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // )
+
+                                    ///===>>>Unit dropdown
+                                    ///
+
+                                    ///===>>>Unit dropdown
+                                    ///===>>>Unit dropdown
+
+                                    /// Unit dropdown
+                                    /// Unit Dropdown
+                                    SizedBox(
+                                      height: 30,
+                                      width: 150,
+                                      child: CustomDropdownTwo(
+                                        items: unitIdsList,
+                                        width: double.infinity,
+                                        height: 30,
+                                        labelText: 'Unit',
+                                        selectedItem: controller.selectedUnit,
+                                        onChanged: (selectedUnit) {
+                                          print("Selected Unit: $selectedUnit");
+
+                                          controller.selectedUnit =
+                                              selectedUnit;
+
+                                          final selectedUnitObj =
+                                              unitProvider.units.firstWhere(
+                                            (unit) => unit.name == selectedUnit,
+                                            orElse: () => Unit(
+                                              id: 0,
+                                              name: "Unknown Unit",
+                                              symbol: "",
+                                              status: 0,
+                                            ),
+                                          );
+
+                                          String finalUnitString = '';
+                                          int qty = 1;
+
+                                          for (var item
+                                              in fetchStockQuantity.items) {
+                                            if (item.id.toString() ==
+                                                controller.selcetedItemId) {
+                                              String unitId =
+                                                  selectedUnitObj.id.toString();
+                                              String unitName = selectedUnit;
+
+                                              if (unitId ==
+                                                  item.secondaryUnitId
+                                                      .toString()) {
+                                                qty = item.secondaryUnitQty ??
+                                                    item.unitQty ??
+                                                    1;
+                                              } else if (unitId ==
+                                                  item.unitId.toString()) {
+                                                qty = item.unitQty ?? 1;
                                               }
 
-                                              // Fallback if no valid unit string was found
-                                              if (finalUnitString.isEmpty) {
-                                                finalUnitString =
-                                                    "${selectedUnitObj.id}_${selectedUnit}_1"; // Default to 1 if no match
-                                                controller
-                                                    .selectedUnitIdWithNameFunction(
-                                                        finalUnitString);
-                                              }
+                                              finalUnitString =
+                                                  "${unitId}_${unitName}_$qty";
+                                              controller
+                                                  .selectedUnitIdWithNameFunction(
+                                                      finalUnitString);
+                                              break;
+                                            }
+                                          }
 
-                                              // Debug print to show final unit ID selected
-                                              print(
-                                                  "🆔 Final Unit ID: $finalUnitString");
+                                          if (finalUnitString.isEmpty) {
+                                            finalUnitString =
+                                                "${selectedUnitObj.id}_${selectedUnit}_1";
+                                            controller
+                                                .selectedUnitIdWithNameFunction(
+                                                    finalUnitString);
+                                          }
 
-                                              // Notify listeners to update the UI
-                                              controller.notifyListeners();
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    )
+                                          print(
+                                              "🆔 Final Unit ID: $finalUnitString");
+
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
 
-                            // Unit Dropdown
-
-                            //purchase
+                            SizedBox(
+                              height: 6,
+                            ),
+                            //purchase price
                             Container(
                               //color: Colors.blueGrey,
                               child: AddSalesFormfield(
                                 height: 30,
-                                label: "", //price
+                                //label: "", //price
                                 labelText: "Price",
                                 controller: controller.mrpController,
                                 keyboardType: TextInputType.number,
@@ -1155,6 +1462,10 @@ class _ItemListPageState extends State<ItemListPage> {
                                   });
                                 },
                               ),
+                            ),
+
+                            SizedBox(
+                              height: 6,
                             ),
 
                             ////discount percentan ande amount
@@ -1175,7 +1486,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                             width: 150,
                                             child: AddSalesFormfield(
                                               labelText: "Discount (%)",
-                                              label: " ", //Discount (%)
+                                              //label: " ", //Discount (%)
                                               controller: controller
                                                   .discountPercentance,
                                               keyboardType:
@@ -1205,7 +1516,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                           child: SizedBox(
                                             width: 150,
                                             child: AddSalesFormfield(
-                                              label: "", //Amount
+                                              //label: "", //Amount
                                               labelText: "Amount",
                                               controller:
                                                   controller.discountAmount,
@@ -1226,6 +1537,10 @@ class _ItemListPageState extends State<ItemListPage> {
                                       ],
                                     ),
                                   ]),
+                            ),
+
+                            const SizedBox(
+                              height: 6,
                             ),
 
                             // ✅ VAT/TAX Dropdown Row
@@ -1263,15 +1578,12 @@ class _ItemListPageState extends State<ItemListPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
                                               //vat, tax %
                                               SizedBox(
                                                 height: 30,
                                                 child: CustomDropdownTwo(
                                                   labelText: 'Vat/Tax',
-                                                  hint: '',
+                                                  //hint: '',
                                                   items: taxProvider.taxList
                                                       .map((tax) =>
                                                           "${tax.name} - (${tax.percent})")
@@ -1344,7 +1656,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                     width: 150,
                                     child: AddSalesFormfield(
                                       readOnly: true,
-                                      label: "", //amount
+                                      //label: "", //amount
                                       labelText: "Amount",
                                       controller: TextEditingController(
                                         text: controller.taxAmount
@@ -1398,8 +1710,8 @@ class _ItemListPageState extends State<ItemListPage> {
                           ],
                         ),
                       ),
-
-                      ///add & new , add
+                      
+                      ///add
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.end,
