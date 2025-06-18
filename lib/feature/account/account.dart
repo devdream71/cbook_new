@@ -2,7 +2,9 @@ import 'package:cbook_dt/feature/account/ui/bank_ui.dart';
 import 'package:cbook_dt/feature/account/ui/cash_in_hand.dart';
 import 'package:cbook_dt/feature/account/ui/discount.dart';
 import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
+import 'package:cbook_dt/feature/account/ui/expense/expense_report.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
+import 'package:cbook_dt/feature/account/ui/income/income_report.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/profile_view.dart';
 import 'package:cbook_dt/feature/tax/UI/tax_list_view.dart';
 import 'package:flutter/material.dart';
@@ -30,12 +32,12 @@ class Account extends StatelessWidget {
       const FormSettingMeta(
         name: 'Income',
         iconPath: 'assets/image/income.svg',
-        destination: Income(), //SalesFormSetting
+        destination: IncomeReport(), //SalesFormSetting
       ),
       const FormSettingMeta(
         name: 'Expanse',
         iconPath: 'assets/image/expanse.svg',
-        destination: Expanse(), //SalesFormSetting
+        destination: ExpenseReport(), //SalesFormSetting
       ),
       const FormSettingMeta(
         name: 'Discount',

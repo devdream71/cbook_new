@@ -1,15 +1,12 @@
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
+import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
+import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_popup.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
-import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
-import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
-import 'package:cbook_dt/feature/account/ui/income/model/recived_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
-import 'package:cbook_dt/feature/sales/widget/custom_box.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,6 +71,8 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
     final provider = context.watch<IncomeProvider>();
 
     final colorScheme = Theme.of(context).colorScheme;
+
+    final providerExpense = Provider.of<ExpenseProvider>(context, listen: true);
 
     // List of forms with metadata
 
@@ -326,10 +325,11 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
             height: 6,
           ),
 
-          if (provider.receiptItems.isNotEmpty)
+          if (providerExpense.receiptItems.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: provider.receiptItems.asMap().entries.map((entry) {
+              children:
+                  providerExpense.receiptItems.asMap().entries.map((entry) {
                 int index = entry.key + 1;
                 var item = entry.value;
                 return Padding(
@@ -397,8 +397,8 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                                 child: Icon(Icons.close, size: 20),
                               ),
                               onPressed: () {
-                                provider.receiptItems.remove(item);
-                                provider.notifyListeners();
+                                providerExpense.receiptItems.remove(item);
+                                providerExpense.notifyListeners();
                               },
                             ),
                           ],
@@ -478,7 +478,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                           color: Colors.black),
                     ),
                     Text(
-                      provider.receiptItems.fold<double>(
+                      providerExpense.receiptItems.fold<double>(
                         0,
                         (sum, item) {
                           // parse amount string safely to double
@@ -500,6 +500,9 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+
                     backgroundColor: Colors.green, // Button background color
                     foregroundColor: Colors.white, // Button text color
                   ),
@@ -521,16 +524,17 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                     final notes = 'text'; // Or from your input field
                     final status = 1;
 
-                    final totalAmount = provider.receiptItems.fold<double>(
+                    final totalAmount =
+                        providerExpense.receiptItems.fold<double>(
                       0,
                       (sum, item) =>
                           sum + (double.tryParse(item.amount.toString()) ?? 0),
                     );
 
                     // Prepare income items with correct account_id (use your actual accountId)
-                    final List<IncomeItem> incomeItems =
-                        provider.receiptItems.map((item) {
-                      return IncomeItem(
+                    final List<ExpenseItemPopUp> expenseItems =
+                        providerExpense.receiptItems.map((item) {
+                      return ExpenseItemPopUp(
                         accountId:
                             account, // or item-specific account id if different
                         narration: item.note,
@@ -538,7 +542,20 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                       );
                     }).toList();
 
-                    bool success = await provider.storeIncome(
+                    // 👉 Print all sending data
+                    debugPrint('Sending Data:');
+                    debugPrint('User ID: $userId');
+                    debugPrint('Expense No: $invoiceNo');
+                    debugPrint('Date: $date');
+                    debugPrint('Paid To: $receivedTo');
+                    debugPrint('Account: $account');
+                    debugPrint('Total Amount: $totalAmount');
+                    debugPrint('Notes: $notes');
+                    debugPrint('Status: $status');
+                    debugPrint(
+                        'Expense Items: ${expenseItems.map((e) => e.toJson()).toList()}');
+
+                    bool success = await providerExpense.storeExpense(
                       userId: userId,
                       invoiceNo: invoiceNo,
                       date: date,
@@ -547,16 +564,25 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                       totalAmount: totalAmount,
                       notes: notes,
                       status: status,
-                      incomeItems: incomeItems,
+                      expenseItems: expenseItems,
                     );
 
                     if (success) {
-                      provider.receiptItems.clear();
-                      provider.notifyListeners();
+                      providerExpense.receiptItems.clear();
+                      providerExpense.notifyListeners();
 
                       // Navigate to Income page (replace with your actual route)
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Income()));
+                      // Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => const Expanse()));
+
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Expanse()),
+                        (Route<dynamic> route) => false,
+                      );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Failed to save income.')),
@@ -682,7 +708,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                               child: const Text('Add & New'),
                             ),
 
-                            ///add 
+                            ///add
                             TextButton(
                               onPressed: () {
                                 if (selectedPaidTo != null &&

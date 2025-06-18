@@ -3,6 +3,8 @@ import 'package:cbook_dt/common/banner_image.dart';
 import 'package:cbook_dt/common/fi_chart_date_amount.dart';
 import 'package:cbook_dt/common/round_fi_chart_document_view.dart';
 import 'package:cbook_dt/common/feature_not_available.dart';
+import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
+import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/dashboard/dashboard_controller.dart';
 import 'package:cbook_dt/feature/home/presentation/widget/reusable_box.dart';
 import 'package:cbook_dt/feature/purchase/purchase_list_api.dart';
@@ -146,7 +148,7 @@ class _Layout extends StatelessWidget {
                                       Text(
                                         "Admin",
                                         style: TextStyle(
-                                           fontFamily: 'Calibri',
+                                            fontFamily: 'Calibri',
                                             color: Colors.white,
                                             fontWeight: FontWeight.w800,
                                             fontSize: 12),
@@ -478,17 +480,18 @@ Widget _buildBottomSheetContent(BuildContext context) {
                       child: _buildIconWithLabel(Icons.shopping_cart_checkout,
                           "Sales/Bill/\nInvoice", context)),
 
-
-                   //// bulk sales
+                  //// bulk sales
                   InkWell(
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const ItemListPage()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const ItemListPage()));
 
                         // showFeatureNotAvailableDialog(context);
                       },
-                      child: _buildIconWithLabel(Icons.apps,
-                          "Bulk sales/\nInvoice", context)),        
+                      child: _buildIconWithLabel(
+                          Icons.apps, "Bulk sales/\nInvoice", context)),
 
                   //// Estimate/\nQuotation
                   InkWell(
@@ -645,10 +648,14 @@ Widget _buildBottomSheetContent(BuildContext context) {
                   ////Purchase
                   InkWell(
                     onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) =>
-                              const FeatureNotAvailableDialog());
+                      // showDialog(
+                      //     context: context,
+                      //     builder: (context) =>
+                      //         const FeatureNotAvailableDialog());
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Expanse()));
                     },
                     child: _buildIconWithLabel(
                         Icons.card_travel, "Expense", context),
@@ -669,10 +676,14 @@ Widget _buildBottomSheetContent(BuildContext context) {
                   //// Payment\nOut
                   InkWell(
                       onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) =>
-                                const FeatureNotAvailableDialog());
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (context) =>
+                        //         const FeatureNotAvailableDialog());
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Income()));
                       },
                       child: _buildIconWithLabel(Icons.tab, "Income", context)),
 

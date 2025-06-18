@@ -5,9 +5,7 @@ import 'package:cbook_dt/feature/account/ui/income/model/recived_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
-import 'package:cbook_dt/feature/sales/widget/custom_box.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -503,10 +501,14 @@ class _IncomeCreateState extends State<IncomeCreate> {
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
+                  
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green, // Button background color
                     foregroundColor: Colors.white, // Button text color
-                  ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)
+                    )
+                    ),
                   onPressed: () async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? userId = prefs.getInt('user_id')?.toString();
@@ -536,6 +538,20 @@ class _IncomeCreateState extends State<IncomeCreate> {
       amount: item.amount.toString(),
     );
   }).toList();
+
+  // 👉 Print all sending data
+                    debugPrint('Sending Data:');
+                    debugPrint('User ID: $userId');
+                    debugPrint('Expense No: $invoiceNo');
+                    debugPrint('Date: $date');
+                    debugPrint('Paid To: $receivedTo');
+                    debugPrint('Account: $account');
+                    debugPrint('Total Amount: $totalAmount');
+                    debugPrint('Notes: $notes');
+                    debugPrint('Status: $status');
+                    debugPrint(
+                        'income Items: ${incomeItems.map((e) => e.toJson()).toList()}');
+
 
   bool success = await provider.storeIncome(
     userId: userId,
