@@ -177,22 +177,22 @@ class _ItemViewState extends State<ItemView> {
                     
                      enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3),
-                borderSide: BorderSide(color: Colors.white, width: 1),
+                borderSide: const BorderSide(color: Colors.white, width: 1),
                 
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3),
-                borderSide: BorderSide(color: Colors.white, width: 1),
+                borderSide: const BorderSide(color: Colors.white, width: 1),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3),
-                borderSide: BorderSide(color: Colors.white, width: 1),
+                borderSide: const BorderSide(color: Colors.white, width: 1),
               ),
                     //filled: true,
                     fillColor: Colors.green,
                     
                     hintText: '',
-                    hintStyle: TextStyle(fontSize: 12),
+                    hintStyle: const TextStyle(fontSize: 12),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                     
                   ),
@@ -361,7 +361,7 @@ class _ItemViewState extends State<ItemView> {
           children: [
 
             Container(
-  padding: EdgeInsets.all(12),
+  padding: const EdgeInsets.all(12),
   decoration: const BoxDecoration(
     color: Color(0xffdddefa),
   ),
@@ -369,7 +369,7 @@ class _ItemViewState extends State<ItemView> {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       // Left (Customer)
-      Row(
+      const Row(
         children: [
           Icon(Icons.handshake, color: Colors.blue),
           SizedBox(width: 8),
@@ -377,7 +377,7 @@ class _ItemViewState extends State<ItemView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Total Item", style: TextStyle(color: Colors.black, fontSize: 12)),
-              Text("50,000", style: TextStyle(color: Colors.green, fontSize: 12)),
+              Text("50,000", style: const TextStyle(color: Colors.green, fontSize: 12)),
             ],
           ),
         ],
@@ -388,11 +388,11 @@ class _ItemViewState extends State<ItemView> {
         height: 40,
         width: 1,
         color: Colors.green.shade800,
-        margin: EdgeInsets.symmetric(horizontal: 12),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
       ),
 
       // Right (Supplier)
-      Row(
+      const Row(
         children: [
           Icon(Icons.person, color: Colors.blue),
           SizedBox(width: 8),
@@ -526,9 +526,9 @@ class _ItemViewState extends State<ItemView> {
             const SizedBox(
               height: 5,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: const Text(
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
                 "All Items",
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),

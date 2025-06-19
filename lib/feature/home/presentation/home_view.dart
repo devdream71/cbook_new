@@ -1,7 +1,6 @@
 import 'package:cbook_dt/feature/account/account.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/dashboard/dashboard_view.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/item_view.dart';
-import 'package:cbook_dt/feature/home/presentation/layer/profile_view.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/report_view.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/transaction_view.dart';
 import 'package:cbook_dt/feature/party/party_list.dart';

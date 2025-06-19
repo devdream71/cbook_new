@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:cbook_dt/common/item_details_pop_up.dart';
 import 'package:cbook_dt/common/item_details_pop_up_two.dart';
-import 'package:cbook_dt/feature/item/model/item_add_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -86,7 +85,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         automaticallyImplyLeading: true,
         title: const Column(
           children: [
@@ -419,7 +418,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                               borderRadius: BorderRadius.circular(0),
                               color: Colors.green),
                           child: Padding(
-                            padding: EdgeInsets.all(4.0),
+                            padding: const EdgeInsets.all(4.0),
                             child: Row(
                               children: [
                                 SizedBox(
@@ -502,7 +501,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                                   ),
                                 ),
 
-                                Spacer(),
+                                const Spacer(),
 
                                 // Dropdown
                                 SizedBox(
@@ -753,7 +752,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                       // Centered text and icon
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children:   [
                           SizedBox(width: 5),
                           Text(
                             "Item Information",

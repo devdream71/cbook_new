@@ -112,7 +112,7 @@ class _FieldPortionState extends State<FieldPortion> {
                           controller: controller.percentController,
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
-                            print("somrat");
+                            debugPrint("cbook");
                             // controller.updateDiscountCreditPercent(value);
                             controller.updateDiscountCashPercent(value);
                           },
@@ -177,7 +177,7 @@ class _FieldPortionState extends State<FieldPortion> {
                                     selectedItem: selectedTaxName,
 
                                     onChanged: (newValue) {
-                                      print(
+                                      debugPrint(
                                           "Selected raw value from dropdown: $newValue");
                                       setState(() {
                                         selectedTaxName = newValue;
@@ -206,7 +206,7 @@ class _FieldPortionState extends State<FieldPortion> {
 
                                         controller.updateTotalTaxId(
                                             '${controller.selectedTotalTaxId}_${controller.selectedTotalTaxPercent}');
-                                        print(
+                                        debugPrint(
                                             'tax_percent: "${controller.taxPercentValue}"'); // ✅ This is what you want
 
                                         controller.selectTotalCreditTaxDropdown(
@@ -413,7 +413,7 @@ class _FieldPortionState extends State<FieldPortion> {
                             controller.updateDiscountCreditAmount(value);
                           },
                           //style: const TextStyle(fontSize: 12, color: Colors.black),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: "৳",
                           ),
                         ),
@@ -432,7 +432,7 @@ class _FieldPortionState extends State<FieldPortion> {
                             controller.updateDiscountCreditPercent(value);
                           },
                           //style: const TextStyle(fontSize: 12, color: Colors.black),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: "%",
                           ),
                         ),
@@ -491,7 +491,7 @@ class _FieldPortionState extends State<FieldPortion> {
                                     selectedItem: selectedTaxName,
 
                                     onChanged: (newValue) {
-                                      print(
+                                      debugPrint(
                                           "Selected raw value from dropdown: $newValue");
                                       setState(() {
                                         selectedTaxName = newValue;
@@ -520,7 +520,7 @@ class _FieldPortionState extends State<FieldPortion> {
 
                                         controller.updateTotalTaxId(
                                             '${controller.selectedTotalTaxId}_${controller.selectedTotalTaxPercent}');
-                                        print(
+                                        debugPrint(
                                             'tax_percent: "${controller.taxPercentValue}"'); // ✅ This is what you want
 
                                         controller.selectTotalCreditTaxDropdown(

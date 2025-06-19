@@ -130,7 +130,7 @@ class _AddItemState extends State<AddItem> {
       AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Add Item",
           style: TextStyle(
@@ -189,7 +189,7 @@ class _AddItemState extends State<AddItem> {
                       );
                     },
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           //border: Border.all(color: Colors.green),
                           //borderRadius: BorderRadius.circular(6)
                           ),
@@ -226,11 +226,11 @@ class _AddItemState extends State<AddItem> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ItemSubCategoryView()),
+                            builder: (context) => const ItemSubCategoryView()),
                       );
                     },
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           // border: Border.all(color: Colors.green),
                           // borderRadius: BorderRadius.circular(6)
                           ),
@@ -268,7 +268,7 @@ class _AddItemState extends State<AddItem> {
                       );
                     },
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           // border: Border.all(color: Colors.green),
                           // borderRadius: BorderRadius.circular(6)
                           ),
@@ -304,7 +304,7 @@ class _AddItemState extends State<AddItem> {
                       );
                     },
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           // border: Border.all(color: Colors.green),
                           // borderRadius: BorderRadius.circular(6)
                           ),
@@ -1126,7 +1126,7 @@ class _AddItemState extends State<AddItem> {
                                 .categoryPriceValues;
 
                             categorypriceData.forEach((key, value) {
-                              print('$key -> $value');
+                              debugPrint('$key -> $value');
                             });
 
                             [

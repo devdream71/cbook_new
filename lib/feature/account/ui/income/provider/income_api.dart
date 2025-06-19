@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class IncomeProvider with ChangeNotifier {
-  
   IncomeListModel? incomeModel;
   bool isLoading = false;
 
@@ -18,11 +17,11 @@ class IncomeProvider with ChangeNotifier {
   bool isAccountLoading = false;
 
   // Receipt From API
-ReceiptFromModel? receiptFromModel;
-List<String> receiptFromNames = [];
-bool isReceiptLoading = false;
+  ReceiptFromModel? receiptFromModel;
+  List<String> receiptFromNames = [];
+  bool isReceiptLoading = false;
 
-List<ReceiptItem> receiptItems = [];
+  List<ReceiptItem> receiptItems = [];
 
   void addReceiptItem(ReceiptItem item) {
     receiptItems.add(item);
@@ -36,71 +35,72 @@ List<ReceiptItem> receiptItems = [];
 
   ///recived form
   Future<void> fetchReceiptFromList() async {
-  print('=== Starting fetchReceiptFromList ===');
+    print('=== Starting fetchReceiptFromList ===');
 
-  isReceiptLoading = true;
-  notifyListeners();
+    isReceiptLoading = true;
+    notifyListeners();
 
-  final url = 'https://commercebook.site/api/v1/income/receive/form/list';
+    final url = 'https://commercebook.site/api/v1/income/receive/form/list';
 
-  try {
-    final response = await http.get(Uri.parse(url));
-    print('Response Status Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
+    try {
+      final response = await http.get(Uri.parse(url));
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      receiptFromModel = ReceiptFromModel.fromJson(data);
-      receiptFromNames = receiptFromModel!.data.map((e) => e.accountName).toList();
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        receiptFromModel = ReceiptFromModel.fromJson(data);
+        receiptFromNames =
+            receiptFromModel!.data.map((e) => e.accountName).toList();
 
-      print('Fetched Receipt From Names: $receiptFromNames');
-    } else {
-      print('API Error: Status ${response.statusCode}');
+        print('Fetched Receipt From Names: $receiptFromNames');
+      } else {
+        print('API Error: Status ${response.statusCode}');
+        receiptFromModel = null;
+        receiptFromNames = [];
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
       receiptFromModel = null;
       receiptFromNames = [];
     }
-  } catch (e) {
-    print('Exception occurred: $e');
-    receiptFromModel = null;
-    receiptFromNames = [];
+
+    isReceiptLoading = false;
+    print('=== fetchReceiptFromList completed ===');
+    notifyListeners();
   }
 
-  isReceiptLoading = false;
-  print('=== fetchReceiptFromList completed ===');
-  notifyListeners();
-}
-
-  
   /// fetch account
   Future<void> fetchAccounts(String type) async {
     print('=== Starting fetchAccounts for type: $type ===');
-    
+
     isAccountLoading = true;
     notifyListeners();
 
-    final url = 'https://commercebook.site/api/v1/receive/form/account?type=$type';
+    final url =
+        'https://commercebook.site/api/v1/receive/form/account?type=$type';
     print('API URL: $url');
 
     try {
       print('Making API request...');
       final response = await http.post(Uri.parse(url));
-      
+
       print('Response Status Code: ${response.statusCode}');
       print('Response Body: ${response.body}');
 
       print('response Status code');
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         print('Parsed JSON Data: $data');
-        
+
         accountModel = AccountModel.fromJson(data);
         accountNames = accountModel!.data.map((e) => e.accountName).toList();
-        
+
         print('Account Model Created Successfully');
         print('Total Accounts Found: ${accountModel!.data.length}');
         print('Account Names: $accountNames');
-        
+
         // Print detailed account info
         for (int i = 0; i < accountModel!.data.length; i++) {
           final account = accountModel!.data[i];
@@ -109,7 +109,7 @@ List<ReceiptItem> receiptItems = [];
       } else {
         print('API Error: Status ${response.statusCode}');
         print('Error Body: ${response.body}');
-        
+
         // Clear previous data on error
         accountModel = null;
         accountNames = [];
@@ -119,8 +119,8 @@ List<ReceiptItem> receiptItems = [];
       print(st);
       print('Stack trace: ${StackTrace.current}');
 
-       print('❌ Exception: $e');
-      
+      print('❌ Exception: $e');
+
       // Clear data on exception
       accountModel = null;
       accountNames = [];
@@ -131,47 +131,44 @@ List<ReceiptItem> receiptItems = [];
     notifyListeners();
   }
 
-
-
-
+  ///income list.
   Future<void> fetchIncomeList() async {
-  isLoading = true;
-  notifyListeners();
+    isLoading = true;
+    notifyListeners();
 
-  const url = 'https://commercebook.site/api/v1/income/list';
+    const url = 'https://commercebook.site/api/v1/income/list';
 
-  try {
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      incomeModel = IncomeListModel.fromJson(data);
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        incomeModel = IncomeListModel.fromJson(data);
+      }
+    } catch (e) {
+      print('Error: $e');
     }
-  } catch (e) {
-    print('Error: $e');
+
+    isLoading = false;
+    notifyListeners();
   }
 
-  isLoading = false;
-  notifyListeners();
-}
-
-  
-  
-
+  ///delete income. ====>>>>>>><<<<<<
   Future<void> deleteIncome(String id) async {
-  final url = 'https://commercebook.site/api/v1/income/remove?id=$id';
+    final url = 'https://commercebook.site/api/v1/income/remove?id=$id';
 
-  try {
-    final response = await http.post(Uri.parse(url));
-    if (response.statusCode == 200) {
-      incomeModel?.data.remove(id);
-      notifyListeners(); // This will refresh the UI
-    } else {
-      print('Failed to delete income');
+    try {
+      final response = await http.post(Uri.parse(url));
+      if (response.statusCode == 200) {
+        incomeModel?.data
+            .removeWhere((income) => income.id.toString() == id); // ✅ Correct
+        notifyListeners(); // This will refresh the UI
+      } else {
+        print('Failed to delete income');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
-  } catch (e) {
-    print('Error: $e');
   }
-}
 
   ///create the income.
   Future<bool> storeIncome({
@@ -211,12 +208,10 @@ List<ReceiptItem> receiptItems = [];
       return false;
     }
   }
-   
 
   ///get the income to edit income.
 
   /// update the income.
 
   ///acoount type
-  
 }

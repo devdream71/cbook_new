@@ -1,4 +1,3 @@
-import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/category/category_update.dart';
 import 'package:cbook_dt/feature/category/create_category.dart';
 import 'package:cbook_dt/feature/category/provider/category_provider.dart';

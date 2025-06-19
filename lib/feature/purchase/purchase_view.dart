@@ -2974,7 +2974,7 @@ class LayoutState extends State<Layout> {
                     ///header, add item & service , and close icon
                     Container(
                       height: 30,
-                      color: Color(0xff278d46),
+                      color: const Color(0xff278d46),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -3395,9 +3395,9 @@ class LayoutState extends State<Layout> {
                               }
 
                               if (unitIdsList.isEmpty) {
-                                print("No valid units found for this item.");
+                                debugPrint("No valid units found for this item.");
                               } else {
-                                print("Units Available: $unitIdsList");
+                                debugPrint("Units Available: $unitIdsList");
                               }
                             },
                           ),
@@ -3470,7 +3470,7 @@ class LayoutState extends State<Layout> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   // const Text(
@@ -3589,7 +3589,7 @@ class LayoutState extends State<Layout> {
 
                                 debugPrint(selectedItem);
 
-                                print(
+                                debugPrint(
                                   'Selected Unit: ${controller.selectedUnit ?? "None"}',
                                 );
 
@@ -3695,7 +3695,7 @@ class LayoutState extends State<Layout> {
 
                                 debugPrint(selectedItem);
 
-                                print(
+                                debugPrint(
                                   'Selected Unit: ${controller.selectedUnit ?? "None"}',
                                 );
 
@@ -3919,9 +3919,9 @@ class LayoutState extends State<Layout> {
                                       unitIdsList.clear();
 
                                       // Debugging: Print unitId and secondaryUnitId for comparison
-                                      print(
+                                      debugPrint(
                                           "Selected item unitId: ${selected.unitId}");
-                                      print(
+                                      debugPrint(
                                           "Selected item secondaryUnitId: ${selected.secondaryUnitId}");
 
                                       // Update the unitIdsList population logic to handle null values properly
@@ -3979,10 +3979,10 @@ class LayoutState extends State<Layout> {
                                       }
 
                                       if (unitIdsList.isEmpty) {
-                                        print(
+                                        debugPrint(
                                             "No valid units found for this item.");
                                       } else {
-                                        print(
+                                        debugPrint(
                                             "Units Available: $unitIdsList"); // Check both units are added
                                       }
 
@@ -4014,7 +4014,7 @@ class LayoutState extends State<Layout> {
                                 height: 30,
                                 selectedItem: selectedItem.unit,
                                 onChanged: (selectedUnit) {
-                                  print("Selected Unit: $selectedUnit");
+                                  debugPrint("Selected Unit: $selectedUnit");
 
                                   // Update the selected unit in controller
                                   controller.selectedUnit = selectedUnit;
@@ -4071,7 +4071,7 @@ class LayoutState extends State<Layout> {
                                   }
 
                                   // Debug print to show final unit ID selected
-                                  print("🆔 Final Unit ID: $finalUnitString");
+                                  debugPrint("🆔 Final Unit ID: $finalUnitString");
 
                                   // Notify listeners to update the UI
                                   controller.notifyListeners();

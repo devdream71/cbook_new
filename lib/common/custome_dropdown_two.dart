@@ -146,56 +146,54 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
           _focusNode.requestFocus();
           _toggleDropdown();
         },
-        child: Container(
-          child: SizedBox(
-            width: widget.width,
-            height: widget.height, // <-- use widget.height here
-            child: InputDecorator(
-              isFocused: isDropdownOpen || _focusNode.hasFocus,
-              isEmpty: !hasValue,
-              decoration: InputDecoration(
-                filled: true,
-                isDense: true,
-                labelText: widget.labelText,
-                labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
-                floatingLabelStyle:
-                    const TextStyle(fontSize: 12, color: Colors.green),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(3),
-                  borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(1),
-                  borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.green),
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: 10, vertical: verticalPadding),
+        child: SizedBox(
+          width: widget.width,
+          height: widget.height, // <-- use widget.height here
+          child: InputDecorator(
+            isFocused: isDropdownOpen || _focusNode.hasFocus,
+            isEmpty: !hasValue,
+            decoration: InputDecoration(
+              filled: true,
+              isDense: true,
+              labelText: widget.labelText,
+              labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
+              floatingLabelStyle:
+                  const TextStyle(fontSize: 12, color: Colors.green),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(3),
+                borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      // hasValue ? selectedItem! : widget.hint,
-                      hasValue ? selectedItem! : widget.hint ?? '',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: hasValue ? Colors.black : Colors.grey.shade600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(1),
+                borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.green),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: 10, vertical: verticalPadding),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    // hasValue ? selectedItem! : widget.hint,
+                    hasValue ? selectedItem! : widget.hint ?? '',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: hasValue ? Colors.black : Colors.grey.shade600,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  Icon(
-                    isDropdownOpen
-                        ? Icons.arrow_drop_up
-                        : Icons.arrow_drop_down,
-                    color: Colors.grey.shade700,
-                  ),
-                ],
-              ),
+                ),
+                Icon(
+                  isDropdownOpen
+                      ? Icons.arrow_drop_up
+                      : Icons.arrow_drop_down,
+                  color: Colors.grey.shade700,
+                ),
+              ],
             ),
           ),
         ),

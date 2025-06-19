@@ -69,12 +69,12 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
   }
 
   void updateItem() {
-    print("Updating item:");
-    print("Selected Item: $selectedItemName");
-    print("Selected Unit: $selectedUnitName");
-    print("Qty: ${qtyController.text}");
-    print("Price: ${priceController.text}");
-    print("Subtotal: ${subTotalController.text}");
+    debugPrint("Updating item:");
+    debugPrint("Selected Item: $selectedItemName");
+    debugPrint("Selected Unit: $selectedUnitName");
+    debugPrint("Qty: ${qtyController.text}");
+    debugPrint("Price: ${priceController.text}");
+    debugPrint("Subtotal: ${subTotalController.text}");
 
     // Pass the updated values back to the provider
     Provider.of<SaleUpdateProvider>(context, listen: false).updateSelectedItem(

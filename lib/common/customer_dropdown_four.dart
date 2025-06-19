@@ -205,7 +205,7 @@ class _CustomDropdownFourState extends State<CustomDropdownFour> {
                                                   //if (customer.type == 'customer')
                                                   Padding(
                                                     padding:
-                                                        EdgeInsets.only(top: 2),
+                                                        const EdgeInsets.only(top: 2),
                                                     child: Icon(
                                                       Icons.circle,
                                                       color: customer.type ==
@@ -217,7 +217,7 @@ class _CustomDropdownFourState extends State<CustomDropdownFour> {
                                                     ),
                                                   ),
 
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 5,
                                                   ),
 

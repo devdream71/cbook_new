@@ -149,21 +149,21 @@ class _SupplierDetailsScreenState extends State<SupplierDetailsScreen> {
                             ),
                             Text(
                               "${supplierDetails?["proprietor_name"]}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 13,
                                 color: Colors.black,
                               ),
                             ),
                             Text(
                               "${supplierDetails?["phone"]}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 13,
                                 color: Colors.black,
                               ),
                             ),
                             Text(
                               "${supplierDetails?["email"]}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 13,
                                 color: Colors.black,
                               ),
@@ -178,7 +178,7 @@ class _SupplierDetailsScreenState extends State<SupplierDetailsScreen> {
                                   children: [
                                     Text(
                                       "${supplierDetails?["address"]}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 13,
                                         color: Colors.black,
                                       ),
@@ -194,7 +194,7 @@ class _SupplierDetailsScreenState extends State<SupplierDetailsScreen> {
                                 ),
 
                                 ///icon
-                                Row(
+                                const Row(
                                   children: [
                                     Icon(Icons.info),
                                     Icon(Icons.help),

@@ -567,7 +567,7 @@ class _LayoutState extends State<_Layout> {
                                             width: 0.5,
                                           ),
                                         ),
-                                        focusedBorder: UnderlineInputBorder(
+                                        focusedBorder: const UnderlineInputBorder(
                                           borderSide: BorderSide(
                                             color: Colors.green,
                                           ),
@@ -606,7 +606,7 @@ class _LayoutState extends State<_Layout> {
                                                 color: Colors.grey.shade400,
                                                 width: 0.5),
                                           ),
-                                          focusedBorder: UnderlineInputBorder(
+                                          focusedBorder: const UnderlineInputBorder(
                                             borderSide:
                                                 BorderSide(color: Colors.green),
                                           ),

@@ -2,8 +2,6 @@ import 'package:cbook_dt/feature/item/provider/item_save_provider.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
-import 'package:flutter/material.dart';
 
 class SupplierCustomerPricePage extends StatefulWidget {
   @override
@@ -12,7 +10,6 @@ class SupplierCustomerPricePage extends StatefulWidget {
 }
 
 class _SupplierCustomerPricePageState extends State<SupplierCustomerPricePage> {
-
   final Map<String, bool> _selected = {
     'Wholesales': false,
     'Dealer': false,
@@ -41,86 +38,78 @@ class _SupplierCustomerPricePageState extends State<SupplierCustomerPricePage> {
   }
 
   void getCategoryPrices() {
-
     final Map<String, String> categoryPriceData = {};
-    
-  _controllers.forEach((label, controller) {
-    if (_selected[label] == true) {
+
+    _controllers.forEach((label, controller) {
+      if (_selected[label] == true) {
         categoryPriceData[label] = controller.text;
       }
-  });
+    });
 
-  Provider.of<ItemProvider>(context, listen: false).setCategoryPriceValues(categoryPriceData);
+    Provider.of<ItemProvider>(context, listen: false)
+        .setCategoryPriceValues(categoryPriceData);
 
-    print('Data saved to provider: $categoryPriceData');
-
-
- }
+    debugPrint('Data saved to provider: $categoryPriceData');
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      //appBar: AppBar(title: Text("Supplier/Customers Price")),
-      child: Padding(
-        padding: const EdgeInsets.all(3.0),
-        child: Wrap(
-          spacing: 5,
-          runSpacing: 5,
-          children: _selected.keys.map((label) {
-            return SizedBox(
-              //width: MediaQuery.of(context).size.width / 2 - 30,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Checkbox(
-                    value: _selected[label],
-                    onChanged: (value) {
-                      setState(() {
-                        _selected[label] = value!;
-                      });
-                    },
-                  ),
-                  Expanded(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                         
+    return Padding(
+      padding: const EdgeInsets.all(3.0),
+      child: Wrap(
+        spacing: 5,
+        runSpacing: 5,
+        children: _selected.keys.map((label) {
+          return SizedBox(
+            //width: MediaQuery.of(context).size.width / 2 - 30,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Checkbox(
+                  value: _selected[label],
+                  onChanged: (value) {
+                    setState(() {
+                      _selected[label] = value!;
+                    });
+                  },
+                ),
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: Text(
+                          label,
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      if (_selected[label]!)
                         SizedBox(
                           width: 100,
-                          child: Text(label,
-                              style: const TextStyle(
-                                  fontSize: 14, color: Colors.black),),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        if (_selected[label]!)
-                          SizedBox(
-                            width: 100,
-                            child: AddSalesFormfield(
-                                //label: "Enter price",
-                                controller: _controllers[label]!,
-
-                                keyboardType: TextInputType.number,
-                                onChanged: (value){
-                                  getCategoryPrices();
-
-                                },
-                                ),
-                          )
-                      ],
-                    ),
+                          child: AddSalesFormfield(
+                            //label: "Enter price",
+                            controller: _controllers[label]!,
+    
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                              getCategoryPrices();
+                            },
+                          ),
+                        )
+                    ],
                   ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
 }
-
-
-

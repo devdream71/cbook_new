@@ -1,23 +1,25 @@
-import 'package:cbook_dt/feature/account/ui/income/add_income.dart';
-import 'package:cbook_dt/feature/account/ui/income/income_edit.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/paymentout/create_payment_out_item.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class Income extends StatefulWidget {
-  const Income({super.key});
+class PaymentOutList extends StatefulWidget {
+  const PaymentOutList({super.key});
 
   @override
-  State<Income> createState() => _IncomeState();
+  State<PaymentOutList> createState() => _PaymentOutListState();
 }
 
-class _IncomeState extends State<Income> {
+class _PaymentOutListState extends State<PaymentOutList> {
   @override
   void initState() {
     super.initState();
-    Provider.of<IncomeProvider>(context, listen: false).fetchIncomeList();
   }
+
+  TextStyle ts = const TextStyle(color: Colors.black, fontSize: 12);
+  TextStyle ts2 =
+      const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +47,11 @@ class _IncomeState extends State<Income> {
     // List of forms with metadata
 
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           automaticallyImplyLeading: true,
           title: const Column(
             children: [
@@ -56,7 +59,7 @@ class _IncomeState extends State<Income> {
                 width: 5,
               ),
               Text(
-                'Income',
+                'Payment out',
                 style: TextStyle(
                     color: Colors.yellow,
                     fontSize: 16,
@@ -70,8 +73,10 @@ class _IncomeState extends State<Income> {
           actions: [
             InkWell(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => IncomeCreate()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PaymentOutCreateItem()));
               },
               child: CircleAvatar(
                   radius: 12,
@@ -239,160 +244,127 @@ class _IncomeState extends State<Income> {
                 const SizedBox(
                   height: 5,
                 ),
-                Consumer<IncomeProvider>(
-                  builder: (context, provider, child) {
-                    if (provider.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
 
-                    if (provider.incomeModel == null ||
-                        provider.incomeModel!.data.isEmpty) {
-                      return const Center(child: Text('No Income Found'));
-                    }
-
-                    final incomes = provider.incomeModel!.data;
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: incomes.length,
-                      itemBuilder: (context, index) {
-                        final income = incomes[index];
-                        final incomeId = income.id
-                            .toString(); // ✅ Correct: get the ID directly from the list item
-
-                        return Padding(
+                //////new item
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics:
+                      const NeverScrollableScrollPhysics(), // Optional: if it's inside another scroll view
+                  itemCount: 2, // Example: Two cards
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 2,
+                          vertical: 1), // 🔥 Reduced vertical gap
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        elevation:
+                            1, // 🔥 Slightly lower elevation to make it look tighter
+                        margin: const EdgeInsets.only(
+                            bottom: 2), // 🔥 Remove default margin
+                        child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 4.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xffe3e7fa),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 8.0),
-                              child: Row(
+                              horizontal: 6.0,
+                              vertical: 6.0), // 🔥 Tightened internal padding
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Left Side
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Received To
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Payment To', style: ts2),
+                                              Text('Cash In Hand', style: ts),
+                                              Text('Cash', style: ts),
+                                            ],
+                                          ),
+                                        ),
+                                        // Received From
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Payment From', style: ts2),
+                                              Text('Farbi Store', style: ts),
+                                              Text('01778344090', style: ts),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Right Side
+                              Row(
                                 children: [
-                                  /// Left side
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      const Text(
-                                        "Received To",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        income.receivedTo.toLowerCase() ==
-                                                'cash'
-                                            ? 'Cash In Hand'
-                                            : income.receivedTo.toLowerCase() ==
-                                                    'bank'
-                                                ? 'Bank'
-                                                : income.receivedTo,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      Text(
-                                        income.accountId == 1
-                                            ? 'Cash'
-                                            : income.accountId == 11
-                                                ? 'PTCash'
-                                                : income.accountId == 10
-                                                    ? 'PTCash'
-                                                    : income.accountId == 13
-                                                        ? 'Cash 1'
-                                                        : income.accountId == 15
-                                                            ? 'Cash 2'
-                                                            : '${income.accountId}', // Show ID if not matched
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                        ),
-                                      ),
+                                      Text('01/05/2025', style: ts),
+                                      Text('Rec/4581', style: ts),
+                                      const SizedBox(height: 5),
+                                      Text('550', style: ts2),
                                     ],
                                   ),
-                                  const Spacer(),
+                                  // const Icon(Icons.more_vert,
+                                  //     size: 28), // 🔥 Slightly smaller icon
 
-                                  /// Right side
-                                  Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            income.voucherDate,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            income.voucherNumber,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            income.totalAmount.toString(),
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
+                                  PopupMenuButton<String>(
+                                    onSelected: (String choice) {
+                                      if (choice == 'edit') {
+                                        // Navigate to Edit Page
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => ExpenseEdit(
+                                        //         expenseId: expenseId),
+                                        //   ),
+                                        // );
+                                      } else if (choice == 'delete') {
+                                        // Show Delete Confirmation Dialog
+                                        //_showDeleteDialog(context, expenseId);
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'edit',
+                                        textStyle:
+                                            TextStyle(color: Colors.blue),
+                                        child: Text('Edit'),
                                       ),
-                                      PopupMenuButton<String>(
-                                        onSelected: (String choice) {
-                                          if (choice == 'edit') {
-                                            // Navigate to Edit Page
-                                            // Navigator.push(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //     builder: (context) => IncomeEdit(
-                                            //         incomeId: incomeId),
-                                            //   ),
-                                            // );
-                                          } else if (choice == 'delete') {
-                                            // Show Delete Confirmation Dialog
-                                            _showDeleteDialog(
-                                                context, incomeId);
-                                          }
-                                        },
-                                        itemBuilder: (BuildContext context) =>
-                                            <PopupMenuEntry<String>>[
-                                          const PopupMenuItem<String>(
-                                            value: 'edit',
-                                            textStyle:
-                                                TextStyle(color: Colors.blue),
-                                            child: Text('Edit'),
-                                          ),
-                                          const PopupMenuItem<String>(
-                                            value: 'delete',
-                                            textStyle:
-                                                TextStyle(color: Colors.red),
-                                            child: Text('Delete'),
-                                          ),
-                                        ],
-                                        icon: const Icon(
-                                            Icons.more_vert), // 3-dot icon
-                                      )
+                                      const PopupMenuItem<String>(
+                                        value: 'delete',
+                                        textStyle: TextStyle(color: Colors.red),
+                                        child: Text('Delete'),
+                                      ),
                                     ],
+                                    icon: const Icon(
+                                        Icons.more_vert), // 3-dot icon
                                   )
                                 ],
                               ),
-                            ),
+                            ],
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     );
                   },
-                )
+                ),
               ],
             ),
 
@@ -406,12 +378,12 @@ class _IncomeState extends State<Income> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(
-          'Delete Income',
+          'Delete payment out',
           style: TextStyle(
               color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
         ),
         content: const Text(
-          'Are you sure you want to delete this income?',
+          'Are you sure you want to delete this payemnt out?',
           style: TextStyle(color: Colors.black, fontSize: 12),
         ),
         actions: [
@@ -436,11 +408,4 @@ class _IncomeState extends State<Income> {
       ),
     );
   }
-}
-
-class AccountModel {
-  final int id;
-  final String accountName;
-
-  AccountModel({required this.id, required this.accountName});
 }

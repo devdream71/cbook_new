@@ -11,15 +11,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ExpenseEdit extends StatefulWidget {
-  final String expenseId;
-  const ExpenseEdit({super.key, required this.expenseId});
+class IncomeEdit extends StatefulWidget {
+  final String incomeId;
+  const IncomeEdit({super.key, required this.incomeId});
 
   @override
-  State<ExpenseEdit> createState() => _ExpenseEditState();
+  State<IncomeEdit> createState() => _IncomeEditState();
 }
 
-class _ExpenseEditState extends State<ExpenseEdit> {
+class _IncomeEditState extends State<IncomeEdit> {
   String? selectedReceivedTo;
 
   String? selectedAccount;
@@ -81,10 +81,10 @@ class _ExpenseEditState extends State<ExpenseEdit> {
           Provider.of<IncomeProvider>(context, listen: false); // 👈 Add this
 
       /// ✅ First fetch Paid Form List
-      await providerExpense.fetchPaidFormList();
+    await providerExpense.fetchPaidFormList();
 
-      /// ✅ Then fetch Edit Expense
-      await providerExpense.fetchEditExpense(widget.expenseId);
+    /// ✅ Then fetch Edit Expense
+    await providerExpense.fetchEditExpense(widget.incomeId);    
 
       //await providerExpense.fetchEditExpense(widget.expenseId);
 
@@ -103,9 +103,9 @@ class _ExpenseEditState extends State<ExpenseEdit> {
         selectedReceivedTo = 'Bank';
         await provider.fetchAccounts('bank'); // Fetch related accounts
       }
-
+      
       /// ✅ Preselect Account Name based on accountId
-      //int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
+    //int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
 
       /// ✅ Preselect Account Name based on accountId
       int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
@@ -148,6 +148,7 @@ class _ExpenseEditState extends State<ExpenseEdit> {
     // List of forms with metadata
 
     // ✅ Show loading indicator while data is fetching
+  
 
     return Scaffold(
       appBar: AppBar(
@@ -244,7 +245,7 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                                     labelText: 'Account',
                                     selectedItem: selectedAccount,
                                     onChanged: (value) {
-                                      print('=== Account Selected: $value ===');
+                                      debugPrint('=== Account Selected: $value ===');
                                       setState(() {
                                         selectedAccount = value;
                                       });
@@ -655,10 +656,10 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                     final String account = providerExpense
                         .receiptItems.first.purchaseId
                         .toString(); // ✔️ Use correct account id
+                     
+                    final expenseId = widget.incomeId;
 
-                    final expenseId = widget.expenseId;
-
-                    const notes = 'text';
+                    const  notes = 'text';
                     const status = 1;
                     //final expenseId = "59"; // Pass the correct expense ID
 
@@ -672,12 +673,13 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                     final List<ExpenseItemPopUp> expenseItems =
                         providerExpense.receiptItems.map((item) {
                       return ExpenseItemPopUp(
-                        accountId:
-                            '10', // ✔️ Use correct item-specific account id
+                        accountId:  '10', // ✔️ Use correct item-specific account id
                         narration: item.note,
                         amount: item.amount.toString(),
                       );
                     }).toList();
+
+                    
 
                     debugPrint('Sending Data:');
                     debugPrint('User ID: $userId');

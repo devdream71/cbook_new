@@ -134,7 +134,7 @@ class _ItemCustomDropDownTextFieldState
                               FocusScope.of(context).unfocus();
 
                               // Print selected item id and name
-                              print(
+                              debugPrint(
                                   "Selected Item Id: ${item.id}, Name: ${item.name}");
 
                               // Call the callback if provided

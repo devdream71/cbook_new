@@ -257,8 +257,7 @@ class _ExpanseState extends State<Expanse> {
                     itemBuilder: (context, index) {
                       final expense = provider.expenseList[index];
 
-                      final expenseId = expense.id
-                            .toString();
+                      final expenseId = expense.id.toString();
                       return Card(
                         margin: const EdgeInsets.symmetric(
                             vertical: 2, horizontal: 8),
@@ -339,39 +338,43 @@ class _ExpanseState extends State<Expanse> {
                                   //       context, expenseId
                                   //     );
 
-                                          
                                   //   },
                                   //   icon: const Icon(Icons.more_vert),
                                   // ),
 
-
                                   PopupMenuButton<String>(
-  onSelected: (String choice) {
-    if (choice == 'edit') {
-      // Navigate to Edit Page
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ExpenseEdit(expenseId: expenseId),
-        ),
-      );
-    } else if (choice == 'delete') {
-      // Show Delete Confirmation Dialog
-      _showDeleteDialog(context, expenseId);
-    }
-  },
-  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-    const PopupMenuItem<String>(
-      value: 'edit',
-      child: Text('Edit'),
-    ),
-    const PopupMenuItem<String>(
-      value: 'delete',
-      child: Text('Delete'),
-    ),
-  ],
-  icon: const Icon(Icons.more_vert), // 3-dot icon
-)
+                                    onSelected: (String choice) {
+                                      if (choice == 'edit') {
+                                        // Navigate to Edit Page
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ExpenseEdit(
+                                                expenseId: expenseId),
+                                          ),
+                                        );
+                                      } else if (choice == 'delete') {
+                                        // Show Delete Confirmation Dialog
+                                        _showDeleteDialog(context, expenseId);
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'edit',
+                                        textStyle:
+                                            TextStyle(color: Colors.blue),
+                                        child: Text('Edit'),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'delete',
+                                        textStyle: TextStyle(color: Colors.red),
+                                        child: Text('Delete'),
+                                      ),
+                                    ],
+                                    icon: const Icon(
+                                        Icons.more_vert), // 3-dot icon
+                                  )
                                 ],
                               )
                             ],
@@ -389,12 +392,7 @@ class _ExpanseState extends State<Expanse> {
     );
   }
 
-   
-
-  void _showDeleteDialog(
-    BuildContext context, String expenseId
-  ) {
-    //
+  void _showDeleteDialog(BuildContext context, String expenseId) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -416,8 +414,15 @@ class _ExpanseState extends State<Expanse> {
           ),
           TextButton(
             onPressed: () async {
-              await Provider.of<ExpenseProvider>(context, listen: false)
-                  .deleteExpense(expenseId.toString());
+              // await Provider.of<ExpenseProvider>(context, listen: false)
+              //     .deleteExpense(expenseId.toString());
+
+              // Navigator.of(context).pop(); // Close dialog
+
+              final provider =
+                  Provider.of<ExpenseProvider>(context, listen: false);
+              await provider.deleteExpense(expenseId.toString());
+              await provider.fetchExpenseList(); // ✅ Re-fetch the latest list
               Navigator.of(context).pop(); // Close dialog
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),

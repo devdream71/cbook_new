@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Discount extends StatefulWidget {
   const Discount({super.key});
@@ -38,7 +37,7 @@ class _DiscountState extends State<Discount> {
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           automaticallyImplyLeading: true,
           title: const Column(
             children: [
@@ -52,7 +51,7 @@ class _DiscountState extends State<Discount> {
             ],
           ),
         ),
-        body: Column(
+        body: const Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

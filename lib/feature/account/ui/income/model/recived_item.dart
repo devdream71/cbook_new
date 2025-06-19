@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-
-class ReceiptItem {
+ class ReceiptItem {
   final String receiptFrom;
   final String amount;
   final String note;

@@ -60,7 +60,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
     };
 
     // Print JSON string in console
-    debugPrint('Final JSON Payload: ${finalPayload}');
+    debugPrint('Final JSON Payload: $finalPayload');
   }
 
   @override
@@ -77,7 +77,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         automaticallyImplyLeading: true,
         title: const Column(
           children: [
@@ -113,13 +113,13 @@ class _IncomeCreateState extends State<IncomeCreate> {
                     width: 150,
                     child: CustomDropdownTwo(
                       hint: '',
-                      items: ['Cash in Hand', 'Bank'],
+                      items: const ['Cash in Hand', 'Bank'],
                       width: double.infinity,
                       height: 30,
                       labelText: 'Received to',
                       selectedItem: selectedReceivedTo,
                       onChanged: (value) async {
-                        print('=== Received To Selected: $value ===');
+                        debugPrint('=== Received To Selected: $value ===');
 
                         setState(() {
                           selectedReceivedTo = value;
@@ -127,14 +127,14 @@ class _IncomeCreateState extends State<IncomeCreate> {
                         });
 
                         if (value == 'Cash in Hand') {
-                          print('Fetching Cash accounts...');
+                          debugPrint('Fetching Cash accounts...');
                           await provider.fetchAccounts('cash');
                         } else if (value == 'Bank') {
-                          print('Fetching Bank accounts...');
+                          debugPrint('Fetching Bank accounts...');
                           await provider.fetchAccounts('bank');
                         }
 
-                        print(
+                        debugPrint(
                             'Fetched Account Names: ${provider.accountNames}');
                       },
                     ),
@@ -156,7 +156,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
                             labelText: 'A/C',
                             selectedItem: selectedAccount,
                             onChanged: (value) {
-                              print('=== Account Selected: $value ===');
+                              debugPrint('=== Account Selected: $value ===');
                               setState(() {
                                 selectedAccount = value;
                               });
@@ -169,17 +169,17 @@ class _IncomeCreateState extends State<IncomeCreate> {
 
                                 selectedAccountId = selectedAccountData.id;
 
-                                print('=== Account Selected: $value ===');
+                                debugPrint('=== Account Selected: $value ===');
                                 if (selectedAccountId != null) {
-                                  print(
+                                  debugPrint(
                                       'Selected Account ID: $selectedAccountId');
                                 }
 
-                                print('Selected Account Details:');
-                                print('- ID: ${selectedAccountData.id}');
-                                print(
+                                debugPrint('Selected Account Details:');
+                                debugPrint('- ID: ${selectedAccountData.id}');
+                                debugPrint(
                                     '- Name: ${selectedAccountData.accountName}');
-                                print('- Type: $selectedReceivedTo');
+                                debugPrint('- Type: $selectedReceivedTo');
                               }
                             },
                           ),
@@ -318,7 +318,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
             ],
           ),
 
-          SizedBox(
+          const SizedBox(
             height: 6,
           ),
 
@@ -393,10 +393,10 @@ class _IncomeCreateState extends State<IncomeCreate> {
                               ),
                             ),
                             IconButton(
-                              icon: CircleAvatar(
+                              icon: const CircleAvatar(
                                   backgroundColor: Colors.grey,
                                   radius: 13,
-                                  child: const Icon(Icons.close, size: 20)),
+                                  child:   Icon(Icons.close, size: 20)),
                               onPressed: () {
                                 setState(() {
                                   provider.receiptItems.remove(item);
@@ -460,7 +460,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
             ),
           ),
 
-          Spacer(),
+          const Spacer(),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -501,45 +501,47 @@ class _IncomeCreateState extends State<IncomeCreate> {
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
-                  
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green, // Button background color
-                    foregroundColor: Colors.white, // Button text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)
-                    )
-                    ),
+                      backgroundColor: Colors.green, // Button background color
+                      foregroundColor: Colors.white, // Button text color
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5))),
                   onPressed: () async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? userId = prefs.getInt('user_id')?.toString();
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String? userId = prefs.getInt('user_id')?.toString();
 
-  if (userId == null) {
-    debugPrint("User ID is null");
-    return;
-  }
+                    if (userId == null) {
+                      debugPrint("User ID is null");
+                      return;
+                    }
 
-  final invoiceNo = billNoController.text.trim();
-  final date = "2025-06-10"; // your date string like '2025-06-10'
-  final receivedTo = (selectedReceivedTo ?? '').toLowerCase();
-  final account = selectedAccountId.toString();
-  final notes = 'text'; // Or from your input field
-  final status = 1;
+                    final invoiceNo = billNoController.text.trim();
+                    const date =
+                        "2025-06-10"; // your date string like '2025-06-10'
+                    final receivedTo = (selectedReceivedTo ?? '').toLowerCase();
+                    final account = selectedAccountId.toString();
+                    const notes = 'text'; // Or from your input field
+                    const status = 1;
 
-  final totalAmount = provider.receiptItems.fold<double>(
-    0,
-    (sum, item) => sum + (double.tryParse(item.amount.toString()) ?? 0),
-  );
+                    final totalAmount = provider.receiptItems.fold<double>(
+                      0,
+                      (sum, item) =>
+                          sum + (double.tryParse(item.amount.toString()) ?? 0),
+                    );
 
-  // Prepare income items with correct account_id (use your actual accountId)
-  final List<IncomeItem> incomeItems = provider.receiptItems.map((item) {
-    return IncomeItem(
-      accountId: account, // or item-specific account id if different
-      narration: item.note,
-      amount: item.amount.toString(),
-    );
-  }).toList();
+                    // Prepare income items with correct account_id (use your actual accountId)
+                    final List<IncomeItem> incomeItems =
+                        provider.receiptItems.map((item) {
+                      return IncomeItem(
+                        accountId:
+                            account, // or item-specific account id if different
+                        narration: item.note,
+                        amount: item.amount.toString(),
+                      );
+                    }).toList();
 
-  // 👉 Print all sending data
+                    // 👉 Print all sending data
                     debugPrint('Sending Data:');
                     debugPrint('User ID: $userId');
                     debugPrint('Expense No: $invoiceNo');
@@ -552,34 +554,33 @@ class _IncomeCreateState extends State<IncomeCreate> {
                     debugPrint(
                         'income Items: ${incomeItems.map((e) => e.toJson()).toList()}');
 
+                    bool success = await provider.storeIncome(
+                      userId: userId,
+                      invoiceNo: invoiceNo,
+                      date: date,
+                      receivedTo: receivedTo,
+                      account: account,
+                      totalAmount: totalAmount,
+                      notes: notes,
+                      status: status,
+                      incomeItems: incomeItems,
+                    );
 
-  bool success = await provider.storeIncome(
-    userId: userId,
-    invoiceNo: invoiceNo,
-    date: date,
-    receivedTo: receivedTo,
-    account: account,
-    totalAmount: totalAmount,
-    notes: notes,
-    status: status,
-    incomeItems: incomeItems,
-  );
+                    if (success) {
+                      provider.receiptItems.clear();
+                      provider.notifyListeners();
 
-  if (success) {
-    provider.receiptItems.clear();
-  provider.notifyListeners();
-
-    // Navigate to Income page (replace with your actual route)
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Income()));
-    
-     
-  
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Failed to save income.')),
-    );
-  }
-},
+                      // Navigate to Income page (replace with your actual route)
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Income()));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Failed to save income.')),
+                      );
+                    }
+                  },
 
                   // onPressed: () async {
                   //   SharedPreferences prefs =
@@ -634,15 +635,11 @@ class _IncomeCreateState extends State<IncomeCreate> {
 
                   //   prepareIncomeItems(provider, selectedAccountId.toString());
 
-
                   // },
-                 
-                 
-                 
+
                   child: const Text("Save"),
                 ),
               ),
-            
             ],
           ),
 
@@ -679,7 +676,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
                   children: [
                     Container(
                       height: 30,
-                      color: Color(0xff278d46),
+                      color: const Color(0xff278d46),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -722,7 +719,6 @@ class _IncomeCreateState extends State<IncomeCreate> {
                         ],
                       ),
                     ),
-                    
                     const SizedBox(height: 20),
                     SizedBox(
                       height: 30,
@@ -736,12 +732,10 @@ class _IncomeCreateState extends State<IncomeCreate> {
                               labelText: 'Receipt From',
                               selectedItem: selectedReceiptFrom,
                               onChanged: (selectedItem) {
-                                print('Selected Receipt From: $selectedItem');
+                                debugPrint('Selected Receipt From: $selectedItem');
                                 setState(() {
                                   selectedReceiptFrom = selectedItem;
                                 });
-
-                                 
                               },
                             ),
                     ),
@@ -806,23 +800,3 @@ class _IncomeCreateState extends State<IncomeCreate> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

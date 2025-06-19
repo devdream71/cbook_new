@@ -3,10 +3,12 @@ import 'package:cbook_dt/common/banner_image.dart';
 import 'package:cbook_dt/common/fi_chart_date_amount.dart';
 import 'package:cbook_dt/common/round_fi_chart_document_view.dart';
 import 'package:cbook_dt/common/feature_not_available.dart';
+import 'package:cbook_dt/feature/Received/received_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/dashboard/dashboard_controller.dart';
 import 'package:cbook_dt/feature/home/presentation/widget/reusable_box.dart';
+import 'package:cbook_dt/feature/paymentout/payment_out_list.dart';
 import 'package:cbook_dt/feature/purchase/purchase_list_api.dart';
 import 'package:cbook_dt/feature/purchase_return/purchase_return_list.dart';
 import 'package:cbook_dt/feature/sales/sales_list.dart';
@@ -519,10 +521,17 @@ Widget _buildBottomSheetContent(BuildContext context) {
                   //// Receipt In
                   InkWell(
                       onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) =>
-                                const FeatureNotAvailableDialog());
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (context) =>
+                        //         const FeatureNotAvailableDialog());
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const ReceivedList()));
+
+                        
                       },
                       child: _buildIconWithLabel(
                           Icons.receipt, "Receipt In", context)),
@@ -599,10 +608,14 @@ Widget _buildBottomSheetContent(BuildContext context) {
                   //// Payment\nOut
                   InkWell(
                       onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) =>
-                                const FeatureNotAvailableDialog());
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (context) =>
+                        //         const FeatureNotAvailableDialog());
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PaymentOutList()));
                       },
                       child: _buildIconWithLabel(
                           Icons.tab, "Payment\nOut", context)),

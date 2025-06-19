@@ -81,7 +81,7 @@ class _SalesScreenState extends State<SalesScreen> {
           title: isSearching
               ? Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     SizedBox(
@@ -449,7 +449,7 @@ class _SalesScreenState extends State<SalesScreen> {
                             // );
                           },
                           child: Card(
-                            color: Color(0xfff4f6ff),
+                            color: const Color(0xfff4f6ff),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   2), // 👈 Rounded corners (radius: 2)

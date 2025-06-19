@@ -1,8 +1,8 @@
 class ExpenseItem {
-  final String receiptFrom;
-  final String note;
-  final double amount;
-  final dynamic ? purchaseId;
+    String receiptFrom;
+    String note;
+    double amount;
+    dynamic ? purchaseId;
 
   ExpenseItem({
     required this.receiptFrom,

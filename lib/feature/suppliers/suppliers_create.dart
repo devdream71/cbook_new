@@ -117,7 +117,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text("Create Supplier",
             style: TextStyle(
                 color: Colors.yellow,

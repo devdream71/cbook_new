@@ -1,7 +1,5 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
-import 'package:cbook_dt/common/item_dropdown_custom.dart';
-import 'package:cbook_dt/common/new_pdfview.dart';
 import 'package:cbook_dt/feature/customer_create/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/item/model/items_show.dart';
@@ -986,9 +984,9 @@ class _ItemListPageState extends State<ItemListPage> {
             }
 
             if (unitIdsList.isEmpty) {
-              print("No valid units found for this item.");
+              debugPrint("No valid units found for this item.");
             } else {
-              print("Units Available: $unitIdsList");
+              debugPrint("Units Available: $unitIdsList");
             }
 
             return Dialog(
@@ -1068,17 +1066,14 @@ class _ItemListPageState extends State<ItemListPage> {
                             ///
 
                             //item
-                            Container(
-                              //color: Colors.blueGrey,
-                              child: AddSalesFormfield(
-                                height: 30,
-                                label: "", //price
-                                labelText: "Item",
-                                controller: itemController,
-                                keyboardType: TextInputType.number,
-                                readOnly: true,
-                                onChanged: (value) {},
-                              ),
+                            AddSalesFormfield(
+                              height: 30,
+                              label: "", //price
+                              labelText: "Item",
+                              controller: itemController,
+                              keyboardType: TextInputType.number,
+                              readOnly: true,
+                              onChanged: (value) {},
                             ),
 
                             ///item working, with dropdown
@@ -1209,240 +1204,234 @@ class _ItemListPageState extends State<ItemListPage> {
                               ),
                             ),
 
-                            SizedBox(
+                            const SizedBox(
                               height: 6,
                             ),
 
                             ///qty , unit
-                            Container(
-                              //color: Colors.yellow,
-                              child: SizedBox(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        //qty
-                                        Container(
-                                          //color: Colors.purple,
-                                          child: SizedBox(
-                                            width: 150,
-                                            child: AddSalesFormfield(
-                                              //label: "", //Qty
-                                              labelText: "Item Qty",
-
-                                              controller:
-                                                  controller.qtyController,
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  
-                                                  controller
-                                                      .calculateSubtotal();
-                                                });
-
-                                                ///<<<===
-                                                //controller.calculateSubtotal();
-                                              },
-                                            ),
-                                          ),
-                                        ),
-
-                                        /// Qty Field (✅ Pre-filled here)
-                                      ],
-                                    ),
-
-                                    ///===>>>unit
-                                    // Column(
-                                    //   mainAxisAlignment:
-                                    //       MainAxisAlignment.start,
-                                    //   crossAxisAlignment:
-                                    //       CrossAxisAlignment.start,
-                                    //   children: [
-                                    //     ///unit dropdown
-                                    //     SizedBox(
-                                    //       height: 30,
-                                    //       width: 150,
-                                    //       child: CustomDropdownTwo(
-                                    //         //hint: '',
-                                    //         items:
-                                    //             unitIdsList, // Holds unit names like ["Pces", "Packet"]
-                                    //         width: double.infinity,
-                                    //         height: 30,
-                                    //         //labelText: 'Vat/Tax',
-                                    //         labelText: 'Unit',
-                                    //         selectedItem:
-                                    //             controller.selectedUnit,
-                                    //         onChanged: (selectedUnit) {
-                                    //           print(
-                                    //               "Selected Unit: $selectedUnit");
-
-                                    //           // Update the selected unit in controller
-                                    //           controller.selectedUnit =
-                                    //               selectedUnit;
-
-                                    //           final selectedUnitObj =
-                                    //               unitProvider.units.firstWhere(
-                                    //             (unit) =>
-                                    //                 unit.name == selectedUnit,
-                                    //             orElse: () => Unit(
-                                    //               id: 0,
-                                    //               name: "Unknown Unit",
-                                    //               symbol: "",
-                                    //               status: 0,
-                                    //             ),
-                                    //           );
-
-                                    //           //String finalUnitStringID = '';
-
-                                    //           String finalUnitString = '';
-                                    //           int qty = 1; // Default qty
-
-                                    //           // Search through fetchStockQuantity items to find unit ID and qty
-                                    //           for (var item
-                                    //               in fetchStockQuantity.items) {
-                                    //             if (item.id.toString() ==
-                                    //                 controller.selcetedItemId) {
-                                    //               String unitId =
-                                    //                   selectedUnitObj.id
-                                    //                       .toString();
-                                    //               String unitName =
-                                    //                   selectedUnit;
-
-                                    //               // Check if selected unit is the primary or secondary unit and set the correct quantity
-                                    //               if (unitId ==
-                                    //                   item.secondaryUnitId
-                                    //                       .toString()) {
-                                    //                 qty = item
-                                    //                         .secondaryUnitQty ??
-                                    //                     item.unitQty ??
-                                    //                     1; // Use secondaryUnitQty, fallback to unitQty or default to 1
-                                    //               } else if (unitId ==
-                                    //                   item.unitId.toString()) {
-                                    //                 qty = item.unitQty ??
-                                    //                     1; // Use unitQty or fallback to 1
-                                    //               }
-
-                                    //               // Build the final unit string in the required format (e.g., 24_Pces_1)
-                                    //               finalUnitString =
-                                    //                   "${unitId}_${unitName}_$qty";
-                                    //               controller
-                                    //                   .selectedUnitIdWithNameFunction(
-                                    //                       finalUnitString);
-                                    //               break;
-                                    //             }
-                                    //           }
-
-                                    //           // Fallback if no valid unit string was found
-                                    //           if (finalUnitString.isEmpty) {
-                                    //             finalUnitString =
-                                    //                 "${selectedUnitObj.id}_${selectedUnit}_1"; // Default to 1 if no match
-                                    //             controller
-                                    //                 .selectedUnitIdWithNameFunction(
-                                    //                     finalUnitString);
-                                    //           }
-
-                                    //           // Debug print to show final unit ID selected
-                                    //           print(
-                                    //               "🆔 Final Unit ID: $finalUnitString");
-
-                                    //           // Notify listeners to update the UI
-                                    //           controller.notifyListeners();
-                                    //         },
-                                    //       ),
-                                    //     ),
-                                    //   ],
-                                    // )
-
-                                    ///===>>>Unit dropdown
-                                    ///
-
-                                    ///===>>>Unit dropdown
-                                    ///===>>>Unit dropdown
-
-                                    /// Unit dropdown
-                                    /// Unit Dropdown
-                                    SizedBox(
-                                      height: 30,
-                                      width: 150,
-                                      child: CustomDropdownTwo(
-                                        items: unitIdsList,
-                                        width: double.infinity,
-                                        height: 30,
-                                        labelText: 'Unit',
-                                        selectedItem: controller.selectedUnit,
-                                        onChanged: (selectedUnit) {
-                                          print("Selected Unit: $selectedUnit");
-
-                                          controller.selectedUnit =
-                                              selectedUnit;
-
-                                          final selectedUnitObj =
-                                              unitProvider.units.firstWhere(
-                                            (unit) => unit.name == selectedUnit,
-                                            orElse: () => Unit(
-                                              id: 0,
-                                              name: "Unknown Unit",
-                                              symbol: "",
-                                              status: 0,
-                                            ),
-                                          );
-
-                                          String finalUnitString = '';
-                                          int qty = 1;
-
-                                          for (var item
-                                              in fetchStockQuantity.items) {
-                                            if (item.id.toString() ==
-                                                controller.selcetedItemId) {
-                                              String unitId =
-                                                  selectedUnitObj.id.toString();
-                                              String unitName = selectedUnit;
-
-                                              if (unitId ==
-                                                  item.secondaryUnitId
-                                                      .toString()) {
-                                                qty = item.secondaryUnitQty ??
-                                                    item.unitQty ??
-                                                    1;
-                                              } else if (unitId ==
-                                                  item.unitId.toString()) {
-                                                qty = item.unitQty ?? 1;
-                                              }
-
-                                              finalUnitString =
-                                                  "${unitId}_${unitName}_$qty";
+                            SizedBox(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    children: [
+                                      //qty
+                                      SizedBox(
+                                        width: 150,
+                                        child: AddSalesFormfield(
+                                          //label: "", //Qty
+                                          labelText: "Item Qty",
+                                                                  
+                                          controller:
+                                              controller.qtyController,
+                                          keyboardType:
+                                              TextInputType.number,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              
                                               controller
-                                                  .selectedUnitIdWithNameFunction(
-                                                      finalUnitString);
-                                              break;
+                                                  .calculateSubtotal();
+                                            });
+                                                                  
+                                            ///<<<===
+                                            //controller.calculateSubtotal();
+                                          },
+                                        ),
+                                      ),
+                            
+                                      /// Qty Field (✅ Pre-filled here)
+                                    ],
+                                  ),
+                            
+                                  ///===>>>unit
+                                  // Column(
+                                  //   mainAxisAlignment:
+                                  //       MainAxisAlignment.start,
+                                  //   crossAxisAlignment:
+                                  //       CrossAxisAlignment.start,
+                                  //   children: [
+                                  //     ///unit dropdown
+                                  //     SizedBox(
+                                  //       height: 30,
+                                  //       width: 150,
+                                  //       child: CustomDropdownTwo(
+                                  //         //hint: '',
+                                  //         items:
+                                  //             unitIdsList, // Holds unit names like ["Pces", "Packet"]
+                                  //         width: double.infinity,
+                                  //         height: 30,
+                                  //         //labelText: 'Vat/Tax',
+                                  //         labelText: 'Unit',
+                                  //         selectedItem:
+                                  //             controller.selectedUnit,
+                                  //         onChanged: (selectedUnit) {
+                                  //           print(
+                                  //               "Selected Unit: $selectedUnit");
+                            
+                                  //           // Update the selected unit in controller
+                                  //           controller.selectedUnit =
+                                  //               selectedUnit;
+                            
+                                  //           final selectedUnitObj =
+                                  //               unitProvider.units.firstWhere(
+                                  //             (unit) =>
+                                  //                 unit.name == selectedUnit,
+                                  //             orElse: () => Unit(
+                                  //               id: 0,
+                                  //               name: "Unknown Unit",
+                                  //               symbol: "",
+                                  //               status: 0,
+                                  //             ),
+                                  //           );
+                            
+                                  //           //String finalUnitStringID = '';
+                            
+                                  //           String finalUnitString = '';
+                                  //           int qty = 1; // Default qty
+                            
+                                  //           // Search through fetchStockQuantity items to find unit ID and qty
+                                  //           for (var item
+                                  //               in fetchStockQuantity.items) {
+                                  //             if (item.id.toString() ==
+                                  //                 controller.selcetedItemId) {
+                                  //               String unitId =
+                                  //                   selectedUnitObj.id
+                                  //                       .toString();
+                                  //               String unitName =
+                                  //                   selectedUnit;
+                            
+                                  //               // Check if selected unit is the primary or secondary unit and set the correct quantity
+                                  //               if (unitId ==
+                                  //                   item.secondaryUnitId
+                                  //                       .toString()) {
+                                  //                 qty = item
+                                  //                         .secondaryUnitQty ??
+                                  //                     item.unitQty ??
+                                  //                     1; // Use secondaryUnitQty, fallback to unitQty or default to 1
+                                  //               } else if (unitId ==
+                                  //                   item.unitId.toString()) {
+                                  //                 qty = item.unitQty ??
+                                  //                     1; // Use unitQty or fallback to 1
+                                  //               }
+                            
+                                  //               // Build the final unit string in the required format (e.g., 24_Pces_1)
+                                  //               finalUnitString =
+                                  //                   "${unitId}_${unitName}_$qty";
+                                  //               controller
+                                  //                   .selectedUnitIdWithNameFunction(
+                                  //                       finalUnitString);
+                                  //               break;
+                                  //             }
+                                  //           }
+                            
+                                  //           // Fallback if no valid unit string was found
+                                  //           if (finalUnitString.isEmpty) {
+                                  //             finalUnitString =
+                                  //                 "${selectedUnitObj.id}_${selectedUnit}_1"; // Default to 1 if no match
+                                  //             controller
+                                  //                 .selectedUnitIdWithNameFunction(
+                                  //                     finalUnitString);
+                                  //           }
+                            
+                                  //           // Debug print to show final unit ID selected
+                                  //           print(
+                                  //               "🆔 Final Unit ID: $finalUnitString");
+                            
+                                  //           // Notify listeners to update the UI
+                                  //           controller.notifyListeners();
+                                  //         },
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // )
+                            
+                                  ///===>>>Unit dropdown
+                                  ///
+                            
+                                  ///===>>>Unit dropdown
+                                  ///===>>>Unit dropdown
+                            
+                                  /// Unit dropdown
+                                  /// Unit Dropdown
+                                  SizedBox(
+                                    height: 30,
+                                    width: 150,
+                                    child: CustomDropdownTwo(
+                                      items: unitIdsList,
+                                      width: double.infinity,
+                                      height: 30,
+                                      labelText: 'Unit',
+                                      selectedItem: controller.selectedUnit,
+                                      onChanged: (selectedUnit) {
+                                        debugPrint("Selected Unit: $selectedUnit");
+                            
+                                        controller.selectedUnit =
+                                            selectedUnit;
+                            
+                                        final selectedUnitObj =
+                                            unitProvider.units.firstWhere(
+                                          (unit) => unit.name == selectedUnit,
+                                          orElse: () => Unit(
+                                            id: 0,
+                                            name: "Unknown Unit",
+                                            symbol: "",
+                                            status: 0,
+                                          ),
+                                        );
+                            
+                                        String finalUnitString = '';
+                                        int qty = 1;
+                            
+                                        for (var item
+                                            in fetchStockQuantity.items) {
+                                          if (item.id.toString() ==
+                                              controller.selcetedItemId) {
+                                            String unitId =
+                                                selectedUnitObj.id.toString();
+                                            String unitName = selectedUnit;
+                            
+                                            if (unitId ==
+                                                item.secondaryUnitId
+                                                    .toString()) {
+                                              qty = item.secondaryUnitQty ??
+                                                  item.unitQty ??
+                                                  1;
+                                            } else if (unitId ==
+                                                item.unitId.toString()) {
+                                              qty = item.unitQty ?? 1;
                                             }
-                                          }
-
-                                          if (finalUnitString.isEmpty) {
+                            
                                             finalUnitString =
-                                                "${selectedUnitObj.id}_${selectedUnit}_1";
+                                                "${unitId}_${unitName}_$qty";
                                             controller
                                                 .selectedUnitIdWithNameFunction(
                                                     finalUnitString);
+                                            break;
                                           }
-
-                                          print(
-                                              "🆔 Final Unit ID: $finalUnitString");
-
-                                          setState(() {});
-                                        },
-                                      ),
+                                        }
+                            
+                                        if (finalUnitString.isEmpty) {
+                                          finalUnitString =
+                                              "${selectedUnitObj.id}_${selectedUnit}_1";
+                                          controller
+                                              .selectedUnitIdWithNameFunction(
+                                                  finalUnitString);
+                                        }
+                            
+                                        debugPrint(
+                                            "🆔 Final Unit ID: $finalUnitString");
+                            
+                                        setState(() {});
+                                      },
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
 
-                            SizedBox(
+                            const SizedBox(
                               height: 6,
                             ),
                             //purchase price
@@ -1464,7 +1453,7 @@ class _ItemListPageState extends State<ItemListPage> {
                               ),
                             ),
 
-                            SizedBox(
+                            const SizedBox(
                               height: 6,
                             ),
 
@@ -1544,131 +1533,128 @@ class _ItemListPageState extends State<ItemListPage> {
                             ),
 
                             // ✅ VAT/TAX Dropdown Row
-                            Container(
-                              //color: Colors.brown,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Dropdown
-                                  Expanded(
-                                    child: Consumer<TaxProvider>(
-                                      builder: (context, taxProvider, child) {
-                                        if (taxProvider.isLoading) {
-                                          return const Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        }
-
-                                        if (taxProvider.taxList.isEmpty) {
-                                          return const Center(
-                                            child: Text(
-                                              'No tax options available.',
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                          );
-                                        }
-                                        return SizedBox(
-                                          width: 150,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              //vat, tax %
-                                              SizedBox(
-                                                height: 30,
-                                                child: CustomDropdownTwo(
-                                                  labelText: 'Vat/Tax',
-                                                  //hint: '',
-                                                  items: taxProvider.taxList
-                                                      .map((tax) =>
-                                                          "${tax.name} - (${tax.percent})")
-                                                      .toList(),
-                                                  width: 150,
-                                                  height: 30,
-                                                  selectedItem: selectedTaxName,
-                                                  onChanged: (newValue) {
-                                                    setState(() {
-                                                      selectedTaxName =
-                                                          newValue;
-
-                                                      final nameOnly = newValue
-                                                          ?.split(" - ")
-                                                          .first;
-
-                                                      final selected =
-                                                          taxProvider.taxList
-                                                              .firstWhere(
-                                                        (tax) =>
-                                                            tax.name ==
-                                                            nameOnly,
-                                                        orElse: () =>
-                                                            taxProvider
-                                                                .taxList.first,
-                                                      );
-
-                                                      selectedTaxId = selected
-                                                          .id
-                                                          .toString();
-
-                                                      controller
-                                                              .selectedTaxPercent =
-                                                          double.tryParse(
-                                                              selected.percent);
-
-                                                      // controller.setTaxPercent(selectedTaxPercent ?? 0.0); // 👈 Call controller
-                                                      controller
-                                                          .taxPercent = controller
-                                                              .selectedTaxPercent ??
-                                                          0.0;
-
-                                                      controller.updateTaxPaecentId(
-                                                          '${selectedTaxId}_${controller.selectedTaxPercent}');
-
-                                                      debugPrint(
-                                                          'tax_percent: "${controller.taxPercentValue}"');
-
-                                                      //controller.calculateSubtotal();
-
-                                                      debugPrint(
-                                                          "Selected Tax ID: $selectedTaxId");
-                                                      debugPrint(
-                                                          "Selected Tax Percent: ${controller.selectedTaxPercent}");
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            ],
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Dropdown
+                                Expanded(
+                                  child: Consumer<TaxProvider>(
+                                    builder: (context, taxProvider, child) {
+                                      if (taxProvider.isLoading) {
+                                        return const Center(
+                                            child:
+                                                CircularProgressIndicator());
+                                      }
+                            
+                                      if (taxProvider.taxList.isEmpty) {
+                                        return const Center(
+                                          child: Text(
+                                            'No tax options available.',
+                                            style: TextStyle(
+                                                color: Colors.black),
                                           ),
                                         );
-                                      },
-                                    ),
+                                      }
+                                      return SizedBox(
+                                        width: 150,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            //vat, tax %
+                                            SizedBox(
+                                              height: 30,
+                                              child: CustomDropdownTwo(
+                                                labelText: 'Vat/Tax',
+                                                //hint: '',
+                                                items: taxProvider.taxList
+                                                    .map((tax) =>
+                                                        "${tax.name} - (${tax.percent})")
+                                                    .toList(),
+                                                width: 150,
+                                                height: 30,
+                                                selectedItem: selectedTaxName,
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    selectedTaxName =
+                                                        newValue;
+                            
+                                                    final nameOnly = newValue
+                                                        ?.split(" - ")
+                                                        .first;
+                            
+                                                    final selected =
+                                                        taxProvider.taxList
+                                                            .firstWhere(
+                                                      (tax) =>
+                                                          tax.name ==
+                                                          nameOnly,
+                                                      orElse: () =>
+                                                          taxProvider
+                                                              .taxList.first,
+                                                    );
+                            
+                                                    selectedTaxId = selected
+                                                        .id
+                                                        .toString();
+                            
+                                                    controller
+                                                            .selectedTaxPercent =
+                                                        double.tryParse(
+                                                            selected.percent);
+                            
+                                                    // controller.setTaxPercent(selectedTaxPercent ?? 0.0); // 👈 Call controller
+                                                    controller
+                                                        .taxPercent = controller
+                                                            .selectedTaxPercent ??
+                                                        0.0;
+                            
+                                                    controller.updateTaxPaecentId(
+                                                        '${selectedTaxId}_${controller.selectedTaxPercent}');
+                            
+                                                    debugPrint(
+                                                        'tax_percent: "${controller.taxPercentValue}"');
+                            
+                                                    //controller.calculateSubtotal();
+                            
+                                                    debugPrint(
+                                                        "Selected Tax ID: $selectedTaxId");
+                                                    debugPrint(
+                                                        "Selected Tax Percent: ${controller.selectedTaxPercent}");
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
                                   ),
-
-                                  const SizedBox(width: 8),
-
-                                  //vat, tax amount
-                                  SizedBox(
-                                    width: 150,
-                                    child: AddSalesFormfield(
-                                      readOnly: true,
-                                      //label: "", //amount
-                                      labelText: "Amount",
-                                      controller: TextEditingController(
-                                        text: controller.taxAmount
-                                            .toStringAsFixed(
-                                                2), // 👈 show calculated tax
-                                      ),
-                                      keyboardType: TextInputType.number,
-                                      //readOnly: true, // 👈 prevent manual editing
+                                ),
+                            
+                                const SizedBox(width: 8),
+                            
+                                //vat, tax amount
+                                SizedBox(
+                                  width: 150,
+                                  child: AddSalesFormfield(
+                                    readOnly: true,
+                                    //label: "", //amount
+                                    labelText: "Amount",
+                                    controller: TextEditingController(
+                                      text: controller.taxAmount
+                                          .toStringAsFixed(
+                                              2), // 👈 show calculated tax
                                     ),
+                                    keyboardType: TextInputType.number,
+                                    //readOnly: true, // 👈 prevent manual editing
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
 
                             const SizedBox(

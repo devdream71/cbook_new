@@ -1,4 +1,3 @@
-import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/category/model/category_list.dart';
 import 'package:cbook_dt/feature/category/provider/category_provider.dart';
 import 'package:cbook_dt/feature/category/sub_category/create_sub_category.dart';
@@ -7,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ItemSubCategoryView extends StatefulWidget {
+  const ItemSubCategoryView({super.key});
+
   @override
   _ItemSubCategoryViewState createState() => _ItemSubCategoryViewState();
 }
@@ -83,7 +84,7 @@ class _ItemSubCategoryViewState extends State<ItemSubCategoryView> {
       appBar: AppBar(
         //centerTitle: true,
         backgroundColor: colorScheme.primary,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Item Subcategories",
           style: TextStyle(color: Colors.yellow, fontSize: 16),
@@ -96,8 +97,8 @@ class _ItemSubCategoryViewState extends State<ItemSubCategoryView> {
                   MaterialPageRoute(
                       builder: (context) => const CreateSubCategory()));
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+            child: const Padding(
+              padding: EdgeInsets.only(right: 8.0),
               child: Row(
                 children: [
                   CircleAvatar(
@@ -111,7 +112,7 @@ class _ItemSubCategoryViewState extends State<ItemSubCategoryView> {
                   SizedBox(
                     width: 3,
                   ),
-                  const Text(
+                  Text(
                     'Add Sub Cat ',
                     style: TextStyle(color: Colors.yellow, fontSize: 15),
                   ),

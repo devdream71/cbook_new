@@ -1,9 +1,7 @@
-import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/purchase/provider/purchase_provider.dart';
 import 'package:cbook_dt/feature/purchase/purchase_details_page.dart';
 import 'package:cbook_dt/feature/purchase/purchase_update.dart';
 import 'package:cbook_dt/feature/purchase/purchase_view.dart';
-import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -121,7 +119,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
         title: isSearching
             ? Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   SizedBox(
@@ -247,7 +245,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
           children: [
             ///amount, due, date, bill, qty
             Container(
-              color: Color(0xffdddefa),
+              color: const Color(0xffdddefa),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 4.0, vertical: 3),
@@ -408,7 +406,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                       return InkWell(
                         onTap: () {},
                         child: Card(
-                          shadowColor: Color.fromARGB(255, 12, 9, 199),
+                          shadowColor: const Color.fromARGB(255, 12, 9, 199),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
                               6.0,
@@ -455,7 +453,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                                       color: Colors.black),
                                                 ),
                                                 Text('${purchase.billNumber}',
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 14,
                                                         color: Colors.black,
                                                         fontWeight:
@@ -514,23 +512,21 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            Container(
-                                              child: Text(
-                                                purchase.transectionMethod!
-                                                            .toLowerCase() ==
-                                                        'cash'
-                                                    ? 'Paid'
-                                                    : 'Unpaid',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
-                                                    color: purchase
-                                                                .transectionMethod!
-                                                                .toLowerCase() ==
-                                                            'cash'
-                                                        ? Colors.green
-                                                        : Colors.amber),
-                                              ),
+                                            Text(
+                                              purchase.transectionMethod!
+                                                          .toLowerCase() ==
+                                                      'cash'
+                                                  ? 'Paid'
+                                                  : 'Unpaid',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  color: purchase
+                                                              .transectionMethod!
+                                                              .toLowerCase() ==
+                                                          'cash'
+                                                      ? Colors.green
+                                                      : Colors.amber),
                                             ),
                                             purchase.transectionMethod!
                                                         .toLowerCase() ==

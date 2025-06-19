@@ -34,7 +34,7 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           title: const Text(
             "Create Sub Category",
             style: TextStyle(color: Colors.yellow, fontSize: 16),

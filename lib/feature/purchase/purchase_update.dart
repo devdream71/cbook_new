@@ -287,7 +287,7 @@ class PurchaseUpdateProvider extends ChangeNotifier {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    print('_selectedDate ${_selectedDate}');
+    debugPrint('_selectedDate ${_selectedDate}');
 
     final url =
         "http://commercebook.site/api/v1/purchase/update?id=${purchaseEditResponse.data!.purchaseDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${purchaseEditResponse.data!.customerId}&bill_number=${purchaseEditResponse.data!.billNumber}&purchase_date=$_selectedDate&details_notes=notes&gross_total=${getSubTotal()}&discount=0&payment_out=0&payment_amount=${getGrossTotal()}";

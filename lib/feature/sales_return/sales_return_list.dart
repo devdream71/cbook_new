@@ -1,4 +1,3 @@
-import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:cbook_dt/feature/sales_return/presentation/sales_return_view.dart';
 import 'package:cbook_dt/feature/sales_return/provider/sale_return_provider.dart';
@@ -49,7 +48,7 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
               );
             },
             child: const Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding:   EdgeInsets.only(right: 8.0),
               child: Row(
                 children: [
                   CircleAvatar(
@@ -63,7 +62,7 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
                   SizedBox(
                     width: 3,
                   ),
-                  const Text(
+                    Text(
                     'Sales Return',
                     style: TextStyle(color: Colors.yellow, fontSize: 16),
                   ),

@@ -4,7 +4,7 @@ import 'package:cbook_dt/feature/settings/ui/bill_invoice_print.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:dotted_line/dotted_line.dart';
-import 'package:google_fonts/google_fonts.dart';
+ 
 import 'package:number_to_words_english/number_to_words_english.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -91,9 +91,9 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
       int wholePart = value.floor();
       int decimalPart = ((value - wholePart) * 100).round();
 
-      String words = NumberToWordsEnglish.convert(wholePart) + " taka";
+      String words = "${NumberToWordsEnglish.convert(wholePart)} taka";
       if (decimalPart > 0) {
-        words += " and " + NumberToWordsEnglish.convert(decimalPart) + " paisa";
+        words += " and ${NumberToWordsEnglish.convert(decimalPart)} paisa";
       }
       return words[0].toUpperCase() + words.substring(1);
     }
@@ -125,7 +125,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
       fontSize: 8,
     );
 
-    final pw.TextStyle cellStyle = pw.TextStyle(
+    final pw.TextStyle cellStyle = const pw.TextStyle(
       fontSize: 8,
     );
 
@@ -246,7 +246,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                 //     style: const pw.TextStyle(fontSize: 9)),
                                 if (showCompanyPhoneNumber)
                                   pw.Text('Phone: 01759546853',
-                                      style: pw.TextStyle(fontSize: 9)),
+                                      style: const pw.TextStyle(fontSize: 9)),
                               ]),
 
                           //right image
@@ -285,15 +285,15 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                               crossAxisAlignment: pw.CrossAxisAlignment.end,
                               children: [
                                 pw.Text("Bill No: inv542",
-                                    style: pw.TextStyle(fontSize: 9)),
+                                    style: const pw.TextStyle(fontSize: 9)),
                                 pw.Text(
                                   "Date: ${DateFormat('dd/MM/yyyy').format(DateTime.now())}",
-                                  style: pw.TextStyle(
+                                  style: const pw.TextStyle(
                                       color: PdfColors.black, fontSize: 9),
                                 ),
                                 pw.Text(
                                     "Bill Person:  ${widget.billPersion != null && widget.billPersion!.trim().isNotEmpty ? widget.billPersion : "No Bill Person"}",
-                                    style: pw.TextStyle(fontSize: 9))
+                                    style: const pw.TextStyle(fontSize: 9))
                               ]),
                         ]),
                     pw.Align(
@@ -1178,9 +1178,9 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
       int wholePart = value.floor();
       int decimalPart = ((value - wholePart) * 100).round();
 
-      String words = NumberToWordsEnglish.convert(wholePart) + " taka";
+      String words = "${NumberToWordsEnglish.convert(wholePart)} taka";
       if (decimalPart > 0) {
-        words += " and " + NumberToWordsEnglish.convert(decimalPart) + " paisa";
+        words += " and ${NumberToWordsEnglish.convert(decimalPart)} paisa";
       }
       return words[0].toUpperCase() + words.substring(1);
     }
@@ -1263,15 +1263,15 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                       crossAxisAlignment: pw.CrossAxisAlignment.end,
                       children: [
                         pw.Text("Bill No: inv542",
-                            style: pw.TextStyle(fontSize: 9)),
+                            style: const pw.TextStyle(fontSize: 9)),
                         pw.Text(
                           "Date: ${DateFormat('dd/MM/yyyy').format(DateTime.now())}",
                           style:
-                              pw.TextStyle(color: PdfColors.black, fontSize: 9),
+                              const pw.TextStyle(color: PdfColors.black, fontSize: 9),
                         ),
                         pw.Text(
                             "Bill Person:  ${widget.billPersion != null && widget.billPersion!.trim().isNotEmpty ? widget.billPersion : "No Bill Person"}",
-                            style: pw.TextStyle(fontSize: 9))
+                            style: const pw.TextStyle(fontSize: 9))
                       ]),
                 ]),
             pw.Align(
@@ -1632,7 +1632,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
         fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black);
     TextStyle tableHeaderStyle =
         const TextStyle(fontWeight: FontWeight.bold, color: Colors.black);
-    final TextStyle tableCellStyle = TextStyle(
+    final TextStyle tableCellStyle = const TextStyle(
       fontSize: 10,
       color: Colors.black,
     );
@@ -1650,9 +1650,9 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
       int wholePart = value.floor();
       int decimalPart = ((value - wholePart) * 100).round();
 
-      String words = NumberToWordsEnglish.convert(wholePart) + " taka";
+      String words = "${NumberToWordsEnglish.convert(wholePart)} taka";
       if (decimalPart > 0) {
-        words += " and " + NumberToWordsEnglish.convert(decimalPart) + " paisa";
+        words += " and ${NumberToWordsEnglish.convert(decimalPart)} paisa";
       }
 
       // Capitalize first letter
@@ -1684,7 +1684,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                 );
                 await _loadCheckboxState();
               },
-              icon: Icon(Icons.settings))
+              icon: const Icon(Icons.settings))
         ],
       ),
       body: Stack(
@@ -1727,12 +1727,12 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text("Dream Tech International",
+                                      const Text("Dream Tech International",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
                                               color: Colors.black)),
-                                      Text("84/8 Naya Paltan, Dhaka",
+                                      const Text("84/8 Naya Paltan, Dhaka",
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 11)),
@@ -1804,7 +1804,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                       //  "Bill Person: ${widget.billPersion != null && widget.billPersion!.trim().isNotEmpty ? widget.billPersion : "No Bill Person"}",
                                       Text(
                                           "Bill Person: ${widget.billPersion != null && widget.billPersion!.trim().isNotEmpty ? widget.billPersion : "N/A"}",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               color: Colors.black,
                                               fontSize: 10)),
                                     ],
@@ -2098,7 +2098,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                               ),
                             ),
 
-                            SizedBox(
+                            const SizedBox(
                               height: 6,
                             ),
 
@@ -2184,9 +2184,9 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.green,
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 6),
-                                    minimumSize: Size(0, 0),
+                                    minimumSize: const Size(0, 0),
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                     shape: RoundedRectangleBorder(

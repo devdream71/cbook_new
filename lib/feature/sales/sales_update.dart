@@ -262,7 +262,7 @@ class SaleUpdateProvider extends ChangeNotifier {
       // Notify UI of changes
       notifyListeners();
     } else {
-      print(
+      debugPrint(
           "Invalid input: Please enter valid numbers for price and quantity.");
     }
   }
@@ -283,7 +283,7 @@ class SaleUpdateProvider extends ChangeNotifier {
       final url =
           "http://commercebook.site/api/v1/sales/update?id=${saleEditResponse.data!.salesDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${saleEditResponse.data!.customerId}&bill_number=${saleEditResponse.data!.billNumber}&sale_date=${saleEditResponse.data!.salesDate}&details_notes=notes&gross_total=${getSubTotal()}&payment_out=1&payment_amount=0&discount_percent=&discount=&tax_percents=3_12.0&tax=41.5";
 
-      print("API URL: $url");
+      debugPrint("API URL: $url");
 
       final requestBody = {"sales_items": saleUpdateList};
 
@@ -309,7 +309,7 @@ class SaleUpdateProvider extends ChangeNotifier {
 
       if (requestBody.isEmpty) return;
 
-      print("Request Body: ${jsonEncode(requestBody)}");
+      debugPrint("Request Body: ${jsonEncode(requestBody)}");
 
       final response = await http.post(
         Uri.parse(url),
@@ -995,7 +995,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                 //===>subtotal
                                 Align(
                                   alignment: Alignment.centerRight,
-                                  child: Container(
+                                  child: SizedBox(
                                     //color: Colors.red,
                                     width: 250,
                                     child: Row(
@@ -1968,7 +1968,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                           }
 
                                           // Debug print to show final unit ID selected
-                                          print(
+                                          debugPrint(
                                               "🆔 Final Unit ID: $finalUnitString");
 
                                           // Notify listeners to update the UI

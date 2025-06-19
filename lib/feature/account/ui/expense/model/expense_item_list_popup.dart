@@ -13,6 +13,7 @@ class ExpenseItemPopUp {
         'account_id': accountId,
         'narration': narration,
         'amount': amount,
+        
       };
 }
 

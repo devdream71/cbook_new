@@ -4,6 +4,7 @@ import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_popup.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/home/presentation/layer/dashboard/dashboard_view.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
     };
 
     // Print JSON string in console
-    debugPrint('Final JSON Payload: ${finalPayload}');
+    debugPrint('Final JSON Payload: $finalPayload');
   }
 
   @override
@@ -80,7 +81,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         automaticallyImplyLeading: true,
         title: const Column(
           children: [
@@ -116,13 +117,13 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                     width: 150,
                     child: CustomDropdownTwo(
                       hint: '',
-                      items: ['Cash in Hand', 'Bank'],
+                      items: const ['Cash in Hand', 'Bank'],
                       width: double.infinity,
                       height: 30,
-                      labelText: 'Paid From',
+                      labelText: 'Paid To',
                       selectedItem: selectedReceivedTo,
                       onChanged: (value) async {
-                        print('=== Received To Selected: $value ===');
+                        debugPrint('=== Received To Selected: $value ===');
 
                         setState(() {
                           selectedReceivedTo = value;
@@ -130,14 +131,14 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         });
 
                         if (value == 'Cash in Hand') {
-                          print('Fetching Cash accounts...');
+                          debugPrint('Fetching Cash accounts...');
                           await provider.fetchAccounts('cash');
                         } else if (value == 'Bank') {
-                          print('Fetching Bank accounts...');
+                          debugPrint('Fetching Bank accounts...');
                           await provider.fetchAccounts('bank');
                         }
 
-                        print(
+                        debugPrint(
                             'Fetched Account Names: ${provider.accountNames}');
                       },
                     ),
@@ -159,7 +160,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                             labelText: 'A/C',
                             selectedItem: selectedAccount,
                             onChanged: (value) {
-                              print('=== Account Selected: $value ===');
+                              debugPrint('=== Account Selected: $value ===');
                               setState(() {
                                 selectedAccount = value;
                               });
@@ -172,17 +173,17 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
 
                                 selectedAccountId = selectedAccountData.id;
 
-                                print('=== Account Selected: $value ===');
+                                debugPrint('=== Account Selected: $value ===');
                                 if (selectedAccountId != null) {
-                                  print(
+                                  debugPrint(
                                       'Selected Account ID: $selectedAccountId');
                                 }
 
-                                print('Selected Account Details:');
-                                print('- ID: ${selectedAccountData.id}');
-                                print(
+                                debugPrint('Selected Account Details:');
+                                debugPrint('- ID: ${selectedAccountData.id}');
+                                debugPrint(
                                     '- Name: ${selectedAccountData.accountName}');
-                                print('- Type: $selectedReceivedTo');
+                                debugPrint('- Type: $selectedReceivedTo');
                               }
                             },
                           ),
@@ -441,7 +442,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "Paid To",
+                      "Paid From",
                       style: TextStyle(color: Colors.white, fontSize: 14),
                     ),
                     InkWell(
@@ -458,7 +459,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
             ),
           ),
 
-          Spacer(),
+          const Spacer(),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -517,12 +518,12 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                     }
 
                     final invoiceNo = billNoController.text.trim();
-                    final date =
+                    const date =
                         "2025-06-10"; // your date string like '2025-06-10'
                     final receivedTo = (selectedReceivedTo ?? '').toLowerCase();
                     final account = selectedAccountId.toString();
-                    final notes = 'text'; // Or from your input field
-                    final status = 1;
+                    const notes = 'text'; // Or from your input field
+                    const status = 1;
 
                     final totalAmount =
                         providerExpense.receiptItems.fold<double>(
@@ -703,10 +704,10 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            TextButton(
-                              onPressed: () {},
-                              child: const Text('Add & New'),
-                            ),
+                            // TextButton(
+                            //   onPressed: () {},
+                            //   child: const Text('Add & New'),
+                            // ),
 
                             ///add
                             TextButton(
@@ -727,7 +728,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                                   Navigator.of(context).pop();
                                 }
                               },
-                              child: const Text('Add'),
+                              child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold, ),),
                             ),
                           ],
                         ),

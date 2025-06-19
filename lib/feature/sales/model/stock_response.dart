@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class StockResponse {
   final bool success;
   final String message;

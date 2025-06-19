@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/item/model/items_show.dart';
 import 'package:cbook_dt/feature/sales/model/sale_create_model.dart';
 import 'package:cbook_dt/feature/unit/model/unit_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/date_time_helper.dart';
 import '../sales_view.dart';

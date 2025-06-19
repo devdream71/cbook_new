@@ -1057,7 +1057,7 @@ class _LayoutState extends State<_Layout> {
                                     ),
                                     // Bill No Field
 
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 8,
                                     ),
 
@@ -1416,10 +1416,10 @@ class _LayoutState extends State<_Layout> {
                                                                                 child: Column(
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: [
-                                                                                    SizedBox(height: 4,
+                                                                                    const SizedBox(height: 4,
                                                                                     ),
                                                                                     Text(
-                                                                                      "${item.itemName!}",
+                                                                                      item.itemName!,
                                                                                       style: const TextStyle(
                                                                                         overflow: TextOverflow.ellipsis,
                                                                                         color: Colors.black,
@@ -1686,7 +1686,7 @@ class _LayoutState extends State<_Layout> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: [
                                                                                   Text(
-                                                                                    "${item.itemName!}",
+                                                                                    item.itemName!,
                                                                                     style: const TextStyle(
                                                                                       overflow: TextOverflow.ellipsis,
                                                                                       color: Colors.black,
@@ -2139,7 +2139,7 @@ class _LayoutState extends State<_Layout> {
                       children: [
                         Container(
                           height: 30,
-                          color: Color(0xff278d46),
+                          color: const Color(0xff278d46),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -2558,9 +2558,9 @@ class _LayoutState extends State<_Layout> {
                                     // Clear previous units
                                     unitIdsList.clear();
 
-                                    print(
+                                    debugPrint(
                                         "Selected item unitId: ${selectedItem.unitId}");
-                                    print(
+                                    debugPrint(
                                         "Selected item secondaryUnitId: ${selectedItem.secondaryUnitId}");
 
                                     // Base unit
@@ -2611,10 +2611,10 @@ class _LayoutState extends State<_Layout> {
                                     }
 
                                     if (unitIdsList.isEmpty) {
-                                      print(
+                                      debugPrint(
                                           "No valid units found for this item.");
                                     } else {
-                                      print("Units Available: $unitIdsList");
+                                      debugPrint("Units Available: $unitIdsList");
                                     }
                                   },
                                 ),
@@ -3188,7 +3188,7 @@ class _LayoutState extends State<_Layout> {
                                       child: Align(
                                         alignment: Alignment.topRight,
                                         child: Text(
-                                          "${controller.subtotalWithTax.toStringAsFixed(2)}",
+                                          controller.subtotalWithTax.toStringAsFixed(2),
                                           style: const TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold,
@@ -3548,9 +3548,9 @@ class _LayoutState extends State<_Layout> {
                                       unitIdsList.clear();
 
                                       // Debugging: Print unitId and secondaryUnitId for comparison
-                                      print(
+                                      debugPrint(
                                           "Selected item unitId: ${selected.unitId}");
-                                      print(
+                                      debugPrint(
                                           "Selected item secondaryUnitId: ${selected.secondaryUnitId}");
 
                                       // Update the unitIdsList population logic to handle null values properly
@@ -3608,10 +3608,10 @@ class _LayoutState extends State<_Layout> {
                                       }
 
                                       if (unitIdsList.isEmpty) {
-                                        print(
+                                        debugPrint(
                                             "No valid units found for this item.");
                                       } else {
-                                        print(
+                                        debugPrint(
                                             "Units Available: $unitIdsList"); // Check both units are added
                                       }
 
@@ -3700,7 +3700,7 @@ class _LayoutState extends State<_Layout> {
                                   }
 
                                   // Debug print to show final unit ID selected
-                                  print("🆔 Final Unit ID: $finalUnitString");
+                                  debugPrint("🆔 Final Unit ID: $finalUnitString");
 
                                   // Notify listeners to update the UI
                                   controller.notifyListeners();
@@ -3981,7 +3981,7 @@ class _LayoutState extends State<_Layout> {
                     }
                   });
 
-                  print(
+                  debugPrint(
                       '===========>>qty & price=====> ${qtyController.text}, ${priceController.text}');
 
                   // Update amount calculations
