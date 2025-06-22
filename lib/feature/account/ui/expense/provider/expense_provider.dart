@@ -24,6 +24,8 @@ class ExpenseProvider with ChangeNotifier {
 
   void clearReceiptItems() {
     receiptItems.clear();
+    //expenseList.clear();
+    //paidFormList.clear();
     notifyListeners();
   }
 

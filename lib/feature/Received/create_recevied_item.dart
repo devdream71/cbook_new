@@ -2,6 +2,8 @@ import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
+import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_form_two.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
@@ -26,6 +28,12 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
   DateTime selectedEndDate = DateTime.now();
   // Default to current date
   String? selectedDropdownValue;
+
+
+  String? selectedBillPerson;
+  int? selectedBillPersonId;
+  BillPersonModel?
+      selectedBillPersonData; 
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -204,39 +212,82 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   //bill person
-                  SizedBox(
-                    height: 30,
-                    width: 90,
-                    child: TextField(
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
-                      controller: TextEditingController(),
-                      cursorHeight: 12, // Match cursor height to text size
-                      decoration: InputDecoration(
-                        isDense: true, // Ensures the field is compact
-                        contentPadding:
-                            EdgeInsets.zero, // Removes unnecessary padding
-                        hintText: "Bill Person",
-                        hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade400,
-                            width: 0.5,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.green,
-                          ),
-                        ),
-                      ),
+                  // SizedBox(
+                  //   height: 30,
+                  //   width: 90,
+                  //   child: TextField(
+                  //     style: const TextStyle(
+                  //       color: Colors.black,
+                  //       fontSize: 12,
+                  //     ),
+                  //     controller: TextEditingController(),
+                  //     cursorHeight: 12, // Match cursor height to text size
+                  //     decoration: InputDecoration(
+                  //       isDense: true, // Ensures the field is compact
+                  //       contentPadding:
+                  //           EdgeInsets.zero, // Removes unnecessary padding
+                  //       hintText: "Bill Person",
+                  //       hintStyle: TextStyle(
+                  //           color: Colors.grey.shade400,
+                  //           fontSize: 12,
+                  //           fontWeight: FontWeight.w600),
+                  //       enabledBorder: UnderlineInputBorder(
+                  //         borderSide: BorderSide(
+                  //           color: Colors.grey.shade400,
+                  //           width: 0.5,
+                  //         ),
+                  //       ),
+                  //       focusedBorder: const UnderlineInputBorder(
+                  //         borderSide: BorderSide(
+                  //           color: Colors.green,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Consumer<PaymentVoucherProvider>(
+                      builder: (context, provider, child) {
+                        return SizedBox(
+                          height: 30,
+                          width: 130,
+                          child: provider.isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : CustomDropdownTwo(
+                                  hint: '',
+                                  items: provider.billPersonNames,
+                                  width: double.infinity,
+                                  height: 30,
+                                  labelText: 'Bill Person',
+                                  selectedItem: selectedBillPerson,
+                                  onChanged: (value) {
+                                    debugPrint(
+                                        '=== Bill Person Selected: $value ===');
+                                    setState(() {
+                                      selectedBillPerson = value;
+                                      selectedBillPersonData =
+                                          provider.billPersons.firstWhere(
+                                        (person) => person.name == value,
+                                      ); // ✅ Save the whole object globally
+                                      selectedBillPersonId =
+                                          selectedBillPersonData!.id;
+                                    });
+
+                                    debugPrint('Selected Bill Person Details:');
+                                    debugPrint(
+                                        '- ID: ${selectedBillPersonData!.id}');
+                                    debugPrint(
+                                        '- Name: ${selectedBillPersonData!.name}');
+                                    debugPrint(
+                                        '- Phone: ${selectedBillPersonData!.phone}');
+                                  }),
+                        );
+                      },
                     ),
                   ),
+                  
                   // Bill No Field
 
                   const SizedBox(
@@ -421,83 +472,86 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                     const SizedBox(height: 8),
 
                     /// Sales List (Only show when customer is selected)
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 2, // Replace with your sales list count
-                      itemBuilder: (context, index) {
-                        bool isExpanded = expandedIndexes.contains(index);
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 2, vertical: 1),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(3)),
-                            elevation: 1,
-                            margin: const EdgeInsets.only(bottom: 2),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  // Toggle individual expansion
-                                  if (isExpanded) {
-                                    expandedIndexes.remove(index);
-                                  } else {
-                                    expandedIndexes.add(index);
-                                  }
-                                });
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6.0, vertical: 6.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Top Row
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text('Sales/1254', style: ts),
-                                        Text('12/05/2025', style: ts),
-                                        Text('Bill 5,000', style: ts),
-                                        Text('Due 4,360', style: ts),
-                                        Icon(
-                                          isExpanded
-                                              ? Icons.arrow_drop_up
-                                              : Icons.arrow_drop_down,
-                                          size: 28,
-                                        ),
-                                      ],
-                                    ),
-                                    // Expanded Section
-                                    if (isExpanded) ...[
-                                      const SizedBox(height: 8),
+                    SizedBox(
+                      height: 300,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        //physics: const NeverScrollableScrollPhysics(),
+                        itemCount: 10, // Replace with your sales list count
+                        itemBuilder: (context, index) {
+                          bool isExpanded = expandedIndexes.contains(index);
+                      
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 2, vertical: 1),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(3)),
+                              elevation: 1,
+                              margin: const EdgeInsets.only(bottom: 2),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    // Toggle individual expansion
+                                    if (isExpanded) {
+                                      expandedIndexes.remove(index);
+                                    } else {
+                                      expandedIndexes.add(index);
+                                    }
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0, vertical: 6.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Top Row
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text('Receipt', style: ts),
-                                          const SizedBox(width: 10),
-                                          SizedBox(
-                                            height: 30,
-                                            width: 150,
-                                            child: AddSalesFormfield(
-                                              controller:
-                                                  TextEditingController(),
-                                              onChanged: (value) {},
-                                            ),
+                                          Text('Sales/1254', style: ts),
+                                          Text('12/05/2025', style: ts),
+                                          Text('Bill 5,000', style: ts),
+                                          Text('Due 4,360', style: ts),
+                                          Icon(
+                                            isExpanded
+                                                ? Icons.arrow_drop_up
+                                                : Icons.arrow_drop_down,
+                                            size: 28,
                                           ),
                                         ],
                                       ),
-                                    ]
-                                  ],
+                                      // Expanded Section
+                                      if (isExpanded) ...[
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text('Receipt', style: ts),
+                                            const SizedBox(width: 10),
+                                            SizedBox(
+                                              height: 30,
+                                              width: 150,
+                                              child: AddSalesFormfield(
+                                                controller:
+                                                    TextEditingController(),
+                                                onChanged: (value) {},
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ]
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     )
                   ]
                 ],

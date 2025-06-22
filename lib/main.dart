@@ -1,3 +1,4 @@
+import 'package:cbook_dt/feature/Received/provider/received_provider.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:cbook_dt/feature/authentication/provider/login_provider.dart';
@@ -11,6 +12,7 @@ import 'package:cbook_dt/feature/item/provider/item_save_provider.dart';
 import 'package:cbook_dt/feature/item/provider/items_show_provider.dart';
 import 'package:cbook_dt/feature/item/provider/unit_provider.dart';
 import 'package:cbook_dt/feature/item/provider/update_item_provider.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/purchase/controller/purchase_controller.dart';
 import 'package:cbook_dt/feature/purchase/provider/purchase_provider.dart';
 import 'package:cbook_dt/feature/purchase/purchase_update.dart';
@@ -112,6 +114,9 @@ void main() async {
               create: (_) => SettingUserProvider()..fetchUsers()),
             ChangeNotifierProvider(create: (_) => IncomeProvider()),
             ChangeNotifierProvider(create: (_) => ExpenseProvider()),
+          ChangeNotifierProvider(create: (_) => PaymentVoucherProvider()), 
+          ChangeNotifierProvider(create: (_) => ReceiveVoucherProvider()),  
+
           
           ],
         child: const MyApp(),

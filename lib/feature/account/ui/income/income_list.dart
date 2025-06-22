@@ -1,4 +1,5 @@
 import 'package:cbook_dt/feature/account/ui/income/add_income.dart';
+import 'package:cbook_dt/feature/account/ui/income/income_details.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_edit.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class _IncomeState extends State<Income> {
     // List of forms with metadata
 
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -91,151 +93,154 @@ class _IncomeState extends State<Income> {
 
             Column(
               children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Row(
-                        children: [
-                          // Start Date Picker
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            child: GestureDetector(
-                              onTap: () => _selectDate(
-                                  context, selectedStartDate, (date) {
-                                setState(() {
-                                  selectedStartDate = date;
-                                });
-                              }),
-                              child: Container(
-                                height: 30,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: BoxDecoration(
-                                  // border:
-                                  //     Border.all(color: Colors.grey.shade100),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}",
-                                      style: GoogleFonts.notoSansPhagsPa(
-                                          fontSize: 12, color: Colors.black),
-                                    ),
-                                    const Icon(Icons.calendar_today, size: 14),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text("To",
-                              style: GoogleFonts.notoSansPhagsPa(
-                                  fontSize: 14, color: Colors.black)),
-                          const SizedBox(width: 8),
 
-                          // End Date Picker
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            child: GestureDetector(
-                              onTap: () =>
-                                  _selectDate(context, selectedEndDate, (date) {
-                                setState(() {
-                                  selectedEndDate = date;
-                                });
-                              }),
-                              child: Container(
-                                height: 30,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: BoxDecoration(
-                                  // border:
-                                  //     Border.all(color: Colors.grey.shade100),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}",
-                                      style: GoogleFonts.notoSansPhagsPa(
-                                          fontSize: 12, color: Colors.black),
-                                    ),
-                                    const Icon(Icons.calendar_today, size: 14),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
+                ///start date, end date, dropdown, this working, but now no need.
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: DecoratedBox(
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.circular(4),
+                //     ),
+                //     child: Padding(
+                //       padding: const EdgeInsets.all(6.0),
+                //       child: Row(
+                //         children: [
+                //           // Start Date Picker
+                //           SizedBox(
+                //             width: MediaQuery.of(context).size.width * 0.25,
+                //             child: GestureDetector(
+                //               onTap: () => _selectDate(
+                //                   context, selectedStartDate, (date) {
+                //                 setState(() {
+                //                   selectedStartDate = date;
+                //                 });
+                //               }),
+                //               child: Container(
+                //                 height: 30,
+                //                 padding:
+                //                     const EdgeInsets.symmetric(horizontal: 8),
+                //                 decoration: BoxDecoration(
+                //                   // border:
+                //                   //     Border.all(color: Colors.grey.shade100),
+                //                   borderRadius: BorderRadius.circular(4),
+                //                 ),
+                //                 child: Row(
+                //                   mainAxisAlignment:
+                //                       MainAxisAlignment.spaceBetween,
+                //                   children: [
+                //                     Text(
+                //                       "${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}",
+                //                       style: GoogleFonts.notoSansPhagsPa(
+                //                           fontSize: 12, color: Colors.black),
+                //                     ),
+                //                     const Icon(Icons.calendar_today, size: 14),
+                //                   ],
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //           const SizedBox(width: 8),
+                //           Text("To",
+                //               style: GoogleFonts.notoSansPhagsPa(
+                //                   fontSize: 14, color: Colors.black)),
+                //           const SizedBox(width: 8),
 
-                          const Spacer(),
+                //           // End Date Picker
+                //           SizedBox(
+                //             width: MediaQuery.of(context).size.width * 0.25,
+                //             child: GestureDetector(
+                //               onTap: () =>
+                //                   _selectDate(context, selectedEndDate, (date) {
+                //                 setState(() {
+                //                   selectedEndDate = date;
+                //                 });
+                //               }),
+                //               child: Container(
+                //                 height: 30,
+                //                 padding:
+                //                     const EdgeInsets.symmetric(horizontal: 8),
+                //                 decoration: BoxDecoration(
+                //                   // border:
+                //                   //     Border.all(color: Colors.grey.shade100),
+                //                   borderRadius: BorderRadius.circular(4),
+                //                 ),
+                //                 child: Row(
+                //                   mainAxisAlignment:
+                //                       MainAxisAlignment.spaceBetween,
+                //                   children: [
+                //                     Text(
+                //                       "${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}",
+                //                       style: GoogleFonts.notoSansPhagsPa(
+                //                           fontSize: 12, color: Colors.black),
+                //                     ),
+                //                     const Icon(Icons.calendar_today, size: 14),
+                //                   ],
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //           const SizedBox(width: 8),
 
-                          // Dropdown
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            child: SizedBox(
-                              height: 30,
-                              child: DropdownButtonFormField<String>(
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(horizontal: 0),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.grey.shade100),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey.shade100)),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide:
-                                        BorderSide(color: Colors.grey.shade200),
-                                  ),
-                                ),
-                                value: selectedDropdownValue,
-                                hint: const Text(""),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedDropdownValue = newValue;
-                                  });
-                                },
-                                items: [
-                                  "All",
-                                  "Purchase",
-                                  "Sale",
-                                  "P. Return",
-                                  "S. Return"
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4.0),
-                                      child: Text(value,
-                                          style: GoogleFonts.notoSansPhagsPa(
-                                              fontSize: 12,
-                                              color: Colors.black)),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                //           const Spacer(),
+
+                //           // Dropdown
+                //           SizedBox(
+                //             width: MediaQuery.of(context).size.width * 0.25,
+                //             child: SizedBox(
+                //               height: 30,
+                //               child: DropdownButtonFormField<String>(
+                //                 decoration: InputDecoration(
+                //                   contentPadding:
+                //                       const EdgeInsets.symmetric(horizontal: 0),
+                //                   enabledBorder: OutlineInputBorder(
+                //                     borderSide:
+                //                         BorderSide(color: Colors.grey.shade100),
+                //                   ),
+                //                   focusedBorder: OutlineInputBorder(
+                //                       borderSide: BorderSide(
+                //                           color: Colors.grey.shade100)),
+                //                   border: OutlineInputBorder(
+                //                     borderRadius: BorderRadius.circular(4),
+                //                     borderSide:
+                //                         BorderSide(color: Colors.grey.shade200),
+                //                   ),
+                //                 ),
+                //                 value: selectedDropdownValue,
+                //                 hint: const Text(""),
+                //                 onChanged: (String? newValue) {
+                //                   setState(() {
+                //                     selectedDropdownValue = newValue;
+                //                   });
+                //                 },
+                //                 items: [
+                //                   "All",
+                //                   "Purchase",
+                //                   "Sale",
+                //                   "P. Return",
+                //                   "S. Return"
+                //                 ].map<DropdownMenuItem<String>>((String value) {
+                //                   return DropdownMenuItem<String>(
+                //                     value: value,
+                //                     child: Padding(
+                //                       padding: const EdgeInsets.symmetric(
+                //                           horizontal: 4.0),
+                //                       child: Text(value,
+                //                           style: GoogleFonts.notoSansPhagsPa(
+                //                               fontSize: 12,
+                //                               color: Colors.black)),
+                //                     ),
+                //                   );
+                //                 }).toList(),
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                
                 const SizedBox(
                   height: 5,
                 ),
@@ -262,129 +267,145 @@ class _IncomeState extends State<Income> {
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 4.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xffe3e7fa),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 8.0),
-                              child: Row(
-                                children: [
-                                  /// Left side
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Received To",
-                                        style: TextStyle(
+                              horizontal: 0.0, vertical: 0.0),
+                          child: InkWell(
+                            onLongPress: () {
+                              editDeleteDiolog(context, incomeId);
+                            },
+                            onTap: () {
+                              ///navigation to expense deatils page
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const IncomeDetails()));
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xffe3e7fa),
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4.0, vertical: 4.0),
+                                child: Row(
+                                  children: [
+                                    /// Left side
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "Received To",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          income.receivedTo.toLowerCase() ==
+                                                  'cash'
+                                              ? 'Cash In Hand'
+                                              : income.receivedTo
+                                                          .toLowerCase() ==
+                                                      'bank'
+                                                  ? 'Bank'
+                                                  : income.receivedTo,
+                                          style: const TextStyle(
                                             color: Colors.black,
                                             fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        income.receivedTo.toLowerCase() ==
-                                                'cash'
-                                            ? 'Cash In Hand'
-                                            : income.receivedTo.toLowerCase() ==
-                                                    'bank'
-                                                ? 'Bank'
-                                                : income.receivedTo,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        income.accountId == 1
-                                            ? 'Cash'
-                                            : income.accountId == 11
-                                                ? 'PTCash'
-                                                : income.accountId == 10
-                                                    ? 'PTCash'
-                                                    : income.accountId == 13
-                                                        ? 'Cash 1'
-                                                        : income.accountId == 15
-                                                            ? 'Cash 2'
-                                                            : '${income.accountId}', // Show ID if not matched
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
+                                        Text(
+                                          income.accountId == 1
+                                              ? 'Cash'
+                                              : income.accountId == 11
+                                                  ? 'PTCash'
+                                                  : income.accountId == 10
+                                                      ? 'PTCash'
+                                                      : income.accountId == 13
+                                                          ? 'Cash 1'
+                                                          : income.accountId ==
+                                                                  15
+                                                              ? 'Cash 2'
+                                                              : '${income.accountId}', // Show ID if not matched
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Spacer(),
+                                      ],
+                                    ),
+                                    const Spacer(),
 
-                                  /// Right side
-                                  Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            income.voucherDate,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            income.voucherNumber,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12),
-                                          ),
-                                          Text(
-                                            income.totalAmount.toString(),
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      PopupMenuButton<String>(
-                                        onSelected: (String choice) {
-                                          if (choice == 'edit') {
-                                            // Navigate to Edit Page
-                                            // Navigator.push(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //     builder: (context) => IncomeEdit(
-                                            //         incomeId: incomeId),
-                                            //   ),
-                                            // );
-                                          } else if (choice == 'delete') {
-                                            // Show Delete Confirmation Dialog
-                                            _showDeleteDialog(
-                                                context, incomeId);
-                                          }
-                                        },
-                                        itemBuilder: (BuildContext context) =>
-                                            <PopupMenuEntry<String>>[
-                                          const PopupMenuItem<String>(
-                                            value: 'edit',
-                                            textStyle:
-                                                TextStyle(color: Colors.blue),
-                                            child: Text('Edit'),
-                                          ),
-                                          const PopupMenuItem<String>(
-                                            value: 'delete',
-                                            textStyle:
-                                                TextStyle(color: Colors.red),
-                                            child: Text('Delete'),
-                                          ),
-                                        ],
-                                        icon: const Icon(
-                                            Icons.more_vert), // 3-dot icon
-                                      )
-                                    ],
-                                  )
-                                ],
+                                    ///Right side
+                                    Row(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              income.voucherDate,
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12),
+                                            ),
+                                            Text(
+                                              income.voucherNumber,
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12),
+                                            ),
+                                            Text(
+                                              income.totalAmount.toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        //working =====> 3 dot, edit and delete.
+                                        // PopupMenuButton<String>(
+                                        //   onSelected: (String choice) {
+                                        //     if (choice == 'edit') {
+                                        //       // Navigate to Edit Page
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => IncomeEdit(
+                                        //         incomeId: incomeId),
+                                        //   ),
+                                        // );
+                                        //     } else if (choice == 'delete') {
+                                        //       // Show Delete Confirmation Dialog
+                                        //       _showDeleteDialog(
+                                        //           context, incomeId);
+                                        //     }
+                                        //   },
+                                        //   itemBuilder: (BuildContext context) =>
+                                        //       <PopupMenuEntry<String>>[
+                                        //     const PopupMenuItem<String>(
+                                        //       value: 'edit',
+                                        //       textStyle:
+                                        //           TextStyle(color: Colors.blue),
+                                        //       child: Text('Edit'),
+                                        //     ),
+                                        //     const PopupMenuItem<String>(
+                                        //       value: 'delete',
+                                        //       textStyle:
+                                        //           TextStyle(color: Colors.red),
+                                        //       child: Text('Delete'),
+                                        //     ),
+                                        //   ],
+                                        //   icon: const Icon(
+                                        //       Icons.more_vert), // 3-dot icon
+                                        // )
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -399,6 +420,94 @@ class _IncomeState extends State<Income> {
             ///Bottom
           ],
         ));
+  }
+
+  Future<dynamic> editDeleteDiolog(BuildContext context, String incomeId) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    //Navigate to Edit Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IncomeEdit(incomeId: incomeId),
+                      ),
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, incomeId);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _showDeleteDialog(BuildContext context, String incomeId) {

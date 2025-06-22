@@ -4,7 +4,6 @@ import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_popup.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
-import 'package:cbook_dt/feature/home/presentation/layer/dashboard/dashboard_view.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +42,16 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
     }
   }
 
+  @override
+  void dispose() {
+    // Clear receipt items when leaving the page
+    final providerExpense =
+        Provider.of<ExpenseProvider>(context, listen: false);
+    providerExpense.clearReceiptItems();
+
+    super.dispose();
+  }
+
   TextEditingController billNoController = TextEditingController();
   String billNo = '';
 
@@ -77,529 +86,544 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
 
     // List of forms with metadata
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: colorScheme.primary,
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: true,
-        title: const Column(
-          children: [
-            SizedBox(
-              width: 5,
-            ),
-            Text(
-              'Expence Create',
-              style: TextStyle(
-                  color: Colors.yellow,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              width: 5,
-            )
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          ///1 section
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return PopScope(
+      canPop: true, // Allow the back navigation
+
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          // Clear receipt items when user navigates back
+          providerExpense.clearReceiptItems();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: colorScheme.primary,
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+          automaticallyImplyLeading: true,
+          title: const Column(
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 30,
-                    width: 150,
-                    child: CustomDropdownTwo(
-                      hint: '',
-                      items: const ['Cash in Hand', 'Bank'],
-                      width: double.infinity,
-                      height: 30,
-                      labelText: 'Paid To',
-                      selectedItem: selectedReceivedTo,
-                      onChanged: (value) async {
-                        debugPrint('=== Received To Selected: $value ===');
-
-                        setState(() {
-                          selectedReceivedTo = value;
-                          selectedAccount = null; // reset account selection
-                        });
-
-                        if (value == 'Cash in Hand') {
-                          debugPrint('Fetching Cash accounts...');
-                          await provider.fetchAccounts('cash');
-                        } else if (value == 'Bank') {
-                          debugPrint('Fetching Bank accounts...');
-                          await provider.fetchAccounts('bank');
-                        }
-
-                        debugPrint(
-                            'Fetched Account Names: ${provider.accountNames}');
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  /// Account Dropdown
-                  SizedBox(
-                    height: 30,
-                    width: 150,
-                    child: provider.isAccountLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : CustomDropdownTwo(
-                            hint: '',
-                            items: provider.accountNames,
-                            width: double.infinity,
-                            height: 30,
-                            labelText: 'A/C',
-                            selectedItem: selectedAccount,
-                            onChanged: (value) {
-                              debugPrint('=== Account Selected: $value ===');
-                              setState(() {
-                                selectedAccount = value;
-                              });
-
-                              if (provider.accountModel != null) {
-                                final selectedAccountData = provider
-                                    .accountModel!.data
-                                    .firstWhere((account) =>
-                                        account.accountName == value);
-
-                                selectedAccountId = selectedAccountData.id;
-
-                                debugPrint('=== Account Selected: $value ===');
-                                if (selectedAccountId != null) {
-                                  debugPrint(
-                                      'Selected Account ID: $selectedAccountId');
-                                }
-
-                                debugPrint('Selected Account Details:');
-                                debugPrint('- ID: ${selectedAccountData.id}');
-                                debugPrint(
-                                    '- Name: ${selectedAccountData.accountName}');
-                                debugPrint('- Type: $selectedReceivedTo');
-                              }
-                            },
-                          ),
-                  ),
-                ],
+              SizedBox(
+                width: 5,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  //bill person
-                  SizedBox(
-                    height: 30,
-                    width: 90,
-                    child: TextField(
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
-                      controller: TextEditingController(),
-                      cursorHeight: 12, // Match cursor height to text size
-                      decoration: InputDecoration(
-                        isDense: true, // Ensures the field is compact
-                        contentPadding:
-                            EdgeInsets.zero, // Removes unnecessary padding
-                        hintText: "Bill Person",
-                        hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade400,
-                            width: 0.5,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.green,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Bill No Field
-
-                  const SizedBox(
-                    height: 8,
-                  ),
-
-                  ///bill no, bill person
-                  SizedBox(
-                    height: 30,
-                    width: 90,
-                    child: TextField(
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
-                      controller: billNoController,
-                      cursorHeight: 12,
-                      onChanged: (value) {
-                        billNo = value;
-                      }, // Match cursor height to text size
-                      decoration: InputDecoration(
-                        isDense: true, // Ensures the field is compact
-                        contentPadding:
-                            EdgeInsets.zero, // Removes unnecessary padding
-                        hintText: "Bill no",
-                        hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade400,
-                            width: 0.5,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.green,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  //person
-
-                  ///bill date
-                  SizedBox(
-                    height: 30,
-                    width: 90,
-                    child: InkWell(
-                      // onTap: () => controller.pickDate(
-                      //     context), // Trigger the date picker
-                      child: InputDecorator(
-                        decoration: InputDecoration(
-                          isDense: true,
-                          suffixIcon: Icon(
-                            Icons.calendar_today,
-                            size: 16,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          suffixIconConstraints: const BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ), // Adjust constraints to align icon closely
-                          hintText: "Bill Date",
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 9,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey.shade400, width: 0.5),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.green),
-                          ),
-                        ),
-                        child: Text(
-                          controller.formattedDate.isNotEmpty
-                              ? controller.formattedDate
-                              : "Select Date", // Default text when no date is selected
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              Text(
+                'Expence Create',
+                style: TextStyle(
+                    color: Colors.yellow,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                width: 5,
               )
             ],
           ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            ///1 section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 30,
+                      width: 150,
+                      child: CustomDropdownTwo(
+                        hint: '',
+                        items: const ['Cash in Hand', 'Bank'],
+                        width: double.infinity,
+                        height: 30,
+                        labelText: 'Paid To',
+                        selectedItem: selectedReceivedTo,
+                        onChanged: (value) async {
+                          debugPrint('=== Received To Selected: $value ===');
 
-          const SizedBox(
-            height: 6,
-          ),
+                          setState(() {
+                            selectedReceivedTo = value;
+                            selectedAccount = null; // reset account selection
+                          });
 
-          if (providerExpense.receiptItems.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:
-                  providerExpense.receiptItems.asMap().entries.map((entry) {
-                int index = entry.key + 1;
-                var item = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(8),
+                          if (value == 'Cash in Hand') {
+                            debugPrint('Fetching Cash accounts...');
+                            await provider.fetchAccounts('cash');
+                          } else if (value == 'Bank') {
+                            debugPrint('Fetching Bank accounts...');
+                            await provider.fetchAccounts('bank');
+                          }
+
+                          debugPrint(
+                              'Fetched Account Names: ${provider.accountNames}');
+                        },
+                      ),
                     ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          '$index.',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color: Colors.black,
+
+                    const SizedBox(height: 10),
+
+                    /// Account Dropdown
+                    SizedBox(
+                      height: 30,
+                      width: 150,
+                      child: provider.isAccountLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : CustomDropdownTwo(
+                              hint: '',
+                              items: provider.accountNames,
+                              width: double.infinity,
+                              height: 30,
+                              labelText: 'A/C',
+                              selectedItem: selectedAccount,
+                              onChanged: (value) {
+                                debugPrint('=== Account Selected: $value ===');
+                                setState(() {
+                                  selectedAccount = value;
+                                });
+
+                                if (provider.accountModel != null) {
+                                  final selectedAccountData = provider
+                                      .accountModel!.data
+                                      .firstWhere((account) =>
+                                          account.accountName == value);
+
+                                  selectedAccountId = selectedAccountData.id;
+
+                                  debugPrint(
+                                      '=== Account Selected: $value ===');
+                                  if (selectedAccountId != null) {
+                                    debugPrint(
+                                        'Selected Account ID: $selectedAccountId');
+                                  }
+
+                                  debugPrint('Selected Account Details:');
+                                  debugPrint('- ID: ${selectedAccountData.id}');
+                                  debugPrint(
+                                      '- Name: ${selectedAccountData.accountName}');
+                                  debugPrint('- Type: $selectedReceivedTo');
+                                }
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    //bill person
+                    SizedBox(
+                      height: 30,
+                      width: 90,
+                      child: TextField(
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                        ),
+                        controller: TextEditingController(),
+                        cursorHeight: 12, // Match cursor height to text size
+                        decoration: InputDecoration(
+                          isDense: true, // Ensures the field is compact
+                          contentPadding:
+                              EdgeInsets.zero, // Removes unnecessary padding
+                          hintText: "Bill Person",
+                          hintStyle: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.grey.shade400,
+                              width: 0.5,
+                            ),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.green,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                    ),
+                    // Bill No Field
+
+                    const SizedBox(
+                      height: 8,
+                    ),
+
+                    ///bill no, bill person
+                    SizedBox(
+                      height: 30,
+                      width: 90,
+                      child: TextField(
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                        ),
+                        controller: billNoController,
+                        cursorHeight: 12,
+                        onChanged: (value) {
+                          billNo = value;
+                        }, // Match cursor height to text size
+                        decoration: InputDecoration(
+                          isDense: true, // Ensures the field is compact
+                          contentPadding:
+                              EdgeInsets.zero, // Removes unnecessary padding
+                          hintText: "Bill no",
+                          hintStyle: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.grey.shade400,
+                              width: 0.5,
+                            ),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.green,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    //person
+
+                    ///bill date
+                    SizedBox(
+                      height: 30,
+                      width: 90,
+                      child: InkWell(
+                        // onTap: () => controller.pickDate(
+                        //     context), // Trigger the date picker
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            isDense: true,
+                            suffixIcon: Icon(
+                              Icons.calendar_today,
+                              size: 16,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ), // Adjust constraints to align icon closely
+                            hintText: "Bill Date",
+                            hintStyle: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 9,
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.grey.shade400, width: 0.5),
+                            ),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                            ),
+                          ),
+                          child: Text(
+                            controller.formattedDate.isNotEmpty
+                                ? controller.formattedDate
+                                : "Select Date", // Default text when no date is selected
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+
+            const SizedBox(
+              height: 6,
+            ),
+
+            if (providerExpense.receiptItems.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:
+                    providerExpense.receiptItems.asMap().entries.map((entry) {
+                  int index = entry.key + 1;
+                  var item = entry.value;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            '$index.',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.receiptFrom,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 1),
+                                Text(
+                                  item.note,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                item.receiptFrom,
+                                item.amount.toString(),
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   fontSize: 14,
+                                  fontWeight: FontWeight.bold,
                                   color: Colors.black,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
-                              const SizedBox(height: 1),
-                              Text(
-                                item.note,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.black54,
+                              IconButton(
+                                icon: const CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 13,
+                                  child: Icon(Icons.close, size: 20),
                                 ),
-                                textAlign: TextAlign.center,
+                                onPressed: () {
+                                  providerExpense.receiptItems.remove(item);
+                                  providerExpense.notifyListeners();
+                                },
                               ),
                             ],
                           ),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              item.amount.toString(),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            IconButton(
-                              icon: const CircleAvatar(
-                                backgroundColor: Colors.grey,
-                                radius: 13,
-                                child: Icon(Icons.close, size: 20),
-                              ),
-                              onPressed: () {
-                                providerExpense.receiptItems.remove(item);
-                                providerExpense.notifyListeners();
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-
-          const SizedBox(height: 6),
-
-          ///2 section
-          InkWell(
-            onTap: () async {
-              await provider
-                  .fetchReceiptFromList(); // 🔥 Fetch API before showing dialog
-
-              final expenseProvider =
-                  Provider.of<ExpenseProvider>(context, listen: false);
-              await expenseProvider.fetchPaidFormList();
-              showExpenseCreateDialog(context, expenseProvider);
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Paid From",
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                    InkWell(
-                      onTap: () {},
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 18,
+                        ],
                       ),
-                    )
+                    ),
+                  );
+                }).toList(),
+              ),
+
+            const SizedBox(height: 6),
+
+            ///2 section
+            InkWell(
+              onTap: () async {
+                await provider
+                    .fetchReceiptFromList(); // 🔥 Fetch API before showing dialog
+
+                final expenseProvider =
+                    Provider.of<ExpenseProvider>(context, listen: false);
+                await expenseProvider.fetchPaidFormList();
+                showExpenseCreateDialog(context, expenseProvider);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
                   ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Paid From",
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
 
-          const Spacer(),
+            const Spacer(),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              /// Total Amount Section
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text(
-                      "Total: ",
-                      style: TextStyle(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                /// Total Amount Section
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Text(
+                        "Total: ",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black),
+                      ),
+                      Text(
+                        providerExpense.receiptItems.fold<double>(
+                          0,
+                          (sum, item) {
+                            // parse amount string safely to double
+                            final amt =
+                                double.tryParse(item.amount.toString()) ?? 0.0;
+                            return sum + amt;
+                          },
+                        ).toStringAsFixed(2),
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: Colors.black),
-                    ),
-                    Text(
-                      providerExpense.receiptItems.fold<double>(
-                        0,
-                        (sum, item) {
-                          // parse amount string safely to double
-                          final amt =
-                              double.tryParse(item.amount.toString()) ?? 0.0;
-                          return sum + amt;
-                        },
-                      ).toStringAsFixed(2),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black87,
+                          color: Colors.black87,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5)),
-
-                    backgroundColor: Colors.green, // Button background color
-                    foregroundColor: Colors.white, // Button text color
+                    ],
                   ),
-                  onPressed: () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    String? userId = prefs.getInt('user_id')?.toString();
-
-                    if (userId == null) {
-                      debugPrint("User ID is null");
-                      return;
-                    }
-
-                    final invoiceNo = billNoController.text.trim();
-                    const date =
-                        "2025-06-10"; // your date string like '2025-06-10'
-                    final receivedTo = (selectedReceivedTo ?? '').toLowerCase();
-                    final account = selectedAccountId.toString();
-                    const notes = 'text'; // Or from your input field
-                    const status = 1;
-
-                    final totalAmount =
-                        providerExpense.receiptItems.fold<double>(
-                      0,
-                      (sum, item) =>
-                          sum + (double.tryParse(item.amount.toString()) ?? 0),
-                    );
-
-                    // Prepare income items with correct account_id (use your actual accountId)
-                    final List<ExpenseItemPopUp> expenseItems =
-                        providerExpense.receiptItems.map((item) {
-                      return ExpenseItemPopUp(
-                        accountId:
-                            account, // or item-specific account id if different
-                        narration: item.note,
-                        amount: item.amount.toString(),
-                      );
-                    }).toList();
-
-                    // 👉 Print all sending data
-                    debugPrint('Sending Data:');
-                    debugPrint('User ID: $userId');
-                    debugPrint('Expense No: $invoiceNo');
-                    debugPrint('Date: $date');
-                    debugPrint('Paid To: $receivedTo');
-                    debugPrint('Account: $account');
-                    debugPrint('Total Amount: $totalAmount');
-                    debugPrint('Notes: $notes');
-                    debugPrint('Status: $status');
-                    debugPrint(
-                        'Expense Items: ${expenseItems.map((e) => e.toJson()).toList()}');
-
-                    bool success = await providerExpense.storeExpense(
-                      userId: userId,
-                      invoiceNo: invoiceNo,
-                      date: date,
-                      receivedTo: receivedTo,
-                      account: account,
-                      totalAmount: totalAmount,
-                      notes: notes,
-                      status: status,
-                      expenseItems: expenseItems,
-                    );
-
-                    if (success) {
-                      providerExpense.receiptItems.clear();
-                      providerExpense.notifyListeners();
-
-                      // Navigate to Income page (replace with your actual route)
-                      // Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => const Expanse()));
-
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Expanse()),
-                        (Route<dynamic> route) => false,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed to save income.')),
-                      );
-                    }
-                  },
-                  child: const Text("Save"),
                 ),
-              ),
-            ],
-          ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
 
-          const SizedBox(
-            height: 10,
-          )
-        ]),
+                      backgroundColor: Colors.green, // Button background color
+                      foregroundColor: Colors.white, // Button text color
+                    ),
+                    onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      String? userId = prefs.getInt('user_id')?.toString();
+
+                      if (userId == null) {
+                        debugPrint("User ID is null");
+                        return;
+                      }
+
+                      final invoiceNo = billNoController.text.trim();
+                      const date =
+                          "2025-06-10"; // your date string like '2025-06-10'
+                      final receivedTo =
+                          (selectedReceivedTo ?? '').toLowerCase();
+                      final account = selectedAccountId.toString();
+                      const notes = 'text'; // Or from your input field
+                      const status = 1;
+
+                      final totalAmount =
+                          providerExpense.receiptItems.fold<double>(
+                        0,
+                        (sum, item) =>
+                            sum +
+                            (double.tryParse(item.amount.toString()) ?? 0),
+                      );
+
+                      // Prepare income items with correct account_id (use your actual accountId)
+                      final List<ExpenseItemPopUp> expenseItems =
+                          providerExpense.receiptItems.map((item) {
+                        return ExpenseItemPopUp(
+                          accountId:
+                              account, // or item-specific account id if different
+                          narration: item.note,
+                          amount: item.amount.toString(),
+                        );
+                      }).toList();
+
+                      // 👉 Print all sending data
+                      debugPrint('Sending Data:');
+                      debugPrint('User ID: $userId');
+                      debugPrint('Expense No: $invoiceNo');
+                      debugPrint('Date: $date');
+                      debugPrint('Paid To: $receivedTo');
+                      debugPrint('Account: $account');
+                      debugPrint('Total Amount: $totalAmount');
+                      debugPrint('Notes: $notes');
+                      debugPrint('Status: $status');
+                      debugPrint(
+                          'Expense Items: ${expenseItems.map((e) => e.toJson()).toList()}');
+
+                      bool success = await providerExpense.storeExpense(
+                        userId: userId,
+                        invoiceNo: invoiceNo,
+                        date: date,
+                        receivedTo: receivedTo,
+                        account: account,
+                        totalAmount: totalAmount,
+                        notes: notes,
+                        status: status,
+                        expenseItems: expenseItems,
+                      );
+
+                      if (success) {
+                        providerExpense.receiptItems.clear();
+                        providerExpense.notifyListeners();
+
+                        // Navigate to Income page (replace with your actual route)
+                        // Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const Expanse()));
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Expanse()),
+                          (Route<dynamic> route) => false,
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Failed to save income.')),
+                        );
+                      }
+                    },
+                    child: const Text("Save"),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(
+              height: 10,
+            )
+          ]),
+        ),
       ),
     );
   }
@@ -728,7 +752,12 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                                   Navigator.of(context).pop();
                                 }
                               },
-                              child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold, ),),
+                              child: const Text(
+                                'Add',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ],
                         ),
