@@ -3,6 +3,8 @@ import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/recived_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,10 @@ class _IncomeCreateState extends State<IncomeCreate> {
   DateTime selectedEndDate = DateTime.now();
   // Default to current date
   String? selectedDropdownValue;
+
+  String? selectedBillPerson;
+  int? selectedBillPersonId;
+  BillPersonModel? selectedBillPersonData;
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -61,6 +67,13 @@ class _IncomeCreateState extends State<IncomeCreate> {
 
     // Print JSON string in console
     debugPrint('Final JSON Payload: $finalPayload');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false).fetchBillPersons());
   }
 
   @override
@@ -208,49 +221,61 @@ class _IncomeCreateState extends State<IncomeCreate> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     //bill person
-                    SizedBox(
-                      height: 30,
-                      width: 90,
-                      child: TextField(
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                        ),
-                        controller: TextEditingController(),
-                        cursorHeight: 12, // Match cursor height to text size
-                        decoration: InputDecoration(
-                          isDense: true, // Ensures the field is compact
-                          contentPadding:
-                              EdgeInsets.zero, // Removes unnecessary padding
-                          hintText: "Bill Person",
-                          hintStyle: TextStyle(
-                              color: Colors.grey.shade400,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade400,
-                              width: 0.5,
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                        ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Consumer<PaymentVoucherProvider>(
+                        builder: (context, provider, child) {
+                          return SizedBox(
+                            height: 30,
+                            width: 130,
+                            child: provider.isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator())
+                                : CustomDropdownTwo(
+                                    hint: '',
+                                    items: provider.billPersonNames,
+                                    width: double.infinity,
+                                    height: 30,
+                                    labelText: 'Bill Person',
+                                    selectedItem: selectedBillPerson,
+                                    onChanged: (value) {
+                                      debugPrint(
+                                          '=== Bill Person Selected: $value ===');
+                                      setState(() {
+                                        selectedBillPerson = value;
+                                        selectedBillPersonData =
+                                            provider.billPersons.firstWhere(
+                                          (person) => person.name == value,
+                                        ); // ✅ Save the whole object globally
+                                        selectedBillPersonId =
+                                            selectedBillPersonData!.id;
+                                      });
+
+                                      debugPrint(
+                                          'Selected Bill Person Details:');
+                                      debugPrint(
+                                          '- ID: ${selectedBillPersonData!.id}');
+                                      debugPrint(
+                                          '- Name: ${selectedBillPersonData!.name}');
+                                      debugPrint(
+                                          '- Phone: ${selectedBillPersonData!.phone}');
+                                    }),
+                          );
+                        },
                       ),
                     ),
+
                     // Bill No Field
 
                     const SizedBox(
                       height: 8,
                     ),
 
-                    ///bill no, bill person
+                    ///bill no, 
                     SizedBox(
                       height: 30,
-                      width: 90,
+                      width: 130,
                       child: TextField(
                         style: const TextStyle(
                           color: Colors.black,
@@ -290,7 +315,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
                     ///bill date
                     SizedBox(
                       height: 30,
-                      width: 90,
+                      width: 130,
                       child: InkWell(
                         // onTap: () => controller.pickDate(
                         //     context), // Trigger the date picker

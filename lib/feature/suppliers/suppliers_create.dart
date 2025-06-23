@@ -133,6 +133,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Supplier Name",
                 controller: _nameController,
                 //validator: _validateRequired,
@@ -141,6 +142,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                 height: 12,
               ),
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Proprietor Name",
                 controller: _proprietorController,
                 //validator: _validateRequired,
@@ -149,6 +151,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                 height: 12,
               ),
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Email",
                 controller: _emailController,
                 //validator: _validateRequired,
@@ -157,6 +160,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                 height: 12,
               ),
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Phone",
                 controller: _phoneController,
                 keyboardType: TextInputType.number,
@@ -166,6 +170,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                 height: 12,
               ),
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Address",
                 controller: _addressController,
                 //validator: _validateRequired,
@@ -174,6 +179,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                 height: 12,
               ),
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Opening Balance",
                 controller: _opiningBanglaceController,
                 //validator: _validateRequired,
@@ -194,7 +200,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                   items: const ["Active", "Inactive"], // Display labels
                   hint: '', //Select status
                   width: double.infinity,
-                  height: 30,
+                  height: 40,
                   onChanged: (value) {
                     setState(() {
                       selectedStatus = (value == "Active")

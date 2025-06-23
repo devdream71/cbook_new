@@ -73,7 +73,7 @@ class _IncomeState extends State<Income> {
             InkWell(
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => IncomeCreate()));
+                    MaterialPageRoute(builder: (context) => const IncomeCreate()));
               },
               child: CircleAvatar(
                   radius: 12,
@@ -93,7 +93,6 @@ class _IncomeState extends State<Income> {
 
             Column(
               children: [
-
                 ///start date, end date, dropdown, this working, but now no need.
                 // SizedBox(
                 //   width: double.infinity,
@@ -240,180 +239,272 @@ class _IncomeState extends State<Income> {
                 //     ),
                 //   ),
                 // ),
-                
+
                 const SizedBox(
                   height: 5,
                 ),
+
+              
+
+
                 Consumer<IncomeProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
-
+                
                     if (provider.incomeModel == null ||
                         provider.incomeModel!.data.isEmpty) {
-                      return const Center(child: Text('No Income Found'));
+                      return const Center(
+                          child: Text(
+                        'No Income Found',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ));
                     }
-
+                
                     final incomes = provider.incomeModel!.data;
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: incomes.length,
-                      itemBuilder: (context, index) {
-                        final income = incomes[index];
-                        final incomeId = income.id
-                            .toString(); // ✅ Correct: get the ID directly from the list item
 
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0.0, vertical: 0.0),
-                          child: InkWell(
-                            onLongPress: () {
-                              editDeleteDiolog(context, incomeId);
-                            },
-                            onTap: () {
-                              ///navigation to expense deatils page
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const IncomeDetails()));
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xffe3e7fa),
-                                borderRadius: BorderRadius.circular(0),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 4.0, vertical: 4.0),
-                                child: Row(
-                                  children: [
-                                    /// Left side
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          "Received To",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          income.receivedTo.toLowerCase() ==
-                                                  'cash'
-                                              ? 'Cash In Hand'
-                                              : income.receivedTo
-                                                          .toLowerCase() ==
-                                                      'bank'
-                                                  ? 'Bank'
-                                                  : income.receivedTo,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        Text(
-                                          income.accountId == 1
-                                              ? 'Cash'
-                                              : income.accountId == 11
-                                                  ? 'PTCash'
-                                                  : income.accountId == 10
-                                                      ? 'PTCash'
-                                                      : income.accountId == 13
-                                                          ? 'Cash 1'
-                                                          : income.accountId ==
-                                                                  15
-                                                              ? 'Cash 2'
-                                                              : '${income.accountId}', // Show ID if not matched
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const Spacer(),
+                    return ListView.separated(
+  shrinkWrap: true,
+  itemCount: incomes.length,
+  separatorBuilder: (context, index) => const SizedBox(height: 1), // 🔥 1px space
+  itemBuilder: (context, index) {
+    final income = incomes[index];
+    final incomeId = income.id.toString();
 
-                                    ///Right side
-                                    Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              income.voucherDate,
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12),
-                                            ),
-                                            Text(
-                                              income.voucherNumber,
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12),
-                                            ),
-                                            Text(
-                                              income.totalAmount.toString(),
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                        //working =====> 3 dot, edit and delete.
-                                        // PopupMenuButton<String>(
-                                        //   onSelected: (String choice) {
-                                        //     if (choice == 'edit') {
-                                        //       // Navigate to Edit Page
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) => IncomeEdit(
-                                        //         incomeId: incomeId),
-                                        //   ),
-                                        // );
-                                        //     } else if (choice == 'delete') {
-                                        //       // Show Delete Confirmation Dialog
-                                        //       _showDeleteDialog(
-                                        //           context, incomeId);
-                                        //     }
-                                        //   },
-                                        //   itemBuilder: (BuildContext context) =>
-                                        //       <PopupMenuEntry<String>>[
-                                        //     const PopupMenuItem<String>(
-                                        //       value: 'edit',
-                                        //       textStyle:
-                                        //           TextStyle(color: Colors.blue),
-                                        //       child: Text('Edit'),
-                                        //     ),
-                                        //     const PopupMenuItem<String>(
-                                        //       value: 'delete',
-                                        //       textStyle:
-                                        //           TextStyle(color: Colors.red),
-                                        //       child: Text('Delete'),
-                                        //     ),
-                                        //   ],
-                                        //   icon: const Icon(
-                                        //       Icons.more_vert), // 3-dot icon
-                                        // )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+      child: InkWell(
+        onLongPress: () {
+          editDeleteDiolog(context, incomeId);
+        },
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const IncomeDetails()),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xffe3e7fa),
+            borderRadius: BorderRadius.circular(0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+            child: Row(
+              children: [
+                /// Left side
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Received To",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      income.receivedTo.toLowerCase() == 'cash'
+                          ? 'Cash In Hand'
+                          : income.receivedTo.toLowerCase() == 'bank'
+                              ? 'Bank'
+                              : income.receivedTo,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      income.accountId == 1
+                          ? 'Cash'
+                          : income.accountId == 11
+                              ? 'PTCash'
+                              : income.accountId == 10
+                                  ? 'PTCash'
+                                  : income.accountId == 13
+                                      ? 'Cash 1'
+                                      : income.accountId == 15
+                                          ? 'Cash 2'
+                                          : '${income.accountId}',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+
+                /// Right side
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          income.voucherDate,
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 12),
+                        ),
+                        Text(
+                          income.voucherNumber,
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 12),
+                        ),
+                        Text(
+                          income.totalAmount.toString(),
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  },
+);
+
+                
+                    // return ListView.builder(
+                    //   shrinkWrap: true,
+                    //   itemCount: incomes.length,
+                      
+                    //   itemBuilder: (context, index) {
+                        
+                    //     final income = incomes[index];
+                    //     final incomeId = income.id
+                    //         .toString(); // ✅ Correct: get the ID directly from the list item
+                
+                    //     return Padding(
+                    //       padding: const EdgeInsets.symmetric(
+                    //           horizontal: 0.0, vertical: 0.0),
+                    //       child: InkWell(
+                    //         onLongPress: () {
+                    //           editDeleteDiolog(context, incomeId);
+                    //         },
+                    //         onTap: () {
+                    //           ///navigation to expense deatils page
+                    //           Navigator.push(
+                    //               context,
+                    //               MaterialPageRoute(
+                    //                   builder: (context) =>
+                    //                       const IncomeDetails()));
+                    //         },
+                    //         child: Container(
+                    //           decoration: BoxDecoration(
+                    //             color: const Color(0xffe3e7fa),
+                    //             borderRadius: BorderRadius.circular(0),
+                    //           ),
+                    //           child: Padding(
+                    //             padding: const EdgeInsets.symmetric(
+                    //                 horizontal: 4.0, vertical: 4.0),
+                    //             child: Row(
+                    //               children: [
+                    //                 /// Left side
+                    //                 Column(
+                    //                   crossAxisAlignment:
+                    //                       CrossAxisAlignment.start,
+                    //                   children: [
+                    //                     const Text(
+                    //                       "Received To",
+                    //                       style: TextStyle(
+                    //                           color: Colors.black,
+                    //                           fontSize: 12,
+                    //                           fontWeight: FontWeight.bold),
+                    //                     ),
+                    //                     Text(
+                    //                       income.receivedTo.toLowerCase() ==
+                    //                               'cash'
+                    //                           ? 'Cash In Hand'
+                    //                           : income.receivedTo
+                    //                                       .toLowerCase() ==
+                    //                                   'bank'
+                    //                               ? 'Bank'
+                    //                               : income.receivedTo,
+                    //                       style: const TextStyle(
+                    //                         color: Colors.black,
+                    //                         fontSize: 12,
+                    //                       ),
+                    //                     ),
+                    //                     Text(
+                    //                       income.accountId == 1
+                    //                           ? 'Cash'
+                    //                           : income.accountId == 11
+                    //                               ? 'PTCash'
+                    //                               : income.accountId == 10
+                    //                                   ? 'PTCash'
+                    //                                   : income.accountId == 13
+                    //                                       ? 'Cash 1'
+                    //                                       : income.accountId ==
+                    //                                               15
+                    //                                           ? 'Cash 2'
+                    //                                           : '${income.accountId}', // Show ID if not matched
+                    //                       style: const TextStyle(
+                    //                         color: Colors.black,
+                    //                         fontSize: 12,
+                    //                       ),
+                    //                     ),
+                    //                   ],
+                    //                 ),
+                    //                 const Spacer(),
+                
+                    //                 ///Right side
+                    //                 Row(
+                    //                   children: [
+                    //                     Column(
+                    //                       crossAxisAlignment:
+                    //                           CrossAxisAlignment.end,
+                    //                       children: [
+                    //                         Text(
+                    //                           income.voucherDate,
+                    //                           style: const TextStyle(
+                    //                               color: Colors.black,
+                    //                               fontSize: 12),
+                    //                         ),
+                    //                         Text(
+                    //                           income.voucherNumber,
+                    //                           style: const TextStyle(
+                    //                               color: Colors.black,
+                    //                               fontSize: 12),
+                    //                         ),
+                    //                         Text(
+                    //                           income.totalAmount.toString(),
+                    //                           style: const TextStyle(
+                    //                               color: Colors.black,
+                    //                               fontSize: 12,
+                    //                               fontWeight: FontWeight.bold),
+                    //                         ),
+                    //                       ],
+                    //                     ),
+                                       
+                    //                   ],
+                    //                 )
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // );
+                  
+                  
+                  
+                  
                   },
                 )
+              
+              
               ],
             ),
 

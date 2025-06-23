@@ -1,17 +1,12 @@
-import 'package:cbook_dt/common/feature_not_available.dart';
-import 'package:cbook_dt/feature/demo/demo_text.dart';
-import 'package:cbook_dt/feature/form_setting/purchase_form_setting/purchase_form_setting.dart';
-import 'package:cbook_dt/feature/form_setting/purchase_return_form_setting/purchase_return_form_setting.dart';
-import 'package:cbook_dt/feature/form_setting/sales_form_setting/sales_form_setting.dart';
-import 'package:cbook_dt/feature/form_setting/sales_return_form_setting/sales_return_form_setting.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/profile_view.dart';
 import 'package:cbook_dt/feature/settings/ui/bill_invoice_create_form.dart';
 import 'package:cbook_dt/feature/settings/ui/bill_invoice_print.dart';
+import 'package:cbook_dt/feature/settings/ui/bill/bill_person_list.dart';
 import 'package:cbook_dt/feature/settings/ui/company_settings.dart';
 import 'package:cbook_dt/feature/settings/ui/general_settings.dart';
 import 'package:cbook_dt/feature/settings/ui/module_settings.dart';
-import 'package:cbook_dt/feature/settings/ui/user_list.dart';
-import 'package:cbook_dt/feature/tax/UI/tax_list_view.dart';
+import 'package:cbook_dt/feature/settings/ui/user/user_list.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -70,7 +65,7 @@ class SettingsView extends StatelessWidget {
       const FormSettingMeta(
         name: 'Bill Persion',
         iconPath: 'assets/image/profile.svg',
-        destination: UserCeate(), //SalesFormSetting
+        destination: BillPersonList(), //SalesFormSetting
       ),
 
 
@@ -103,6 +98,7 @@ class SettingsView extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

@@ -57,6 +57,8 @@ class _Layout extends StatelessWidget {
         color: AppColors.primaryColor,
         child: SafeArea(
           child: Scaffold(
+             //backgroundColor: colorScheme.surface,
+            backgroundColor :Colors.white,
             floatingActionButton: Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
@@ -105,7 +107,7 @@ class _Layout extends StatelessWidget {
                 ],
               ),
             ),
-            backgroundColor: colorScheme.surface,
+           
             body: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(

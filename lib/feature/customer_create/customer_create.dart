@@ -167,6 +167,7 @@ class _CustomerCreateState extends State<CustomerCreate> {
               // _buildFieldLabel("Customer Name", textTheme, colorScheme),
 
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Customer Name",
                 controller: _nameController,
                 //validator: _validateRequired,
@@ -177,6 +178,7 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Proprietor Name",
                 controller: _proprietorController,
                 //validator: _validateRequired,
@@ -211,6 +213,7 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Email",
                 controller: _emailController,
                 //validator: _validateEmail,
@@ -221,6 +224,7 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Phone",
                 controller: _phoneController,
                 //validator: _validatePhone,
@@ -232,6 +236,7 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Address",
                 controller: _addressController,
                 //validator: _validateRequired,
@@ -242,6 +247,7 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                height: 40,
                 label: "Enter Opening Balance",
                 controller: _opiningBanglaceController,
                 //validator: _validateRequired,
@@ -265,7 +271,7 @@ class _CustomerCreateState extends State<CustomerCreate> {
                   items: const ["Active", "Inactive"], // Display labels
                   hint: '', //Select status
                   width: double.infinity,
-                  height: 30,
+                  height: 40,
                   onChanged: (value) {
                     setState(() {
                       selectedStatus = (value == "Active")

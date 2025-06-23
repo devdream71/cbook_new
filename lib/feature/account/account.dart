@@ -49,6 +49,7 @@ class Account extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

@@ -1,8 +1,10 @@
+import 'package:cbook_dt/feature/customer_create/customer_details.dart';
+
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
-import 'package:cbook_dt/feature/party/add_supplier_customer.dart';
+
+import 'package:cbook_dt/feature/party/party_intro_page.dart';
 import 'package:cbook_dt/feature/suppliers/provider/suppliers_list.dart';
-import 'package:cbook_dt/feature/suppliers/supplier_update.dart';
-import 'package:cbook_dt/feature/suppliers/supplies_details.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,6 +36,7 @@ class _PartyState extends State<Party> {
     // List of forms with metadata
 
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -148,24 +151,24 @@ class _PartyState extends State<Party> {
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(3),
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 1),
+                                borderSide: const BorderSide(
+                                    color: Colors.white, width: 1),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(3),
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 1),
+                                borderSide: const BorderSide(
+                                    color: Colors.white, width: 1),
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(3),
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 1),
+                                borderSide: const BorderSide(
+                                    color: Colors.white, width: 1),
                               ),
                               //filled: true,
                               fillColor: Colors.green,
 
                               hintText: '',
-                              hintStyle: TextStyle(fontSize: 12),
+                              hintStyle: const TextStyle(fontSize: 12),
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 8),
                             ),
@@ -211,8 +214,8 @@ class _PartyState extends State<Party> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.only(left: 8),
-                            decoration: BoxDecoration(
+                            margin: const EdgeInsets.only(left: 8),
+                            decoration: const BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
                             ),
@@ -230,16 +233,16 @@ class _PartyState extends State<Party> {
 
               // Always visible: Add icon
               IconButton(
-                icon: CircleAvatar(
-                  radius: 12,
-                  backgroundColor: Colors.white,
-                  
-                  child: const Icon(Icons.add, color: Colors.green)),
+                icon: const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.white,
+                    child: const Icon(Icons.add, color: Colors.green)),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AddSupplierCustomer(),
+                      builder: (context) =>
+                          const AddNewPartyIntro(), //AddSupplierCustomer
                     ),
                   );
                 },
@@ -251,7 +254,7 @@ class _PartyState extends State<Party> {
         body: Column(
           children: [
             Container(
-              //padding: EdgeInsets.all(12),
+              padding: EdgeInsets.all(8),
               decoration: const BoxDecoration(
                 color: Color(0xffdddefa),
               ),
@@ -259,12 +262,12 @@ class _PartyState extends State<Party> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Left (Customer)
-                  Row(
+                  const Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Icon(Icons.handshake, color: Colors.blue),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.only(left: 4.0),
+                      //   child: Icon(Icons.handshake, color: Colors.blue),
+                      // ),
                       SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,19 +285,20 @@ class _PartyState extends State<Party> {
 
                   // Vertical Divider
                   Container(
-                    height: 30,
-                    width: 1,
-                    color: Colors.green.shade800,
-                    margin: EdgeInsets.symmetric(horizontal: 12),
+                    height: 35,
+                    width: 35,
+                    //color: Colors.green.shade800,
+                    //margin: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Image.asset('assets/image/cooperation_one.png'),
                   ),
 
                   // Right (Supplier)
-                  Row(
+                  const Row(
                     children: [
-                      Icon(Icons.person, color: Colors.blue),
-                      SizedBox(width: 8),
+                      // Icon(Icons.person, color: Colors.blue),
+                      // SizedBox(width: 8),
                       Padding(
-                        padding: const EdgeInsets.only(right: 4.0),
+                        padding: EdgeInsets.only(right: 4.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -313,243 +317,656 @@ class _PartyState extends State<Party> {
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-              child:
-                  //search, purchase, sales
-                  Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4),
-                child: Row(
-                  children: [],
-                ),
-              ),
-            ),
+            // const Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+            //   child:
+            //       //search, purchase, sales
+            //       Padding(
+            //     padding:
+            //         EdgeInsets.symmetric(horizontal: 6.0, vertical: 4),
+            //     child: Row(
+            //       children: [],
+            //     ),
+            //   ),
+            // ),
 
             //customer or supplier
-            Container(
-              //color: Colors.red,
-              child: Expanded(
-                child: Consumer<SupplierProvider>(
-                  builder: (context, supplierProvider, child) {
-                    if (supplierProvider.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+            // Container(
+            //   //color: Colors.red,
+            //   child: Expanded(
+            //     child: Consumer<SupplierProvider>(
+            //       builder: (context, supplierProvider, child) {
+            //         if (supplierProvider.isLoading) {
+            //           return const Center(child: CircularProgressIndicator());
+            //         }
 
-                    if (supplierProvider.errorMessage.isNotEmpty) {
-                      return Center(
-                        child: Text(
-                          supplierProvider.errorMessage,
-                          style:
-                              const TextStyle(color: Colors.red, fontSize: 16),
-                        ),
-                      );
-                    }
+            //         if (supplierProvider.errorMessage.isNotEmpty) {
+            //           return Center(
+            //             child: Text(
+            //               supplierProvider.errorMessage,
+            //               style:
+            //                   const TextStyle(color: Colors.red, fontSize: 16),
+            //             ),
+            //           );
+            //         }
 
-                    // final suppliers =
-                    //     supplierProvider.supplierResponse?.data.values.toList() ?? [];
+            //         // final suppliers =
+            //         //     supplierProvider.supplierResponse?.data.values.toList() ?? [];
 
-                    final suppliers =
-                        supplierProvider.supplierResponse?.data ?? [];
+            //         final suppliers =
+            //             supplierProvider.supplierResponse?.data ?? [];
 
-                    if (suppliers.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          "No Suppliers Found",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
-                        ),
-                      );
-                    }
+            //         if (suppliers.isEmpty) {
+            //           return const Center(
+            //             child: Text(
+            //               "No Suppliers Found",
+            //               style: TextStyle(
+            //                   fontSize: 16,
+            //                   fontWeight: FontWeight.bold,
+            //                   color: Colors.black),
+            //             ),
+            //           );
+            //         }
 
-                    return ListView.builder(
+            //         return ListView.builder(
+            //           shrinkWrap: true,
+
+            //           itemCount: suppliers.length,
+            //           itemBuilder: (context, index) {
+            //             final supplier = suppliers[index];
+            //             final supplierPurchase = suppliers[index].purchases;
+
+            //             return InkWell(
+            //               onTap: () {
+            //                 Navigator.push(
+            //                   context,
+            //                   MaterialPageRoute(
+            //                     builder: (context) => SupplierDetailsScreen(
+            //                       supplierId: supplier.id,
+            //                       purchases: supplierPurchase,
+            //                     ),
+            //                   ),
+            //                 );
+            //               },
+            //               child: Card(
+            //                 shape: RoundedRectangleBorder(
+            //                     borderRadius: BorderRadius.circular(2)),
+            //                 elevation: 1,
+            //                 //margin: const EdgeInsets.symmetric(vertical: 8),
+            //                 child: ListTile(
+            //                  contentPadding: EdgeInsets.all(4),
+            //                   leading: const CircleAvatar(
+            //                     backgroundImage:
+            //                         AssetImage("assets/image/cbook_logo.png"),
+            //                   ),
+            //                   title: Text(
+            //                     supplier.name,
+            //                     style: const TextStyle(
+            //                         fontFamily: 'Calibri',
+            //                         fontSize: 12,
+            //                         fontWeight: FontWeight.bold),
+            //                   ),
+            //                   subtitle: Column(
+            //                     mainAxisAlignment: MainAxisAlignment.start,
+            //                     crossAxisAlignment: CrossAxisAlignment.start,
+            //                     children: [
+            //                       Text(
+            //                         supplier.proprietorName,
+            //                         overflow: TextOverflow.ellipsis,
+            //                         style: TextStyle(
+            //                             color: Colors.grey[800], fontSize: 12),
+            //                       ),
+            //                       Text(
+            //                         "01759546853",
+            //                         overflow: TextOverflow.ellipsis,
+            //                         style: TextStyle(
+            //                             color: Colors.grey[800], fontSize: 12),
+            //                       ),
+            //                     ],
+            //                   ),
+            //                   trailing: SizedBox(
+            //                     width: 140, // Adjust width as needed
+            //                     child: Row(
+            //                       mainAxisAlignment: MainAxisAlignment.end,
+            //                       mainAxisSize: MainAxisSize.min,
+            //                       children: [
+            //                         Icon(
+            //                           Icons.keyboard_arrow_down,
+            //                           color: Colors.red[700],
+            //                         ),
+
+            //                         // Icon(
+            //                         //   Icons.keyboard_control_key,
+            //                         //   color: Colors.red[700],
+            //                         // ),
+            //                         Text(
+            //                           "${supplier.due}",
+            //                           style: const TextStyle(
+            //                             fontSize: 14,
+            //                             fontWeight: FontWeight.w400,
+            //                           ),
+            //                         ),
+            //                         const SizedBox(width: 10),
+
+            //                         // PopupMenuButton<String>(
+            //                         //   position: PopupMenuPosition.under,
+            //                         //   onSelected: (value) async {
+            //                         //     if (value == 'Edit') {
+            //                         //       final supplierProvider =
+            //                         //           Provider.of<SupplierProvider>(
+            //                         //               context,
+            //                         //               listen: false);
+
+            //                         //       debugPrint(
+            //                         //           "Clicked Edit for Supplier ID: ${supplier.id}");
+
+            //                         //       // Fetch supplier data by ID
+            //                         //       final supplierData =
+            //                         //           await supplierProvider
+            //                         //               .fetchSupplierById(
+            //                         //                   supplier.id);
+
+            //                         //       if (supplierData != null) {
+            //                         //         debugPrint(
+            //                         //             "Fetched Supplier Data: ${supplierData.id}");
+
+            //                         //         Navigator.push(
+            //                         //           context,
+            //                         //           MaterialPageRoute(
+            //                         //             builder: (context) =>
+            //                         //                 SupplierUpdate(
+            //                         //                     supplier: supplierData),
+            //                         //           ),
+            //                         //         );
+            //                         //       } else {
+            //                         //         ScaffoldMessenger.of(context)
+            //                         //             .showSnackBar(
+            //                         //           const SnackBar(
+            //                         //               content: Text(
+            //                         //                   "Failed to fetch supplier details")),
+            //                         //         );
+            //                         //       }
+            //                         //     } else if (value == 'delete') {
+            //                         //       final confirm = await showDialog(
+            //                         //         context: context,
+            //                         //         builder: (context) => AlertDialog(
+            //                         //           title:
+            //                         //               const Text("Delete Supplier"),
+            //                         //           content: const Text(
+            //                         //             "Are you sure you want to delete this supplier?",
+            //                         //             style: TextStyle(
+            //                         //                 color: Colors.black),
+            //                         //           ),
+            //                         //           actions: [
+            //                         //             TextButton(
+            //                         //               onPressed: () =>
+            //                         //                   Navigator.pop(
+            //                         //                       context, false),
+            //                         //               child: const Text("Cancel"),
+            //                         //             ),
+            //                         //             TextButton(
+            //                         //               onPressed: () {
+            //                         //                 Navigator.pop(
+            //                         //                     context, true);
+            //                         //               },
+            //                         //               child: const Text("Delete",
+            //                         //                   style: TextStyle(
+            //                         //                       color: Colors.red)),
+            //                         //             ),
+            //                         //           ],
+            //                         //         ),
+            //                         //       );
+
+            //                         //       if (confirm == true) {
+            //                         //         await Provider.of<SupplierProvider>(
+            //                         //                 context,
+            //                         //                 listen: false)
+            //                         //             .deleteSupplier(supplier.id);
+            //                         //       }
+            //                         //     }
+            //                         //   },
+            //                         //   itemBuilder: (context) => [
+            //                         //     const PopupMenuItem(
+            //                         //       value: 'Edit',
+            //                         //       child: ListTile(
+            //                         //         leading: Icon(Icons.edit,
+            //                         //             color: Colors.blue),
+            //                         //         title: Text('Edit'),
+            //                         //       ),
+            //                         //     ),
+            //                         //     const PopupMenuItem(
+            //                         //       value: 'delete',
+            //                         //       child: ListTile(
+            //                         //         leading: Icon(Icons.delete,
+            //                         //             color: Colors.red),
+            //                         //         title: Text('Delete'),
+            //                         //       ),
+            //                         //     ),
+            //                         //   ],
+            //                         //   icon: const Icon(Icons.more_vert),
+            //                         // ),
+            //                       ],
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+            //             );
+            //           },
+            //         );
+            //       },
+            //     ),
+            //   ),
+            // ),
+
+            Expanded(
+              child: Consumer<CustomerProvider>(
+                builder: (context, customerProvider, child) {
+                  if (customerProvider.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (customerProvider.errorMessage.isNotEmpty) {
+                    return Center(
+                      child: Text(
+                        customerProvider.errorMessage,
+                        style: const TextStyle(color: Colors.red, fontSize: 16),
+                      ),
+                    );
+                  }
+
+                  // final customer =
+                  //     customerProvider.customerResponse?.data.values.toList() ?? [];
+
+                  final customer =
+                      customerProvider.customerResponse?.data ?? [];
+
+                  if (customer.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "No Customer Found",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
+                      ),
+                    );
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: suppliers.length,
+                      padding: const EdgeInsets.all(0),
+                      itemCount: customer.length,
                       itemBuilder: (context, index) {
-                        final supplier = suppliers[index];
-                        final supplierPurchase = suppliers[index].purchases;
+                        final customers = customer[index];
+                        final customersPurchaase = customer[index].purchases;
+
+                        final customerId = customers.id;
 
                         return InkWell(
+                          onLongPress: () {
+                            editDeleteDiolog(context, customerId.toString());
+                          },
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SupplierDetailsScreen(
-                                  supplierId: supplier.id,
-                                  purchases: supplierPurchase,
+                                builder: (context) => CustomerDetailsScreen(
+                                  customerId: customers.id,
+                                  purchases: customersPurchaase,
                                 ),
                               ),
                             );
                           },
                           child: Card(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6)),
+                                borderRadius: BorderRadius.circular(2)),
                             elevation: 1,
-                            //margin: const EdgeInsets.symmetric(vertical: 8),
-                            child: ListTile(
-                              leading: const CircleAvatar(
-                                backgroundImage:
-                                    AssetImage("assets/image/cbook_logo.png"),
-                              ),
-                              title: Text(
-                                supplier.name,
-                                style: const TextStyle(
-                                   fontFamily: 'Calibri',
-                                    fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    supplier.proprietorName,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: Colors.grey[800], fontSize: 12),
-                                  ),
-                                  Text(
-                                    "01759546853",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: Colors.grey[800], fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                              trailing: SizedBox(
-                                width: 140, // Adjust width as needed
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  mainAxisSize: MainAxisSize.min,
+                          
+                            margin: const EdgeInsets.symmetric(vertical: 1),
+                            child: Padding(
+                              padding: const EdgeInsets.all(1),
+                              child: ListTile(
+                                leading: const CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage("assets/image/cbook_logo.png"),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                                title: Text(
+                                  customers.name,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: Colors.red[700],
-                                    ),
-
-                                    // Icon(
-                                    //   Icons.keyboard_control_key,
-                                    //   color: Colors.red[700],
-                                    // ),
                                     Text(
-                                      "${supplier.due}",
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
+                                      "N/A",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.grey[800],
+                                        fontSize: 12,
                                       ),
                                     ),
-                                    const SizedBox(width: 10),
-                                    PopupMenuButton<String>(
-                                      position: PopupMenuPosition.under,
-                                      onSelected: (value) async {
-                                        if (value == 'Edit') {
-                                          final supplierProvider =
-                                              Provider.of<SupplierProvider>(
-                                                  context,
-                                                  listen: false);
-
-                                          debugPrint(
-                                              "Clicked Edit for Supplier ID: ${supplier.id}");
-
-                                          // Fetch supplier data by ID
-                                          final supplierData =
-                                              await supplierProvider
-                                                  .fetchSupplierById(
-                                                      supplier.id);
-
-                                          if (supplierData != null) {
-                                            debugPrint(
-                                                "Fetched Supplier Data: ${supplierData.id}");
-
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SupplierUpdate(
-                                                        supplier: supplierData),
-                                              ),
-                                            );
-                                          } else {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                  content: Text(
-                                                      "Failed to fetch supplier details")),
-                                            );
-                                          }
-                                        } else if (value == 'delete') {
-                                          final confirm = await showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title:
-                                                  const Text("Delete Supplier"),
-                                              content: const Text(
-                                                "Are you sure you want to delete this supplier?",
-                                                style: TextStyle(
-                                                    color: Colors.black),
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          context, false),
-                                                  child: const Text("Cancel"),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(
-                                                        context, true);
-                                                  },
-                                                  child: const Text("Delete",
-                                                      style: TextStyle(
-                                                          color: Colors.red)),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-
-                                          if (confirm == true) {
-                                            await Provider.of<SupplierProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .deleteSupplier(supplier.id);
-                                          }
-                                        }
-                                      },
-                                      itemBuilder: (context) => [
-                                        const PopupMenuItem(
-                                          value: 'Edit',
-                                          child: ListTile(
-                                            leading: Icon(Icons.edit,
-                                                color: Colors.blue),
-                                            title: Text('Edit'),
-                                          ),
-                                        ),
-                                        const PopupMenuItem(
-                                          value: 'delete',
-                                          child: ListTile(
-                                            leading: Icon(Icons.delete,
-                                                color: Colors.red),
-                                            title: Text('Delete'),
-                                          ),
-                                        ),
-                                      ],
-                                      icon: const Icon(Icons.more_vert),
+                                    Text(
+                                      customers.address != null
+                                          ? customers.phone.toString()
+                                          : "No Phone",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.grey[800],
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ],
+                                ),
+                                trailing: SizedBox(
+                                  width: 140, // Adjust width as needed
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 4.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              "${customers.type![0].toUpperCase()}${customers.type!.substring(1)}",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                            ),
+                                            Text(
+                                              "${customers.due}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color:
+                                                    customers.type == 'customer'
+                                                        ? Colors.green[700]
+                                                        : Colors.red[700],
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        // PopupMenuButton<String>(
+                                        //   position: PopupMenuPosition.under,
+                                        //   onSelected: (value) async {
+                                        //     if (value == 'Edit') {
+                                        //       final customerProvider =
+                                        //           Provider.of<CustomerProvider>(
+                                        //               context,
+                                        //               listen: false);
+                          
+                                        //       debugPrint(
+                                        //           "Clicked Edit for Supplier ID: ${customers.id}");
+                          
+                                        //       // Fetch supplier data by ID
+                                        //       final customerData =
+                                        //           await customerProvider
+                                        //               .fetchCustomerById(
+                                        //                   customers.id);
+                          
+                                        //       if (customerData != null) {
+                                        //         debugPrint(
+                                        //             "Fetched Supplier Data: ${customerData.id}");
+                          
+                                        //         Navigator.push(
+                                        //           context,
+                                        //           MaterialPageRoute(
+                                        //             builder: (context) =>
+                                        //                 CustomerUpdate(
+                                        //                     customer:
+                                        //                         customerData),
+                                        //           ),
+                                        //         );
+                                        //       } else {
+                                        //         ScaffoldMessenger.of(context)
+                                        //             .showSnackBar(
+                                        //           const SnackBar(
+                                        //               content: Text(
+                                        //                   "Failed to fetch supplier details")),
+                                        //         );
+                                        //       }
+                                        //     } else if (value == 'delete') {
+                                        //       final confirm = await showDialog(
+                                        //         context: context,
+                                        //         builder: (context) =>
+                                        //             AlertDialog(
+                                        //           title: const Text(
+                                        //               "Delete Customer"),
+                                        //           content: const Text(
+                                        //             "Are you sure you want to delete this Customer?",
+                                        //             style: TextStyle(
+                                        //                 color: Colors.black),
+                                        //           ),
+                                        //           actions: [
+                                        //             TextButton(
+                                        //               onPressed: () =>
+                                        //                   Navigator.pop(
+                                        //                       context, false),
+                                        //               child:
+                                        //                   const Text("Cancel"),
+                                        //             ),
+                                        //             TextButton(
+                                        //               onPressed: () {
+                                        //                 Navigator.pop(
+                                        //                     context, true);
+                                        //               },
+                                        //               child: const Text(
+                                        //                   "Delete",
+                                        //                   style: TextStyle(
+                                        //                       color:
+                                        //                           Colors.red)),
+                                        //             ),
+                                        //           ],
+                                        //         ),
+                                        //       );
+                          
+                                        //       if (confirm == true) {
+                                        //         await Provider.of<
+                                        //                     CustomerProvider>(
+                                        //                 context,
+                                        //                 listen: false)
+                                        //             .deleteCustomer(
+                                        //                 customers.id);
+                                        //       }
+                                        //     }
+                                        //   },
+                                        //   itemBuilder: (context) => [
+                                        //     const PopupMenuItem(
+                                        //       value: 'Edit',
+                                        //       child: ListTile(
+                                        //         leading: Icon(Icons.edit,
+                                        //             color: Colors.blue),
+                                        //         title: Text('Edit'),
+                                        //       ),
+                                        //     ),
+                                        //     const PopupMenuItem(
+                                        //       value: 'delete',
+                                        //       child: ListTile(
+                                        //         leading: Icon(Icons.delete,
+                                        //             color: Colors.red),
+                                        //         title: Text('Delete'),
+                                        //       ),
+                                        //     ),
+                                        //   ],
+                                        //   icon: const Icon(Icons.more_vert),
+                                        // ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
         ));
   }
+
+  Future<dynamic> editDeleteDiolog(BuildContext context, String customerId) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    //Navigate to Edit Page
+
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) =>
+                    //         CustomerUpdate(id: customerId),
+                    //   ),
+                    // );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, customerId);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context, String customerId) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Customer/Supplier',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this Customer/Supplier?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final provider =
+                  Provider.of<CustomerProvider>(context, listen: false);
+              bool isDeleted =
+                  await provider.deleteCustomer(int.parse(customerId));
+
+              if (isDeleted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Customer/Supplier deleted successfully!',
+                      style: TextStyle(color: colorScheme.primary),
+                    ),
+                  ),
+                );
+                Navigator.of(context).pop(); // Close dialog
+                await provider.fetchCustomsr(); // Refresh list
+              } else {
+                Navigator.of(context).pop(); // Close dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Failed to delete Customer/Supplier',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+ 
 }

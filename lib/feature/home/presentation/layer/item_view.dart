@@ -1,20 +1,14 @@
 import 'dart:convert';
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/feature_not_available.dart';
-import 'package:cbook_dt/feature/category/item_category_list.dart';
-import 'package:cbook_dt/feature/category/sub_category/sub_category_list.dart';
 import 'package:cbook_dt/feature/item/add_item.dart';
 import 'package:cbook_dt/feature/item/item_details.dart';
 import 'package:cbook_dt/feature/item/model/items_show.dart';
-import 'package:cbook_dt/feature/item/provider/update_item_provider.dart';
-import 'package:cbook_dt/feature/item/update_item.dart';
 import 'package:cbook_dt/feature/purchase/purchase_list_api.dart';
 import 'package:cbook_dt/feature/purchase_return/purchase_return_list.dart';
 import 'package:cbook_dt/feature/sales/sales_list.dart';
-import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:cbook_dt/feature/sales_bulk/sales_bulk.dart';
 import 'package:cbook_dt/feature/sales_return/sales_return_list.dart';
-import 'package:cbook_dt/feature/unit/unit_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -116,8 +110,6 @@ class _ItemViewState extends State<ItemView> {
     }
   }
 
-  
-
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
 
@@ -128,153 +120,153 @@ class _ItemViewState extends State<ItemView> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: colorTheme.primary,
         centerTitle: true,
-        title:   
-        
-    //     Row(
-    //       children: [
-    //         Text(
-    //           'Item/Product',
-    //           style: TextStyle(
-    //               color: Colors.yellow,
-    //               fontSize: 16,
-    //               fontWeight: FontWeight.bold),
-    //         ),
+        title:
 
-    //         IconButton(
-    //   icon: const Icon(Icons.add, color: Colors.white),
-    //   onPressed: () {
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => const AddItem(),
-    //       ),
-    //     );
-    //   },
-    // ),
-           
-    //       ],
-    //     ),
+            //     Row(
+            //       children: [
+            //         Text(
+            //           'Item/Product',
+            //           style: TextStyle(
+            //               color: Colors.yellow,
+            //               fontSize: 16,
+            //               fontWeight: FontWeight.bold),
+            //         ),
 
-    Row(
-  children: [
-    // If searching: Show search field (left side)
-    if (isSearching)
-      Expanded(
-        child: Row(
+            //         IconButton(
+            //   icon: const Icon(Icons.add, color: Colors.white),
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const AddItem(),
+            //       ),
+            //     );
+            //   },
+            // ),
+
+            //       ],
+            //     ),
+
+            Row(
           children: [
-            Expanded(
-              child: SizedBox(
-                height: 30,
-                child: TextField(
-                  controller: searchController,
-                  autofocus: true,
-                  cursorColor: Colors.white,
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                  decoration: InputDecoration(
-                    
-                     enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(3),
-                borderSide: const BorderSide(color: Colors.white, width: 1),
-                
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(3),
-                borderSide: const BorderSide(color: Colors.white, width: 1),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(3),
-                borderSide: const BorderSide(color: Colors.white, width: 1),
-              ),
-                    //filled: true,
-                    fillColor: Colors.green,
-                    
-                    hintText: '',
-                    hintStyle: const TextStyle(fontSize: 12),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    
-                  ),
+            // If searching: Show search field (left side)
+            if (isSearching)
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 30,
+                        child: TextField(
+                          controller: searchController,
+                          autofocus: true,
+                          cursorColor: Colors.white,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12),
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(3),
+                              borderSide: const BorderSide(
+                                  color: Colors.white, width: 1),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(3),
+                              borderSide: const BorderSide(
+                                  color: Colors.white, width: 1),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(3),
+                              borderSide: const BorderSide(
+                                  color: Colors.white, width: 1),
+                            ),
+                            //filled: true,
+                            fillColor: Colors.green,
+
+                            hintText: '',
+                            hintStyle: const TextStyle(fontSize: 12),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 8),
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () {
+                        setState(() {
+                          isSearching = false;
+                          searchController.clear();
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              )
+            else
+              // If not searching: Show search icon + Party text + Add icon
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Center: Party title
+                    const Center(
+                      child: Text(
+                        'Item/Product',
+                        style: TextStyle(
+                            color: Colors.yellow,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+
+                    // Left: Search icon
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isSearching = true;
+                          });
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 8),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Icon(Icons.search,
+                                color: Colors.green, size: 20),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
+
+            // Always visible: Add icon
             IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
+              icon: const CircleAvatar(
+                  radius: 12,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.add, color: Colors.green)),
               onPressed: () {
-                setState(() {
-                  isSearching = false;
-                  searchController.clear();
-                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddItem(),
+                  ),
+                );
               },
             ),
           ],
         ),
-      )
-    else
-      // If not searching: Show search icon + Party text + Add icon
-      Expanded(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Center: Party title
-            const Center(
-              child: Text(
-                'Item/Product',
-                style: TextStyle(
-                    color: Colors.yellow,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-
-            // Left: Search icon
-            Align(
-              alignment: Alignment.centerLeft,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isSearching = true;
-                  });
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(left: 8),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(4),
-                    child: Icon(Icons.search, color: Colors.green, size: 20),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-
-    // Always visible: Add icon
-    IconButton(
-      icon: const CircleAvatar(
-        radius: 12,
-        backgroundColor: Colors.white,
-        child:   Icon(Icons.add, color: Colors.green)),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const AddItem(),
-          ),
-        );
-      },
-    ),
-  ],
-),
-
-
-
-
         automaticallyImplyLeading: false,
       ),
       // floatingActionButton: Padding(
@@ -359,183 +351,62 @@ class _ItemViewState extends State<ItemView> {
           //mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Container(
-  padding: const EdgeInsets.all(12),
-  decoration: const BoxDecoration(
-    color: Color(0xffdddefa),
-  ),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      // Left (Customer)
-      const Row(
-        children: [
-          Icon(Icons.handshake, color: Colors.blue),
-          SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Total Item", style: TextStyle(color: Colors.black, fontSize: 12)),
-              Text("50,000", style: const TextStyle(color: Colors.green, fontSize: 12)),
-            ],
-          ),
-        ],
-      ),
-
-      // Vertical Divider
-      Container(
-        height: 40,
-        width: 1,
-        color: Colors.green.shade800,
-        margin: const EdgeInsets.symmetric(horizontal: 12),
-      ),
-
-      // Right (Supplier)
-      const Row(
-        children: [
-          Icon(Icons.person, color: Colors.blue),
-          SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Stock Value", style: TextStyle(color: Colors.black, fontSize: 12)),
-              Text("10,01,55,320", style: TextStyle(color: Colors.red, fontSize: 12)),
-            ],
-          ),
-        ],
-      ),
-    ],
-  ),
-),
-            
-            const SizedBox(
-              height: 8,
-            ),
-
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: SizedBox(
-            //         //width: double.maxFinite,
-            //         child: ElevatedButton(
-            //           onPressed: () {
-            //             Navigator.push(
-            //               context,
-            //               MaterialPageRoute(
-            //                   builder: (context) => ItemCategoryView()),
-            //             );
-            //           },
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: AppColors.primaryColor,
-            //             padding: const EdgeInsets.symmetric(
-            //                 vertical: 12, horizontal: 20),
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10),
-            //             ),
-            //           ),
-            //           child: const Text(
-            //             "Add Category",
-            //             style: TextStyle(color: Colors.white),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     const SizedBox(
-            //       width: 5,
-            //     ),
-            //     /////====>add unit.
-            //     Expanded(
-            //       child: SizedBox(
-            //         //width: double.maxFinite,
-            //         child: ElevatedButton(
-            //           onPressed: () {},
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: AppColors.primaryColor,
-            //             padding: const EdgeInsets.symmetric(
-            //                 vertical: 12, horizontal: 20),
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10),
-            //             ),
-            //           ),
-            //           child: const Text(
-            //             "Add Subcategory",
-            //             style: TextStyle(color: Colors.white),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: SizedBox(
-            //         //width: double.maxFinite,
-            //         child: ElevatedButton(
-            //           onPressed: () {
-
-            //             //showFeatureNotAvailableDialog(context);
-            //           },
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: AppColors.primaryColor,
-            //             padding: const EdgeInsets.symmetric(
-            //                 vertical: 12, horizontal: 20),
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10),
-            //             ),
-            //           ),
-            //           child: const Text(
-            //             "Add Item",
-            //             style: TextStyle(color: Colors.white),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     const SizedBox(
-            //       width: 5,
-            //     ),
-            //     /////====>add unit.
-            //     Expanded(
-            //       child: SizedBox(
-            //         //width: double.maxFinite,
-            //         child: ElevatedButton(
-            //           onPressed: () {
-
-            //           },
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: AppColors.primaryColor,
-            //             padding: const EdgeInsets.symmetric(
-            //                 vertical: 12, horizontal: 20),
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10),
-            //             ),
-            //           ),
-            //           child: const Text(
-            //             "Add Unit",
-            //             style: TextStyle(color: Colors.white),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-
-            
-
-            const SizedBox(
-              height: 5,
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(
-                "All Items",
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: Color(0xffdddefa),
               ),
-            ),
-            const SizedBox(
-              height: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Left (Customer)
+                  const Row(
+                    children: [
+                      Icon(Icons.handshake, color: Colors.blue),
+                      SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Total Item",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 12)),
+                          Text("50,000",
+                              style: const TextStyle(
+                                  color: Colors.green, fontSize: 12)),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // Vertical Divider
+                  Container(
+                    height: 35,
+                    width: 35,
+                    //color: Colors.green.shade800,
+                    //margin: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Image.asset('assets/image/product.png'),
+                  ),
+
+                  // Right (Supplier)
+                  const Row(
+                    children: [
+                      Icon(Icons.person, color: Colors.blue),
+                      SizedBox(width: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Stock Value",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 12)),
+                          Text("10,01,55,320",
+                              style:
+                                  TextStyle(color: Colors.red, fontSize: 12)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Consumer<AddItemProvider>(
@@ -546,79 +417,85 @@ class _ItemViewState extends State<ItemView> {
 
                   if (itemProvider.items.isEmpty) {
                     return const Center(
-                        child: Text(
-                      'No items available.',
-                      style: TextStyle(color: Colors.black),
-                    ));
+                      child: Text(
+                        'No items available.',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    );
                   }
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 0.0, vertical: 0.0),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0.0, vertical: 0),
-                            itemCount: itemProvider.items.length,
-                            itemBuilder: (context, index) {
-                              ItemsModel item = itemProvider.items[index];
-                              debugPrint(
-                                  "Item from provider: ${item.name}"); // Debugging
-                              debugPrint("Item from provider: ${item.id}");
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero, // No padding
+                          itemCount: itemProvider.items.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 1), // 1px space
+                          itemBuilder: (context, index) {
+                            ItemsModel item = itemProvider.items[index];
+                            debugPrint("Item from provider: ${item.name}");
+                            debugPrint("Item from provider: ${item.id}");
 
-                              int? unitId = int.tryParse(item.unitId
-                                  .toString()); // Convert unit_id to int
-                              int? secondaryUnitId =
-                                  item.secondaryUnitId; // Already an int
+                            final itemId = item.id;
 
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ItemDetailsView(itemId: item.id),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(6)),
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 1.0, horizontal: 1),
+                            return InkWell(
+                              onLongPress: (){
+
+
+                               editDeleteDiolog(context, itemId.toString()); 
+
+                              },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ItemDetailsView(itemId: item.id),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(1),
+                                ),
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        2), // 🔥 Rounded corner radius here
+                                  ),
+                                  elevation: 1, // Optional: add shadow
+                                  margin: EdgeInsets.zero, // No margin
                                   child: ListTile(
                                     contentPadding: const EdgeInsets.only(
                                         left: 16, right: 2),
                                     title: Row(
                                       children: [
+                                        /// Product image
                                         SizedBox(
-                                            height: 30,
-                                            width: 30,
-                                            child: Image.network(
-                                              "$base_url${item.image}",
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  "assets/image/cbook_logo.png",
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
-                                            )),
-                                        const SizedBox(
-                                          width: 10,
+                                          height: 30,
+                                          width: 30,
+                                          child: Image.network(
+                                            "$base_url${item.image}",
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Image.asset(
+                                                "assets/image/cbook_logo.png",
+                                                fit: BoxFit.cover,
+                                              );
+                                            },
+                                          ),
                                         ),
+                                        const SizedBox(width: 6),
                                         Expanded(
-                                          child: Column(
+                                          child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Row(
+                                              /// Item details
+                                              Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 mainAxisAlignment:
@@ -629,253 +506,70 @@ class _ItemViewState extends State<ItemView> {
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: const TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  const Spacer(),
-                                                  const Align(
-                                                    alignment:
-                                                        Alignment.topRight,
-                                                    child: Text(
-                                                      '1Box = 12PC',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: Color(
-                                                              0xff9575CD)),
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  )
+                                                  const Text(
+                                                    '1Box = 12PC',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.blue,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "M.R.P: ${item.mrp}",
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
-                                              Row(
+
+                                              /// Prices
+                                              Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                    MainAxisAlignment.end,
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.end,
                                                 children: [
-                                                  ///===>>>pp
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 5.0),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          const Text(
-                                                            "P.P",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 12),
-                                                          ),
-                                                          Text(
-                                                            "${item.purchasePrice}",
-                                                            style:
-                                                                const TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        12),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                  Text(
+                                                    "Sales Price: ${item.salesPrice}",
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
-
-                                                  ///===>>>pp
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 5.0),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          const Text(
-                                                            "S.P",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 12),
-                                                          ),
-                                                          Text(
-                                                            "${item.salesPrice}",
-                                                            style:
-                                                                const TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        12),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  ///===>>>pp
-                                                  Expanded(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 5.0),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          const Text(
-                                                            "M.R.P",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 12),
-                                                          ),
-                                                          Text(
-                                                            "${item.mrp}",
-                                                            style:
-                                                                const TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontSize:
-                                                                        12),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  const Expanded(
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 5.0),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            "Stock",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.blue,
-                                                                fontSize: 12),
-                                                          ),
-                                                          FittedBox(
-                                                            child: Text(
-                                                              "50Bx 600Pc",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontSize: 12),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                  Text(
+                                                    "Purchase: ${item.purchasePrice}",
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                              // Text(
-                                              //   "Stock: ${item.openingStock.toString()}",
-                                              //   style: const TextStyle(
-                                              //       fontSize: 12,
-                                              //       color: Colors.black),
-                                              // ),
-                                              // Text(
-                                              //   "Unit:  ${item.openingStock.toString()} ${itemProvider.unitSymbols[unitId] ?? 'N/A'} "
-                                              //   "(${item.openingStock.toString()} ${secondaryUnitId != null ? (itemProvider.unitSymbols[secondaryUnitId] ?? '') : 'Pc '})",
-                                              //   style: const TextStyle(
-                                              //       fontSize: 12,
-                                              //       color: Colors.black),
-                                              // ),
                                             ],
                                           ),
-                                        ),
+                                        )
                                       ],
                                     ),
-                                    // trailing: PopupMenuButton<String>(
-                                    //   onSelected: (value) async {
-                                    //     debugPrint("Item ID: ${item.id}");
-
-                                    //     if (value == 'update') {
-                                    //       final itemProvider =
-                                    //           Provider.of<ItemUpdateProvider>(
-                                    //               context,
-                                    //               listen: false);
-
-                                    //       // Show loading dialog
-                                    //       showDialog(
-                                    //         context: context,
-                                    //         barrierDismissible: false,
-                                    //         builder: (_) => const Center(
-                                    //             child:
-                                    //                 CircularProgressIndicator()),
-                                    //       );
-
-                                    //       // Fetch data before navigating
-                                    //       await itemProvider
-                                    //           .fetchItemDetails(item.id);
-
-                                    //       // Close the loading dialog
-                                    //       Navigator.pop(context);
-
-                                    //       // Navigate to the update screen
-                                    //       Navigator.push(
-                                    //         context,
-                                    //         MaterialPageRoute(
-                                    //           builder: (context) =>
-                                    //               UpdateItem(itemId: item.id),
-                                    //         ),
-                                    //       );
-
-                                    //       debugPrint("item data");
-                                    //       debugPrint("${item.id}");
-                                    //     } else if (value == 'delete') {
-                                    //       debugPrint("Delete ${item.name}");
-                                    //       _deleteItem(context, item.id);
-                                    //     }
-                                    //   },
-                                    //   itemBuilder: (context) => [
-                                    //     const PopupMenuItem(
-                                    //       value: 'update',
-                                    //       child: ListTile(
-                                    //         leading: Icon(Icons.edit,
-                                    //             color: Colors.blue),
-                                    //         title: Text('Update'),
-                                    //       ),
-                                    //     ),
-                                    //     const PopupMenuItem(
-                                    //       value: 'delete',
-                                    //       child: ListTile(
-                                    //         leading: Icon(Icons.delete,
-                                    //             color: Colors.red),
-                                    //         title: Text('Delete'),
-                                    //       ),
-                                    //     ),
-                                    //   ],
-                                    // ),
                                   ),
                                 ),
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   );
                 },
               ),
@@ -885,6 +579,160 @@ class _ItemViewState extends State<ItemView> {
       ),
     );
   }
+
+
+  Future<dynamic> editDeleteDiolog(BuildContext context, String customerId) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    //Navigate to Edit Page
+
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) =>
+                    //         CustomerUpdate(id: customerId),
+                    //   ),
+                    // );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, customerId);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+  void _showDeleteDialog(BuildContext context, String customerId) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Item',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this Item?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              // final provider =
+              //     Provider.of<CustomerProvider>(context, listen: false);
+              // bool isDeleted =
+              //     await provider.deleteCustomer(int.parse(customerId));
+
+              // if (isDeleted) {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(
+              //       content: Text(
+              //         'Item deleted successfully!',
+              //         style: TextStyle(color: colorScheme.primary),
+              //       ),
+              //     ),
+              //   );
+              //   Navigator.of(context).pop(); // Close dialog
+              //   await provider.fetchCustomsr(); // Refresh list
+              // } else {
+              //   Navigator.of(context).pop(); // Close dialog
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(
+              //       content: Text(
+              //         'Failed to delete Item',
+              //         style: TextStyle(color: Colors.red),
+              //       ),
+              //     ),
+              //   );
+              // }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+ 
+
+
 
   Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
     return await showDialog(
@@ -999,20 +847,19 @@ class _ItemViewState extends State<ItemView> {
                         child: _buildIconWithLabel(Icons.shopping_cart_checkout,
                             "Sales/Bill/\nInvoice", context)),
 
-                    
-                  
-                     //// bulk sales
-                  InkWell(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const ItemListPage()));
+                    //// bulk sales
+                    InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const ItemListPage()));
 
-                        // showFeatureNotAvailableDialog(context);
-                      },
-                      child: _buildIconWithLabel(Icons.apps,
-                          "Bulk sales/\nInvoice", context)),  
-                    
-                    
+                          // showFeatureNotAvailableDialog(context);
+                        },
+                        child: _buildIconWithLabel(
+                            Icons.apps, "Bulk sales/\nInvoice", context)),
+
                     //// Estimate/\nQuotation
                     InkWell(
                       onTap: () {

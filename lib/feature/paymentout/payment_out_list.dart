@@ -318,12 +318,15 @@ class _PaymentOutListState extends State<PaymentOutList> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Text(voucher.voucherDate,
+                                                        Text(
+                                                            voucher.voucherDate,
                                                             style: ts),
                                                         Text(
-                                                            voucher.voucherNumber,
+                                                            voucher
+                                                                .voucherNumber,
                                                             style: ts),
-                                                        const SizedBox(height: 5),
+                                                        const SizedBox(
+                                                            height: 5),
                                                         Text(
                                                             voucher.totalAmount
                                                                 .toStringAsFixed(

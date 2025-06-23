@@ -19,6 +19,8 @@ class PaymentOutCreateItem extends StatefulWidget {
 }
 
 class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
+  String? selectedDiscountType;
+
   String? selectedReceivedTo;
   String? selectedAccount;
 
@@ -579,8 +581,15 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                         width: double.infinity,
                         height: 30,
                         labelText: '%',
-                        selectedItem: selectedReceivedTo,
-                        onChanged: (value) {},
+                        selectedItem: selectedDiscountType,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDiscountType =
+                                value; // ✅ Update the selected value
+                          });
+                          debugPrint(
+                              'Discount type selected: $selectedDiscountType');
+                        },
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -662,6 +671,14 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                     debugPrint('note ${notes}');
                     debugPrint('status ${status.toString()}');
                     debugPrint('invoice number ${invoiceNo}');
+
+                    debugPrint('total amount ${totalAmount.text}');
+
+                    debugPrint("payment ${paymentAmount.text}");
+
+                    debugPrint("discount ${discountAmount.text}");
+
+                    debugPrint('Discount type selected: $selectedDiscountType');
 
                     if (selectedBillPersonData != null) {
                       debugPrint(

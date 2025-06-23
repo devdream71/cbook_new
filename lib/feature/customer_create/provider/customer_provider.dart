@@ -73,35 +73,67 @@ class CustomerProvider extends ChangeNotifier {
  
 
   /// **Delete Supplier**
-  Future<void> deleteCustomer(int supplierId) async {
-    final url = Uri.parse(
-        'https://commercebook.site/api/v1/customer/remove/$supplierId');
+  // Future<void> deleteCustomer(int supplierId) async {
+  //   final url = Uri.parse(
+  //       'https://commercebook.site/api/v1/customer/remove/$supplierId');
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json', // Ensure JSON request
-          'Accept': 'application/json', // Ensure JSON response
-        },
-      );
-      final data = jsonDecode(response.body);
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {
+  //         'Content-Type': 'application/json', // Ensure JSON request
+  //         'Accept': 'application/json', // Ensure JSON response
+  //       },
+  //     );
+  //     final data = jsonDecode(response.body);
 
-      debugPrint("Delete Response: $data");
+  //     debugPrint("Delete Response: $data");
 
-      if (response.statusCode == 200 && data["success"] == true) {
-        // Remove the deleted supplier from the local list
-        customerResponse?.data.remove(supplierId);
-        notifyListeners();
-        fetchCustomsr();
-        notifyListeners();
-      } else {
-        debugPrint("Error deleting supplier: ${data['message']}");
-      }
-    } catch (e) {
-      debugPrint("Error: $e");
+  //     if (response.statusCode == 200 && data["success"] == true) {
+  //       // Remove the deleted supplier from the local list
+  //       customerResponse?.data.remove(supplierId);
+  //       notifyListeners();
+  //       fetchCustomsr();
+  //       notifyListeners();
+  //     } else {
+  //       debugPrint("Error deleting supplier: ${data['message']}");
+  //     }
+  //   } catch (e) {
+  //     debugPrint("Error: $e");
+  //   }
+  // }
+
+  Future<bool> deleteCustomer(int supplierId) async {
+  final url = Uri.parse('https://commercebook.site/api/v1/customer/remove/$supplierId');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    final data = jsonDecode(response.body);
+    debugPrint("Delete Response: $data");
+
+    if (response.statusCode == 200 && data["success"] == true) {
+      // Optional: remove from local list if needed
+      customerResponse?.data.removeWhere((customer) => customer.id == supplierId);
+
+      notifyListeners();
+      return true; // Success
+    } else {
+      debugPrint("Error deleting supplier: ${data['message']}");
+      return false; // Failed
     }
+  } catch (e) {
+    debugPrint("Error: $e");
+    return false; // Failed
   }
+}
+
 
  
   /// Create new customer

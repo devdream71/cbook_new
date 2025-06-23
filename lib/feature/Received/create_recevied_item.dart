@@ -81,6 +81,10 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
     super.initState();
     Future.microtask(() =>
         Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
+
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false).fetchBillPersons());
+            
   }
 
   @override
@@ -658,7 +662,11 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                     backgroundColor: Colors.green, // Button background color
                     foregroundColor: Colors.white, // Button text color
                   ),
-                  onPressed: () async {},
+                  onPressed: () async {
+                   
+                   
+
+                  },
                   child: const Text("Save"),
                 ),
               ),

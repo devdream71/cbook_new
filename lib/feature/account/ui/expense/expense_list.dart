@@ -250,7 +250,7 @@ class _ExpanseState extends State<Expanse> {
                     return const Center(
                         child: Text(
                       'No expenses found.',
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ));
                   }
 
@@ -407,6 +407,8 @@ class _ExpanseState extends State<Expanse> {
                   );
                 },
               )
+            
+            
             ],
           ),
         ],

@@ -48,22 +48,26 @@ class AddSalesFormfield extends StatelessWidget {
             style: textStyle,
             onChanged: onChanged,
             readOnly: readOnly,
+
+            ///unbderline
+            autocorrect: false,
+            enableSuggestions: false,
+            
+
+            ///underline
             decoration: decoration.copyWith(
               labelText: labelText,
               labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
-
               floatingLabelStyle: const TextStyle(
                   fontSize: 12, color: Colors.green), // when floating at top
-
               filled: true,
-
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3),
                 borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3),
-                borderSide: BorderSide(color: Colors.green, width: 1),
+                borderSide: const BorderSide(color: Colors.green, width: 1),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3),
@@ -73,6 +77,7 @@ class AddSalesFormfield extends StatelessWidget {
                 vertical: 2,
                 horizontal: 10,
               ),
+              //enableBroder: OutlineInputBorder()
             ),
           ),
         ),
@@ -80,17 +85,3 @@ class AddSalesFormfield extends StatelessWidget {
     );
   }
 }
-
-
-
-// TextFormField(
-//   initialValue: 'Input text',
-//   decoration: InputDecoration(
-//     labelText: 'Label text',
-//     errorText: 'Error message',
-//     border: OutlineInputBorder(),
-//     suffixIcon: Icon(
-//       Icons.error,
-//     ),
-//   ),
-// ),

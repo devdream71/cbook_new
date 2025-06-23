@@ -90,111 +90,114 @@ class _AddSalesFormfieldTwoState extends State<AddSalesFormfieldTwo> {
                       maxHeight: 200,
                       maxWidth: availableWidth,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 4.0, left: 8, right: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                widget.customerorSaleslist!,
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 12),
-                              ),
-                              InkWell(
-                                  onTap: widget.onTap,
-                                  child: Text(
-                                    widget.customerOrSupplierButtonLavel!,
-                                    style: const TextStyle(
-                                        color: Colors.blue, fontSize: 12),
-                                  )),
-                            ],
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 4.0, left: 8, right: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  widget.customerorSaleslist!,
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 12),
+                                ),
+                                InkWell(
+                                    onTap: widget.onTap,
+                                    child: Text(
+                                      widget.customerOrSupplierButtonLavel!,
+                                      style: const TextStyle(
+                                          color: Colors.blue, fontSize: 12),
+                                    )),
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: Divider(
-                            color: widget.color,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8),
+                            child: Divider(
+                              color: widget.color,
+                            ),
                           ),
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets
-                              .zero, // Remove default ListView padding
-                          itemCount: _filteredCustomers.length,
-                          itemBuilder: (context, index) {
-                            final customer = _filteredCustomers[index];
-
-                            return Container(
-                              color: colorScheme.surface,
-                              child: GestureDetector(
-                                onTap: () {
-                                  widget.controller.text = customer.name;
-                                  provider.setSelectedCustomer(customer);
-                                  _removeOverlay();
-                                  FocusScope.of(context).unfocus();
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6), // Custom padding
-                                  child: Row(
-                                    children: [
-                                      // Colored Dot
-                                      Container(
-                                        width: 8,
-                                        height: 8,
-                                        margin: const EdgeInsets.only(right: 8),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: customer.type == 'customer'
-                                              ? Colors.green
-                                              : Colors.red,
+                          ListView.builder(
+                            shrinkWrap: true,
+                          
+                            padding: EdgeInsets
+                                .zero, // Remove default ListView padding
+                            itemCount: _filteredCustomers.length,
+                            itemBuilder: (context, index) {
+                              final customer = _filteredCustomers[index];
+                      
+                              return Container(
+                                color: colorScheme.surface,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    widget.controller.text = customer.name;
+                                    provider.setSelectedCustomer(customer);
+                                    _removeOverlay();
+                                    FocusScope.of(context).unfocus();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 6), // Custom padding
+                                    child: Row(
+                                      children: [
+                                        // Colored Dot
+                                        Container(
+                                          width: 8,
+                                          height: 8,
+                                          margin: const EdgeInsets.only(right: 8),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: customer.type == 'customer'
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
                                         ),
-                                      ),
-
-                                      // Name and Due
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                customer.name,
+                      
+                                        // Name and Due
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  customer.name,
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 13,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Text(
+                                                customer.due.toString(),
                                                 style: const TextStyle(
                                                   color: Colors.black,
+                                                  // customer.type ==
+                                                  //         'customer'
+                                                  //     ? Colors.green
+                                                  //     : Colors.red,
                                                   fontSize: 13,
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                            ),
-                                            Text(
-                                              customer.due.toString(),
-                                              style: const TextStyle(
-                                                color: Colors.black,
-                                                // customer.type ==
-                                                //         'customer'
-                                                //     ? Colors.green
-                                                //     : Colors.red,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

@@ -342,6 +342,7 @@ class _AddItemState extends State<AddItem> {
            
                     vPad10,
                     AddSalesFormfield(
+                      height: 40,
                       label: "Item Name",
                       controller: controller.nameAddItemController,
                     ),
@@ -507,7 +508,7 @@ class _AddItemState extends State<AddItem> {
                                             .toList(),
                                         hint: '',
                                         width: double.infinity,
-                                        height: 30,
+                                        height: 40,
                                         onChanged: (value) {
                                           final selectedCategory =
                                               categoryProvider.categories
@@ -567,7 +568,7 @@ class _AddItemState extends State<AddItem> {
                                                     .toList(),
                                                 hint: '',
                                                 width: double.infinity,
-                                                height: 30,
+                                                height: 40,
                                                 onChanged: (value) {
                                                   final selectedSubCategory =
                                                       categoryProvider
@@ -605,6 +606,7 @@ class _AddItemState extends State<AddItem> {
                       children: [
                         Expanded(
                           child: AddSalesFormfield(
+                            height: 40,
                             label: "Opening Stock",
                             controller: controller.stockAddItemController,
                             keyboardType: TextInputType.number,
@@ -613,6 +615,7 @@ class _AddItemState extends State<AddItem> {
                         hPad10,
                         Expanded(
                           child: AddSalesFormfield(
+                            height: 40,
                             label: "Price",
                             controller: controller.priceAddItemController,
                             keyboardType: TextInputType.number,
@@ -627,6 +630,7 @@ class _AddItemState extends State<AddItem> {
                       children: [
                         Expanded(
                           child: AddSalesFormfield(
+                            height: 40,
                             label: "Value",
                             controller: controller.valueAddItemController,
                             onChanged: (value) {},
@@ -644,7 +648,7 @@ class _AddItemState extends State<AddItem> {
                                     color: Colors.black, fontSize: 12),
                               ),
                               Container(
-                                height: 30,
+                                height: 40,
                                 width: double.maxFinite,
                                 decoration: BoxDecoration(
                                   color: Colors.transparent, // Background color

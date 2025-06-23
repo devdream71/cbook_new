@@ -2,11 +2,11 @@ class BillPersonModel {
   final int id;
   final String name;
   final String nickName;
-  final String? email;
+  final String email;
   final String phone;
   final int designationId;
-  final dynamic avatar;
-  final dynamic  date;
+  final String? avatar;
+  final int date;
   final int status;
 
   BillPersonModel({
@@ -16,7 +16,7 @@ class BillPersonModel {
     required this.email,
     required this.phone,
     required this.designationId,
-    required this.avatar,
+    this.avatar,
     required this.date,
     required this.status,
   });

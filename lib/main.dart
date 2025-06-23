@@ -23,6 +23,7 @@ import 'package:cbook_dt/feature/sales/sales_update.dart';
 import 'package:cbook_dt/feature/sales_return/controller/sales_return_controller.dart';
 import 'package:cbook_dt/feature/sales_return/provider/sale_return_provider.dart';
 import 'package:cbook_dt/feature/settings/provider/setting_user_provider.dart';
+import 'package:cbook_dt/feature/settings/ui/bill/provider/bill_provider.dart';
 import 'package:cbook_dt/feature/splash_screen.dart';
 import 'package:cbook_dt/feature/suppliers/provider/suppliers_list.dart';
 import 'package:cbook_dt/feature/tax/provider/tax_provider.dart';
@@ -115,7 +116,8 @@ void main() async {
             ChangeNotifierProvider(create: (_) => IncomeProvider()),
             ChangeNotifierProvider(create: (_) => ExpenseProvider()),
           ChangeNotifierProvider(create: (_) => PaymentVoucherProvider()), 
-          ChangeNotifierProvider(create: (_) => ReceiveVoucherProvider()),  
+          ChangeNotifierProvider(create: (_) => ReceiveVoucherProvider()),
+          ChangeNotifierProvider(create: (_) => BillPersonProvider()),  
 
           
           ],

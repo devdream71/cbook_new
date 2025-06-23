@@ -74,10 +74,12 @@ class _AddUnitState extends State<AddUnit> {
               children: [
                 vPad10,
                 AddSalesFormfield(
+                  height: 40,
                   label: "Name",
                   controller: nameController,
                 ),
                 AddSalesFormfield(
+                  height: 40,
                   label: "Symbol",
                   controller: symbolController,
                 ),
@@ -95,7 +97,7 @@ class _AddUnitState extends State<AddUnit> {
                     items: const ["Active", "Inactive"], // Display labels
                     hint: '', //Select status
                     width: double.infinity,
-                    height: 30,
+                    height: 40,
                     value: selectedStatus == "1"
                         ? "Active"
                         : "Inactive", // ✅ reflect selection

@@ -93,6 +93,7 @@ class TransactionViewState extends State<TransactionView> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: false,

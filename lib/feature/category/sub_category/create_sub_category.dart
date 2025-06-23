@@ -52,6 +52,7 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AddSalesFormfield(
+                  height: 40,
                   label: "Enter Subcategory Name",
                   controller: _nameController,
                 ),
@@ -74,7 +75,7 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
                         .toList(),
                     hint: '', //Select Category
                     width: double.infinity,
-                    height: 30,
+                    height: 40,
                     onChanged: (value) {
                       setState(() {
                         selectedCategory = value;
@@ -99,7 +100,7 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
                     items: const ["Active", "Inactive"],
                     hint: '', //Select status
                     width: double.infinity,
-                    height: 30,
+                    height: 40,
                     onChanged: (value) {
                       setState(() {
                         selectedStatus = (value == "Active") ? "1" : "0";

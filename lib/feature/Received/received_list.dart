@@ -263,7 +263,11 @@ class _ReceivedListState extends State<ReceivedList> {
 
                     if (provider.vouchers.isEmpty) {
                       return const Center(
-                          child: Text('No Receive Vouchers Found'));
+                          child: Text(
+                        'No Receive Vouchers Found',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ));
                     }
 
                     return ListView.builder(
@@ -321,18 +325,22 @@ class _ReceivedListState extends State<ReceivedList> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Text(voucher.voucherDate,
+                                                        Text(
+                                                            voucher.voucherDate,
                                                             style: ts), // Date
                                                         Text(
-                                                            voucher.voucherNumber,
+                                                            voucher
+                                                                .voucherNumber,
                                                             style:
                                                                 ts), // Voucher Number
-                                                        const SizedBox(height: 5),
+                                                        const SizedBox(
+                                                            height: 5),
                                                         Text(
                                                             voucher.totalAmount
                                                                 .toStringAsFixed(
                                                                     2),
-                                                            style: ts2), // Amount
+                                                            style:
+                                                                ts2), // Amount
                                                       ],
                                                     ),
                                                   ],
@@ -511,7 +519,7 @@ class _ReceivedListState extends State<ReceivedList> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
-                      _showDeleteDialog(context, voucherId);
+                    _showDeleteDialog(context, voucherId);
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -528,7 +536,7 @@ class _ReceivedListState extends State<ReceivedList> {
   }
 
   void _showDeleteDialog(BuildContext context, String voucherId) {
-      final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

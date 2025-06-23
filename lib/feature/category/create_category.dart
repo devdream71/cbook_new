@@ -67,6 +67,7 @@ class _CreateCategoryState extends State<CreateCategory> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AddSalesFormfield(
+              height: 40,
               label: "Enter Category Name",
               controller: _nameController,
             ),
@@ -84,7 +85,7 @@ class _CreateCategoryState extends State<CreateCategory> {
                 items: const ["Active", "Inactive"], // Display labels
                 hint: '', //Select status
                 width: double.infinity,
-                height: 30,
+                height: 40,
                 onChanged: (value) {
                   setState(() {
                     selectedStatus = (value == "Active") ? "1" : "0";

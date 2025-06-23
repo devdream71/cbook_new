@@ -9,6 +9,7 @@ class DemoText extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
