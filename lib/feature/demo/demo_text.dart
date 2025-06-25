@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class DemoText extends StatelessWidget {
   const DemoText({super.key});
 
@@ -13,21 +12,17 @@ class DemoText extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
-
         title: const Text(
           'cBook',
           style: TextStyle(
               color: Colors.yellow, fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        iconTheme: IconThemeData(
-    color: Colors.white, // ← makes back icon white
-  ),
+        iconTheme: const IconThemeData(
+          color: Colors.white, // ← makes back icon white
+        ),
         automaticallyImplyLeading: true,
-        
       ),
       body: const Text("cBook"),
     );
   }
 }
-
- 

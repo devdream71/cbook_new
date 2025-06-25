@@ -52,8 +52,9 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AddSalesFormfield(
+                  labelText: 'Enter Subcategory Name',
                   height: 40,
-                  label: "Enter Subcategory Name",
+                  label: "",
                   controller: _nameController,
                 ),
                 const SizedBox(height: 12),

@@ -56,10 +56,18 @@ class _UpdateSubCategoryState extends State<UpdateSubCategory> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final provider = Provider.of<CategoryProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Update Sub Category")),
+      appBar: AppBar(
+          backgroundColor: colorScheme.primary,
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text(
+            "Update Sub Category",
+            style: TextStyle(color: Colors.yellow),
+          )),
       body: !_isDataLoaded
           ? const Center(child: CircularProgressIndicator())
           : provider.categories.isEmpty
@@ -71,7 +79,9 @@ class _UpdateSubCategoryState extends State<UpdateSubCategory> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AddSalesFormfield(
-                          label: "Enter Subcategory Name",
+                          height: 40,
+                          labelText: 'Enter Subcategory Name',
+                          label: "",
                           controller: _nameController,
                         ),
                         const SizedBox(height: 12),
@@ -110,7 +120,7 @@ class _UpdateSubCategoryState extends State<UpdateSubCategory> {
                             items: const ["Active", "Inactive"],
                             hint: "Select Status",
                             width: double.infinity,
-                            height: 30,
+                            height: 40,
                             selectedItem:
                                 selectedStatus == "1" ? "Active" : "Inactive",
                             onChanged: (value) {

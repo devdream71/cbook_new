@@ -303,6 +303,7 @@ class CategoryProvider extends ChangeNotifier {
   SubcategoryEditResponse? _editSubcategory;
   SubcategoryEditResponse? get editSubcategory => _editSubcategory;
 
+  ///sub category details.
   Future<void> fetchSubcategoryDetails(int id) async {
     isLoading = true;
     notifyListeners();

@@ -1,9 +1,14 @@
 import 'dart:convert';
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/feature_not_available.dart';
+import 'package:cbook_dt/feature/Received/received_list.dart';
+import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
+import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
 import 'package:cbook_dt/feature/item/add_item.dart';
 import 'package:cbook_dt/feature/item/item_details.dart';
 import 'package:cbook_dt/feature/item/model/items_show.dart';
+import 'package:cbook_dt/feature/item/update_item.dart';
+import 'package:cbook_dt/feature/paymentout/payment_out_list.dart';
 import 'package:cbook_dt/feature/purchase/purchase_list_api.dart';
 import 'package:cbook_dt/feature/purchase_return/purchase_return_list.dart';
 import 'package:cbook_dt/feature/sales/sales_list.dart';
@@ -37,6 +42,7 @@ class _ItemViewState extends State<ItemView> {
         }
       });
       provider.fetchUnits(); // Fetch unit names
+      provider.fetchUnits();
     });
   }
 
@@ -44,71 +50,6 @@ class _ItemViewState extends State<ItemView> {
   Map<int, String> unitMap = {};
 
   final String base_url = "https://commercebook.site/";
-
-  Future<void> _deleteItem(BuildContext context, int itemId) async {
-    bool confirmDelete = await _showDeleteConfirmationDialog(context);
-    if (!confirmDelete) return;
-
-    final String deleteUrl =
-        "https://commercebook.site/api/v1/item/remove?id=$itemId";
-
-    try {
-      final response = await http.post(Uri.parse(deleteUrl));
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Item deleted successfully!",
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
-        // Refresh item list
-        context.read<AddItemProvider>().fetchItems();
-        //xyz
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Failed to delete item",
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
-    }
-  }
-
-  Future<void> fetchUnits() async {
-    const String url = "https://commercebook.site/api/v1/units";
-
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        final Map<String, dynamic> data = jsonData['data'];
-
-        setState(() {
-          unitMap = {
-            for (var entry in data.entries)
-              int.parse(entry.key): entry.value['name']
-          };
-        });
-      } else {
-        debugPrint("Failed to load units");
-      }
-    } catch (e) {
-      debugPrint("Error fetching units: $e");
-    }
-  }
 
   bool isSearching = false;
   TextEditingController searchController = TextEditingController();
@@ -124,34 +65,7 @@ class _ItemViewState extends State<ItemView> {
       appBar: AppBar(
         backgroundColor: colorTheme.primary,
         centerTitle: true,
-        title:
-
-            //     Row(
-            //       children: [
-            //         Text(
-            //           'Item/Product',
-            //           style: TextStyle(
-            //               color: Colors.yellow,
-            //               fontSize: 16,
-            //               fontWeight: FontWeight.bold),
-            //         ),
-
-            //         IconButton(
-            //   icon: const Icon(Icons.add, color: Colors.white),
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => const AddItem(),
-            //       ),
-            //     );
-            //   },
-            // ),
-
-            //       ],
-            //     ),
-
-            Row(
+        title: Row(
           children: [
             // If searching: Show search field (left side)
             if (isSearching)
@@ -269,35 +183,6 @@ class _ItemViewState extends State<ItemView> {
         ),
         automaticallyImplyLeading: false,
       ),
-      // floatingActionButton: Padding(
-      //   padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.end,
-      //     crossAxisAlignment: CrossAxisAlignment.end,
-      //     children: [
-      //       //////=====> purchase and sale commit out.
-
-      //       IconButton(
-      //         onPressed: () {
-      //           showModalBottomSheet(
-      //             context: context,
-      //             shape: const RoundedRectangleBorder(
-      //               borderRadius:
-      //                   BorderRadius.vertical(top: Radius.circular(16)),
-      //             ),
-      //             builder: (context) => _buildBottomSheetContent(context),
-      //           );
-      //         },
-      //         icon: Icon(
-      //           Icons.add_circle_outline,
-      //           color: colorScheme.primary,
-      //           size: 40.0,
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // )
-
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
         child: Row(
@@ -344,7 +229,6 @@ class _ItemViewState extends State<ItemView> {
           ],
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0),
         child: Column(
@@ -372,14 +256,14 @@ class _ItemViewState extends State<ItemView> {
                                   TextStyle(color: Colors.black, fontSize: 12)),
                           Text("50,000",
                               style: const TextStyle(
-                                  color: Colors.green, fontSize: 12)),
+                                  color: Color(0xff278d46), fontSize: 12)),
                         ],
                       ),
                     ],
                   ),
 
                   // Vertical Divider
-                  Container(
+                  SizedBox(
                     height: 35,
                     width: 35,
                     //color: Colors.green.shade800,
@@ -440,12 +324,18 @@ class _ItemViewState extends State<ItemView> {
 
                             final itemId = item.id;
 
+                            final unitName = itemProvider
+                                .getUnitSymbol(item.unitId?.toString());
+                            final secondaryUnitName =
+                                item.secondaryUnitId != null &&
+                                        item.secondaryUnitId != 0
+                                    ? itemProvider.getUnitSymbol(
+                                        item.secondaryUnitId?.toString())
+                                    : null;
+
                             return InkWell(
-                              onLongPress: (){
-
-
-                               editDeleteDiolog(context, itemId.toString()); 
-
+                              onLongPress: () {
+                                editDeleteDiolog(context, itemId.toString());
                               },
                               onTap: () {
                                 Navigator.push(
@@ -469,8 +359,13 @@ class _ItemViewState extends State<ItemView> {
                                   elevation: 1, // Optional: add shadow
                                   margin: EdgeInsets.zero, // No margin
                                   child: ListTile(
+                                    minVerticalPadding: 0,
+                                    visualDensity: const VisualDensity(
+                                        vertical: 0, horizontal: 0),
+                                    //contentPadding: EdgeInsets.zero,
+
                                     contentPadding: const EdgeInsets.only(
-                                        left: 16, right: 2),
+                                        left: 4, right: 4),
                                     title: Row(
                                       children: [
                                         /// Product image
@@ -482,13 +377,15 @@ class _ItemViewState extends State<ItemView> {
                                             errorBuilder:
                                                 (context, error, stackTrace) {
                                               return Image.asset(
-                                                "assets/image/cbook_logo.png",
+                                                "assets/image/no_pictures.png",
                                                 fit: BoxFit.cover,
                                               );
                                             },
                                           ),
                                         ),
                                         const SizedBox(width: 6),
+
+                                        /// item name , box, mrp, sales price, purchase price.
                                         Expanded(
                                           child: Row(
                                             mainAxisAlignment:
@@ -501,30 +398,43 @@ class _ItemViewState extends State<ItemView> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    item.name,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                  SizedBox(
+                                                    width:
+                                                        263, // Adjust based on layout space
+                                                    height:
+                                                        18, // To restrict vertical overflow
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      child: Text(
+                                                        item.name,
+                                                        style: GoogleFonts
+                                                            .notoSansPhagsPa(
+                                                          fontSize: 13,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
-                                                  const Text(
-                                                    '1Box = 12PC',
+                                                  Text(
+                                                    secondaryUnitName != null
+                                                        ? '1 $unitName ${item.unitQty} $secondaryUnitName'
+                                                        : unitName,
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    style: TextStyle(
+                                                    style: GoogleFonts
+                                                        .notoSansPhagsPa(
                                                       fontSize: 12,
                                                       color: Colors.blue,
                                                     ),
                                                   ),
                                                   Text(
-                                                    "M.R.P: ${item.mrp}",
-                                                    style: const TextStyle(
+                                                    "MRP: ${item.mrp}",
+                                                    style: GoogleFonts
+                                                        .notoSansPhagsPa(
+                                                      fontSize: 11,
                                                       color: Colors.black,
-                                                      fontSize: 12,
                                                     ),
                                                   ),
                                                 ],
@@ -539,20 +449,18 @@ class _ItemViewState extends State<ItemView> {
                                                 children: [
                                                   Text(
                                                     "Sales Price: ${item.salesPrice}",
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
+                                                    style: GoogleFonts
+                                                        .notoSansPhagsPa(
                                                       fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      color: Colors.black87,
                                                     ),
                                                   ),
                                                   Text(
                                                     "Purchase: ${item.purchasePrice}",
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                    style: GoogleFonts
+                                                        .notoSansPhagsPa(
                                                       fontSize: 12,
+                                                      color: Colors.black87,
                                                     ),
                                                   ),
                                                 ],
@@ -580,8 +488,8 @@ class _ItemViewState extends State<ItemView> {
     );
   }
 
-
-  Future<dynamic> editDeleteDiolog(BuildContext context, String customerId) {
+  ////delete and edit alart diolog
+  Future<dynamic> editDeleteDiolog(BuildContext context, String itemId) {
     final colorScheme = Theme.of(context).colorScheme;
     return showDialog(
       context: context,
@@ -637,13 +545,13 @@ class _ItemViewState extends State<ItemView> {
                     Navigator.of(context).pop();
                     //Navigate to Edit Page
 
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) =>
-                    //         CustomerUpdate(id: customerId),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            UpdateItem(itemId: int.parse(itemId)),
+                      ),
+                    );
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -655,7 +563,7 @@ class _ItemViewState extends State<ItemView> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
-                    _showDeleteDialog(context, customerId);
+                    _showDeleteDialog(context, itemId);
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -671,8 +579,8 @@ class _ItemViewState extends State<ItemView> {
     );
   }
 
-
-  void _showDeleteDialog(BuildContext context, String customerId) {
+  /////delete diolog
+  void _showDeleteDialog(BuildContext context, String itemId) {
     final colorScheme = Theme.of(context).colorScheme;
 
     showDialog(
@@ -723,6 +631,29 @@ class _ItemViewState extends State<ItemView> {
               //     ),
               //   );
               // }
+
+              final provider =
+                  Provider.of<AddItemProvider>(context, listen: false);
+              bool isDeleted = await provider
+                  .deleteItem(int.parse(itemId)); // itemId as string
+
+              Navigator.of(context).pop(); // Always close the dialog
+
+              if (isDeleted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Item deleted successfully!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Failed to delete Item'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
@@ -730,37 +661,36 @@ class _ItemViewState extends State<ItemView> {
       ),
     );
   }
- 
 
+  ///delete.
+  // Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
+  //   return await showDialog(
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           return AlertDialog(
+  //             title: const Text("Confirm Delete"),
+  //             content: const Text(
+  //               "Are you sure you want to delete this item?",
+  //               style: TextStyle(color: Colors.black),
+  //             ),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () => Navigator.of(context).pop(false),
+  //                 child: const Text("Cancel"),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () => Navigator.of(context).pop(true),
+  //                 child:
+  //                     const Text("Delete", style: TextStyle(color: Colors.red)),
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       ) ??
+  //       false;
+  // }
 
-
-  Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
-    return await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Confirm Delete"),
-              content: const Text(
-                "Are you sure you want to delete this item?",
-                style: TextStyle(color: Colors.black),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child:
-                      const Text("Delete", style: TextStyle(color: Colors.red)),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-  }
-
+  ///Feature Not Available
   void showFeatureNotAvailableDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -780,6 +710,7 @@ class _ItemViewState extends State<ItemView> {
     );
   }
 
+  ////bottom item modal shet
   Widget _buildBottomSheetContent(BuildContext context) {
     return SafeArea(
       child: SizedBox(
@@ -886,10 +817,15 @@ class _ItemViewState extends State<ItemView> {
                     //// Receipt In
                     InkWell(
                         onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  const FeatureNotAvailableDialog());
+                          // showDialog(
+                          //     context: context,
+                          //     builder: (context) =>
+                          //         const FeatureNotAvailableDialog());
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const ReceivedList()));
                         },
                         child: _buildIconWithLabel(
                             Icons.receipt, "Receipt In", context)),
@@ -966,10 +902,16 @@ class _ItemViewState extends State<ItemView> {
                     //// Payment\nOut
                     InkWell(
                         onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  const FeatureNotAvailableDialog());
+                          // showDialog(
+                          //     context: context,
+                          //     builder: (context) =>
+                          //         const FeatureNotAvailableDialog());
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PaymentOutList()));
                         },
                         child: _buildIconWithLabel(
                             Icons.tab, "Payment\nOut", context)),
@@ -1015,10 +957,15 @@ class _ItemViewState extends State<ItemView> {
                     ////Purchase
                     InkWell(
                       onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) =>
-                                const FeatureNotAvailableDialog());
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (context) =>
+                        //         const FeatureNotAvailableDialog());
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Expanse()));
                       },
                       child: _buildIconWithLabel(
                           Icons.card_travel, "Expense", context),
@@ -1039,10 +986,15 @@ class _ItemViewState extends State<ItemView> {
                     //// Payment\nOut
                     InkWell(
                         onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  const FeatureNotAvailableDialog());
+                          // showDialog(
+                          //     context: context,
+                          //     builder: (context) =>
+                          //         const FeatureNotAvailableDialog());
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Income()));
                         },
                         child:
                             _buildIconWithLabel(Icons.tab, "Income", context)),
@@ -1059,6 +1011,7 @@ class _ItemViewState extends State<ItemView> {
     );
   }
 
+  ////icon with label
   Widget _buildIconWithLabel(
       IconData icon, String label, BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;

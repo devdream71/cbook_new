@@ -9,6 +9,9 @@ class UpdateItemModel {
   final dynamic purchasePrice; 
   final dynamic salePrice; 
   final dynamic mrpPrice; 
+  final dynamic unitId;
+  final dynamic unit2nd;
+  final dynamic unitQTY;
 
   UpdateItemModel({
     required this.name,
@@ -21,6 +24,9 @@ class UpdateItemModel {
     this. purchasePrice,
     this. salePrice,
     this. mrpPrice,
+    this.unitId,
+    this.unit2nd,
+    this.unitQTY,
 
   });
 
@@ -36,6 +42,9 @@ class UpdateItemModel {
       purchasePrice: json['purchase_price'] ?? 0,
       salePrice: json['sales_price'] ?? 0,
       mrpPrice: json['mrps_price'] ?? 0,
+      unitId: json['unit_id'] ?? 'unit id',
+      unit2nd: json['secondary_unit_id'] ?? 'unit 2nd',
+      unitQTY: json['unit_qty'] ?? 0,
     );
   }
 }

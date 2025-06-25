@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cbook_dt/feature/tax/model/tax_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,6 +10,8 @@ class TaxProvider with ChangeNotifier {
   List<TaxModel> get taxList => _taxList;
   bool get isLoading => _isLoading;
 
+  
+  ///tax show list ====> 
   Future<void> fetchTaxes() async {
     _isLoading = true;
     notifyListeners();
@@ -35,6 +36,8 @@ class TaxProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  
+  ///tax create ===>
   Future<void> createTax({
     required int userId,
     required String name,
@@ -64,6 +67,7 @@ class TaxProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  ///tax delete ====>
   Future<void> deleteTax(int id) async {
     _isLoading = true;
     notifyListeners();
@@ -89,6 +93,8 @@ class TaxProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  
+  ///get tex by id
   Future<TaxModel?> getTaxById(int id) async {
     final url = Uri.parse('https://commercebook.site/api/v1/tax/edit/$id');
 
@@ -110,6 +116,8 @@ class TaxProvider with ChangeNotifier {
     return null;
   }
 
+  
+  ///tax update===>
   Future<void> updateTax({
     required int id,
     required String name,

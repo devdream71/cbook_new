@@ -36,47 +36,61 @@ class _UpdateCategoryState extends State<UpdateCategory> {
     setState(() => isLoading = false);
   }
 
+  void _updateCategory() async {
+    final provider = Provider.of<CategoryProvider>(context, listen: false);
 
- void _updateCategory() async {
-  final provider = Provider.of<CategoryProvider>(context, listen: false);
-
-  final success = await provider.updateCategory(
-    id: widget.categoryId,
-    name: _nameController.text.trim(),
-    status: selectedStatus,
-  );
-
-  if (!mounted) return; // ✅ Prevent further execution if widget is disposed
-
-  if (success) {
-    await provider.fetchCategories();
-
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Category updated successfully!", style: TextStyle(color: Colors.white),),
-      backgroundColor: Colors.green,
-      ),
+    final success = await provider.updateCategory(
+      id: widget.categoryId,
+      name: _nameController.text.trim(),
+      status: selectedStatus,
     );
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) =>   ItemCategoryView()),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Failed to update category", style: TextStyle(color: Colors.white),),
-      backgroundColor: Colors.red,
-      ),
-    );
+    if (!mounted) return; // ✅ Prevent further execution if widget is disposed
+
+    if (success) {
+      await provider.fetchCategories();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Category updated successfully!",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => ItemCategoryView()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Failed to update category",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text("Update Category")),
+      appBar: AppBar(
+          backgroundColor: colorScheme.primary,
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text(
+            "Update Category",
+            style: TextStyle(color: Colors.yellow),
+          )),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -86,20 +100,26 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AddSalesFormfield(
-                    label: "Enter Category Name",
+                    labelText: 'Enter Category Name',
+                    height: 40,
+                    label: "",
                     controller: _nameController,
                   ),
                   const SizedBox(height: 12),
-
-                  const Text("Status", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 12),),
-
+                  const Text(
+                    "Status",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12),
+                  ),
                   SizedBox(
                     width: double.infinity,
                     child: CustomDropdownTwo(
                       items: const ["Active", "Inactive"],
                       hint: '', //Select status
                       width: double.infinity,
-                      height: 30,
+                      height: 40,
                       onChanged: (value) {
                         setState(() {
                           selectedStatus = value == "Active" ? "1" : "0";
@@ -119,7 +139,8 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text("Update Category", style: TextStyle(color: Colors.white)),
+                      child: const Text("Update Category",
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 ],

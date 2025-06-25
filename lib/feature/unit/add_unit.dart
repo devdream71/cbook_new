@@ -74,13 +74,15 @@ class _AddUnitState extends State<AddUnit> {
               children: [
                 vPad10,
                 AddSalesFormfield(
+                  labelText: "Name",
                   height: 40,
-                  label: "Name",
+                  label: "",
                   controller: nameController,
                 ),
                 AddSalesFormfield(
+                  labelText: 'Symbol',
                   height: 40,
-                  label: "Symbol",
+                  label: "",
                   controller: symbolController,
                 ),
                 const SizedBox(height: 10),

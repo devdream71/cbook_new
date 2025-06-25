@@ -56,8 +56,13 @@ class _UpdateUnitPageState extends State<UpdateUnitPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text("Update Unit")),
+      appBar: AppBar(
+        backgroundColor: colorScheme.primary,
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text("Update Unit", style: TextStyle(color: Colors.yellow),)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -67,11 +72,15 @@ class _UpdateUnitPageState extends State<UpdateUnitPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AddSalesFormfield(
-                label: "Name",
+                height: 40,
+                labelText: "Name",
+                label: "",
                 controller: _nameController,
               ),
               AddSalesFormfield(
-                label: "Symbol",
+                height: 40,
+                labelText: 'Symbol',
+                label: "",
                 controller: _symbolController,
               ),
               const SizedBox(height: 10),
@@ -91,7 +100,7 @@ class _UpdateUnitPageState extends State<UpdateUnitPage> {
                   items: const ["Active", "Inactive"], // Display labels
                   hint: '', //Select status
                   width: double.infinity,
-                  height: 30,
+                  height: 40,
                   onChanged: (value) {
                     setState(() {
                       selectedStatus = (value == "Active")

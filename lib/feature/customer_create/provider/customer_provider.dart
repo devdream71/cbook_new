@@ -2,12 +2,26 @@ import 'dart:convert';
 import 'package:cbook_dt/feature/customer_create/model/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
 import 'package:cbook_dt/feature/home/presentation/home_view.dart';
+import 'package:cbook_dt/utils/date_time_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class CustomerProvider extends ChangeNotifier {
+
+    DateTime _selectedDate = DateTime.now();
+
+    String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
+
+
+   Future<void> pickDate(BuildContext context) async {
+    final pickedDate = await DateTimeHelper.pickDate(context, _selectedDate);
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      _selectedDate = pickedDate;
+      notifyListeners();
+    }
+  }
 
   
   Customer? _selectedCustomer;

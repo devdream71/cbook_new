@@ -1,5 +1,7 @@
 import 'package:flutter/painting.dart';
 
+///sir grey color  = f4f6ff
+
 //old primary color
 //static const Color _primaryColor = Color(0xff057abd);
 
@@ -19,6 +21,9 @@ class AppColors {
   static const Color _tableHeaderColor = Color(0xffdddefa);
   static const Color _backgroundColor = Color(0xfff4f6ff);
 
+  static const Color _cardGrey = Color(0xfff4f6ff);
+
+
   // Getters to access the colors
   static Color get secondaryColor => _secondaryColor;
   static Color get primaryColor => _primaryColor;
@@ -26,4 +31,6 @@ class AppColors {
   static Color get iconColor => _iconColor;
   static Color get tableHeaderColor => _tableHeaderColor;
   static Color get backgroundColor => _backgroundColor;
+  static Color get cardGrey => _cardGrey;
+
 }

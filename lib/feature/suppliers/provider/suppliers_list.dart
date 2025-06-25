@@ -2,11 +2,24 @@ import 'dart:convert';
 import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/suppliers/model/suppliers_creat.dart';
 import 'package:cbook_dt/feature/suppliers/model/suppliers_list.dart';
+import 'package:cbook_dt/utils/date_time_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SupplierProvider extends ChangeNotifier {
+  DateTime _selectedDate = DateTime.now();
+
+  String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
+
+  Future<void> pickDate(BuildContext context) async {
+    final pickedDate = await DateTimeHelper.pickDate(context, _selectedDate);
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      _selectedDate = pickedDate;
+      notifyListeners();
+    }
+  }
+
   bool isLoading = false;
   SupplierResponse? supplierResponse;
   String errorMessage = "";
@@ -60,7 +73,6 @@ class SupplierProvider extends ChangeNotifier {
         notifyListeners();
         fetchSuppliers();
         notifyListeners();
-
       } else {
         debugPrint("Error deleting supplier: ${data['message']}");
       }
@@ -69,68 +81,73 @@ class SupplierProvider extends ChangeNotifier {
     }
   }
 
-
+  
+  ///  **create supplier**
+  
   Future<void> createSupplier({
-  required String name,
-  required String email,
-  required String phone,
-  required String address,
-  required String status, // Expecting '1' or '0' as strings
-  required String proprietorName,
-  required String openingBalance,
-}) async {
-  isLoading = true;
-  errorMessage = "";
-  notifyListeners();
+    required String name,
+    required String email,
+    required String phone,
+    required String address,
+    required String status, // Expecting '1' or '0' as strings
+    required String proprietorName,
+    required String openingBalance,
+  }) async {
+    isLoading = true;
+    errorMessage = "";
+    notifyListeners();
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? userId = prefs.getInt('user_id')?.toString();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getInt('user_id')?.toString();
 
-  if (userId == null || userId.isEmpty) {
-    errorMessage = "User ID is missing. Please log in again.";
+    if (userId == null || userId.isEmpty) {
+      errorMessage = "User ID is missing. Please log in again.";
+      isLoading = false;
+      notifyListeners();
+      return;
+    }
+
+    final url = Uri.parse('https://commercebook.site/api/v1/supplier/store');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'user_id':
+            userId, // ✅ Fix: Send user_id in the body instead of query params
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'address': address,
+        'status': status, // ✅ Ensure '1' or '0' is passed
+        'proprietor_name': proprietorName,
+        'opening_balance': openingBalance,
+      },
+    );
+
+    try {
+      final data = jsonDecode(response.body);
+      debugPrint("Create Response: $data");
+
+      if (response.statusCode == 200 && data["success"] == true) {
+        debugPrint("Supplier Created: ${data['data']['name']}");
+      } else {
+        errorMessage = data['message'] ?? "Failed to create supplier";
+      }
+    } catch (e) {
+      errorMessage = "Error: $e";
+      debugPrint("Error: $e");
+    }
+
     isLoading = false;
     notifyListeners();
-    return;
   }
 
-  final url = Uri.parse('https://commercebook.site/api/v1/supplier/store');
   
-  final response = await http.post(
-    url,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: {
-      'user_id': userId, // ✅ Fix: Send user_id in the body instead of query params
-      'name': name,
-      'email': email,
-      'phone': phone,
-      'address': address,
-      'status': status, // ✅ Ensure '1' or '0' is passed
-      'proprietor_name': proprietorName,
-      'opening_balance': openingBalance,
-    },
-  );
-
-  try {
-    final data = jsonDecode(response.body);
-    debugPrint("Create Response: $data");
-
-    if (response.statusCode == 200 && data["success"] == true) {
-      debugPrint("Supplier Created: ${data['data']['name']}");
-    } else {
-      errorMessage = data['message'] ?? "Failed to create supplier";
-    }
-  } catch (e) {
-    errorMessage = "Error: $e";
-    debugPrint("Error: $e");
-  }
-
-  isLoading = false;
-  notifyListeners();
-}
-
+  /// **featch supplier by id**
   Future<SupplierData?> fetchSupplierById(int supplierId) async {
     final url =
         Uri.parse('https://commercebook.site/api/v1/supplier/edit/$supplierId');
@@ -151,6 +168,8 @@ class SupplierProvider extends ChangeNotifier {
     return null;
   }
 
+  
+  /// **update supplier**
   Future<void> updateSupplier({
     required String id,
     required String name,

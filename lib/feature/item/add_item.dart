@@ -179,6 +179,81 @@ class _AddItemState extends State<AddItem> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+
+                ///item
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddItem()),
+                      );
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          // border: Border.all(color: Colors.green),
+                          // borderRadius: BorderRadius.circular(6)
+                          ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.developer_board,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "New Item",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+
+                  ///unit
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => UnitListView()),
+                      );
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          // border: Border.all(color: Colors.green),
+                          // borderRadius: BorderRadius.circular(6)
+                          ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.list_alt,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              "Unit",
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.black),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
                   ///category view
                   GestureDetector(
                     onTap: () {
@@ -259,78 +334,9 @@ class _AddItemState extends State<AddItem> {
                     width: 5,
                   ),
 
-                  ///unit
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => UnitListView()),
-                      );
-                    },
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          // border: Border.all(color: Colors.green),
-                          // borderRadius: BorderRadius.circular(6)
-                          ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.list_alt,
-                              size: 18,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Unit",
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.black),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  
 
-                  ///item
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AddItem()),
-                      );
-                    },
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          // border: Border.all(color: Colors.green),
-                          // borderRadius: BorderRadius.circular(6)
-                          ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.developer_board,
-                              size: 18,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "New Item",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  
                   const SizedBox(
                     width: 5,
                   ),
@@ -341,9 +347,13 @@ class _AddItemState extends State<AddItem> {
            
            
                     vPad10,
+
+                   ///item text form start. 
+
                     AddSalesFormfield(
+                      labelText: 'Item Name',
                       height: 40,
-                      label: "Item Name",
+                      label: "",
                       controller: controller.nameAddItemController,
                     ),
 
@@ -417,6 +427,7 @@ class _AddItemState extends State<AddItem> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
+                            
                             onPressed: () {
                               showModalBottomSheet(
                                 isScrollControlled: true,
@@ -606,8 +617,9 @@ class _AddItemState extends State<AddItem> {
                       children: [
                         Expanded(
                           child: AddSalesFormfield(
+                            labelText: "Opening Stock",
                             height: 40,
-                            label: "Opening Stock",
+                            label: "",
                             controller: controller.stockAddItemController,
                             keyboardType: TextInputType.number,
                           ),
@@ -615,8 +627,9 @@ class _AddItemState extends State<AddItem> {
                         hPad10,
                         Expanded(
                           child: AddSalesFormfield(
+                            labelText: 'Price',
                             height: 40,
-                            label: "Price",
+                            label: "",
                             controller: controller.priceAddItemController,
                             keyboardType: TextInputType.number,
                           ),
@@ -630,8 +643,9 @@ class _AddItemState extends State<AddItem> {
                       children: [
                         Expanded(
                           child: AddSalesFormfield(
+                            labelText: 'Value',
                             height: 40,
-                            label: "Value",
+                            label: "",
                             controller: controller.valueAddItemController,
                             onChanged: (value) {},
                           ),
@@ -784,7 +798,7 @@ class _AddItemState extends State<AddItem> {
                                 image: _imageFile != null
                                     ? FileImage(File(_imageFile!.path))
                                     : const AssetImage(
-                                        "assets/image/cbook_logo.png"),
+                                        "assets/image/image_upload_blue.png"),
                                 fit: BoxFit.fitWidth,
                               ),
                             ),
@@ -1080,9 +1094,7 @@ class _AddItemState extends State<AddItem> {
                       height: 10,
                     ),
 
-                    const SizedBox(
-                      height: 8,
-                    ),
+                     
 
                     //const Spacer(),
 
@@ -1273,7 +1285,7 @@ class _AddItemState extends State<AddItem> {
                                     categorypriceData['ecommerces_price'],
                               );
 
-                              // Clear all form fields after saving
+                              //Clear all form fields after saving
                               controller.nameAddItemController.clear();
                               controller.stockAddItemController.clear();
                               controller.priceAddItemController.clear();
@@ -1312,6 +1324,7 @@ class _AddItemState extends State<AddItem> {
                         ),
                       ),
                     ),
+
 
                     const SizedBox(
                       height: 25,

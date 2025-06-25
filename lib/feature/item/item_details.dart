@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'package:cbook_dt/common/custome_close_button.dart';
 import 'package:cbook_dt/common/item_details_pop_up.dart';
 import 'package:cbook_dt/common/item_details_pop_up_two.dart';
+import 'package:cbook_dt/feature/Received/provider/received_provider.dart';
+import 'package:cbook_dt/feature/item/update_item.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class ItemDetailsView extends StatefulWidget {
   final int itemId;
@@ -77,653 +81,387 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
     }
   }
 
+  TextStyle ts = const TextStyle(color: Colors.black, fontSize: 13);
+  TextStyle ts2 = const TextStyle(
+      color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold);
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final itemName = itemDetails?['name'] as String? ?? '';
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
-        centerTitle: true,
+        //centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         automaticallyImplyLeading: true,
-        title: const Column(
+        title: Column(
           children: [
             Text(
-              'Item Details',
-              style: TextStyle(
-                  color: Colors.yellow,
+              itemName,
+              style: const TextStyle(
+                  color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
             ),
           ],
         ),
+        actions: [
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> UpdateItem(itemId: widget.itemId),));
+          }, icon: const Icon(Icons.edit_document))
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : itemDetails == null
               ? const Center(child: Text("No data available"))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ///===>>>Image , text, and 5 icon
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.black26,
-                                      borderRadius: BorderRadius.circular(4)),
-                                  height: 95,
-                                  width: 120,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.network(
-                                      "$baseUrl${itemDetails!['image'] ?? ''}",
-                                      height: 150,
-                                      width: 150,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                            "assets/image/cbook_logo.png",
-                                            fit: BoxFit.fill);
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 130,
-                                  child: Center(
-                                    child: Text(
-                                      "1 Box = 10 Pc",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        showItemDetailsDialog(context);
-                                      },
-                                      child: const Icon(
-                                        Icons.info,
-                                        color: Colors.green,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.help,
-                                      color: Colors.blue,
-                                      size: 20,
-                                    ),
-                                    const Icon(
-                                      Icons.info,
-                                      color: Colors.amber,
-                                      size: 20,
-                                    ),
-                                    const Icon(
-                                      Icons.help,
-                                      color: Colors.purple,
-                                      size: 20,
-                                    ),
-                                    const Icon(
-                                      Icons.info,
-                                      color: Colors.amber,
-                                      size: 20,
-                                    ),
-                                    const Icon(
-                                      Icons.help,
-                                      color: Colors.brown,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-
-                            ///item name, vat/tex, exclusive, inclusive
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 2.0, vertical: 0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 8.0, right: 8, top: 8),
+                        child: Container(
+                          //color: Colors.grey.shade300,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ///===>>>Image , text, and 5 icon
+                              Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("${itemDetails!['name']}",
-                                      style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black)),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(6)),
-                                    child: const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Column(
-                                          children: [
-                                            ItemDetailsPopUpTwo(
-                                              leftTest: "Vat/Tax 15%",
-                                              rightText: 'Exclusive',
-                                              last: "Inclusive",
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            ItemDetailsPopUpTwo(
-                                              leftTest: "Pur Price",
-                                              rightText: '100',
-                                              last: "120",
-                                            ),
-                                            ItemDetailsPopUpTwo(
-                                              leftTest: "Sales. Price",
-                                              rightText: '120',
-                                              last: "140",
-                                            ),
-                                            ItemDetailsPopUpTwo(
-                                              leftTest: "Discount",
-                                              rightText: '5%',
-                                              last: " ",
-                                            ),
-                                            ItemDetailsPopUpTwo(
-                                              leftTest: "MRP",
-                                              rightText: '145',
-                                              last: "",
-                                            ),
-                                          ],
-                                        )
-
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.start,
-                                        //   crossAxisAlignment:
-                                        //       CrossAxisAlignment.start,
-                                        //   children: [
-                                        //     ///===>>>vat,default price, seal, discount, mrp price
-                                        //     Column(
-                                        //       crossAxisAlignment:
-                                        //           CrossAxisAlignment.start,
-                                        //       children: [
-                                        //         Container(
-                                        //           decoration: const BoxDecoration(
-                                        //               color: Colors.green),
-                                        //           child: const Padding(
-                                        //             padding: EdgeInsets.symmetric(
-                                        //                 horizontal: 6.0),
-                                        //             child: Text(
-                                        //               "Vat/Tax:     15%",
-                                        //               style: TextStyle(
-                                        //                   color: Colors.white,
-                                        //                   fontSize: 12,
-                                        //                   fontWeight:
-                                        //                       FontWeight.bold),
-                                        //             ),
-                                        //           ),
-                                        //         ),
-                                        //         const Text(
-                                        //           "Def P.Price", //${itemDetails!['sales_price'] ?? 'N/A'}
-                                        //           style: TextStyle(
-                                        //               color: Colors.black,
-                                        //               fontSize: 12),
-                                        //         ),
-                                        //         const Text(
-                                        //           "Def S.Price", //${itemDetails!['sales_price'] ?? 'N/A'}
-                                        //           style: TextStyle(
-                                        //               color: Colors.black,
-                                        //               fontSize: 12),
-                                        //         ),
-                                        //         const Text(
-                                        //           "Def Discount",
-                                        //           style: TextStyle(
-                                        //               color: Colors.black,
-                                        //               fontSize: 12),
-                                        //         ),
-                                        //         const Text(
-                                        //           "MRP", //${itemDetails!['mrp_price'] ?? 'N/A'}
-                                        //           style: TextStyle(
-                                        //               color: Colors.black,
-                                        //               fontSize: 12),
-                                        //         ),
-                                        //       ],
-                                        //     ),
-
-                                        //     // spacing before divider
-
-                                        //     // Divider (horizontal line)
-                                        //     Container(
-                                        //       height: 80,
-                                        //       width: 2,
-                                        //       color: Colors.grey[300],
-                                        //       margin: const EdgeInsets.symmetric(
-                                        //           horizontal: 6),
-                                        //     ),
-
-                                        //     ///excclusive
-                                        //     Column(
-                                        //       crossAxisAlignment:
-                                        //           CrossAxisAlignment.center,
-                                        //       mainAxisAlignment:
-                                        //           MainAxisAlignment.center,
-                                        //       children: [
-                                        //         Container(
-                                        //           decoration: const BoxDecoration(
-                                        //               color: Colors.green),
-                                        //           child: const Padding(
-                                        //             padding: EdgeInsets.symmetric(
-                                        //                 horizontal: 6.0),
-                                        //             child: Text("Exc",
-                                        //                 style: TextStyle(
-                                        //                     color: Colors.white,
-                                        //                     fontSize: 12,
-                                        //                     fontWeight:
-                                        //                         FontWeight.bold)),
-                                        //           ),
-                                        //         ),
-                                        //         const Text(""),
-                                        //         const Align(
-                                        //           alignment: Alignment.center,
-                                        //           child: Text(
-                                        //             "100",
-                                        //             style: TextStyle(
-                                        //                 color: Colors.black,
-                                        //                 fontSize: 12,
-                                        //                 fontWeight:
-                                        //                     FontWeight.bold),
-                                        //           ),
-                                        //         ),
-                                        //         const Align(
-                                        //           alignment: Alignment.center,
-                                        //           child: Text(
-                                        //             "5 %",
-                                        //             style: TextStyle(
-                                        //                 color: Colors.black,
-                                        //                 fontSize: 12,
-                                        //                 fontWeight:
-                                        //                     FontWeight.bold),
-                                        //           ),
-                                        //         )
-                                        //       ],
-                                        //     ),
-
-                                        //     ///===>>> divider
-                                        //     Container(
-                                        //       height: 80,
-                                        //       width: 2,
-                                        //       color: Colors.grey[300],
-                                        //       margin: const EdgeInsets.symmetric(
-                                        //           horizontal: 6),
-                                        //     ),
-
-                                        //     ///===>>>inc
-                                        //     Column(
-                                        //       crossAxisAlignment:
-                                        //           CrossAxisAlignment.center,
-                                        //       mainAxisAlignment:
-                                        //           MainAxisAlignment.center,
-                                        //       children: [
-                                        //         Container(
-                                        //           decoration: const BoxDecoration(
-                                        //               color: Colors.green),
-                                        //           child: const Padding(
-                                        //             padding: EdgeInsets.symmetric(
-                                        //                 horizontal: 6.0),
-                                        //             child: Text("Inc.",
-                                        //                 style: TextStyle(
-                                        //                     color: Colors.white,
-                                        //                     fontSize: 12,
-                                        //                     fontWeight:
-                                        //                         FontWeight.bold)),
-                                        //           ),
-                                        //         ),
-                                        //         const Text(""),
-                                        //         const Align(
-                                        //           alignment: Alignment.center,
-                                        //           child: Text(
-                                        //             "120",
-                                        //             style: TextStyle(
-                                        //                 color: Colors.black,
-                                        //                 fontSize: 12,
-                                        //                 fontWeight:
-                                        //                     FontWeight.bold),
-                                        //           ),
-                                        //         ),
-                                        //       ],
-                                        //     ),
-                                        //   ],
-                                        // ),
-                                        ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-
-                        //// start date v, end date, dropdown,
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(0),
-                              color: Colors.green),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.25,
-                                  child: GestureDetector(
-                                    onTap: () => _selectDate(
-                                        context, selectedStartDate, (date) {
-                                      setState(() {
-                                        selectedStartDate = date;
-                                      });
-                                    }),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5.0),
                                     child: Container(
-                                      height: 30,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
                                       decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.grey.shade100),
+                                          color: Colors.black26,
                                           borderRadius:
                                               BorderRadius.circular(4)),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}",
-                                            style: GoogleFonts.notoSansPhagsPa(
-                                                fontSize: 12,
-                                                color: Colors.white),
-                                          ),
-                                          const Icon(Icons.calendar_today,
-                                              size: 14),
-                                        ],
+                                      height: 90,
+                                      width: 120,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.network(
+                                          "$baseUrl${itemDetails!['image'] ?? ''}",
+                                          height: 110,
+                                          width: 150,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Image.asset(
+                                                "assets/image/no_pictures.png",
+                                                fit: BoxFit.fill);
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                ],
+                              ),
 
-                                const SizedBox(width: 8),
-                                Text("To",
-                                    style: GoogleFonts.notoSansPhagsPa(
-                                        fontSize: 14, color: Colors.white)),
-                                const SizedBox(width: 8),
-                                // End Date Picker
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.25,
-                                  child: GestureDetector(
-                                    onTap: () => _selectDate(
-                                        context, selectedEndDate, (date) {
-                                      setState(() {
-                                        selectedEndDate = date;
-                                      });
-                                    }),
-                                    child: Container(
-                                      height: 30,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
+                              const SizedBox(
+                                width: 6,
+                              ),
+
+                              ///item name, vat/tex, exclusive, inclusive
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 2.0, vertical: 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
                                       decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey.shade300),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}",
-                                            style: GoogleFonts.notoSansPhagsPa(
-                                                fontSize: 12,
-                                                color: Colors.white),
-                                          ),
-                                          const Icon(Icons.calendar_today,
-                                              size: 14),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                const Spacer(),
-
-                                // Dropdown
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.25,
-                                  child: SizedBox(
-                                    height: 30,
-                                    child: DropdownButtonFormField<String>(
-                                      // decoration: InputDecoration(
-                                      //   contentPadding:
-                                      //       const EdgeInsets.symmetric(
-                                      //           horizontal: 0),
-                                      //   border: OutlineInputBorder(
-
-                                      //     borderRadius:
-                                      //         BorderRadius.circular(4),
-                                      //     borderSide: const BorderSide(
-                                      //       color: Colors.grey,
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 0),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.grey.shade300),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade300)),
-                                        border: OutlineInputBorder(
+                                          color: Colors.white,
                                           borderRadius:
-                                              BorderRadius.circular(4),
-                                          borderSide: BorderSide(
-                                              color: Colors.grey.shade400),
-                                        ),
-                                      ),
-                                      value: selectedDropdownValue,
-                                      hint: const Text(""),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedDropdownValue = newValue;
-                                        });
-                                      },
-                                      items: [
-                                        "All",
-                                        "Purchase",
-                                        "Sale",
-                                        "P. Return",
-                                        "S. Return"
-                                      ].map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 4.0),
-                                            child: Text(value,
-                                                style:
-                                                    GoogleFonts.notoSansPhagsPa(
-                                                        fontSize: 12,
-                                                        color: Colors.black)),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
+                                              BorderRadius.circular(6)),
+                                      child: const Padding(
+                                          padding: EdgeInsets.only(left: 2.0),
+                                          child: Column(
+                                            children: [
+                                              ItemDetailsPopUpTwo(
+                                                leftTest: "Vat/Tax 15%",
+                                                rightText: 'Exclusive',
+                                                last: "Inclusive",
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              ItemDetailsPopUpTwo(
+                                                leftTest: "Pur Price",
+                                                rightText: '100',
+                                                last: "120",
+                                              ),
+                                              ItemDetailsPopUpTwo(
+                                                leftTest: "Sales. Price",
+                                                rightText: '120',
+                                                last: "140",
+                                              ),
+                                              ItemDetailsPopUpTwo(
+                                                leftTest: "Discount",
+                                                rightText: '5%',
+                                                last: " ",
+                                              ),
+                                              ItemDetailsPopUpTwo(
+                                                leftTest: "MRP",
+                                                rightText: '145',
+                                                last: "",
+                                              ),
+                                            ],
+                                          )),
+                                    )
+                                  ],
                                 ),
-                              ],
-                            ),
+                              )
+                            ],
                           ),
                         ),
+                      ),
+                      //const SizedBox(height: 10),
 
-                        ///===>>> this section no need
-                        // Text("Name: ${itemDetails!['name']}",
-                        //     style: const TextStyle(
-                        //         fontSize: 14,
-                        //         fontWeight: FontWeight.bold,
-                        //         color: Colors.black)),
-                        // const SizedBox(height: 5),
-                        // Text(
-                        //   "Unit: ${itemDetails!['unit_id'] ?? 'N/A'}",
-                        //   style: const TextStyle(
-                        //       color: Colors.black, fontSize: 12),
-                        // ),
-                        // Text("MRP: ${itemDetails!['mrp_price'] ?? 'N/A'}",
-                        //     style: const TextStyle(
-                        //         color: Colors.black, fontSize: 12)),
-                        // Text(
-                        //     "Purchase Price: ${itemDetails!['purchase_price'] ?? 'N/A'}",
-                        //     style: const TextStyle(
-                        //         color: Colors.black, fontSize: 12)),
-                        // Text(
-                        //     "Sales Price: ${itemDetails!['sales_price'] ?? 'N/A'}",
-                        //     style: const TextStyle(
-                        //         color: Colors.black, fontSize: 12)),
-                        // Text(
-                        //     "Opening Date: ${itemDetails!['opening_date'] ?? 'N/A'}",
-                        //     style: const TextStyle(
-                        //         color: Colors.black, fontSize: 12)),
+                      //// info and dropdown filter.,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(0),
+                          //color: Colors.white
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Row(
+                            children: [
+                              ///info button
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: IconButton(
+                                  iconSize: 20, // match icon size
+                                  padding: EdgeInsets
+                                      .zero, // remove inner padding :contentReference[oaicite:1]{index=1}
+                                  constraints:
+                                      const BoxConstraints(), // override default 48×48 minimum :contentReference[oaicite:2]{index=2}
+                                  visualDensity: VisualDensity
+                                      .compact, // further tighten around the icon :contentReference[oaicite:3]{index=3}
+                                  onPressed: () {
+                                    showItemDetailsDialog(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.info,
+                                    size: 20,
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                              ),
 
-                        ///===>>>item details section
-                        const Text("Item Details:",
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black)),
-                        purchaseDetails.isEmpty
-                            ? const Center(
-                                child: Text("No details available.",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 14)),
-                              )
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: purchaseDetails.length,
-                                itemBuilder: (context, index) {
-                                  var detail = purchaseDetails[index];
+                              const Spacer(),
 
-                                  String capitalize(String text) {
-                                    if (text.isEmpty) return text;
-                                    return text[0].toUpperCase() +
-                                        text.substring(1);
-                                  }
-
-// Inside your build method:
-                                  Text(
-                                    capitalize(detail['type'] ?? ''),
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                                  return Container(
-                                    //elevation: 2,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: Colors.white),
-                                    margin:
-                                        const EdgeInsets.symmetric(vertical: 3),
-                                    child: ListTile(
+                              // Dropdown
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.25,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: DropdownButtonFormField<String>(
+                                    decoration: InputDecoration(
                                       contentPadding:
                                           const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 2),
+                                              horizontal: 0),
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent),
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.transparent)),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: const BorderSide(
+                                            color: Colors.transparent),
+                                      ),
+                                    ),
+                                    value: selectedDropdownValue,
+                                    hint: const Text("All"),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedDropdownValue = newValue;
+                                      });
+                                    },
+                                    items: [
+                                      "All",
+                                      "Purchase",
+                                      "Sale",
+                                      "P. Return",
+                                      "S. Return"
+                                    ].map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          child: Text(value,
+                                              style:
+                                                  GoogleFonts.notoSansPhagsPa(
+                                                      fontSize: 12,
+                                                      color: Colors.black)),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
 
-                                      ///===>>> type, store name, date, billl
-                                      title: Row(
+                      ///===>>>item details section
+                      // const Text("Item Details:",
+                      //     style: TextStyle(
+                      //         fontSize: 14,
+                      //         fontWeight: FontWeight.bold,
+                      //         color: Colors.black)),
+
+                      purchaseDetails.isEmpty
+                          ? const Center(
+                              child: Text("No details available.",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 14)),
+                            )
+                          : Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0)),
+                              elevation: 1,
+                              margin: const EdgeInsets.only(bottom: 1),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6.0, vertical: 0.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Left Side
+                                    Expanded(
+                                      child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          //type, store name,
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                          Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-// Inside your build method:
-                                              Text(
-                                                capitalize(
-                                                    detail['type'] ?? ''),
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
+                                              // Right Side
+                                              SizedBox(
+                                                width: 80,
+                                                child: Row(
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text('2025-06-25',
+                                                            style: ts), // Date
+                                                        Text('Sales',
+                                                            style:
+                                                                ts2), // Voucher Number
+
+                                                        Text('sal/1452',
+                                                            style:
+                                                                ts), // Amount
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
 
-                                              const Text("Farabi Store",
-                                                  style:
-                                                      TextStyle(fontSize: 12)),
-                                            ],
-                                          ),
+                                              const SizedBox(width: 5),
 
-                                          ///===>>> date, invoice
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              const Text("01/05/2025",
-                                                  style:
-                                                      TextStyle(fontSize: 12)),
-                                              Text("${detail['bill_number']}",
-                                                  style: const TextStyle(
-                                                      fontSize: 12)),
+                                              //Divider (vertical)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 8.0),
+                                                child: Container(
+                                                  height: 40,
+                                                  width: 2,
+                                                  color: Colors.green.shade200,
+                                                  margin: const EdgeInsets
+                                                      .symmetric(horizontal: 6),
+                                                ),
+                                              ),
+
+                                              const SizedBox(width: 5),
+
+                                              // Received To
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('MD. Tamim',
+                                                        style: ts),
+                                                    Text('Md. Shakib',
+                                                        style:
+                                                            ts), // Static Text
+                                                    Text('01759546853',
+                                                        style:
+                                                            ts), // Static Text
+                                                  ],
+                                                ),
+                                              ),
+
+                                              // Received From
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text('Bill Qty: 20',
+                                                        style: ts),
+                                                    Text('Price: 170',
+                                                        style:
+                                                            ts), // Customer Name
+
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        style:
+                                                            ts, // base TextStyle for entire text
+                                                        children: [
+                                                          const TextSpan(
+                                                              text: 'Amount: '),
+                                                          TextSpan(
+                                                            text: '1236',
+                                                            style: ts.copyWith(
+                                                                color: Colors
+                                                                    .purple), // '1236' in purple
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                      subtitle: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text("Bill Qty: 18 Pc",
-                                              style: TextStyle(fontSize: 12)),
-                                          const Text("Price: 55",
-                                              style: TextStyle(fontSize: 12)),
-                                          Text("Bill: ${detail['sub_total']}",
-                                              style: const TextStyle(
-                                                  fontSize: 12)),
                                         ],
                                       ),
                                     ),
-                                  );
-                                },
+                                  ],
+                                ),
                               ),
-                      ],
-                    ),
+                            ),
+                    ],
                   ),
                 ),
     );
   }
 
   void showItemDetailsDialog(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (context) {
@@ -740,7 +478,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
               children: [
                 Container(
                   height: 30,
-                  color: Colors.yellow,
+                  color: colorScheme.primary,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -752,12 +490,12 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                       // Centered text and icon
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children:   [
+                        children: [
                           SizedBox(width: 5),
                           Text(
                             "Item Information",
                             style: TextStyle(
-                                color: Colors.black,
+                                color: Colors.yellow,
                                 fontWeight: FontWeight.bold),
                           ),
                         ],

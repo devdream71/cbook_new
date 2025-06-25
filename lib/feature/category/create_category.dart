@@ -67,8 +67,9 @@ class _CreateCategoryState extends State<CreateCategory> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AddSalesFormfield(
+              labelText: 'Enter Category Name',
               height: 40,
-              label: "Enter Category Name",
+              label: "",
               controller: _nameController,
             ),
             const SizedBox(height: 12),

@@ -14,15 +14,15 @@ class ItemDetailsPopUpTwo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
+            SizedBox(
               //color: Colors.blue,
               child: SizedBox(
-                width: 85,
+                width: 108,
                 child: Text(leftTest,
                     style: TextStyle(
                         fontWeight: fontWeight,
@@ -30,7 +30,7 @@ class ItemDetailsPopUpTwo extends StatelessWidget {
                         fontSize: 12)),
               ),
             ),
-            Container(
+            SizedBox(
               //color: Colors.green,
               child: SizedBox(
                 width: 70,
@@ -41,7 +41,7 @@ class ItemDetailsPopUpTwo extends StatelessWidget {
                         fontSize: 12)),
               ),
             ),
-            Container(
+            SizedBox(
               //color: Colors.red,
               child: SizedBox(
                 width: 70,
@@ -52,7 +52,7 @@ class ItemDetailsPopUpTwo extends StatelessWidget {
                         fontSize: 12)),
               ),
             ),
-            SizedBox(height: 3),
+            const SizedBox(height: 3),
           ]),
     );
   }

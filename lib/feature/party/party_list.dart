@@ -1,11 +1,13 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/customer_create/customer_details.dart';
-
+import 'package:cbook_dt/feature/customer_create/customer_update.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
-
 import 'package:cbook_dt/feature/party/party_intro_page.dart';
 import 'package:cbook_dt/feature/suppliers/provider/suppliers_list.dart';
-
+import 'package:cbook_dt/feature/suppliers/supplier_update.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class Party extends StatefulWidget {
@@ -40,99 +42,7 @@ class _PartyState extends State<Party> {
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
-          title:
-
-              // Row(
-              //   children: [
-
-              //     //search text field
-              //           if (isSearching)
-              //             Expanded(
-              //               child: Row(
-              //                 children: [
-              //                   Expanded(
-              //                     child: SizedBox(
-              //                       height: 30,
-              //                       child: TextField(
-              //                         cursorHeight: 15,
-              //                         controller: searchController,
-              //                         autofocus: true,
-              //                         style: const TextStyle(
-              //                             color: Colors.white, fontSize: 12),
-              //                         decoration: InputDecoration(
-              //                           hintText: '',
-              //                           border: OutlineInputBorder(
-              //                             borderRadius: BorderRadius.circular(6),
-
-              //                           ),
-
-              //                           contentPadding: const EdgeInsets.symmetric(
-              //                               horizontal: 8, vertical: 2),
-              //                         ),
-              //                       ),
-              //                     ),
-              //                   ),
-              //                   IconButton(
-              //                     icon: const Icon(Icons.close),
-              //                     onPressed: () {
-              //                       setState(() {
-              //                         isSearching = false;
-              //                         searchController.clear();
-              //                       });
-              //                     },
-              //                   ),
-              //                 ],
-              //               ),
-              //             )
-              //           else ...[
-              //             Expanded(
-              //               child: Align(
-              //                 alignment: Alignment.centerLeft,
-              //                 child: GestureDetector(
-              //                   onTap: () {
-              //                     setState(() {
-              //                       isSearching = true;
-              //                     });
-              //                   },
-              //                   child: Container(
-              //                     decoration: BoxDecoration(
-              //                       border: Border.all(color: Colors.blue),
-              //                       borderRadius: BorderRadius.circular(50),
-              //                     ),
-              //                     child: const CircleAvatar(
-              //                       radius: 14,
-              //                       backgroundColor: Colors.white,
-              //                       child: Icon(Icons.search, color: Colors.blue),
-              //                     ),
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-
-              //           ],
-
-              //     const Text(
-              //       'Party',
-              //       style: TextStyle(
-              //           color: Colors.yellow,
-              //           fontSize: 16,
-              //           fontWeight: FontWeight.bold),
-              //     ),
-
-              //    IconButton(onPressed: (){
-
-              //                   Navigator.push(
-              //                       context,
-              //                       MaterialPageRoute(
-              //                           builder: (context) =>
-              //                               const AddSupplierCustomer()));
-
-              //    }, icon: Icon(Icons.add))
-
-              //   ],
-              // ),
-
-              Row(
+          title: Row(
             children: [
               // If searching: Show search field (left side)
               if (isSearching)
@@ -276,8 +186,8 @@ class _PartyState extends State<Party> {
                               style:
                                   TextStyle(color: Colors.black, fontSize: 12)),
                           Text("10,01,55,320",
-                              style:
-                                  TextStyle(color: Colors.green, fontSize: 12)),
+                              style: TextStyle(
+                                  color: Color(0xff278d46), fontSize: 12)),
                         ],
                       ),
                     ],
@@ -317,254 +227,13 @@ class _PartyState extends State<Party> {
               ),
             ),
 
-            // const Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            //   child:
-            //       //search, purchase, sales
-            //       Padding(
-            //     padding:
-            //         EdgeInsets.symmetric(horizontal: 6.0, vertical: 4),
-            //     child: Row(
-            //       children: [],
-            //     ),
-            //   ),
-            // ),
-
-            //customer or supplier
-            // Container(
-            //   //color: Colors.red,
-            //   child: Expanded(
-            //     child: Consumer<SupplierProvider>(
-            //       builder: (context, supplierProvider, child) {
-            //         if (supplierProvider.isLoading) {
-            //           return const Center(child: CircularProgressIndicator());
-            //         }
-
-            //         if (supplierProvider.errorMessage.isNotEmpty) {
-            //           return Center(
-            //             child: Text(
-            //               supplierProvider.errorMessage,
-            //               style:
-            //                   const TextStyle(color: Colors.red, fontSize: 16),
-            //             ),
-            //           );
-            //         }
-
-            //         // final suppliers =
-            //         //     supplierProvider.supplierResponse?.data.values.toList() ?? [];
-
-            //         final suppliers =
-            //             supplierProvider.supplierResponse?.data ?? [];
-
-            //         if (suppliers.isEmpty) {
-            //           return const Center(
-            //             child: Text(
-            //               "No Suppliers Found",
-            //               style: TextStyle(
-            //                   fontSize: 16,
-            //                   fontWeight: FontWeight.bold,
-            //                   color: Colors.black),
-            //             ),
-            //           );
-            //         }
-
-            //         return ListView.builder(
-            //           shrinkWrap: true,
-
-            //           itemCount: suppliers.length,
-            //           itemBuilder: (context, index) {
-            //             final supplier = suppliers[index];
-            //             final supplierPurchase = suppliers[index].purchases;
-
-            //             return InkWell(
-            //               onTap: () {
-            //                 Navigator.push(
-            //                   context,
-            //                   MaterialPageRoute(
-            //                     builder: (context) => SupplierDetailsScreen(
-            //                       supplierId: supplier.id,
-            //                       purchases: supplierPurchase,
-            //                     ),
-            //                   ),
-            //                 );
-            //               },
-            //               child: Card(
-            //                 shape: RoundedRectangleBorder(
-            //                     borderRadius: BorderRadius.circular(2)),
-            //                 elevation: 1,
-            //                 //margin: const EdgeInsets.symmetric(vertical: 8),
-            //                 child: ListTile(
-            //                  contentPadding: EdgeInsets.all(4),
-            //                   leading: const CircleAvatar(
-            //                     backgroundImage:
-            //                         AssetImage("assets/image/cbook_logo.png"),
-            //                   ),
-            //                   title: Text(
-            //                     supplier.name,
-            //                     style: const TextStyle(
-            //                         fontFamily: 'Calibri',
-            //                         fontSize: 12,
-            //                         fontWeight: FontWeight.bold),
-            //                   ),
-            //                   subtitle: Column(
-            //                     mainAxisAlignment: MainAxisAlignment.start,
-            //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //                     children: [
-            //                       Text(
-            //                         supplier.proprietorName,
-            //                         overflow: TextOverflow.ellipsis,
-            //                         style: TextStyle(
-            //                             color: Colors.grey[800], fontSize: 12),
-            //                       ),
-            //                       Text(
-            //                         "01759546853",
-            //                         overflow: TextOverflow.ellipsis,
-            //                         style: TextStyle(
-            //                             color: Colors.grey[800], fontSize: 12),
-            //                       ),
-            //                     ],
-            //                   ),
-            //                   trailing: SizedBox(
-            //                     width: 140, // Adjust width as needed
-            //                     child: Row(
-            //                       mainAxisAlignment: MainAxisAlignment.end,
-            //                       mainAxisSize: MainAxisSize.min,
-            //                       children: [
-            //                         Icon(
-            //                           Icons.keyboard_arrow_down,
-            //                           color: Colors.red[700],
-            //                         ),
-
-            //                         // Icon(
-            //                         //   Icons.keyboard_control_key,
-            //                         //   color: Colors.red[700],
-            //                         // ),
-            //                         Text(
-            //                           "${supplier.due}",
-            //                           style: const TextStyle(
-            //                             fontSize: 14,
-            //                             fontWeight: FontWeight.w400,
-            //                           ),
-            //                         ),
-            //                         const SizedBox(width: 10),
-
-            //                         // PopupMenuButton<String>(
-            //                         //   position: PopupMenuPosition.under,
-            //                         //   onSelected: (value) async {
-            //                         //     if (value == 'Edit') {
-            //                         //       final supplierProvider =
-            //                         //           Provider.of<SupplierProvider>(
-            //                         //               context,
-            //                         //               listen: false);
-
-            //                         //       debugPrint(
-            //                         //           "Clicked Edit for Supplier ID: ${supplier.id}");
-
-            //                         //       // Fetch supplier data by ID
-            //                         //       final supplierData =
-            //                         //           await supplierProvider
-            //                         //               .fetchSupplierById(
-            //                         //                   supplier.id);
-
-            //                         //       if (supplierData != null) {
-            //                         //         debugPrint(
-            //                         //             "Fetched Supplier Data: ${supplierData.id}");
-
-            //                         //         Navigator.push(
-            //                         //           context,
-            //                         //           MaterialPageRoute(
-            //                         //             builder: (context) =>
-            //                         //                 SupplierUpdate(
-            //                         //                     supplier: supplierData),
-            //                         //           ),
-            //                         //         );
-            //                         //       } else {
-            //                         //         ScaffoldMessenger.of(context)
-            //                         //             .showSnackBar(
-            //                         //           const SnackBar(
-            //                         //               content: Text(
-            //                         //                   "Failed to fetch supplier details")),
-            //                         //         );
-            //                         //       }
-            //                         //     } else if (value == 'delete') {
-            //                         //       final confirm = await showDialog(
-            //                         //         context: context,
-            //                         //         builder: (context) => AlertDialog(
-            //                         //           title:
-            //                         //               const Text("Delete Supplier"),
-            //                         //           content: const Text(
-            //                         //             "Are you sure you want to delete this supplier?",
-            //                         //             style: TextStyle(
-            //                         //                 color: Colors.black),
-            //                         //           ),
-            //                         //           actions: [
-            //                         //             TextButton(
-            //                         //               onPressed: () =>
-            //                         //                   Navigator.pop(
-            //                         //                       context, false),
-            //                         //               child: const Text("Cancel"),
-            //                         //             ),
-            //                         //             TextButton(
-            //                         //               onPressed: () {
-            //                         //                 Navigator.pop(
-            //                         //                     context, true);
-            //                         //               },
-            //                         //               child: const Text("Delete",
-            //                         //                   style: TextStyle(
-            //                         //                       color: Colors.red)),
-            //                         //             ),
-            //                         //           ],
-            //                         //         ),
-            //                         //       );
-
-            //                         //       if (confirm == true) {
-            //                         //         await Provider.of<SupplierProvider>(
-            //                         //                 context,
-            //                         //                 listen: false)
-            //                         //             .deleteSupplier(supplier.id);
-            //                         //       }
-            //                         //     }
-            //                         //   },
-            //                         //   itemBuilder: (context) => [
-            //                         //     const PopupMenuItem(
-            //                         //       value: 'Edit',
-            //                         //       child: ListTile(
-            //                         //         leading: Icon(Icons.edit,
-            //                         //             color: Colors.blue),
-            //                         //         title: Text('Edit'),
-            //                         //       ),
-            //                         //     ),
-            //                         //     const PopupMenuItem(
-            //                         //       value: 'delete',
-            //                         //       child: ListTile(
-            //                         //         leading: Icon(Icons.delete,
-            //                         //             color: Colors.red),
-            //                         //         title: Text('Delete'),
-            //                         //       ),
-            //                         //     ),
-            //                         //   ],
-            //                         //   icon: const Icon(Icons.more_vert),
-            //                         // ),
-            //                       ],
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ),
-            //             );
-            //           },
-            //         );
-            //       },
-            //     ),
-            //   ),
-            // ),
-
+       
             Expanded(
               child: Consumer<CustomerProvider>(
                 builder: (context, customerProvider, child) {
                   if (customerProvider.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-
                   if (customerProvider.errorMessage.isNotEmpty) {
                     return Center(
                       child: Text(
@@ -574,242 +243,174 @@ class _PartyState extends State<Party> {
                     );
                   }
 
-                  // final customer =
-                  //     customerProvider.customerResponse?.data.values.toList() ?? [];
-
                   final customer =
                       customerProvider.customerResponse?.data ?? [];
-
                   if (customer.isEmpty) {
                     return const Center(
                       child: Text(
                         "No Customer Found",
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
                       ),
                     );
                   }
 
-                  return Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(0),
-                      itemCount: customer.length,
-                      itemBuilder: (context, index) {
-                        final customers = customer[index];
-                        final customersPurchaase = customer[index].purchases;
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: customer.length,
+                    itemBuilder: (context, index) {
+                      final customers = customer[index];
+                      final customersPurchase = customers.purchases;
+                      final customerId = customers.id;
+                      final customerType = customers.type;
 
-                        final customerId = customers.id;
-
-                        return InkWell(
-                          onLongPress: () {
-                            editDeleteDiolog(context, customerId.toString());
-                          },
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CustomerDetailsScreen(
-                                  customerId: customers.id,
-                                  purchases: customersPurchaase,
-                                ),
+                      return InkWell(
+                        onLongPress: () => editDeleteDiolog(
+                            context, customerId.toString(),  customerType ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CustomerDetailsScreen(
+                                customerId: customerId,
+                                purchases: customersPurchase,
                               ),
-                            );
-                          },
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(2)),
-                            elevation: 1,
-                          
-                            margin: const EdgeInsets.symmetric(vertical: 1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(1),
-                              child: ListTile(
-                                leading: const CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage("assets/image/cbook_logo.png"),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-                                title: Text(
-                                  customers.name,
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "N/A",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Colors.grey[800],
-                                        fontSize: 12,
+                            ),
+                          );
+                        },
+                        child: Card(
+                          color: AppColors.cardGrey,
+                          //color: Colors.red,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero),
+                          elevation: 1,
+                          margin: EdgeInsets.zero,
+                          child: ListTile(
+                            dense: true,
+                            minVerticalPadding: 0,
+                            visualDensity:
+                                const VisualDensity(vertical: 0, horizontal: 0),
+                            contentPadding: EdgeInsets.zero,
+                            leading: Container(
+                              //color: Colors.red,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 6.0),
+                                child: Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors
+                                        .white, // background color behind the image
+                                    borderRadius: BorderRadius.circular(
+                                        50), // rounded corners
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        blurRadius: 10,
+                                        spreadRadius: 2,
+                                        offset: const Offset(
+                                            0, 4), // shadow below the container
                                       ),
-                                    ),
-                                    Text(
-                                      customers.address != null
-                                          ? customers.phone.toString()
-                                          : "No Phone",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Colors.grey[800],
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                trailing: SizedBox(
-                                  width: 140, // Adjust width as needed
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 4.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              "${customers.type![0].toUpperCase()}${customers.type!.substring(1)}",
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                            ),
-                                            Text(
-                                              "${customers.due}",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color:
-                                                    customers.type == 'customer'
-                                                        ? Colors.green[700]
-                                                        : Colors.red[700],
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        // PopupMenuButton<String>(
-                                        //   position: PopupMenuPosition.under,
-                                        //   onSelected: (value) async {
-                                        //     if (value == 'Edit') {
-                                        //       final customerProvider =
-                                        //           Provider.of<CustomerProvider>(
-                                        //               context,
-                                        //               listen: false);
-                          
-                                        //       debugPrint(
-                                        //           "Clicked Edit for Supplier ID: ${customers.id}");
-                          
-                                        //       // Fetch supplier data by ID
-                                        //       final customerData =
-                                        //           await customerProvider
-                                        //               .fetchCustomerById(
-                                        //                   customers.id);
-                          
-                                        //       if (customerData != null) {
-                                        //         debugPrint(
-                                        //             "Fetched Supplier Data: ${customerData.id}");
-                          
-                                        //         Navigator.push(
-                                        //           context,
-                                        //           MaterialPageRoute(
-                                        //             builder: (context) =>
-                                        //                 CustomerUpdate(
-                                        //                     customer:
-                                        //                         customerData),
-                                        //           ),
-                                        //         );
-                                        //       } else {
-                                        //         ScaffoldMessenger.of(context)
-                                        //             .showSnackBar(
-                                        //           const SnackBar(
-                                        //               content: Text(
-                                        //                   "Failed to fetch supplier details")),
-                                        //         );
-                                        //       }
-                                        //     } else if (value == 'delete') {
-                                        //       final confirm = await showDialog(
-                                        //         context: context,
-                                        //         builder: (context) =>
-                                        //             AlertDialog(
-                                        //           title: const Text(
-                                        //               "Delete Customer"),
-                                        //           content: const Text(
-                                        //             "Are you sure you want to delete this Customer?",
-                                        //             style: TextStyle(
-                                        //                 color: Colors.black),
-                                        //           ),
-                                        //           actions: [
-                                        //             TextButton(
-                                        //               onPressed: () =>
-                                        //                   Navigator.pop(
-                                        //                       context, false),
-                                        //               child:
-                                        //                   const Text("Cancel"),
-                                        //             ),
-                                        //             TextButton(
-                                        //               onPressed: () {
-                                        //                 Navigator.pop(
-                                        //                     context, true);
-                                        //               },
-                                        //               child: const Text(
-                                        //                   "Delete",
-                                        //                   style: TextStyle(
-                                        //                       color:
-                                        //                           Colors.red)),
-                                        //             ),
-                                        //           ],
-                                        //         ),
-                                        //       );
-                          
-                                        //       if (confirm == true) {
-                                        //         await Provider.of<
-                                        //                     CustomerProvider>(
-                                        //                 context,
-                                        //                 listen: false)
-                                        //             .deleteCustomer(
-                                        //                 customers.id);
-                                        //       }
-                                        //     }
-                                        //   },
-                                        //   itemBuilder: (context) => [
-                                        //     const PopupMenuItem(
-                                        //       value: 'Edit',
-                                        //       child: ListTile(
-                                        //         leading: Icon(Icons.edit,
-                                        //             color: Colors.blue),
-                                        //         title: Text('Edit'),
-                                        //       ),
-                                        //     ),
-                                        //     const PopupMenuItem(
-                                        //       value: 'delete',
-                                        //       child: ListTile(
-                                        //         leading: Icon(Icons.delete,
-                                        //             color: Colors.red),
-                                        //         title: Text('Delete'),
-                                        //       ),
-                                        //     ),
-                                        //   ],
-                                        //   icon: const Icon(Icons.more_vert),
-                                        // ),
-                                      ],
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.asset(
+                                      //scale: 1,
+                                      "assets/image/partytwo.png",
+                                      fit: BoxFit.cover, // adapt as needed
                                     ),
                                   ),
                                 ),
                               ),
                             ),
+                            title: Container(
+                              //color: Colors.yellow,
+                              height: 60.0, // Set your desired item height
+                              padding: const EdgeInsets.only(left: 0),
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  //const SizedBox(width: 6),
+
+                                  ///name, phone,
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        customers.name,
+                                        style: GoogleFonts.notoSansPhagsPa(
+                                          fontSize: 13,
+                                          color: Colors.black,
+                                          //fontWeight: FontWeight.w400
+                                        ),
+                                      ),
+                                      Text(
+                                        "N/A",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.notoSansPhagsPa(
+                                          fontSize: 12,
+                                          color: Colors.grey[800],
+                                          //fontWeight: FontWeight.w400
+                                        ),
+                                      ),
+                                      Text(
+                                        customers.address != null
+                                            ? customers.phone.toString()
+                                            : "No Phone",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.notoSansPhagsPa(
+                                          fontSize: 12,
+                                          color: Colors.grey[800],
+                                          //fontWeight: FontWeight.w400
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            trailing: Container(
+                              width: 140,
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(right: 4.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "${customers.type![0].toUpperCase()}${customers.type!.substring(1)}",
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${customers.due}",
+                                    style: GoogleFonts.notoSansPhagsPa(
+                                      fontSize: 13,
+                                      color: customers.type == 'customer'
+                                          ? const Color(0xff278d46)
+                                          : Colors.red[700],
+                                      //fontWeight: FontWeight.w400
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        );
-                      },
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) => Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Colors.grey.shade300,
                     ),
                   );
                 },
@@ -819,7 +420,8 @@ class _PartyState extends State<Party> {
         ));
   }
 
-  Future<dynamic> editDeleteDiolog(BuildContext context, String customerId) {
+  Future<dynamic> editDeleteDiolog(
+      BuildContext context, String customerId, String? customerType,  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return showDialog(
       context: context,
@@ -873,15 +475,38 @@ class _PartyState extends State<Party> {
                 InkWell(
                   onTap: () async {
                     Navigator.of(context).pop();
-                    //Navigate to Edit Page
 
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) =>
-                    //         CustomerUpdate(id: customerId),
-                    //   ),
-                    // );
+                    
+
+                    // if (customerType == 'suppliers') {
+                    //   // 💡 You already have `customers` in the ListView
+
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) =>
+                    //           SupplierUpdate(supplier: customers),
+                    //     ),
+
+
+                    //   );
+                    // } else if (customerType == 'customer') {
+
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) =>
+                    //           CustomerUpdate(customer: customerId),
+                    //     ),
+                    //   );
+                    // } else {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     SnackBar(
+                    //       content: Text('Unknown customer type: $customerType'),
+                    //       backgroundColor: Colors.red,
+                    //     ),
+                    //   );
+                    // }
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -967,6 +592,4 @@ class _PartyState extends State<Party> {
       ),
     );
   }
-
- 
 }

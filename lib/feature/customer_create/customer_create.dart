@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/common/price_option_selector_customer.dart';
@@ -5,6 +7,7 @@ import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart
 import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class CustomerCreate extends StatefulWidget {
@@ -30,6 +33,34 @@ class _CustomerCreateState extends State<CustomerCreate> {
   bool _isChecked = false;
 
   String selectedStatus = "1"; // Default status
+
+  final ImagePicker _picker = ImagePicker();
+
+  final ImagePicker _picker2 = ImagePicker();
+
+  XFile? _imageFile;
+
+  XFile? _imageFile2;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final XFile? pickedFile = await _picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = pickedFile;
+      });
+    }
+  }
+
+  Future<void> _pickImage2(ImageSource source) async {
+    final XFile? pickedFile2 = await _picker2.pickImage(source: source);
+
+    if (pickedFile2 != null) {
+      setState(() {
+        _imageFile2 = pickedFile2;
+      });
+    }
+  }
 
   // Validation functions
   String? _validateRequired(String? value) {
@@ -147,6 +178,10 @@ class _CustomerCreateState extends State<CustomerCreate> {
     final textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
+    //  final controller = Provider.of<SalesController>(context);
+
+    final controller = Provider.of<CustomerProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
@@ -167,8 +202,9 @@ class _CustomerCreateState extends State<CustomerCreate> {
               // _buildFieldLabel("Customer Name", textTheme, colorScheme),
 
               AddSalesFormfield(
+                labelText: "Enter Customer Name",
                 height: 40,
-                label: "Enter Customer Name",
+                label: "",
                 controller: _nameController,
                 //validator: _validateRequired,
               ),
@@ -178,8 +214,9 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                 labelText: "Enter Proprietor Name",
                 height: 40,
-                label: "Enter Proprietor Name",
+                label: "",
                 controller: _proprietorController,
                 //validator: _validateRequired,
               ),
@@ -213,8 +250,9 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                labelText: "Enter Email",
                 height: 40,
-                label: "Enter Email",
+                label: "",
                 controller: _emailController,
                 //validator: _validateEmail,
               ),
@@ -224,8 +262,10 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                
+                labelText: "Enter Phone",
                 height: 40,
-                label: "Enter Phone",
+                label: "",
                 controller: _phoneController,
                 //validator: _validatePhone,
                 keyboardType: TextInputType.number,
@@ -236,8 +276,9 @@ class _CustomerCreateState extends State<CustomerCreate> {
               ),
 
               AddSalesFormfield(
+                labelText: "Enter Address",
                 height: 40,
-                label: "Enter Address",
+                label: "",
                 controller: _addressController,
                 //validator: _validateRequired,
               ),
@@ -246,44 +287,209 @@ class _CustomerCreateState extends State<CustomerCreate> {
                 height: 12,
               ),
 
-              AddSalesFormfield(
-                height: 40,
-                label: "Enter Opening Balance",
-                controller: _opiningBanglaceController,
-                //validator: _validateRequired,
+              Row(
+                children: [
+                  Expanded(
+                    child: AddSalesFormfield(
+                      keyboardType: TextInputType.number,
+                      labelText: "Enter Opening Balance",
+                      height: 40,
+                      label: "",
+                      controller: _opiningBanglaceController,
+                      //validator: _validateRequired,
+                    ),
+                  ),
+                  const SizedBox(width: 8,),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Date",
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                        ),
+                        Container(
+                          height: 40,
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent, // Background color
+                            borderRadius:
+                                BorderRadius.circular(8), // Rounded corners
+                            border: Border.all(
+                                color: Colors.grey.shade300,
+                                width: 0.5), // Border
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey
+                                    .withOpacity(0.1), // Light shadow
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: const Offset(0, 1), // Shadow position
+                              ),
+                            ],
+                          ),
+                          child: InkWell(
+                            onTap: () => controller.pickDate(context),
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                suffixIcon: Icon(
+                                  Icons.calendar_today,
+                                  size: 16,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                suffixIconConstraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                hintText: "Bill Date",
+                                hintStyle: TextStyle(
+                                  color: Colors.grey.shade400,
+                                  fontSize: 10,
+                                ),
+                                border: InputBorder
+                                    .none, // Remove default underline
+                              ),
+                              child: Text(
+                                controller.formattedDate.isNotEmpty
+                                    ? controller.formattedDate
+                                    : "No Date Provided",
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
 
               const SizedBox(
                 height: 12,
               ),
 
-              const Text(
-                "Status",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12),
+              const SizedBox(height: 8),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ///business logoi
+                  Column(
+                    children: [
+                      Center(
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Container(
+                              width: 90,
+                              height: 90,
+                              decoration: BoxDecoration(
+                                color: Colors.green[100],
+                                borderRadius: BorderRadius.circular(8),
+                                image: DecorationImage(
+                                  image: _imageFile != null
+                                      ? FileImage(File(_imageFile!.path))
+                                      : const AssetImage(
+                                          "assets/image/image_upload_blue.png"),
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 4,
+                              right: 4,
+                              child: GestureDetector(
+                                onTap: () {
+                                  _showImageSourceActionSheet(context);
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  padding: const EdgeInsets.all(6),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Text(
+                        " Business Logo",
+                        style: TextStyle(color: Colors.black, fontSize: 13),
+                      ),
+                    ],
+                  ),
+
+                  //company/ customer
+                  Column(
+                    children: [
+                      Center(
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Container(
+                              width: 90,
+                              height: 90,
+                              decoration: BoxDecoration(
+                                color: Colors.green[100],
+                                borderRadius: BorderRadius.circular(8),
+                                image: DecorationImage(
+                                  image: _imageFile2 != null
+                                      ? FileImage(File(_imageFile2!.path))
+                                      : const AssetImage(
+                                          "assets/image/image_upload_green.png",
+                                        ),
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 4,
+                              right: 4,
+                              child: GestureDetector(
+                                onTap: () {
+                                  _showImageSourceActionSheet2(context);
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  padding: const EdgeInsets.all(6),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Text(
+                        "Company/Customer Logo",
+                        style: TextStyle(color: Colors.black, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ],
               ),
 
-              SizedBox(
-                width: double.infinity,
-                child: CustomDropdownTwo(
-                  items: const ["Active", "Inactive"], // Display labels
-                  hint: '', //Select status
-                  width: double.infinity,
-                  height: 40,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedStatus = (value == "Active")
-                          ? "1"
-                          : "0"; // ✅ Convert label to 1 or 0
-                    });
-                    debugPrint(selectedStatus);
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
 
               SizedBox(
                 width: double.infinity,
@@ -364,6 +570,66 @@ class _CustomerCreateState extends State<CustomerCreate> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showImageSourceActionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showImageSourceActionSheet2(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage2(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickImage2(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

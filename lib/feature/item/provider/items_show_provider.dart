@@ -9,135 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-// class AddItemProvider extends ChangeNotifier {
-//   List<ItemsModel> _items = [];
-//   //Map<int, String> _unitNames = {}; // Store unit ID to name mapping
-//   bool _isLoading = false;
-//   StockData? _stockData;
-//   StockDataPurchase? _purchaseStockData; // Store purchase stock data
-
-//   List<ItemsModel> get items => _items;
-//   bool get isLoading => _isLoading;
-//   Map<int, String> get unitNames => _unitNames;
-
-//   StockData? get stockData => _stockData;
-
-//    String? _selectedCustomerId;
-//   String? get selectedCustomerId => _selectedCustomerId;
-
-//   bool isHistoryLoading = false;
-
-//   List<PurchaseHistoryModel> purchaseHistory = [];
-
-//   List<SalesReturnHistoryModel> saleHistory = [];
-
-//     //===> for symble
-//   final Map<int, String> _unitSymbols = {}; // Store unit ID to symbol mapping
-//   Map<int, String> get unitSymbols => _unitSymbols;
-
-//    final Map<int, String> _unitNames = {}; // Store unit ID to name mapping
-//   //Map<String, int> _stockQuantities = {}; // Store item stock quantities
-//   Map<String, String> get stockQuantities => _stockQuantities;
-//   final Map<String, String> _stockQuantities = {};
-
-//   StockDataPurchase? get purchaseStockData => _purchaseStockData;
-
-//   void clearStockData() {
-//     _stockData = null;
-//     notifyListeners();
-//   }
-
-//   List<ItemModel> itemsCash = [];
-
-//   void updateItem(int index, ItemModel updatedItem) {
-//     if (index >= 0 && index < itemsCash.length) {
-//       itemsCash[index] = updatedItem;
-//       notifyListeners();
-//     }
-//   }
-
-//   // Add inside AddItemProvider
-//   void clearPurchaseStockDatasale() {
-//     _stockData = null;
-
-//     notifyListeners();
-//   }
-
-//   // Add inside AddItemProvider
-//   void clearPurchaseStockData() {
-//     _purchaseStockData = null;
-//     notifyListeners();
-//   }
-
-//   String getItemName(int id) {
-//     return _items.firstWhere((e) => id == e.id).name;
-//   }
-
-//   void setSelectedCustomerId(String customerId) {
-//     _selectedCustomerId = customerId;
-//     notifyListeners(); // Notify UI
-//   }
-
-//   Future<void> fetchItems() async {
-//     _isLoading = true;
-//     notifyListeners();
-
-//     const url = "https://commercebook.site/api/v1/items";
-//     try {
-//       final response = await http.get(Uri.parse(url));
-//       debugPrint("API response: ${response.body}"); // Debugging
-
-//       if (response.statusCode == 200) {
-//         final data = json.decode(response.body);
-
-//         // Check if the response is successful
-//         if (data["success"] == true && data["data"] is List) {
-//           // Convert the List of items into a list of ItemsModel
-//           final List<ItemsModel> fetchedItems = [];
-//           for (var item in data["data"]) {
-//             final modelItem = ItemsModel.fromJson(item);
-//             fetchedItems.add(modelItem);
-//           }
-
-//           _items = fetchedItems;
-//         } else {
-//           debugPrint("Error: Invalid data structure");
-//         }
-//       } else {
-//         debugPrint("Error: ${response.statusCode}");
-//       }
-//     } catch (e) {
-//       debugPrint("Error fetching items: $e");
-//     }
-
-//     _isLoading = false;
-//     notifyListeners();
-//   }
-
-//   /// Fetch units from API and store their names
-//   Future<void> fetchUnits() async {
-//     const url = "https://commercebook.site/api/v1/units";
-//     try {
-//       final response = await http.get(Uri.parse(url));
-
-//       if (response.statusCode == 200) {
-//         final Map<String, dynamic> responseData = json.decode(response.body);
-//         final unitData = responseData["data"] as Map<String, dynamic>;
-
-//         unitData.forEach((key, value) {
-//           int unitId = int.parse(key);
-//           _unitNames[unitId] = value["name"];
-//           _unitSymbols[unitId] = value["symbol"];
-//         });
-
-//         debugPrint("Unit Mapping: $_unitNames");
-//         notifyListeners();
-//       }
-//     } catch (e) {
-//       debugPrint("Error fetching units: $e");
-//     }
-//   }
-
 class AddItemProvider extends ChangeNotifier {
   List<ItemsModel> _items = [];
   bool _isLoading = false;
@@ -167,8 +38,6 @@ class AddItemProvider extends ChangeNotifier {
 
   bool isHistoryLoading = false;
 
-
-   
   //filter item base on category and subcategory
   List<ItemsModel> _filteredItems = [];
   List<ItemsModel> get filteredItems => _filteredItems;
@@ -207,11 +76,6 @@ class AddItemProvider extends ChangeNotifier {
         .name;
   }
 
-  // String getUnitName(String selectedUnit) {
-  //   final unitId = int.tryParse(selectedUnit);
-  //   return _unitNames[unitId].toString();
-  // }
-
   /// NEW helper method to get unit name by unitId string
   String getUnitName(String? unitId) {
     if (unitId == null) return "N/A";
@@ -228,8 +92,7 @@ class AddItemProvider extends ChangeNotifier {
     return _unitSymbols[id] ?? "Unknown";
   }
 
-
-  ////item fetch
+  ////item fetch alllll
 
   Future<void> fetchItems() async {
     _isLoading = true;
@@ -263,50 +126,6 @@ class AddItemProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Filter method
-  void filterItems(int? categoryId, int? subCategoryId) {
-    _filteredItems = _items.where((item) {
-      final matchCategory = categoryId == null || item.itemCategoryId == categoryId;
-      final matchSubCategory = subCategoryId == null || item.itemSubCategoryId == subCategoryId;
-      return matchCategory && matchSubCategory;
-    }).toList();
-
-    notifyListeners();
-  }
-
-   ////its working.
-  // Future<void> fetchItems() async {
-  //   _isLoading = true;
-  //   notifyListeners();
-
-  //   const url = "https://commercebook.site/api/v1/items";
-  //   try {
-  //     final response = await http.get(Uri.parse(url));
-  //     debugPrint("API response: ${response.body}");
-
-  //     if (response.statusCode == 200) {
-  //       final data = json.decode(response.body);
-
-  //       if (data["success"] == true && data["data"] is List) {
-  //         _items = (data["data"] as List)
-  //             .map((item) => ItemsModel.fromJson(item))
-  //             .toList();
-
-  //         fetchUnits();
-  //       } else {
-  //         debugPrint("Invalid data format");
-  //       }
-  //     } else {
-  //       debugPrint("Failed to fetch items: ${response.statusCode}");
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Exception during fetchItems: $e");
-  //   }
-
-  //   _isLoading = false;
-  //   notifyListeners();
-  // }
-
   Future<void> fetchUnits() async {
     const url = "https://commercebook.site/api/v1/units";
     try {
@@ -329,6 +148,42 @@ class AddItemProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint("Exception fetching units: $e");
     }
+  }
+
+  ////delete item. ===== >
+
+  Future<bool> deleteItem(int itemId) async {
+    final String deleteUrl =
+        "https://commercebook.site/api/v1/item/remove?id=$itemId";
+
+    try {
+      final response = await http.post(Uri.parse(deleteUrl));
+      debugPrint("Delete response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data["success"] == true) {
+          await fetchItems();
+          return true;
+        }
+      }
+    } catch (e) {
+      debugPrint("Delete error: $e");
+    }
+    return false;
+  }
+
+  /// Filter method
+  void filterItems(int? categoryId, int? subCategoryId) {
+    _filteredItems = _items.where((item) {
+      final matchCategory =
+          categoryId == null || item.itemCategoryId == categoryId;
+      final matchSubCategory =
+          subCategoryId == null || item.itemSubCategoryId == subCategoryId;
+      return matchCategory && matchSubCategory;
+    }).toList();
+
+    notifyListeners();
   }
 
   ///==> fetch stock quantity
@@ -485,4 +340,6 @@ class AddItemProvider extends ChangeNotifier {
     isHistoryLoading = false;
     notifyListeners();
   }
+
+  ////update item provider showing below
 }

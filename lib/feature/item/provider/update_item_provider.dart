@@ -1,12 +1,10 @@
 import 'dart:convert';
-
 import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/item/model/update_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ItemUpdateProvider with ChangeNotifier {
-
   bool isLoading = false;
   UpdateItemModel? item;
   String errorMessage = "";
@@ -21,6 +19,9 @@ class ItemUpdateProvider with ChangeNotifier {
   final TextEditingController mrpPriceController = TextEditingController();
   final TextEditingController imageController = TextEditingController();
 
+  final TextEditingController unitIdController = TextEditingController();
+  final TextEditingController unitIdSecondController = TextEditingController();
+  final TextEditingController unitQtyController = TextEditingController();
 
   String selectedDate = "";
 
@@ -30,7 +31,7 @@ class ItemUpdateProvider with ChangeNotifier {
   int? selectedSecondaryUnitId;
   String selectedStatus = "1";
 
-   bool _isLoading2 = false;
+  bool _isLoading2 = false;
 
   bool get isLoading2 => _isLoading2;
 
@@ -44,7 +45,10 @@ class ItemUpdateProvider with ChangeNotifier {
     errorMessage = "";
     notifyListeners(); // Notify UI to show loading indicator
 
-    final url = Uri.parse("https://commercebook.site/api/v1/item/edit/$id");
+    final url =
+        Uri.parse("https://commercebook.site/api/v1/item/edit/$id"); //old
+    //final url = Uri.parse("https://commercebook.site/api/v1/item/show/$id"); //new
+
     debugPrint("Fetching item details from: $url");
 
     try {
@@ -78,6 +82,10 @@ class ItemUpdateProvider with ChangeNotifier {
           mrpPriceController.text = item?.mrpPrice?.toString() ?? "0";
           imageController.text = item?.image?.toString() ?? "0";
 
+          unitIdController.text = item?.unitId.toString() ?? "";
+          unitIdSecondController.text = item?.unit2nd.toString() ?? "";
+          unitQtyController.text = item?.unitQTY.toString() ?? "";
+
           valueController.text =
               item?.openingValue?.toString() ?? "0"; // Handle null value
           selectedDate = item?.openingDate ?? "";
@@ -98,92 +106,94 @@ class ItemUpdateProvider with ChangeNotifier {
     notifyListeners(); // Ensure UI updates
   }
 
+  Future<void> updateItem(int itemId, BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
 
+    final url = Uri.parse("https://commercebook.site/api/v1/item/update");
 
-Future<void> updateItem(int itemId, BuildContext context) async {
-  isLoading = true;
-  notifyListeners();
+    Map<String, dynamic> requestData = {
+      "id": itemId,
+      "name": nameController.text,
+      "item_category_id": selectedCategoryId,
+      "item_sub_category_id": selectedSubCategoryId,
+      "unit_id": selectedUnitId,
+      "unit_qty": 1,
+      "secondary_unit_id": selectedSecondaryUnitId,
+      "opening_stock": stockController.text,
+      "opening_price": priceController.text,
+      "mrp_price": mrpPriceController.text,
+      "opening_value": valueController.text,
+      "opening_date": selectedDate,
+      "status": selectedStatus,
+    };
 
-  final url = Uri.parse("https://commercebook.site/api/v1/item/update");
+    // Add purchase_price_type and purchase_price if purchase price is provided
+    if (purchasePriceController.text.isNotEmpty) {
+      requestData["purchase_price_type"] = 1;
+      requestData["purchase_price"] = purchasePriceController.text;
+    }
 
-  Map<String, dynamic> requestData = {
-    "id": itemId,
-    "name": nameController.text,
-    "item_category_id": selectedCategoryId,
-    "item_sub_category_id": selectedSubCategoryId,
-    "unit_id": selectedUnitId,
-    "unit_qty": 1,
-    "secondary_unit_id": selectedSecondaryUnitId,
-    "opening_stock": stockController.text,
-    "opening_price": priceController.text,
-    "mrp_price": mrpPriceController.text,
-    "opening_value": valueController.text,
-    "opening_date": selectedDate,
-    "status": selectedStatus,
+    // Add sales_price_type and sales_price if sales price is provided
+    if (salePriceController.text.isNotEmpty) {
+      requestData["sales_price_type"] = 1;
+      requestData["sales_price"] = salePriceController.text;
+    }
 
-  };
+    // Add sales_price_type and sales_price if sales price is provided
+    if (mrpPriceController.text.isNotEmpty) {
+      requestData["mrp_price_type"] = 1;
+      requestData["mrp_price"] = mrpPriceController.text;
+    }
 
-  // Add purchase_price_type and purchase_price if purchase price is provided
-  if (purchasePriceController.text.isNotEmpty) {
-    requestData["purchase_price_type"] = 1;
-    requestData["purchase_price"] = purchasePriceController.text;
-  }
+    debugPrint("Updating item with data: $requestData");
 
-  // Add sales_price_type and sales_price if sales price is provided
-  if (salePriceController.text.isNotEmpty) {
-    requestData["sales_price_type"] = 1;
-    requestData["sales_price"] = salePriceController.text;
-  }
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode(requestData),
+      );
 
-  debugPrint("Updating item with data: $requestData");
+      debugPrint("Update Response Status: ${response.statusCode}");
+      debugPrint("Update Response Body: ${response.body}");
 
-  try {
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: jsonEncode(requestData),
-    );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data["success"] == true) {
+          debugPrint("✅ Item updated successfully!");
 
-    debugPrint("Update Response Status: ${response.statusCode}");
-    debugPrint("Update Response Body: ${response.body}");
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeView()),
+            );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data["success"] == true) {
-        debugPrint("✅ Item updated successfully!");
-
-        if (context.mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeView()),
-          );
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Item updated successfully!"),
-              backgroundColor: Colors.green,
-            ),
-          );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Item updated successfully!"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        } else {
+          errorMessage = data["message"] ?? "Failed to update item.";
+          debugPrint(errorMessage);
         }
       } else {
-        errorMessage = data["message"] ?? "Failed to update item.";
-        debugPrint(errorMessage);
+        errorMessage = "Server error: ${response.statusCode}";
       }
-    } else {
-      errorMessage = "Server error: ${response.statusCode}";
+    } catch (e) {
+      errorMessage = "Network error: $e";
+      debugPrint(errorMessage);
     }
-  } catch (e) {
-    errorMessage = "Network error: $e";
-    debugPrint(errorMessage);
-  }
 
-  isLoading = false;
-  if (context.mounted) {
-    notifyListeners();
+    isLoading = false;
+    if (context.mounted) {
+      notifyListeners();
+    }
   }
-
-}
 }
