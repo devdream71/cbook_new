@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cbook_dt/feature/customer_create/customer_update.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,11 +10,13 @@ import 'package:url_launcher/url_launcher.dart';
 class CustomerDetailsScreen extends StatefulWidget {
   final int customerId;
   final List<Purchase> purchases;
+   final Customer customer; 
 
   const CustomerDetailsScreen({
     super.key,
     required this.customerId,
     required this.purchases,
+     required this.customer,
   });
 
   @override
@@ -209,6 +213,8 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
+
+                                //edit data
                                 SizedBox(
                                   width: 20,
                                   height: 20,
@@ -220,7 +226,32 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                                         const BoxConstraints(), // override default 48×48 minimum :contentReference[oaicite:2]{index=2}
                                     visualDensity: VisualDensity
                                         .compact, // further tighten around the icon :contentReference[oaicite:3]{index=3}
-                                    onPressed: () {},
+                                    onPressed: () {
+                                       final c = widget.customer;
+    final customerData = CustomerData(
+      id: c.id,
+      userId: c.userId,
+      name: c.name,
+      proprietorName: c.proprietorName,
+      email: "", // or pass real email if available
+      phone: c.phone ?? "",
+      address: c.address ?? "",
+      openingBalance: c.due,
+      status: 1,
+      createdAt: "",
+      updatedAt: "",
+      type: c.type,
+      level: null,
+      levelType: null,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CustomerUpdate(customer: customerData),
+      ),
+    );
+                                    },
                                     icon: const Icon(Icons.edit_document,
                                         size: 20),
                                   ),
@@ -241,44 +272,7 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                // Row(
-                                //   mainAxisAlignment: MainAxisAlignment.end,
-                                //   crossAxisAlignment: CrossAxisAlignment.end,
-                                //   children: [
-                                //     SizedBox(
-                                //         width: 20,
-                                //         height: 20,
-                                //         child: Image.asset(
-                                //           'assets/image/sms.png',
-                                //           height: 20,
-                                //           width: 20,
-                                //         ),),
-                                //     const SizedBox(
-                                //       width: 4,
-                                //     ),
-                                //     SizedBox(
-                                //       width: 20,
-                                //       height: 20,
-                                //       child: Image.asset(
-                                //         'assets/image/whatsapp.png',
-                                //         height: 20,
-                                //         width: 20,
-                                //       ),
-                                //     ),
-                                //     const SizedBox(
-                                //       width: 4,
-                                //     ),
-                                //     SizedBox(
-                                //       width: 20,
-                                //       height: 20,
-                                //       child: Image.asset(
-                                //         'assets/image/report.png',
-                                //         height: 20,
-                                //         width: 20,
-                                //       ),
-                                //     ),
-                                //   ],
-                                // )
+                                
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -344,59 +338,7 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                           color: Color(0xff278d46),
                         ),
 
-//                         Container(
-//   color: Colors.white,
-//   child: Row(
-//     children: [
-//       // Left side: Date, label, id
-//       Expanded(
-//         child: Padding(
-//           padding: const EdgeInsets.all(8.0),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               const Text('25/05/2025',
-//                   style: TextStyle(fontSize: 12, color: Colors.black87)),
-//               const SizedBox(height: 4),
-//               const Text('Sales', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87)),
-//               const SizedBox(height: 2),
-//               Text('Sal/5458648',
-//                   style: TextStyle(fontSize: 12, color: Colors.grey[700])),
-//             ],
-//           ),
-//         ),
-//       ),
 
-//       // Vertical divider line
-//       const VerticalDivider(
-//         color: Colors.green,
-//         thickness: 2,
-//         width: 16, // spacing including padding
-//         indent: 8,
-//         endIndent: 8,
-//       ), // :contentReference[oaicite:1]{index=1}
-
-//       // Right side: label and amount
-//       const Expanded(
-//         child: Padding(
-//           padding: EdgeInsets.all(8.0),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.end,
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               Text('Bill Amount',
-//                   style: TextStyle(fontSize: 12, color: Colors.black87)),
-//               SizedBox(height: 4),
-//               Text('01,50,350 Tk',
-//                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87)),
-//             ],
-//           ),
-//         ),
-//       ),
-//     ],
-//   ),
-// ),
                       ],
                     ),
                   ),

@@ -61,7 +61,7 @@ class _IncomeDetailsState extends State<IncomeDetails> {
           ],
         ),
       ),
-      body: Column(
+      body: const Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

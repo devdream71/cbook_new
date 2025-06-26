@@ -135,12 +135,12 @@ class TaxProvider with ChangeNotifier {
       final response = await http.post(url);
       if (response.statusCode == 200) {
         await fetchTaxes(); // Refresh list after update
-        print("Tax updated successfully.");
+        debugPrint("Tax updated successfully.");
       } else {
-        print("Update failed: ${response.body}");
+        debugPrint("Update failed: ${response.body}");
       }
     } catch (e) {
-      print("Error updating tax: $e");
+      debugPrint("Error updating tax: $e");
     }
 
     _isLoading = false;

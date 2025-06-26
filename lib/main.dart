@@ -6,6 +6,7 @@ import 'package:cbook_dt/feature/authentication/provider/otp_provider.dart';
 import 'package:cbook_dt/feature/authentication/provider/reg_provider.dart';
 import 'package:cbook_dt/feature/category/provider/category_provider.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
+import 'package:cbook_dt/feature/demo/demo_text.dart';
 import 'package:cbook_dt/feature/home/provider/profile_provider.dart';
 import 'package:cbook_dt/feature/item/provider/item_category.dart';
 import 'package:cbook_dt/feature/item/provider/item_save_provider.dart';

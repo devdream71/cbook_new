@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class UnitListView extends StatefulWidget {
+  const UnitListView({super.key});
+
   @override
-  _UnitListViewState createState() => _UnitListViewState();
+  UnitListViewState createState() => UnitListViewState();
 }
 
-class _UnitListViewState extends State<UnitListView> {
+class UnitListViewState extends State<UnitListView> {
   @override
   void initState() {
     super.initState();
@@ -30,7 +32,7 @@ class _UnitListViewState extends State<UnitListView> {
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         //centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           'Units List',
           style: TextStyle(color: Colors.yellow, fontSize: 16),
@@ -39,10 +41,10 @@ class _UnitListViewState extends State<UnitListView> {
           InkWell(
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => AddUnit()));
+                  context, MaterialPageRoute(builder: (context) => const AddUnit()));
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+            child: const Padding(
+              padding: EdgeInsets.only(right: 8.0),
               child: Row(
                 children: [
                   CircleAvatar(
@@ -56,7 +58,7 @@ class _UnitListViewState extends State<UnitListView> {
                   SizedBox(
                     width: 3,
                   ),
-                  const Text(
+                  Text(
                     'Add Units ',
                     style: TextStyle(color: Colors.yellow, fontSize: 15),
                   ),

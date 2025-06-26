@@ -1,12 +1,10 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
-import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/common/price_option_selector_customer.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 
 class CustomerUpdate extends StatefulWidget {
   final CustomerData customer;
@@ -84,8 +82,19 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text("Update Customer")),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        automaticallyImplyLeading: true,
+        backgroundColor: colorScheme.primary,
+        centerTitle: true,
+        title: Text("Update Party",
+            style: TextStyle(color: Colors.yellow, fontSize: 14)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -93,13 +102,17 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AddSalesFormfield(
-              label: "Customer Name",
+              height: 40,
+              labelText: "Party Name",
+              label: "",
               controller: nameController,
               //validator: _validateRequired,
             ),
 
             AddSalesFormfield(
-              label: "Proprietor Name",
+              height: 40,
+              labelText: 'Proprietor Name',
+              label: "",
               controller: proprietorController,
               //validator: _validateRequired,
             ),
@@ -125,51 +138,57 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
             ),
 
             AddSalesFormfield(
-              label: "Email",
+              height: 40,
+              labelText: "Email",
+              label: "",
               controller: emailController,
               //validator: _validateRequired,
             ),
 
             AddSalesFormfield(
-              label: "Phone",
+              label: "",
+              height: 40,
+              labelText: "Phone",
               controller: phoneController,
               keyboardType: TextInputType.number,
               //validator: _validateRequired,
             ),
 
             AddSalesFormfield(
-              label: "Address",
+              height: 40,
+              labelText: 'Address',
+              label: "",
               controller: addressController,
               //validator: _validateRequired,
             ),
 
             const SizedBox(height: 20),
 
-            const Text(
-              "Status",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12),
-            ),
+            // const Text(
+            //   "Status",
+            //   style: TextStyle(
+            //       color: Colors.black,
+            //       fontWeight: FontWeight.w600,
+            //       fontSize: 12),
+            // ),
 
-            SizedBox(
-              width: double.infinity,
-              child: CustomDropdownTwo(
-                items: const ["Active", "Inactive"], // Display labels
-                hint: '', //Select status
-                width: double.infinity,
-                height: 30,
-                onChanged: (value) {
-                  setState(() {
-                    selectedStatus = (value == "Active")
-                        ? "1"
-                        : "0"; // ✅ Convert label to 1 or 0
-                  });
-                  debugPrint(selectedStatus);
-                },
-              ),
-            ),
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: CustomDropdownTwo(
+            //     items: const ["Active", "Inactive"], // Display labels
+            //     hint: '', //Select status
+            //     width: double.infinity,
+            //     height: 30,
+            //     onChanged: (value) {
+            //       setState(() {
+            //         selectedStatus = (value == "Active")
+            //             ? "1"
+            //             : "0"; // ✅ Convert label to 1 or 0
+            //       });
+            //       debugPrint(selectedStatus);
+            //     },
+            //   ),
+            // ),
 
             const SizedBox(height: 20),
             SizedBox(
@@ -183,7 +202,7 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
                   if (customerId == 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Invalid Customer ID"),
+                        content: Text("Invalid Party ID"),
                       ),
                     );
                     return;
@@ -211,7 +230,7 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
                   if (customerProvider.errorMessage.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text(
-                        "Customer updated successfully",
+                        "Party updated successfully",
                         style: TextStyle(color: Colors.white),
                       ),
                       backgroundColor: Colors.green,
@@ -231,7 +250,7 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
                   ),
                 ),
                 child: const Text(
-                  "Update Customer",
+                  "Update Party",
                   style: TextStyle(color: Colors.white),
                 ),
               ),

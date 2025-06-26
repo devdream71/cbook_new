@@ -1,6 +1,7 @@
 import 'dart:convert'; 
 import 'package:cbook_dt/feature/customer_create/model/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
+import 'package:cbook_dt/feature/customer_create/model/payment_voicer_model.dart';
 import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/utils/date_time_helper.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class CustomerProvider extends ChangeNotifier {
 
    void setSelectedCustomer(Customer customer) {
    _selectedCustomer = customer;
+    fetchPaymentVouchersByCustomerId(customer.id);
    notifyListeners();
    }
 
@@ -47,6 +49,8 @@ class CustomerProvider extends ChangeNotifier {
   CustomerResponse? customerResponse;
 
   String errorMessage = "";
+
+
 
   ///show supplier
   Future<void> fetchCustomsr() async {
@@ -83,39 +87,39 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners(); // Notify after data fetch is completed
   }
 
+    
 
- 
+   ///paymet voucher 
+  List<PaymentVoucherCustomer> _paymentVouchers = [];
+List<PaymentVoucherCustomer> get paymentVouchers => _paymentVouchers;
 
-  /// **Delete Supplier**
-  // Future<void> deleteCustomer(int supplierId) async {
-  //   final url = Uri.parse(
-  //       'https://commercebook.site/api/v1/customer/remove/$supplierId');
+Future<void> fetchPaymentVouchersByCustomerId(int customerId) async {
+  final url = Uri.parse(
+      'https://commercebook.site/api/v1/payment-vouchers/purchase/invoice/$customerId');
 
-  //   try {
-  //     final response = await http.post(
-  //       url,
-  //       headers: {
-  //         'Content-Type': 'application/json', // Ensure JSON request
-  //         'Accept': 'application/json', // Ensure JSON response
-  //       },
-  //     );
-  //     final data = jsonDecode(response.body);
+  try {
+    final response = await http.get(url);
+    final data = jsonDecode(response.body);
 
-  //     debugPrint("Delete Response: $data");
+    debugPrint("Payment Voucher Response: $data");
 
-  //     if (response.statusCode == 200 && data["success"] == true) {
-  //       // Remove the deleted supplier from the local list
-  //       customerResponse?.data.remove(supplierId);
-  //       notifyListeners();
-  //       fetchCustomsr();
-  //       notifyListeners();
-  //     } else {
-  //       debugPrint("Error deleting supplier: ${data['message']}");
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Error: $e");
-  //   }
-  // }
+    if (response.statusCode == 200 && data['success'] == true) {
+      final List<dynamic> dataList = data['data'] ?? [];
+      _paymentVouchers = dataList
+          .map((item) => PaymentVoucherCustomer.fromJson(item))
+          .toList();
+    } else {
+      _paymentVouchers = [];
+    }
+  } catch (e) {
+    debugPrint("Error fetching vouchers: $e");
+    _paymentVouchers = [];
+  }
+
+  notifyListeners();
+}
+
+
 
   Future<bool> deleteCustomer(int supplierId) async {
   final url = Uri.parse('https://commercebook.site/api/v1/customer/remove/$supplierId');

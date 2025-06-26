@@ -38,7 +38,7 @@ class _BankState extends State<Bank> {
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           automaticallyImplyLeading: true,
           title: const Column(
             children: [
@@ -65,8 +65,8 @@ class _BankState extends State<Bank> {
             ],
           ),
         ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+        floatingActionButton: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 6.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -250,7 +250,7 @@ class _BankState extends State<Bank> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Color(0xffe3e7fa),
+                        color: const Color(0xffe3e7fa),
                         borderRadius: BorderRadius.circular(6)),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -323,7 +323,7 @@ class _BankState extends State<Bank> {
                   ),
                 ),
 
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
 
@@ -332,7 +332,7 @@ class _BankState extends State<Bank> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Color(0xffe3e7fa),
+                        color: const Color(0xffe3e7fa),
                         borderRadius: BorderRadius.circular(6)),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -405,7 +405,7 @@ class _BankState extends State<Bank> {
                   ),
                 ),
 
-                SizedBox(
+                const SizedBox(
                   height: 4,
                 ),
 
@@ -414,7 +414,7 @@ class _BankState extends State<Bank> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Color(0xffe3e7fa),
+                        color: const Color(0xffe3e7fa),
                         borderRadius: BorderRadius.circular(6)),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -496,7 +496,7 @@ class _BankState extends State<Bank> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Color(0xffe3e7fa),
+                        color: const Color(0xffe3e7fa),
                         borderRadius: BorderRadius.circular(6)),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -553,7 +553,7 @@ class _BankState extends State<Bank> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 )
               ],

@@ -17,9 +17,9 @@ class PurchaseViewModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    data['message'] = this.message;
+    final Map<String, dynamic> data =  Map<String, dynamic>();
+    data['success'] = success;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -73,19 +73,19 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['user_id'] = this.userId;
-    data['supplier_name'] = this.supplier;
-    data['bill_number'] = this.billNumber;
-    data['transection_method'] = this.transectionMethod;
-    data['purchase_date'] = this.pruchaseDate;
-    data['discount'] = this.discount;
-    data['gross_total'] = this.grossTotal;
-    data['disabled'] = this.disabled;
-    data['details_notes'] = this.detailsNotes;
-    if (this.purchaseDetails != null) {
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['user_id'] = userId;
+    data['supplier_name'] = supplier;
+    data['bill_number'] = billNumber;
+    data['transection_method'] = transectionMethod;
+    data['purchase_date'] = pruchaseDate;
+    data['discount'] = discount;
+    data['gross_total'] = grossTotal;
+    data['disabled'] = disabled;
+    data['details_notes'] = detailsNotes;
+    if (purchaseDetails != null) {
       data['purchase_details'] =
-          this.purchaseDetails!.map((v) => v.toJson()).toList();
+          purchaseDetails!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -150,24 +150,24 @@ class PurchaseDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['purchase_id'] = this.purchaseId;
+    final Map<String, dynamic> data =  Map<String, dynamic>();
+    data['id'] = id;
+    data['purchase_id'] = purchaseId;
     //data['purchase_details_id'] = this.purchaseDetailsId;
-    data['type'] = this.type;
-    data['purchase_date'] = this.pruchaseDate;
-    data['item_id'] = this.itemId;
-    data['default_qty'] = this.defaultQty;
-    data['qty'] = this.qty;
-    data['raw_qty'] = this.rawQty;
-    data['unit_id'] = this.unitId;
-    data['price'] = this.price;
-    data['sub_total'] = this.subTotal;
-    data['sales_qty'] = this.salesQty;
-    data['return_qty'] = this.returnQty;
-    data['deleted_at'] = this.deletedAt;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    data['type'] = type;
+    data['purchase_date'] = pruchaseDate;
+    data['item_id'] = itemId;
+    data['default_qty'] = defaultQty;
+    data['qty'] = qty;
+    data['raw_qty'] = rawQty;
+    data['unit_id'] = unitId;
+    data['price'] = price;
+    data['sub_total'] = subTotal;
+    data['sales_qty'] = salesQty;
+    data['return_qty'] = returnQty;
+    data['deleted_at'] = deletedAt;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

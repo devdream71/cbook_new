@@ -161,166 +161,163 @@ class _ItemListPageState extends State<ItemListPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ///cash and credit , if creadit then show customer list.
-          Container(
-            //color: Colors.red,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  //color: Colors.red,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, top: 2),
-                    child: InkWell(
-                      onTap: () {
-                        controller.updateCash(context);
-
-                        Provider.of<CustomerProvider>(context, listen: false)
-                            .clearSelectedCustomer();
-
-                        final customerProvider = Provider.of<CustomerProvider>(
-                            context,
-                            listen: false);
-
-                        // Clear selected customer
-                        customerProvider.clearSelectedCustomer();
-
-                        // Clear customer list
-                        customerProvider.clearCustomerList();
-
-                        // Clear customer name from TextField
-                        controller.customerNameController.clear();
-                      },
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                controller.isCash ? "Cash" : "Credit",
-                                style: GoogleFonts.lato(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14),
-                              ),
-                              const SizedBox(width: 1),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white,
-                                size: 12,
-                              )
-                            ],
-                          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                //color: Colors.red,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, top: 2),
+                  child: InkWell(
+                    onTap: () {
+                      controller.updateCash(context);
+          
+                      Provider.of<CustomerProvider>(context, listen: false)
+                          .clearSelectedCustomer();
+          
+                      final customerProvider = Provider.of<CustomerProvider>(
+                          context,
+                          listen: false);
+          
+                      // Clear selected customer
+                      customerProvider.clearSelectedCustomer();
+          
+                      // Clear customer list
+                      customerProvider.clearCustomerList();
+          
+                      // Clear customer name from TextField
+                      controller.customerNameController.clear();
+                    },
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              controller.isCash ? "Cash" : "Credit",
+                              style: GoogleFonts.lato(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14),
+                            ),
+                            const SizedBox(width: 1),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white,
+                              size: 12,
+                            )
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
-
-                const SizedBox(
-                  width: 6,
-                ),
-
-                //customer list.
-                controller.isCash
-                    ? const SizedBox(
+              ),
+          
+              const SizedBox(
+                width: 6,
+              ),
+          
+              //customer list.
+              controller.isCash
+                  ? const SizedBox(
+                      height: 53,
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 0.0),
+                      child: SizedBox(
+                        width: 320,
                         height: 53,
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.only(top: 0.0),
-                        child: SizedBox(
-                          width: 320,
-                          height: 53,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ///show text field search ====>
-                              AddSalesFormfieldTwo(
-                                controller: controller.customerNameController,
-                                customerorSaleslist: "Showing Customer list",
-                                customerOrSupplierButtonLavel: "Add customer",
-                                color: Colors.grey,
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CustomerCreate()));
-                                },
-                                //label: "Customer",
-                              ),
-
-                              /// show bottom payable or recivedable.
-                              Consumer<CustomerProvider>(
-                                builder: (context, customerProvider, child) {
-                                  final customerList =
-                                      customerProvider.customerResponse?.data ??
-                                          [];
-
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // If the customer list is empty, show a SizedBox
-                                      if (customerList.isEmpty)
-                                        const SizedBox(
-                                            height:
-                                                2), // Adjust height as needed
-
-                                      // Otherwise, show the dropdown with customers
-                                      if (customerList.isNotEmpty)
-
-                                        // Check if the selected customer is valid
-                                        if (customerProvider.selectedCustomer !=
-                                                null &&
-                                            customerProvider
-                                                    .selectedCustomer!.id !=
-                                                -1)
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
-                                                style: TextStyle(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ///show text field search ====>
+                            AddSalesFormfieldTwo(
+                              controller: controller.customerNameController,
+                              customerorSaleslist: "Showing Customer list",
+                              customerOrSupplierButtonLavel: "Add customer",
+                              color: Colors.grey,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CustomerCreate()));
+                              },
+                              //label: "Customer",
+                            ),
+          
+                            /// show bottom payable or recivedable.
+                            Consumer<CustomerProvider>(
+                              builder: (context, customerProvider, child) {
+                                final customerList =
+                                    customerProvider.customerResponse?.data ??
+                                        [];
+          
+                                return Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    // If the customer list is empty, show a SizedBox
+                                    if (customerList.isEmpty)
+                                      const SizedBox(
+                                          height:
+                                              2), // Adjust height as needed
+          
+                                    // Otherwise, show the dropdown with customers
+                                    if (customerList.isNotEmpty)
+          
+                                      // Check if the selected customer is valid
+                                      if (customerProvider.selectedCustomer !=
+                                              null &&
+                                          customerProvider
+                                                  .selectedCustomer!.id !=
+                                              -1)
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                                color: customerProvider
+                                                            .selectedCustomer!
+                                                            .type ==
+                                                        'customer'
+                                                    ? Colors.green
+                                                    : Colors.red,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 2.0),
+                                              child: Text(
+                                                "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
+                                                style: const TextStyle(
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,
-                                                  color: customerProvider
-                                                              .selectedCustomer!
-                                                              .type ==
-                                                          'customer'
-                                                      ? Colors.green
-                                                      : Colors.red,
+                                                  color: Colors.black,
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 2.0),
-                                                child: Text(
-                                                  "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
-                                                  style: const TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                                            ),
+                                          ],
+                                        ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-              ],
-            ),
+                    ),
+            ],
           ),
 
           /// Category and Subcategory Section - Full Width, Equal Size, No Padding
@@ -575,8 +572,9 @@ class _ItemListPageState extends State<ItemListPage> {
                                         GestureDetector(
                                           onTap: () {
                                             setState(() {
-                                              if (quantities[index] > 0)
+                                              if (quantities[index] > 0) {
                                                 quantities[index]--;
+                                              }
                                             });
                                           },
                                           child: Container(

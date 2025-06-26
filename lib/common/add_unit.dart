@@ -16,13 +16,13 @@ class SelectUnitBottomSheet extends StatefulWidget {
   final TextEditingController conversionRateController;
 
   const SelectUnitBottomSheet({
-    Key? key,
+    super.key,
     required this.selectedUnit,
     required this.selectedUnit2,
     required this.onUnit1Changed,
     required this.onUnit2Changed,
     required this.conversionRateController,
-  }) : super(key: key);
+  });
 
   @override
   _SelectUnitBottomSheetState createState() => _SelectUnitBottomSheetState();

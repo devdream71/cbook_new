@@ -63,7 +63,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
         ),
         
       ),
-      body: Column(
+      body: const Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

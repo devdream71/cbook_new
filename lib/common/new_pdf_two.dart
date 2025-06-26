@@ -75,10 +75,10 @@ class CustomInvoicePage extends StatelessWidget {
               const SizedBox(height: 10),
 
               // Bill to and Info
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,9 +204,9 @@ class CustomInvoicePage extends StatelessWidget {
                     size: 80,
                   ),
                   const SizedBox(width: 10),
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text("Discount  2%         1,000",
                           style: TextStyle(color: Colors.black, fontSize: 12)),
                       Text("Vat/Tax  15%       4,500",
@@ -224,9 +224,9 @@ class CustomInvoicePage extends StatelessWidget {
               // Footer Signatures
               const Divider(thickness: 0.8),
               const SizedBox(height: 10),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Text("Receiver",
                       style: TextStyle(color: Colors.black, fontSize: 12)),
                   Text("Sales Person",

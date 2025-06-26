@@ -1,13 +1,17 @@
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/customer_create/model/payment_voicer_model.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/model/create_payment_out.dart';
+import 'package:cbook_dt/feature/paymentout/payment_out_list.dart';
 import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_form_two.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,8 +23,6 @@ class PaymentOutCreateItem extends StatefulWidget {
 }
 
 class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
-  String? selectedDiscountType;
-
   String? selectedReceivedTo;
   String? selectedAccount;
 
@@ -45,8 +47,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
     }
   }
 
-  TextEditingController billNoController = TextEditingController();
-  String billNo = '';
+  Map<int, TextEditingController> receiptControllers = {};
 
   String? selectedBillPerson;
   int? selectedBillPersonId;
@@ -74,8 +75,6 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
     debugPrint('Final JSON Payload: $finalPayload');
   }
 
-  //int? selectedIndex; // 🔥 To track which item is expanded
-
   Set<int> expandedIndexes = {};
 
   @override
@@ -89,22 +88,76 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
             .fetchBillPersons());
   }
 
-  TextEditingController totalAmount = TextEditingController();
+  TextEditingController billNoController = TextEditingController();
+  final TextEditingController totalAmount = TextEditingController();
+  String billNo = '';
+
   TextEditingController discountAmount = TextEditingController();
   TextEditingController paymentAmount = TextEditingController();
+
+  //String? selectedDiscountType;
+
+  String selectedDiscountType = '%'; // default '%'
+  double dueAmount =
+      0; // You should assign this when customer selected or invoice loaded
+
+  /// Calculate sum of all receipts input
+  double get totalReceiptAmount {
+    double total = 0;
+    for (final c in receiptControllers.values) {
+      total += double.tryParse(c.text) ?? 0;
+    }
+    return total;
+  }
+
+  /// Called when discount or receipt amounts change
+  void _recalculatePayment() {
+    double due = totalReceiptAmount; // total receipt entered by user
+
+    final discountText = discountAmount.text.trim();
+    double discountValue = double.tryParse(discountText) ?? 0;
+
+    if (due <= 0) {
+      paymentAmount.text = "0.00";
+      totalAmount.text = "0.00";
+      return;
+    }
+
+    // Clamp discount value
+    if (selectedDiscountType == '%') {
+      if (discountValue > 100) discountValue = 100;
+    } else {
+      if (discountValue > due) discountValue = due;
+    }
+
+    double discountAmountCalculated = selectedDiscountType == '%'
+        ? (discountValue / 100) * due
+        : discountValue;
+
+    double finalPayment = due - discountAmountCalculated;
+
+    if (finalPayment < 0) finalPayment = 0;
+
+    setState(() {
+      totalAmount.text = due.toStringAsFixed(2); // show total before discount
+      paymentAmount.text = finalPayment.toStringAsFixed(2);
+    });
+
+    debugPrint(
+      'Total Receipt: $due, Discount: $discountValue $selectedDiscountType, '
+      'Discount Amt: $discountAmountCalculated, Final Payment: $finalPayment',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<SalesController>();
     //final provider = Provider.of<IncomeProvider>(context);
     final provider = context.watch<IncomeProvider>();
-
     final colorScheme = Theme.of(context).colorScheme;
-
     final providerExpense = Provider.of<ExpenseProvider>(context, listen: true);
 
     // List of forms with metadata
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
@@ -448,90 +501,194 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       ],
                     ),
                     const SizedBox(height: 8),
-
-                    /// Sales List (Only show when customer is selected)
                     SizedBox(
                       height: 300,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        //physics: const NeverScrollableScrollPhysics(),
-                        itemCount: 10, // Replace with your sales list count
-                        itemBuilder: (context, index) {
-                          bool isExpanded = expandedIndexes.contains(index);
+                      child: customerProvider.paymentVouchers.isEmpty
+                          ? const Center(
+                              child: Text(
+                                "No voucher found.",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount:
+                                  customerProvider.paymentVouchers.length,
+                              itemBuilder: (context, index) {
+                                final PaymentVoucherCustomer invoice =
+                                    customerProvider.paymentVouchers[index];
+                                final bool isExpanded =
+                                    expandedIndexes.contains(index);
 
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 2, vertical: 1),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3)),
-                              elevation: 1,
-                              margin: const EdgeInsets.only(bottom: 2),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    // Toggle individual expansion
-                                    if (isExpanded) {
-                                      expandedIndexes.remove(index);
-                                    } else {
-                                      expandedIndexes.add(index);
-                                    }
-                                  });
-                                },
-                                child: Padding(
+                                return Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0, vertical: 6.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Top Row
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('Sales/1254', style: ts),
-                                          Text('12/05/2025', style: ts),
-                                          Text('Bill 5,000', style: ts),
-                                          Text('Due 4,360', style: ts),
-                                          Icon(
-                                            isExpanded
-                                                ? Icons.arrow_drop_up
-                                                : Icons.arrow_drop_down,
-                                            size: 28,
-                                          ),
-                                        ],
-                                      ),
-                                      // Expanded Section
-                                      if (isExpanded) ...[
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                      horizontal: 2, vertical: 1),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(3)),
+                                    elevation: 1,
+                                    margin: const EdgeInsets.only(bottom: 2),
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          if (isExpanded) {
+                                            expandedIndexes.remove(index);
+                                          } else {
+                                            expandedIndexes.add(index);
+                                          }
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6.0, vertical: 6.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Receipt', style: ts),
-                                            const SizedBox(width: 10),
-                                            SizedBox(
-                                              height: 30,
-                                              width: 150,
-                                              child: AddSalesFormfield(
-                                                controller:
-                                                    TextEditingController(),
-                                                onChanged: (value) {},
-                                              ),
+                                            /// Top Row
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(invoice.billNumber,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text(invoice.purchaseDate,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text(
+                                                    'Bill ৳${invoice.grossTotal}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text('Due ৳${invoice.due}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Icon(
+                                                  isExpanded
+                                                      ? Icons.arrow_drop_up
+                                                      : Icons.arrow_drop_down,
+                                                  size: 28,
+                                                ),
+                                              ],
                                             ),
+
+                                            if (isExpanded) ...[
+                                              const SizedBox(height: 8),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  const Text('Receipt',
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.black)),
+                                                  const SizedBox(width: 10),
+                                                  SizedBox(
+                                                    height: 30,
+                                                    width: 150,
+                                                    child: TextFormField(
+                                                      controller:
+                                                          receiptControllers[
+                                                                  index] ??=
+                                                              TextEditingController(),
+                                                      keyboardType:
+                                                          const TextInputType
+                                                              .numberWithOptions(
+                                                              decimal: true),
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black,
+                                                      ),
+                                                      decoration:
+                                                          InputDecoration(
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 10),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(4),
+                                                        ),
+                                                      ),
+                                                      onChanged: (value) {
+                                                        final input =
+                                                            double.tryParse(
+                                                                    value) ??
+                                                                0;
+                                                        final due = invoice.due;
+
+                                                        if (input > due) {
+                                                          // Clamp to due
+                                                          receiptControllers[
+                                                                      index]!
+                                                                  .text =
+                                                              due.toStringAsFixed(
+                                                                  2);
+                                                          receiptControllers[
+                                                                      index]!
+                                                                  .selection =
+                                                              TextSelection
+                                                                  .fromPosition(
+                                                            TextPosition(
+                                                                offset: receiptControllers[
+                                                                        index]!
+                                                                    .text
+                                                                    .length),
+                                                          );
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                  'Amount can’t exceed due: ৳${due.toStringAsFixed(2)}'),
+                                                              backgroundColor:
+                                                                  Colors.red,
+                                                              duration:
+                                                                  const Duration(
+                                                                      seconds:
+                                                                          2),
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        // ✅ Always recalculate total
+                                                        double total = 0;
+                                                        for (final controller
+                                                            in receiptControllers
+                                                                .values) {
+                                                          total += double.tryParse(
+                                                                  controller
+                                                                      .text) ??
+                                                              0;
+                                                        }
+                                                        totalAmount.text = total
+                                                            .toStringAsFixed(2);
+
+                                                        _recalculatePayment();
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ]
                                           ],
                                         ),
-                                      ]
-                                    ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
-                    )
+                    ),
                   ]
                 ],
               );
@@ -540,6 +697,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
 
           const Spacer(),
 
+          ///total amount
           Align(
             alignment: Alignment.centerRight,
             child: Column(
@@ -556,6 +714,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
+                        readOnly: true,
                         controller: totalAmount,
                         onChanged: (value) {
                           debugPrint('Payment Value: ${totalAmount.text}');
@@ -580,12 +739,12 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                         items: const ['%', '৳'],
                         width: double.infinity,
                         height: 30,
-                        labelText: '%',
+                        labelText: selectedDiscountType,
                         selectedItem: selectedDiscountType,
                         onChanged: (value) {
                           setState(() {
-                            selectedDiscountType =
-                                value; // ✅ Update the selected value
+                            selectedDiscountType = value ?? '%';
+                            _recalculatePayment();
                           });
                           debugPrint(
                               'Discount type selected: $selectedDiscountType');
@@ -593,21 +752,23 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       ),
                     ),
                     const SizedBox(width: 10),
+
+                    ///discount amount
                     SizedBox(
                       height: 30,
                       width: 76,
                       child: AddSalesFormfield(
                         controller: discountAmount,
                         onChanged: (value) {
-                          debugPrint(discountAmount.text);
+                          _recalculatePayment();
                         },
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
 
-                // Received
+                const SizedBox(height: 10),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -618,13 +779,29 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       width: 163,
                       child: AddSalesFormfield(
                         controller: paymentAmount,
-                        onChanged: (value) {
-                          debugPrint('Payment Value: ${paymentAmount.text}');
-                        },
+                        readOnly:
+                            true, // user should not edit final payment manually
                       ),
                     ),
                   ],
                 ),
+
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: [
+                //     Text("Payment", style: ts),
+                //     const SizedBox(width: 24),
+                //     SizedBox(
+                //       height: 30,
+                //       width: 163,
+                //       child: AddSalesFormfield(
+                //         controller: paymentAmount,
+                //         onChanged: (value) {
+                //           debugPrint('Payment Value: ${paymentAmount.text}');
+                //         },
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -651,58 +828,82 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                     foregroundColor: Colors.white, // Button text color
                   ),
                   onPressed: () async {
+                    // SharedPreferences prefs =
+                    //     await SharedPreferences.getInstance();
+                    // String? userId = prefs.getInt('user_id')?.toString();
+
+                    // if (userId == null) {
+                    //   debugPrint("User ID is null");
+                    //   return;
+                    // }
+
+                    // final invoiceNo = billNoController.text.trim();
+                    // const date = "2025-06-10";
+
+                    // const notes = 'text'; // Or from your input field
+                    // const status = 1;
+                    // final account = selectedAccountId.toString();
+
+                    // debugPrint("user id ${userId}");
+                    // debugPrint('note ${notes}');
+                    // debugPrint('status ${status.toString()}');
+                    // debugPrint('invoice number ${invoiceNo}');
+
+                    // debugPrint('total amount ${totalAmount.text}');
+
+                    // debugPrint("payment ${paymentAmount.text}");
+
+                    // debugPrint("discount ${discountAmount.text}");
+
+                    // debugPrint('Discount type selected: $selectedDiscountType');
+
+                    // if (selectedBillPersonData != null) {
+                    //   debugPrint(
+                    //       '- Selected Bill Person id: ${selectedBillPersonData!.id}');
+                    //   // debugPrint(
+                    //   //     '- Selected Bill Person Name: ${selectedBillPersonData!.name}');
+                    //   // debugPrint(
+                    //   //     '- Selected Bill Person Phone: ${selectedBillPersonData!.phone}');
+                    // } else {
+                    //   debugPrint('No Bill Person Selected');
+                    // }
+
+                    // // ///payment from
+                    // // debugPrint(
+                    // //     'Fetched Account Names: ${provider.accountNames}');
+
+                    // ///a/c number
+                    // debugPrint('Account id: $account');
+
+                    // /// ✅ Print Selected Payment From (Dropdown Value)
+                    // debugPrint('Selected Payment From: $selectedReceivedTo');
+
+                    // /// ✅ Print Selected Account ID (Optional)
+                    // debugPrint('Selected Account ID: $account');
+
+                    // /// ✅ Get Selected Customer ID
+                    // final selectedCustomer =
+                    //     Provider.of<CustomerProvider>(context, listen: false)
+                    //         .selectedCustomer;
+
+                    // if (selectedCustomer != null) {
+                    //   debugPrint(
+                    //       'Selected Customer ID: ${selectedCustomer.id}');
+                    //   debugPrint(
+                    //       'Selected Customer Name: ${selectedCustomer.name}');
+                    // } else {
+                    //   debugPrint('No customer selected.');
+                    // }
+
+                    ///final api call here ====== >>>>>>
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    String? userId = prefs.getInt('user_id')?.toString();
+                    String? userIdStr = prefs.getInt('user_id')?.toString();
 
-                    if (userId == null) {
+                    if (userIdStr == null) {
                       debugPrint("User ID is null");
                       return;
                     }
-
-                    final invoiceNo = billNoController.text.trim();
-                    const date = "2025-06-10";
-
-                    const notes = 'text'; // Or from your input field
-                    const status = 1;
-                    final account = selectedAccountId.toString();
-
-                    debugPrint("user id ${userId}");
-                    debugPrint('note ${notes}');
-                    debugPrint('status ${status.toString()}');
-                    debugPrint('invoice number ${invoiceNo}');
-
-                    debugPrint('total amount ${totalAmount.text}');
-
-                    debugPrint("payment ${paymentAmount.text}");
-
-                    debugPrint("discount ${discountAmount.text}");
-
-                    debugPrint('Discount type selected: $selectedDiscountType');
-
-                    if (selectedBillPersonData != null) {
-                      debugPrint(
-                          '- Selected Bill Person id: ${selectedBillPersonData!.id}');
-                      // debugPrint(
-                      //     '- Selected Bill Person Name: ${selectedBillPersonData!.name}');
-                      // debugPrint(
-                      //     '- Selected Bill Person Phone: ${selectedBillPersonData!.phone}');
-                    } else {
-                      debugPrint('No Bill Person Selected');
-                    }
-
-                    // ///payment from
-                    // debugPrint(
-                    //     'Fetched Account Names: ${provider.accountNames}');
-
-                    ///a/c number
-                    debugPrint('Account id: $account');
-
-                    /// ✅ Print Selected Payment From (Dropdown Value)
-                    debugPrint('Selected Payment From: $selectedReceivedTo');
-
-                    /// ✅ Print Selected Account ID (Optional)
-                    debugPrint('Selected Account ID: $account');
 
                     /// ✅ Get Selected Customer ID
                     final selectedCustomer =
@@ -716,6 +917,70 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                           'Selected Customer Name: ${selectedCustomer.name}');
                     } else {
                       debugPrint('No customer selected.');
+                    }
+
+                    int userId = int.parse(userIdStr);
+                    int customerId = selectedCustomer?.id ??
+                        0; // from your selected customer object
+                    int voucherPerson = selectedBillPersonData?.id ?? 0;
+                    String voucherNumber = billNoController.text.trim();
+                    String voucherDate =
+                        DateFormat('yyyy-MM-dd').format(DateTime.now());
+                    String voucherTime =
+                        DateFormat('HH:mm:ss').format(DateTime.now());
+                    String paymentForm =
+                        selectedReceivedTo ?? "cash".toLowerCase(); // adapt this accordingly
+                    int accountId = selectedAccountId ?? 0;
+                    int paymentTo = selectedAccountId ?? 0; // or payment to id
+                    String percent =
+                        selectedDiscountType; // "%", "percent", or "flat", adjust as needed
+                    double totalAmt = double.tryParse(totalAmount.text) ?? 0;
+                    double paymentAmt = double.tryParse(paymentAmount.text) ?? 0;
+                    double discountAmt =
+                        double.tryParse(discountAmount.text) ?? 0;
+                    String notes = 'notes'; // from your input
+
+                    List<VoucherItem> voucherItems = [
+                      VoucherItem(
+                          salesId: "57", amount: totalAmt.toStringAsFixed(2)),
+                      // you can dynamically add items here from your form
+                    ];
+
+                    final request = PaymentVoucherRequest(
+                      userId: userId,
+                      customerId: customerId,
+                      voucherPerson: voucherPerson,
+                      voucherNumber: voucherNumber,
+                      voucherDate: voucherDate,
+                      voucherTime: voucherTime,
+                      paymentForm: (selectedReceivedTo ?? "cash").toLowerCase(), // ✅ FIXED paymentForm,
+                      accountId: accountId,
+                      paymentTo:   paymentTo,
+                      percent: percent,
+                      totalAmount:  paymentAmt, //totalAmt,
+                      discount: discountAmt,
+                      notes: notes,
+                      voucherItems: voucherItems,
+                    );
+
+                    final provider = Provider.of<PaymentVoucherProvider>(
+                        context,
+                        listen: false);
+                    bool success = await provider.storePaymentVoucher(request);
+
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content:
+                                Text("Payment voucher saved successfully!")),
+                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentOutList()));
+                      // Optionally reset form or navigate
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text("Failed to save payment voucher.")),
+                      );
                     }
                   },
                   child: const Text("Save"),

@@ -1,9 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-
 class DonutChartViewRound extends StatefulWidget {
   @override
   _DonutChartViewRoundState createState() => _DonutChartViewRoundState();

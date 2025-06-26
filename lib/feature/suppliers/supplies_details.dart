@@ -127,23 +127,21 @@ class _SupplierDetailsScreenState extends State<SupplierDetailsScreen> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.keyboard_arrow_down,
-                                        color: Colors.red[700],
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: Colors.red[700],
+                                    ),
+                                    Text(
+                                      "${supplierDetails?["opening_balance"] ?? '0'}",
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
                                       ),
-                                      Text(
-                                        "${supplierDetails?["opening_balance"] ?? '0'}",
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 )
                               ],
                             ),

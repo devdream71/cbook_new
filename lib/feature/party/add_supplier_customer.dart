@@ -134,7 +134,7 @@ class _AddSupplierCustomerState extends State<AddSupplierCustomer> {
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           title: const Column(
             children: [
               Text(
@@ -151,7 +151,7 @@ class _AddSupplierCustomerState extends State<AddSupplierCustomer> {
         body: Column(
           children: [
              Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xffdddefa)
               ),
               child: Row(
@@ -162,12 +162,12 @@ class _AddSupplierCustomerState extends State<AddSupplierCustomer> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CustomerCreate()),
+                        MaterialPageRoute(builder: (context) => const CustomerCreate()),
                       );
                     },
                     child:
                      Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           //border: Border.all(color: Colors.green),
                           //borderRadius: BorderRadius.circular(6)
                           ),
@@ -201,11 +201,11 @@ class _AddSupplierCustomerState extends State<AddSupplierCustomer> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SuppliersCreate()),
+                            builder: (context) => const SuppliersCreate()),
                       );
                     },
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           //border: Border.all(color: Colors.green),
                           //borderRadius: BorderRadius.circular(6)
                           ),
@@ -236,7 +236,7 @@ class _AddSupplierCustomerState extends State<AddSupplierCustomer> {
               ),
             ),
 
-            SizedBox(height: 5,),
+            const SizedBox(height: 5,),
             
 
              // _buildFieldLabel("Customer Name", textTheme, colorScheme),

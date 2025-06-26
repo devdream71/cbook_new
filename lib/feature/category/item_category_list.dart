@@ -76,9 +76,9 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
                   MaterialPageRoute(
                       builder: (context) => const CreateCategory()));
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: const Row(
+            child: const Padding(
+              padding: EdgeInsets.only(right: 8.0),
+              child: Row(
                 children: [
                   CircleAvatar(
                       radius: 10,

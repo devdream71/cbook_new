@@ -123,7 +123,7 @@ class SettingsView extends StatelessWidget {
           itemBuilder: (context, index) {
             final form = forms[index];
             return ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 8),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
               //visualDensity: VisualDensity(horizontal: 0, vertical: -4),
               dense: true, // <== smaller vertical size
               visualDensity: VisualDensity.compact, // <== even more compact

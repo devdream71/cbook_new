@@ -125,7 +125,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
       fontSize: 8,
     );
 
-    final pw.TextStyle cellStyle = const pw.TextStyle(
+    const pw.TextStyle cellStyle = pw.TextStyle(
       fontSize: 8,
     );
 
@@ -275,7 +275,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold,
                                       fontSize: 9)),
-                              pw.Text("${widget.customerName}",
+                              pw.Text(widget.customerName,
                                   style: pw.TextStyle(
                                       fontSize: 9,
                                       fontWeight: pw.FontWeight.bold))
@@ -435,7 +435,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                         ),
                         pw.Align(
                           alignment: pw.Alignment.centerRight,
-                          child: pw.Text("$formattedTotalAmount",
+                          child: pw.Text(formattedTotalAmount,
                               style: pw.TextStyle(
                                   fontSize: 9, fontWeight: pw.FontWeight.bold)),
                         ),
@@ -494,7 +494,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                   "${widget.discountAmount}"),
                             buildDottedLine(),
                             customDiscount(
-                                "Total Amount", "$formattedTotalAmount"),
+                                "Total Amount", formattedTotalAmount),
                             buildDottedLine(),
                             customDiscount("Due", "0"),
                             buildDottedLine(),
@@ -515,7 +515,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                             pw.Align(
                               alignment: pw.Alignment.center,
                               child: pw.Text(
-                                  "${convertDoubleToWords(totalAmount)}"),
+                                  convertDoubleToWords(totalAmount)),
                             ),
                         ],
                       ),
@@ -1046,7 +1046,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                     customDiscount(
                         "Vat/Tax ${taxPercentOnly}%", "${widget.taxAmount}"),
                     buildDottedLine(),
-                    customDiscount("Total Amount", "$formattedTotalAmount"),
+                    customDiscount("Total Amount", formattedTotalAmount),
                     buildDottedLine(),
                     customDiscount("Due", "0"),
                     buildDottedLine(),
@@ -1068,7 +1068,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
               children: [
                 pw.Align(
                   alignment: pw.Alignment.center,
-                  child: pw.Text("${convertDoubleToWords(totalAmount)}"),
+                  child: pw.Text(convertDoubleToWords(totalAmount)),
 
                   // customDiscount(
                   //     "In Words:", " One thousand and five hundred"),
@@ -1254,7 +1254,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                       pw.Text('Bill to:',
                           style: pw.TextStyle(
                               fontWeight: pw.FontWeight.bold, fontSize: 9)),
-                      pw.Text("${widget.customerName}",
+                      pw.Text(widget.customerName,
                           style: pw.TextStyle(
                               fontSize: 9, fontWeight: pw.FontWeight.bold))
                     ],
@@ -1394,7 +1394,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                 ),
                 pw.Align(
                   alignment: pw.Alignment.centerRight,
-                  child: pw.Text("$formattedTotalAmount",
+                  child: pw.Text(formattedTotalAmount,
                       style: pw.TextStyle(
                           fontSize: 9, fontWeight: pw.FontWeight.bold)),
                 ),
@@ -1445,7 +1445,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                     customDiscount(
                         "Vat/Tax ${taxPercentOnly}%", "${widget.taxAmount}"),
                     buildDottedLine(),
-                    customDiscount("Total Amount", "$formattedTotalAmount"),
+                    customDiscount("Total Amount", formattedTotalAmount),
                     buildDottedLine(),
                     customDiscount("Due", "0"),
                     buildDottedLine(),
@@ -1464,7 +1464,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                 children: [
                   pw.Align(
                     alignment: pw.Alignment.center,
-                    child: pw.Text("${convertDoubleToWords(totalAmount)}"),
+                    child: pw.Text(convertDoubleToWords(totalAmount)),
 
                     // customDiscount(
                     //     "In Words:", " One thousand and five hundred"),
@@ -1619,20 +1619,17 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('=====> item discount ${widget.items.first.itemDiscountAmount}');
-    print('=====> item vat ${widget.items.first.itemVatTaxAmount}');
-    print('=====> item dis per ${widget.items.first.itemDiscountPercentace}');
-    print('=====> item vat per ${widget.items.first.itemvatTaxPercentace}');
+    debugPrint('=====> item discount ${widget.items.first.itemDiscountAmount}');
+    debugPrint('=====> item vat ${widget.items.first.itemVatTaxAmount}');
+    debugPrint('=====> item dis per ${widget.items.first.itemDiscountPercentace}');
+    debugPrint('=====> item vat per ${widget.items.first.itemvatTaxPercentace}');
 
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    TextStyle headerStyle = const TextStyle(
-        fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black);
-    TextStyle labelStyle = const TextStyle(fontSize: 14, color: Colors.black);
-    TextStyle valueStyle = const TextStyle(
-        fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black);
+    
+   
     TextStyle tableHeaderStyle =
         const TextStyle(fontWeight: FontWeight.bold, color: Colors.black);
-    final TextStyle tableCellStyle = const TextStyle(
+    const TextStyle tableCellStyle = TextStyle(
       fontSize: 10,
       color: Colors.black,
     );
@@ -1889,9 +1886,9 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                           tableCell(item.quantity.toString(),
                                               tableCellStyle),
                                           tableCell(
-                                              '${item.unit}', tableCellStyle),
+                                              item.unit, tableCellStyle),
                                           tableCell(
-                                            "${(item.amount / (item.quantity > 0 ? item.quantity : 1)).toStringAsFixed(2)}",
+                                            (item.amount / (item.quantity > 0 ? item.quantity : 1)).toStringAsFixed(2),
                                             tableCellStyle,
                                           ),
                                           if (showItemDiscountAndPercentance)
@@ -2142,7 +2139,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                 ElevatedButton.icon(
                                   onPressed: () {
                                     _viewPDFGenPrinting();
-                                    print('vieww pdf called');
+                                    debugPrint('vieww pdf called');
                                   }, //_viewPDF
                                   icon: const Icon(Icons.picture_as_pdf,
                                       size: 18),

@@ -152,7 +152,7 @@ class SaleUpdateProvider extends ChangeNotifier {
         ));
       });
 
-      print(saleUpdateList.length);
+      debugPrint(saleUpdateList.length.toString());
 
       // print(purchaseUpdateList.length);
       debugPrint(saleUpdateList.length.toString());
@@ -317,13 +317,13 @@ class SaleUpdateProvider extends ChangeNotifier {
         body: jsonEncode(requestBody),
       );
 
-      print("API Response: ${response.body}");
+      debugPrint("API Response: ${response.body}");
 
       final data = json.decode(response.body);
 
       if (response.statusCode == 200) {
         if (data["success"] == true) {
-          print("Sale successful: ${data["data"]}");
+          debugPrint("Sale successful: ${data["data"]}");
 
           // Navigate to home page
           Navigator.pushReplacement(
@@ -535,7 +535,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
     final controller = context.watch<SalesController>();
     final colorScheme = Theme.of(context).colorScheme;
 
-    print("purchase id");
+    debugPrint("purchase id");
 
     final categoryProvider =
         Provider.of<ItemCategoryProvider>(context, listen: true);
@@ -554,7 +554,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
         body: SingleChildScrollView(
           child: Consumer<SaleUpdateProvider>(
             builder: (context, provider, child) {
-              print("======================");
+              debugPrint("======================");
               // print(provider.qtyController);
               return provider.isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -1178,7 +1178,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                                     controller.updateTaxPaecentId(
                                                         '${selectedTaxId}_${controller.selectedTaxPercent}');
 
-                                                    print(
+                                                    debugPrint(
                                                         'tax_percent: "${controller.taxPercentValue}"');
 
                                                     //controller.calculateSubtotal();

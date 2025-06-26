@@ -15,10 +15,10 @@ class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
  
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  SplashScreenState createState() => SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
@@ -45,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Keep checking the connectivity for a few seconds before proceeding
     for (int i = 0; i < 5; i++) {
       connectivityResult = (await Connectivity().checkConnectivity())[0]; // Get the first item from the list
-      print("Connectivity Status: $connectivityResult");
+      debugPrint("Connectivity Status: $connectivityResult");
 
       if (connectivityResult != ConnectivityResult.none) {
         isInternetAvailable = true;

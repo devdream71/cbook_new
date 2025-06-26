@@ -54,11 +54,11 @@ class ExpenseProvider with ChangeNotifier {
         expenseList = result.data;
       } else {
          expenseList = [];
-        print('Failed to load expense list');
+        debugPrint('Failed to load expense list');
       }
     } catch (e) {
       expenseList = [];
-      print('Error fetching expense list: $e');
+      debugPrint('Error fetching expense list: $e');
     }
 
     isLoading = false;
@@ -114,10 +114,10 @@ Future<void> deleteExpense(String id) async {
       expenseList.removeWhere((expense) => expense.id.toString() == id);
       notifyListeners(); // This will refresh the UI
     } else {
-      print('Failed to delete expense');
+      debugPrint('Failed to delete expense');
     }
   } catch (e) {
-    print('Error: $e');
+    debugPrint('Error: $e');
   }
 }
 
@@ -140,10 +140,10 @@ Future<void> deleteExpense(String id) async {
         final result = PaidFormModel.fromJson(json.decode(response.body));
         paidFormList = result.data;
       } else {
-        print('Failed to load paid form list');
+        debugPrint('Failed to load paid form list');
       }
     } catch (e) {
-      print('Error fetching paid form list: $e');
+      debugPrint('Error fetching paid form list: $e');
     }
 
     isLoading = false;
@@ -210,13 +210,13 @@ Future<bool> updateExpense({
   final url = Uri.parse(
       'https://commercebook.site/api/v1/expense/update?id=$expenseId&user_id=$userId&expence_no=$invoiceNo&date=$date&paid_to=$paidTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status');
 
-  print("url ====> ${url}");
+  debugPrint("url ====> ${url}");
 
   final body = json.encode({
     'expense_items': expenseItems.map((e) => e.toJson()).toList(),
   });
 
-  print('Sending Body: $body'); // ✅ Add this to see the payload
+  debugPrint('Sending Body: $body'); // ✅ Add this to see the payload
 
   try {
     final response = await http.post(
@@ -225,8 +225,8 @@ Future<bool> updateExpense({
       body: body,
     );
 
-    print('Response Status: ${response.statusCode}'); // ✅ Log status code
-    print('Response Body: ${response.body}'); // ✅ Log response body
+    debugPrint('Response Status: ${response.statusCode}'); // ✅ Log status code
+    debugPrint('Response Body: ${response.body}'); // ✅ Log response body
 
     if (response.statusCode == 200) {
       debugPrint('Expense updated successfully.');

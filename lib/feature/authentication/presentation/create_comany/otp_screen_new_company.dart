@@ -27,7 +27,7 @@ class _OtpScreenNewCompanyState extends State<OtpScreenNewCompany> {
 
     if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please enter a valid 6-digit OTP")),
+        const SnackBar(content: Text("Please enter a valid 6-digit OTP")),
       );
       return;
     }
@@ -43,7 +43,7 @@ class _OtpScreenNewCompanyState extends State<OtpScreenNewCompany> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Verification successful!")),
+        const SnackBar(content: Text("Verification successful!")),
       );
       // Navigate to next screen if needed
       final userData = provider.response?.data;
@@ -72,7 +72,7 @@ class _OtpScreenNewCompanyState extends State<OtpScreenNewCompany> {
       backgroundColor: colorScheme.secondary,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               Row(
@@ -86,7 +86,7 @@ class _OtpScreenNewCompanyState extends State<OtpScreenNewCompany> {
                       Navigator.pop(context);
                     },
                   ),
-                  Spacer(),
+                  const Spacer(),
                 ],
               ),
               Center(
@@ -155,7 +155,7 @@ class _OtpScreenNewCompanyState extends State<OtpScreenNewCompany> {
                           ),
                         ),
                         child: _isSubmitting
-                            ? CircularProgressIndicator(color: Colors.white)
+                            ? const CircularProgressIndicator(color: Colors.white)
                             : Text(
                                 "Submit",
                                 style: textTheme.bodyLarge?.copyWith(

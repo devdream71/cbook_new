@@ -18,7 +18,7 @@ class CompanySettings extends StatelessWidget {
           style: TextStyle(
               color: Colors.yellow, fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
     color: Colors.white, // ← makes back icon white
   ),
         automaticallyImplyLeading: true,

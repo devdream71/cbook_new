@@ -36,7 +36,7 @@ class UnitDTProvider extends ChangeNotifier {
         throw Exception("Failed to load units");
       }
     } catch (error) {
-      print("Error fetching units: $error");
+      debugPrint("Error fetching units: $error");
     }
 
     isLoading = false;
@@ -68,7 +68,7 @@ class UnitDTProvider extends ChangeNotifier {
       units.add(newUnit); // ✅ Add to the same list UI is using
       notifyListeners();
 
-      print("Unit added successfully: ${responseData['message']}");
+      debugPrint("Unit added successfully: ${responseData['message']}");
 
       // ✅ Refresh the unit list from API to ensure latest data
       await fetchUnits();
@@ -77,10 +77,10 @@ class UnitDTProvider extends ChangeNotifier {
        
     } else {
       
-      print("Failed to add unit: ${responseData['message']}");
+      debugPrint("Failed to add unit: ${responseData['message']}");
     }
   } catch (error) {
-    print("Error adding unit: $error");
+    debugPrint("Error adding unit: $error");
   }
 }
 
@@ -114,12 +114,12 @@ Future<void> deleteUnit(int unitId, BuildContext context) async {
       // ✅ Refresh unit list to ensure latest data
       await fetchUnits();
       
-      print("Unit deleted successfully: ${responseData['message']}");
+      debugPrint("Unit deleted successfully: ${responseData['message']}");
     } else {
-      print("Failed to delete unit: ${responseData['message']}");
+      debugPrint("Failed to delete unit: ${responseData['message']}");
     }
   } catch (error) {
-    print("Error deleting unit: $error");
+    debugPrint("Error deleting unit: $error");
   }
 }
 
@@ -160,10 +160,10 @@ Future<void> deleteUnit(int unitId, BuildContext context) async {
         ),
       );
     } else {
-      print("Failed to update unit: ${responseData['message']}");
+      debugPrint("Failed to update unit: ${responseData['message']}");
     }
   } catch (error) {
-    print("Error updating unit: $error");
+    debugPrint("Error updating unit: $error");
   }
 
 }

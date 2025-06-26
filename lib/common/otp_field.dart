@@ -29,7 +29,7 @@ class OtpField extends StatelessWidget {
       onChanged: (value) => onChanged(value, focusNode),
       decoration: InputDecoration(
         counterText: "",
-        border: UnderlineInputBorder(
+        border: const UnderlineInputBorder(
             // borderRadius: BorderRadius.circular(10),
             ),
         enabledBorder: UnderlineInputBorder(

@@ -434,7 +434,7 @@ class SalesController extends ChangeNotifier {
     double discount = double.tryParse(discountController.text) ?? 0.0;
     double total = subtotal - discount;
 
-    debugPrint('recived amount total ${total}');
+    debugPrint('recived amount total $total');
 
     return total.toStringAsFixed(2);
   }
@@ -583,7 +583,7 @@ class SalesController extends ChangeNotifier {
     // Notify UI about loading state
 
     try {
-      print('bill bumber ${billNo}');
+      debugPrint('bill bumber $billNo');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       // Check if bill_number exists, if not, set an initial value
@@ -623,11 +623,11 @@ class SalesController extends ChangeNotifier {
       debugPrint("date =====>$date");
 
       debugPrint("Cash Subtotal: ${addAmount2()}");
-      debugPrint("Cash Total (after discount): ${totalAmount}");
+      debugPrint("Cash Total (after discount): $totalAmount");
 
-      debugPrint("discountPercent: ${discountPercent}");
-      debugPrint("taxAmount: ${taxAmount}");
-      debugPrint("taxPercent: ${taxPercent}");
+      debugPrint("discountPercent: $discountPercent");
+      debugPrint("taxAmount: $taxAmount");
+      debugPrint("taxPercent: $taxPercent");
       debugPrint("discount amount: $discount");
 
       // var discount = discountController.text;
@@ -636,9 +636,9 @@ class SalesController extends ChangeNotifier {
       //     "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=$newBillNumber&sale_date=$encodedDate&details_notes=notes&gross_total=${customerId.isNotEmpty ? totalAmount2 : totalAmount}&discount=$discount&payment_out=1&payment_amount=${customerId.isNotEmpty ? totalAmount2 : totalAmount}";
 
       final url =
-          "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'Cash'}&bill_number=$billNo&sale_date=$encodedDate&details_notes=$note&discount_percent=${discountPercentance.text}&tax=${taxAmount}&tax_percents=${totaltaxPercentValue}&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount : totalAmount2}";
+          "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'Cash'}&bill_number=$billNo&sale_date=$encodedDate&details_notes=$note&discount_percent=${discountPercentance.text}&tax=$taxAmount&tax_percents=$totaltaxPercentValue&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount : totalAmount2}";
 
-      print("API URL: $url");
+      debugPrint("API URL: $url");
 
       // Prepare request body
       final requestBody = {

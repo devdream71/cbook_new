@@ -9,13 +9,13 @@ import 'package:provider/provider.dart';
 class UpdateUnitPage extends StatefulWidget {
   final UnitResponseModel unit;
 
-  const UpdateUnitPage({Key? key, required this.unit}) : super(key: key);
+  const UpdateUnitPage({super.key, required this.unit});
 
   @override
-  _UpdateUnitPageState createState() => _UpdateUnitPageState();
+  UpdateUnitPageState createState() => UpdateUnitPageState();
 }
 
-class _UpdateUnitPageState extends State<UpdateUnitPage> {
+class UpdateUnitPageState extends State<UpdateUnitPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _symbolController;

@@ -349,13 +349,13 @@ class CategoryProvider extends ChangeNotifier {
         if (data['success']) {
           // ✅ Navigate to ItemSubCategoryView
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => ItemSubCategoryView()));
+              MaterialPageRoute(builder: (context) => const ItemSubCategoryView()));
           // Optionally show a snackbar or toast
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 data['message'],
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
               backgroundColor: Colors.green,
             ),

@@ -1,13 +1,11 @@
 import 'dart:convert';
-import 'package:cbook_dt/common/custome_close_button.dart';
 import 'package:cbook_dt/common/item_details_pop_up.dart';
 import 'package:cbook_dt/common/item_details_pop_up_two.dart';
-import 'package:cbook_dt/feature/Received/provider/received_provider.dart';
 import 'package:cbook_dt/feature/item/update_item.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+
 
 class ItemDetailsView extends StatefulWidget {
   final int itemId;
@@ -126,7 +124,7 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                       Padding(
                         padding:
                             const EdgeInsets.only(left: 8.0, right: 8, top: 8),
-                        child: Container(
+                        child: SizedBox(
                           //color: Colors.grey.shade300,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,

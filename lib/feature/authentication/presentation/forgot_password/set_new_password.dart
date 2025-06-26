@@ -90,7 +90,7 @@ class SetNewPassword extends StatelessWidget {
                       controller: reaswordController,
                     )),
                 
-                Spacer(),
+                const Spacer(),
                       
                 SizedBox(
                   width: double.infinity,

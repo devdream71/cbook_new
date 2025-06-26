@@ -23,7 +23,7 @@ class ItemDetailsPopUp extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
                 fontSize: 12)),
-        SizedBox(height: 3),
+        const SizedBox(height: 3),
       ]),
     );
   }

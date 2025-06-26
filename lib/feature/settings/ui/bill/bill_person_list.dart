@@ -22,7 +22,7 @@ class _BillPersonListState extends State<BillPersonList> {
   TextStyle ts =
       const TextStyle(color: Colors.black, fontWeight: FontWeight.bold);
 
-  TextStyle ts2  = TextStyle(color: Colors.black, fontSize: 12);    
+  TextStyle ts2  = const TextStyle(color: Colors.black, fontSize: 12);    
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;

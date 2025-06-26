@@ -119,11 +119,11 @@ class UserCeate extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   if (user.nickName != null)
-                                    Text("${user.nickName!}",
+                                    Text(user.nickName!,
                                         style: const TextStyle(fontSize: 12)),
-                                  Text("${user.email}",
+                                  Text(user.email,
                                       style: const TextStyle(fontSize: 12)),
-                                  Text("${user.phone}",
+                                  Text(user.phone,
                                       style: const TextStyle(fontSize: 12)),
                                 ],
                               ),

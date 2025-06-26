@@ -104,6 +104,7 @@ class CustomerListScreenState extends State<CustomerListScreen> {
                                 builder: (context) => CustomerDetailsScreen(
                                   customerId: customers.id,
                                   purchases: customersPurchaase,
+                                  customer: customers,
                                 ),
                               ),
                             );

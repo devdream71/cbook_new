@@ -54,7 +54,7 @@ class _CreateCategoryState extends State<CreateCategory> {
         
         centerTitle: true,
         backgroundColor: colorScheme.primary,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Create Category",
           style: TextStyle(color: Colors.yellow, fontSize: 16),

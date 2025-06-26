@@ -2,6 +2,7 @@ import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/customer_create/customer_details.dart';
 import 'package:cbook_dt/feature/customer_create/customer_update.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_create.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/party/party_intro_page.dart';
 import 'package:cbook_dt/feature/suppliers/provider/suppliers_list.dart';
@@ -226,8 +227,6 @@ class _PartyState extends State<Party> {
                 ],
               ),
             ),
-
-       
             Expanded(
               child: Consumer<CustomerProvider>(
                 builder: (context, customerProvider, child) {
@@ -268,8 +267,8 @@ class _PartyState extends State<Party> {
                       final customerType = customers.type;
 
                       return InkWell(
-                        onLongPress: () => editDeleteDiolog(
-                            context, customerId.toString(),  customerType ),
+                        onLongPress: () => editDeleteDiolog(context,
+                            customerId.toString(), customerType, customers),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -277,6 +276,7 @@ class _PartyState extends State<Party> {
                               builder: (context) => CustomerDetailsScreen(
                                 customerId: customerId,
                                 purchases: customersPurchase,
+                                customer: customers,
                               ),
                             ),
                           );
@@ -351,11 +351,11 @@ class _PartyState extends State<Party> {
                                         ),
                                       ),
                                       Text(
-                                        "N/A",
+                                          "N/A",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.notoSansPhagsPa(
                                           fontSize: 12,
-                                          color: Colors.grey[800],
+                                          color: Colors.black,
                                           //fontWeight: FontWeight.w400
                                         ),
                                       ),
@@ -420,9 +420,13 @@ class _PartyState extends State<Party> {
         ));
   }
 
-  Future<dynamic> editDeleteDiolog(
-      BuildContext context, String customerId, String? customerType,  ) {
+  Future<dynamic> editDeleteDiolog(BuildContext context, String customerId,
+      String? customerType, Customer customers) {
     final colorScheme = Theme.of(context).colorScheme;
+    final customerProvider =
+        Provider.of<CustomerProvider>(context, listen: false);
+    final customerList = customerProvider.customerResponse?.data ?? [];
+
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -476,37 +480,72 @@ class _PartyState extends State<Party> {
                   onTap: () async {
                     Navigator.of(context).pop();
 
+                    await Future.delayed(const Duration(milliseconds: 100));
+
+                    if (customerType == 'suppliers') {
+                      // 💡 You already have `customers` in the ListView
                     
 
-                    // if (customerType == 'suppliers') {
-                    //   // 💡 You already have `customers` in the ListView
+                      
 
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) =>
-                    //           SupplierUpdate(supplier: customers),
-                    //     ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CustomerUpdate(
+                            customer: CustomerData(
+                              id: customers.id,
+                              userId: customers.userId,
+                              name: customers.name,
+                              proprietorName: customers.proprietorName,
+                              email: "", // or correct value
+                              phone: customers.phone ?? "",
+                              address: customers.address ?? "",
+                              openingBalance: customers.due,
+                              status: 1,
+                              createdAt: "",
+                              updatedAt: "",
+                              type: customers.type,
+                              level: null,
+                              levelType: null,
+                            ),
+                          ),
+                        ),
+                      );
 
-
-                    //   );
-                    // } else if (customerType == 'customer') {
-
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) =>
-                    //           CustomerUpdate(customer: customerId),
-                    //     ),
-                    //   );
-                    // } else {
-                    //   ScaffoldMessenger.of(context).showSnackBar(
-                    //     SnackBar(
-                    //       content: Text('Unknown customer type: $customerType'),
-                    //       backgroundColor: Colors.red,
-                    //     ),
-                    //   );
-                    // }
+                      // );
+                    } else if (customerType == 'customer') {
+                       
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CustomerUpdate(
+                            customer: CustomerData(
+                              id: customers.id,
+                              userId: customers.userId,
+                              name: customers.name,
+                              proprietorName: customers.proprietorName,
+                              email: "", // or correct value
+                              phone: customers.phone ?? "",
+                              address: customers.address ?? "",
+                              openingBalance: customers.due,
+                              status: 1,
+                              createdAt: "",
+                              updatedAt: "",
+                              type: customers.type,
+                              level: null,
+                              levelType: null,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Unknown customer type: $customerType'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),

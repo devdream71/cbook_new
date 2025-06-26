@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class UserDetailsPage extends StatelessWidget {
   final user;
 
-  const UserDetailsPage({Key? key, required this.user}) : super(key: key);
+  const UserDetailsPage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class UserDetailsPage extends StatelessWidget {
                 style: const TextStyle(fontSize: 12, color: Colors.black)),
             Text('${user.createdDate}',
                 style: const TextStyle(fontSize: 12, color: Colors.black)),
-            Text('${user.status == 1 ? "Active" : "Inactive"}',
+            Text(user.status == 1 ? "Active" : "Inactive",
                 style: const TextStyle(fontSize: 12, color: Colors.black)),
             // Add more fields as needed
           ],

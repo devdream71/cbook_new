@@ -10,8 +10,8 @@ class AddNewPartyIntro extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    TextStyle ts = TextStyle(color: Colors.white, fontSize: 12);
-    TextStyle ts2 = TextStyle(
+    TextStyle ts = const TextStyle(color: Colors.white, fontSize: 12);
+    TextStyle ts2 = const TextStyle(
         color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold);
 
     return Scaffold(

@@ -159,12 +159,12 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                   scale: 0.75,
                   child: Switch(
                     //inactiveTrackColor: Colors.orange,
-                    inactiveThumbColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
 
                     //activeColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
 
                     value: _billInvoiceNumber,
                     onChanged: (bool value) {
@@ -190,10 +190,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _defiledCash,
                     onChanged: (bool value) {
                       setState(() {
@@ -218,10 +218,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     
                     value: _categorySubCategory,
                     onChanged: (bool value) {
@@ -247,10 +247,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _stockQtyUnitShow,
                     onChanged: (bool value) {
                       setState(() {
@@ -276,10 +276,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                   
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _salesPrice,
                     onChanged: (bool value) {
                       setState(() {
@@ -304,10 +304,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _purchasePrice,
                     onChanged: (bool value) {
                       setState(() {
@@ -332,10 +332,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _itemWiseDiscount,
                     onChanged: (bool value) {
                       setState(() {
@@ -360,10 +360,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _itemWiseVatTax,
                     onChanged: (bool value) {
                       setState(() {
@@ -388,10 +388,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _billWiseDiscount,
                     onChanged: (bool value) {
                       setState(() {
@@ -416,10 +416,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _billWiseVatTax,
                     onChanged: (bool value) {
                       setState(() {
@@ -444,10 +444,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _narrationText,
                     onChanged: (bool value) {
                       setState(() {
@@ -472,10 +472,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _showProfitLossIcon,
                     onChanged: (bool value) {
                       setState(() {
@@ -500,10 +500,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _saveNew,
                     onChanged: (bool value) {
                       setState(() {
@@ -528,10 +528,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _saveA4,
                     onChanged: (bool value) {
                       setState(() {
@@ -556,10 +556,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _saveA5,
                     onChanged: (bool value) {
                       setState(() {
@@ -584,10 +584,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _qrCodeGen,
                     onChanged: (bool value) {
                       setState(() {
@@ -612,10 +612,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _shareButton,
                     onChanged: (bool value) {
                       setState(() {
@@ -640,10 +640,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _smsSend,
                     onChanged: (bool value) {
                       setState(() {
@@ -668,10 +668,10 @@ class _BillInvoiceCreateFormState extends State<BillInvoiceCreateForm> {
                 trailing: Transform.scale(
                   scale: 0.75,
                   child: Switch(
-                    inactiveThumbColor: Color(0xff278d46),
-                    activeTrackColor: Color(0xff278d46),
+                    inactiveThumbColor: const Color(0xff278d46),
+                    activeTrackColor: const Color(0xff278d46),
                     trackOutlineColor:
-                        WidgetStateProperty.all(Color(0xff278d46)),
+                        WidgetStateProperty.all(const Color(0xff278d46)),
                     value: _maskingCompanyNameSms,
                     onChanged: (bool value) {
                       setState(() {
