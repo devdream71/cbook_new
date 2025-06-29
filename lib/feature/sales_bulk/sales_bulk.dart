@@ -165,55 +165,52 @@ class _ItemListPageState extends State<ItemListPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                //color: Colors.red,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, top: 2),
-                  child: InkWell(
-                    onTap: () {
-                      controller.updateCash(context);
-          
-                      Provider.of<CustomerProvider>(context, listen: false)
-                          .clearSelectedCustomer();
-          
-                      final customerProvider = Provider.of<CustomerProvider>(
-                          context,
-                          listen: false);
-          
-                      // Clear selected customer
-                      customerProvider.clearSelectedCustomer();
-          
-                      // Clear customer list
-                      customerProvider.clearCustomerList();
-          
-                      // Clear customer name from TextField
-                      controller.customerNameController.clear();
-                    },
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              controller.isCash ? "Cash" : "Credit",
-                              style: GoogleFonts.lato(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14),
-                            ),
-                            const SizedBox(width: 1),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white,
-                              size: 12,
-                            )
-                          ],
-                        ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0, top: 2),
+                child: InkWell(
+                  onTap: () {
+                    controller.updateCash(context);
+                        
+                    Provider.of<CustomerProvider>(context, listen: false)
+                        .clearSelectedCustomer();
+                        
+                    final customerProvider = Provider.of<CustomerProvider>(
+                        context,
+                        listen: false);
+                        
+                    // Clear selected customer
+                    customerProvider.clearSelectedCustomer();
+                        
+                    // Clear customer list
+                    customerProvider.clearCustomerList();
+                        
+                    // Clear customer name from TextField
+                    controller.customerNameController.clear();
+                  },
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            controller.isCash ? "Cash" : "Credit",
+                            style: GoogleFonts.lato(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14),
+                          ),
+                          const SizedBox(width: 1),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                            size: 12,
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -1433,22 +1430,19 @@ class _ItemListPageState extends State<ItemListPage> {
                               height: 6,
                             ),
                             //purchase price
-                            Container(
-                              //color: Colors.blueGrey,
-                              child: AddSalesFormfield(
-                                height: 30,
-                                //label: "", //price
-                                labelText: "Price",
-                                controller: controller.mrpController,
-                                keyboardType: TextInputType.number,
-                                readOnly: false,
-                                onChanged: (value) {
-                                  setState(() {
-                                    controller.hasCustomPrice = true;
-                                    controller.calculateSubtotal();
-                                  });
-                                },
-                              ),
+                            AddSalesFormfield(
+                              height: 30,
+                              //label: "", //price
+                              labelText: "Price",
+                              controller: controller.mrpController,
+                              keyboardType: TextInputType.number,
+                              readOnly: false,
+                              onChanged: (value) {
+                                setState(() {
+                                  controller.hasCustomPrice = true;
+                                  controller.calculateSubtotal();
+                                });
+                              },
                             ),
 
                             const SizedBox(
@@ -1680,7 +1674,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                     child: Align(
                                       alignment: Alignment.topRight,
                                       child: Text(
-                                        "${controller.subtotalWithTax.toStringAsFixed(2)}",
+                                        controller.subtotalWithTax.toStringAsFixed(2),
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,

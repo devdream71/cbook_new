@@ -341,7 +341,7 @@ class _LayoutState extends State<_Layout> {
                                                   final dropdownItems =
                                                       customerList
                                                           .map((customer) =>
-                                                              "${customer.name}") // Store both ID and Name
+                                                              customer.name) // Store both ID and Name
                                                           .toList();
 
                                                   return Column(

@@ -87,12 +87,12 @@ class SalesReturnItem {
          'type' : type,
          'pruchase_date' : purchaseDate,
          'item_id' : itemID,
-         'default_qty' : price,
+         'price' : price,
          'default_qty' : defaultQty,
          'qty' : qty,
          'raw_qty' : rawQty,
          'unit_id' : unitID,
-         'price' : price, 
+           
      };
   }
 

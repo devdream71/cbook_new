@@ -1156,7 +1156,7 @@ class _AddItemState extends State<AddItem> {
                               'Online Store'
                             ].forEach((label) {
                               if (categorypriceData.containsKey(label)) {
-                                print('$label: ${categorypriceData[label]}');
+                                debugPrint('$label: ${categorypriceData[label]}');
                               }
                             });
 

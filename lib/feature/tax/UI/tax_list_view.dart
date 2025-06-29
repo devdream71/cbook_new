@@ -1,3 +1,4 @@
+import 'package:cbook_dt/feature/tax/UI/add_new_tax.dart';
 import 'package:cbook_dt/feature/tax/model/tax_model.dart';
 import 'package:cbook_dt/feature/tax/provider/tax_provider.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,27 @@ class TaxListView extends StatelessWidget {
           ),
           iconTheme: const IconThemeData(color: Colors.white),
           automaticallyImplyLeading: true,
+        actions: [
+          // Always visible: Add icon
+              IconButton(
+                icon: const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.white,
+                    child:   Icon(Icons.add, color: Colors.green)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const AddNewTax(), //AddSupplierCustomer
+                    ),
+                  );
+                },
+              ),
+        ],
+        
         ),
+        
       body: Consumer<TaxProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {

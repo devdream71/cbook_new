@@ -447,7 +447,7 @@ class PurchaseController extends ChangeNotifier {
       // Save the updated bill number
       await prefs.setInt("bill_number", newBillNumber);
 
-      debugPrint('${noteController}');
+      debugPrint('$noteController');
 
       final String note = noteController.text;
 
@@ -472,7 +472,7 @@ class PurchaseController extends ChangeNotifier {
       debugPrint("date =====>$date");
 
       debugPrint("Cash Subtotal: ${addAmount2()}");
-      debugPrint("Cash Total (after discount): ${totalAmount}");
+      debugPrint("Cash Total (after discount): $totalAmount");
       debugPrint("Note : $note");
 
       debugPrint("bill $billNo");

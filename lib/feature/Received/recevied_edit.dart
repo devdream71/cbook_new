@@ -1,13 +1,17 @@
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
-import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
-import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
-import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_popup.dart';
-import 'package:cbook_dt/feature/account/ui/expense/model/expense_paid_form_list.dart';
-import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
+import 'package:cbook_dt/feature/Received/model/create_recived_voucher.dart';
+import 'package:cbook_dt/feature/Received/provider/received_provider.dart';
+import 'package:cbook_dt/feature/Received/received_list.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/customer_create/model/received_voucher_model.dart';
+import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
+import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
+import 'package:cbook_dt/feature/sales/widget/add_sales_form_two.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,110 +24,131 @@ class ReceviedEdit extends StatefulWidget {
 }
 
 class _ReceviedEditState extends State<ReceviedEdit> {
-  String? selectedReceivedTo;
-
-  String? selectedAccount;
-
-  int? selectedAccountId;
-
   DateTime selectedStartDate = DateTime.now();
-  // Default to current date
   DateTime selectedEndDate = DateTime.now();
-  // Default to current date
   String? selectedDropdownValue;
-
-  Future<void> _selectDate(BuildContext context, DateTime initialDate,
-      Function(DateTime) onDateSelected) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      onDateSelected(picked);
-    }
-  }
-
+  String? selectedReceivedTo;
+  String? selectedAccount;
+  int? selectedAccountId;
   TextEditingController billNoController = TextEditingController();
-  late TextEditingController voucherNumberController;
+
   String billNo = '';
   String billDate = '';
+  Map<int, TextEditingController> receiptControllers = {};
+  // late TextEditingController totalAmount = TextEditingController();
+  // late TextEditingController discountAmount = TextEditingController();
+  late TextEditingController voucherNumberController;
+  late TextEditingController totalAmount;
+  late TextEditingController discountAmount;
+  TextEditingController paymentAmount = TextEditingController();
+  String selectedDiscountType = '%'; // default '%'
+  double dueAmount = 0;
+  String? selectedBillPerson;
+  int? selectedBillPersonId;
+  BillPersonModel? selectedBillPersonData;
+  Set<int> expandedIndexes = {};
 
-  void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
-    // Convert receiptItems to required JSON structure
-    final List<Map<String, dynamic>> incomeItems =
-        provider.receiptItems.map((item) {
-      return {
-        "account_id": selectedAccountId,
-        "narration": item.note,
-        "amount": item.amount.toString(),
-      };
-    }).toList();
+  /// Calculate sum of all receipts input
+  double get totalReceiptAmount {
+    double total = 0;
+    for (final c in receiptControllers.values) {
+      total += double.tryParse(c.text) ?? 0;
+    }
+    return total;
+  }
 
-    final Map<String, dynamic> finalPayload = {
-      "income_items": incomeItems,
-    };
+  /// Called when discount or receipt amounts change
+  void _recalculatePayment() {
+    double due = totalReceiptAmount; // total receipt entered by user
 
-    // Print JSON string in console
-    debugPrint('Final JSON Payload: $finalPayload');
+    final discountText = discountAmount.text.trim();
+    double discountValue = double.tryParse(discountText) ?? 0;
+
+    if (due <= 0) {
+      paymentAmount.text = "0.00";
+      totalAmount.text = "0.00";
+      return;
+    }
+
+    // Clamp discount value
+    if (selectedDiscountType == '%') {
+      if (discountValue > 100) discountValue = 100;
+    } else {
+      if (discountValue > due) discountValue = due;
+    }
+
+    double discountAmountCalculated = selectedDiscountType == '%'
+        ? (discountValue / 100) * due
+        : discountValue;
+
+    double finalPayment = due - discountAmountCalculated;
+
+    if (finalPayment < 0) finalPayment = 0;
+
+    setState(() {
+      totalAmount.text = due.toStringAsFixed(2); // show total before discount
+      paymentAmount.text = finalPayment.toStringAsFixed(2);
+    });
+
+    debugPrint(
+      'Total Receipt: $due, Discount: $discountValue $selectedDiscountType, '
+      'Discount Amt: $discountAmountCalculated, Final Payment: $finalPayment',
+    );
   }
 
   @override
   void initState() {
     super.initState();
+
     voucherNumberController = TextEditingController();
+    totalAmount = TextEditingController();
+    discountAmount = TextEditingController();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final providerExpense =
-          Provider.of<ExpenseProvider>(context, listen: false);
+    Future.microtask(() =>
+        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
+
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false)
+            .fetchBillPersons());
+
+    Future.microtask(() async {
       final provider =
-          Provider.of<IncomeProvider>(context, listen: false); // 👈 Add this
+          Provider.of<ReceiveVoucherProvider>(context, listen: false);
+      final data = await provider.fetchReceiveVoucherById(widget.receviedId);
 
-      /// ✅ First fetch Paid Form List
-      await providerExpense.fetchPaidFormList();
+      if (data != null) {
+        // ✅ Use this data to pre-fill your fields
 
-      /// ✅ Then fetch Edit Expense
-      await providerExpense.fetchEditExpense(widget.receviedId);
+        setState(() {
+          voucherNumberController.text = data['voucher_number'] ?? '';
+          selectedReceivedTo = data['received_to']; //cash or bank //received_to
+          selectedBillPersonId = data['bill_person_id'];
+          selectedAccountId =
+              data['account_type']; // coount type //cash, cash 1,
+          selectedDiscountType = data['discount_type'];
+          discountAmount.text = (data['discount_amount'] ?? 0).toString();
+          totalAmount.text = (data['total_amount'] ?? 0).toString();
+          selectedStartDate =
+              DateTime.tryParse(data['voucher_date']) ?? DateTime.now();
+          selectedEndDate =
+              DateTime.tryParse(data['voucher_date']) ?? DateTime.now();
 
-      //await providerExpense.fetchEditExpense(widget.expenseId);
+          // ✅ Fill voucher details list
+          if (data['voucher_detaiuls'] is List) {
+            final List details = data['voucher_detaiuls'];
+            for (int i = 0; i < details.length; i++) {
+              final item = details[i];
+              final controller =
+                  TextEditingController(text: item['amount'].toString());
+              receiptControllers[i] = controller;
+            }
+          }
 
-      //providerExpense.fetchPaidFormList();
+          _recalculatePayment();
 
-      voucherNumberController.text =
-          providerExpense.editExpenseData?.voucherNumber ?? '';
-      billDate = providerExpense.editExpenseData?.voucherDate ?? '';
-
-      /// Paid to mapping
-      String? paidToApi = providerExpense.editExpenseData?.paidTo;
-      if (paidToApi == 'cash') {
-        selectedReceivedTo = 'Cash in Hand';
-        await provider.fetchAccounts('cash'); // Fetch related accounts
-      } else if (paidToApi == 'bank') {
-        selectedReceivedTo = 'Bank';
-        await provider.fetchAccounts('bank'); // Fetch related accounts
+          debugPrint('receipt to === ${selectedReceivedTo} ');
+        });
       }
-
-      /// ✅ Preselect Account Name based on accountId
-      //int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
-
-      /// ✅ Preselect Account Name based on accountId
-      int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
-
-      if (provider.accountModel != null) {
-        final matchingAccount = provider.accountModel!.data.firstWhere(
-          (account) => account.id == accountIdFromApi,
-          orElse: () => provider
-              .accountModel!.data.first, // fallback to first item if not found
-        );
-
-        selectedAccount = matchingAccount.accountName;
-        selectedAccountId = matchingAccount.id;
-
-        debugPrint('Selected Account from API: $selectedAccount');
-      }
-
-      setState(() {});
     });
   }
 
@@ -135,19 +160,15 @@ class _ReceviedEditState extends State<ReceviedEdit> {
 
   @override
   Widget build(BuildContext context) {
+    print("recived voucer id ====${widget.receviedId}");
+    print("voucher number ====${voucherNumberController.text}");
+    print("total amount ====${totalAmount.text}");
+    print("discount amount ====${discountAmount.text}");
+
     final controller = context.watch<SalesController>();
-    //final provider = Provider.of<IncomeProvider>(context);
-    final provider = context.watch<IncomeProvider>();
-
+    final provider = Provider.of<IncomeProvider>(context);
     final colorScheme = Theme.of(context).colorScheme;
-
-    final providerExpense = Provider.of<ExpenseProvider>(context, listen: true);
-
     TextStyle ts = const TextStyle(color: Colors.black, fontSize: 12);
-
-    // List of forms with metadata
-
-    // ✅ Show loading indicator while data is fetching
 
     return Scaffold(
       appBar: AppBar(
@@ -178,374 +199,245 @@ class _ReceviedEditState extends State<ReceviedEdit> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           ///1 section
 
-          const SizedBox(
-            height: 6,
-          ),
-
-          if (providerExpense.editExpenseData != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2.0),
-              child: Column(
+          ///1 section, receipt to, a/c.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ///paid to
-                          SizedBox(
-                            height: 30,
-                            width: 150,
-                            child: CustomDropdownTwo(
-                              hint: '',
-                              items: const ['Cash in Hand', 'Bank'],
-                              width: double.infinity,
-                              height: 30,
-                              labelText: 'Paid To',
-                              selectedItem: selectedReceivedTo,
-                              onChanged: (value) async {
-                                debugPrint('=== Received To Selected: $value ===');
+                  //receipt to
+                  SizedBox(
+                    height: 30,
+                    width: 150,
+                    child: CustomDropdownTwo(
+                      hint: '',
+                      items: const ['Cash in Hand', 'Bank'],
+                      width: double.infinity,
+                      height: 30,
+                      labelText: 'Receipt To',
+                      selectedItem: selectedReceivedTo,
+                      onChanged: (value) async {
+                        debugPrint('=== Received To Selected: $value ===');
 
-                                setState(() {
-                                  selectedReceivedTo = value;
-                                  selectedAccount =
-                                      null; // reset account selection
-                                });
-                                if (value == 'Cash in Hand') {
-                                  debugPrint('Fetching Cash accounts...');
-                                  await provider.fetchAccounts('cash');
-                                } else if (value == 'Bank') {
-                                  debugPrint('Fetching Bank accounts...');
-                                  await provider.fetchAccounts('bank');
+                        setState(() {
+                          selectedReceivedTo = value;
+                          selectedAccount = null; // reset account selection
+                        });
+
+                        if (value == 'Cash in Hand') {
+                          debugPrint('Fetching Cash accounts...');
+                          await provider.fetchAccounts('cash');
+                        } else if (value == 'Bank') {
+                          debugPrint('Fetching Bank accounts...');
+                          await provider.fetchAccounts('bank');
+                        }
+
+                        debugPrint(
+                            'Fetched Account Names: ${provider.accountNames}');
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// Account Dropdown
+                  SizedBox(
+                    height: 30,
+                    width: 150,
+                    child: provider.isAccountLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : CustomDropdownTwo(
+                            hint: '',
+                            items: provider.accountNames,
+                            width: double.infinity,
+                            height: 30,
+                            labelText: 'A/C',
+                            selectedItem: selectedAccount,
+                            onChanged: (value) {
+                              debugPrint('=== Account Selected: $value ===');
+                              setState(() {
+                                selectedAccount = value;
+                              });
+
+                              if (provider.accountModel != null) {
+                                final selectedAccountData = provider
+                                    .accountModel!.data
+                                    .firstWhere((account) =>
+                                        account.accountName == value);
+
+                                selectedAccountId = selectedAccountData.id;
+
+                                debugPrint('=== Account Selected: $value ===');
+                                if (selectedAccountId != null) {
+                                  debugPrint(
+                                      'Selected Account ID: $selectedAccountId');
                                 }
+
+                                debugPrint('Selected Account Details:');
+                                debugPrint('- ID: ${selectedAccountData.id}');
                                 debugPrint(
-                                    'Fetched Account Names: ${provider.accountNames}');
-                              },
-                            ),
+                                    '- Name: ${selectedAccountData.accountName}');
+                                debugPrint('- Type: $selectedReceivedTo');
+                              }
+                            },
                           ),
-
-                          const SizedBox(height: 10),
-
-                          /// Account Dropdown
-                          SizedBox(
-                            height: 30,
-                            width: 150,
-                            child: provider.isAccountLoading
-                                ? const Center(
-                                    child: CircularProgressIndicator())
-                                : CustomDropdownTwo(
-                                    hint: '',
-                                    items: provider.accountNames,
-                                    width: double.infinity,
-                                    height: 30,
-                                    labelText: 'Account',
-                                    selectedItem: selectedAccount,
-                                    onChanged: (value) {
-                                      print('=== Account Selected: $value ===');
-                                      setState(() {
-                                        selectedAccount = value;
-                                      });
-
-                                      if (provider.accountModel != null) {
-                                        final selectedAccountData = provider
-                                            .accountModel!.data
-                                            .firstWhere((account) =>
-                                                account.accountName == value);
-
-                                        selectedAccountId =
-                                            selectedAccountData.id;
-
-                                        debugPrint(
-                                            '=== Account Selected: $value ===');
-                                        if (selectedAccountId != null) {
-                                          debugPrint(
-                                              'Selected Account ID: $selectedAccountId');
-                                        }
-
-                                        debugPrint('Selected Account Details:');
-                                        debugPrint(
-                                            '- ID: ${selectedAccountData.id}');
-                                        debugPrint(
-                                            '- Name: ${selectedAccountData.accountName}');
-                                        debugPrint('- Type: $selectedReceivedTo');
-                                      }
-                                    },
-                                  ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          //bill person
-                          SizedBox(
-                            height: 30,
-                            width: 90,
-                            child: TextField(
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                              ),
-                              controller: TextEditingController(),
-                              cursorHeight:
-                                  12, // Match cursor height to text size
-                              decoration: InputDecoration(
-                                isDense: true, // Ensures the field is compact
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes unnecessary padding
-                                hintText: "Bill Person",
-                                hintStyle: TextStyle(
-                                    color: Colors.grey.shade400,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade400,
-                                    width: 0.5,
-                                  ),
-                                ),
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          // Bill No Field
-
-                          const SizedBox(
-                            height: 8,
-                          ),
-
-                          ///bill no, bill person
-                          SizedBox(
-                            height: 30,
-                            width: 90,
-                            child: TextField(
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                              ),
-                              controller: voucherNumberController,
-                              cursorHeight: 12,
-                              onChanged: (value) {
-                                billNo = value;
-                              }, // Match cursor height to text size
-                              decoration: InputDecoration(
-                                isDense: true, // Ensures the field is compact
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes unnecessary padding
-                                hintText: "Bill no",
-                                hintStyle: TextStyle(
-                                    color: Colors.grey.shade400,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade400,
-                                    width: 0.5,
-                                  ),
-                                ),
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          //person
-
-                          ///bill date
-                          SizedBox(
-                            height: 30,
-                            width: 90,
-                            child: InkWell(
-                              // onTap: () => controller.pickDate(
-                              //     context), // Trigger the date picker
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2100),
-                                );
-
-                                if (pickedDate != null) {
-                                  // Example: Format the date if needed
-                                  String formattedDate =
-                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-
-                                  setState(() {
-                                    billDate =
-                                        formattedDate; // Update the selected date
-                                  });
-                                }
-                              },
-                              child: InputDecorator(
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  suffixIcon: Icon(
-                                    Icons.calendar_today,
-                                    size: 16,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  suffixIconConstraints: const BoxConstraints(
-                                    minWidth: 16,
-                                    minHeight: 16,
-                                  ), // Adjust constraints to align icon closely
-                                  hintText: "Bill Date",
-                                  hintStyle: TextStyle(
-                                    color: Colors.grey.shade400,
-                                    fontSize: 9,
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey.shade400,
-                                        width: 0.5),
-                                  ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.green),
-                                  ),
-                                ),
-                                child: Text(
-                                  billDate.isNotEmpty
-                                      ? billDate
-                                      : "Select Date", // Default text when no date is selected
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
                   ),
                 ],
               ),
-            ),
+
+              ////righ side data
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  ///bill person
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Consumer<PaymentVoucherProvider>(
+                      builder: (context, provider, child) {
+                        return SizedBox(
+                          height: 30,
+                          width: 130,
+                          child: provider.isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : CustomDropdownTwo(
+                                  hint: '',
+                                  items: provider.billPersonNames,
+                                  width: double.infinity,
+                                  height: 30,
+                                  labelText: 'Bill Person',
+                                  selectedItem: selectedBillPerson,
+                                  onChanged: (value) {
+                                    debugPrint(
+                                        '=== Bill Person Selected: $value ===');
+                                    setState(() {
+                                      selectedBillPerson = value;
+                                      selectedBillPersonData =
+                                          provider.billPersons.firstWhere(
+                                        (person) => person.name == value,
+                                      ); // ✅ Save the whole object globally
+                                      selectedBillPersonId =
+                                          selectedBillPersonData!.id;
+                                    });
+
+                                    debugPrint('Selected Bill Person Details:');
+                                    debugPrint(
+                                        '- ID: ${selectedBillPersonData!.id}');
+                                    debugPrint(
+                                        '- Name: ${selectedBillPersonData!.name}');
+                                    debugPrint(
+                                        '- Phone: ${selectedBillPersonData!.phone}');
+                                  }),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // Bill No Field
+
+                  const SizedBox(
+                    height: 8,
+                  ),
+
+                  ///bill no,
+                  SizedBox(
+                    height: 30,
+                    width: 130,
+                    child: TextField(
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                      controller: voucherNumberController,
+                      cursorHeight: 12,
+                      onChanged: (value) {
+                        billNo = value;
+                      }, // Match cursor height to text size
+                      decoration: InputDecoration(
+                        isDense: true, // Ensures the field is compact
+                        contentPadding:
+                            EdgeInsets.zero, // Removes unnecessary padding
+                        hintText: "Bill no",
+                        hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade400,
+                            width: 0.5,
+                          ),
+                        ),
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  ///bill date
+                  SizedBox(
+                    height: 30,
+                    width: 130,
+                    child: InkWell(
+                      // onTap: () => controller.pickDate(
+                      //     context), // Trigger the date picker
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          isDense: true,
+                          suffixIcon: Icon(
+                            Icons.calendar_today,
+                            size: 16,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          suffixIconConstraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ), // Adjust constraints to align icon closely
+                          hintText: "Bill Date",
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 9,
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.grey.shade400, width: 0.5),
+                          ),
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.green),
+                          ),
+                        ),
+                        child: Text(
+                          controller.formattedDate.isNotEmpty
+                              ? controller.formattedDate
+                              : "Select Date", // Default text when no date is selected
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
 
           const SizedBox(
             height: 8,
           ),
 
-          ///expense item list.
-          if (providerExpense.receiptItems.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children:
-                  providerExpense.receiptItems.asMap().entries.map((entry) {
-                int index = entry.key + 1;
-                var item = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: InkWell(
-                    onTap: () {
-                      showExpenseUpdateDialog(context, providerExpense, item);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 2),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            '$index.',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  providerExpense.getAccountNameById(item
-                                      .purchaseId), // ✅ show account_name instead of ID
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    color: Colors.black,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 1),
-                                Text(
-                                  item.note,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black54,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                item.amount.toString(),
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const CircleAvatar(
-                                  backgroundColor: Colors.grey,
-                                  radius: 13,
-                                  child: Icon(Icons.close, size: 20),
-                                ),
-                                onPressed: () {
-                                  providerExpense.receiptItems.remove(item);
-                                  providerExpense.notifyListeners();
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-
-          const SizedBox(height: 6),
-
-          ///add new expense item & 2 section
+          ///customer show
           InkWell(
-            onTap: () async {
-              await provider
-                  .fetchReceiptFromList(); // 🔥 Fetch API before showing dialog
-
-              final expenseProvider =
-                  Provider.of<ExpenseProvider>(context, listen: false);
-              await expenseProvider.fetchPaidFormList();
-              showExpenseCreateDialog(context, expenseProvider);
-            },
+            onTap: () async {},
             child: Container(
               decoration: BoxDecoration(
                 color: colorScheme.primary,
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(3),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.2),
@@ -554,22 +446,14 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                   ),
                 ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      "Paid From",
+                    Text(
+                      "Received From",
                       style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                    InkWell(
-                      onTap: () {},
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 18,
-                      ),
                     ),
                   ],
                 ),
@@ -577,42 +461,360 @@ class _ReceviedEditState extends State<ReceviedEdit> {
             ),
           ),
 
+          const SizedBox(height: 6),
+
+          /// Customer search field
+          AddSalesFormfieldTwo(
+            controller: controller.customerNameController,
+            customerorSaleslist: "Showing Customer list",
+            customerOrSupplierButtonLavel: "",
+            color: Colors.grey,
+            isForReceivedVoucher: true,
+            onTap: () async {
+              // Add your customer selection logic
+            },
+          ),
+
+          /// Show customer payable/receivable if selected
+          Consumer<CustomerProvider>(
+            builder: (context, customerProvider, child) {
+              final customerList =
+                  customerProvider.customerResponse?.data ?? [];
+              final selectedCustomerRecived =
+                  customerProvider.selectedCustomerRecived;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (customerList.isEmpty) const SizedBox(height: 2),
+                  if (customerList.isNotEmpty &&
+                      selectedCustomerRecived != null &&
+                      selectedCustomerRecived.id != -1) ...[
+                    Row(
+                      children: [
+                        Text(
+                          "${selectedCustomerRecived.type == 'customer' ? 'Receivable' : 'Payable'}: ",
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: selectedCustomerRecived.type == 'customer'
+                                ? Colors.green
+                                : Colors.red,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2.0),
+                          child: Text(
+                            "৳ ${selectedCustomerRecived.due.toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 300,
+                      child: customerProvider.receivedVouchers.isEmpty
+                          ? const Center(
+                              child: Text(
+                                "No received voucher found.",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount:
+                                  customerProvider.receivedVouchers.length,
+                              itemBuilder: (context, index) {
+                                final ReceivedVoucherCustomer invoice =
+                                    customerProvider.receivedVouchers[index];
+                                final bool isExpanded =
+                                    expandedIndexes.contains(index);
+
+                                final int salesId = invoice.id;
+
+                                print("Tapped Invoice ID: ${invoice.id}");
+
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2, vertical: 1),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(3)),
+                                    elevation: 1,
+                                    margin: const EdgeInsets.only(bottom: 2),
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          if (isExpanded) {
+                                            expandedIndexes.remove(index);
+                                          } else {
+                                            expandedIndexes.add(index);
+                                          }
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6.0, vertical: 6.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            /// Top Row
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(invoice.billNumber,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text(invoice.purchaseDate,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text(
+                                                    'Bill ৳${invoice.grossTotal}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text('Due ৳${invoice.due}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Icon(
+                                                  isExpanded
+                                                      ? Icons.arrow_drop_up
+                                                      : Icons.arrow_drop_down,
+                                                  size: 28,
+                                                ),
+                                              ],
+                                            ),
+
+                                            if (isExpanded) ...[
+                                              const SizedBox(height: 8),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  const Text('Receipt',
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.black)),
+                                                  const SizedBox(width: 10),
+                                                  SizedBox(
+                                                    height: 30,
+                                                    width: 150,
+                                                    child: TextFormField(
+                                                      controller:
+                                                          receiptControllers[
+                                                                  index] ??=
+                                                              TextEditingController(),
+                                                      keyboardType:
+                                                          const TextInputType
+                                                              .numberWithOptions(
+                                                              decimal: true),
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black,
+                                                      ),
+                                                      decoration:
+                                                          InputDecoration(
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 10),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(4),
+                                                        ),
+                                                      ),
+                                                      onChanged: (value) {
+                                                        final input =
+                                                            double.tryParse(
+                                                                    value) ??
+                                                                0;
+                                                        final due = invoice.due;
+
+                                                        if (input > due) {
+                                                          // Clamp to due
+                                                          receiptControllers[
+                                                                      index]!
+                                                                  .text =
+                                                              due.toStringAsFixed(
+                                                                  2);
+                                                          receiptControllers[
+                                                                      index]!
+                                                                  .selection =
+                                                              TextSelection
+                                                                  .fromPosition(
+                                                            TextPosition(
+                                                                offset: receiptControllers[
+                                                                        index]!
+                                                                    .text
+                                                                    .length),
+                                                          );
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                  'Amount can’t exceed due: ৳${due.toStringAsFixed(2)}'),
+                                                              backgroundColor:
+                                                                  Colors.red,
+                                                              duration:
+                                                                  const Duration(
+                                                                      seconds:
+                                                                          2),
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        // ✅ Always recalculate total
+                                                        double total = 0;
+                                                        for (final controller
+                                                            in receiptControllers
+                                                                .values) {
+                                                          total += double.tryParse(
+                                                                  controller
+                                                                      .text) ??
+                                                              0;
+                                                        }
+                                                        totalAmount.text = total
+                                                            .toStringAsFixed(2);
+
+                                                        _recalculatePayment();
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ]
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ]
+                ],
+              );
+            },
+          ),
+
+          ////down bottom save option
           const Spacer(),
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.end, // 🔥 Right align labels + fields
+              children: [
+                // Total Amount
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text("Total Amount", style: ts),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      height: 30,
+                      width: 163,
+                      child: AddSalesFormfield(
+                        readOnly: true,
+                        controller: totalAmount,
+                        onChanged: (value) {
+                          debugPrint("recived value ${totalAmount.text}");
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+
+                // Discount row with % dropdown and text field
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text("Discount", style: ts),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      height: 30,
+                      width: 76,
+                      child: CustomDropdownTwo(
+                        hint: '',
+                        items: ['%', '৳'],
+                        width: double.infinity,
+                        height: 30,
+                        labelText: selectedDiscountType,
+                        selectedItem: selectedDiscountType,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDiscountType = value ?? '%';
+                            _recalculatePayment();
+                          });
+                          debugPrint(
+                              'Discount type selected: $selectedDiscountType');
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      height: 30,
+                      width: 76,
+                      child: AddSalesFormfield(
+                        controller: discountAmount,
+                        onChanged: (value) {
+                          _recalculatePayment();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+
+                // Received
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text("Received", style: ts),
+                    const SizedBox(width: 24),
+                    SizedBox(
+                      height: 30,
+                      width: 163,
+                      child: AddSalesFormfield(
+                        controller: paymentAmount,
+                        readOnly: true,
+                        onChanged: (value) {},
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               /// Total Amount Section
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text(
-                      "Total: ",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.black),
-                    ),
-                    Text(
-                      providerExpense.receiptItems.fold<double>(
-                        0,
-                        (sum, item) {
-                          // parse amount string safely to double
-                          final amt =
-                              double.tryParse(item.amount.toString()) ?? 0.0;
-                          return sum + amt;
-                        },
-                      ).toStringAsFixed(2),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
+                  children: [],
                 ),
               ),
               Align(
@@ -628,96 +830,115 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                   onPressed: () async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    String? userId = prefs.getInt('user_id')?.toString();
+                    String? userIdStr = prefs.getInt('user_id')?.toString();
 
-                    if (userId == null) {
+                    if (userIdStr == null) {
                       debugPrint("User ID is null");
                       return;
                     }
 
-                    final invoiceNo = voucherNumberController.text.trim();
-                    //final invoiceNo = billNoController.text.trim();
-                    if (invoiceNo.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Expense No cannot be empty')),
-                      );
+                    final selectedCustomer =
+                        Provider.of<CustomerProvider>(context, listen: false)
+                            .selectedCustomerRecived;
+
+                    if (selectedCustomer == null) {
+                      debugPrint('No customer selected.');
                       return;
                     }
 
-                    const date = "2025-06-10";
-                    final paidTo =
-                        (selectedReceivedTo ?? '').toLowerCase().trim() ==
-                                'cash in hand'
-                            ? 'cash'
-                            : 'bank';
-                    //final account = selectedAccountId.toString();
-                    final String account = providerExpense
-                        .receiptItems.first.purchaseId
-                        .toString(); // ✔️ Use correct account id
+                    int userId = int.parse(userIdStr);
+                    int customerId = selectedCustomer.id;
+                    int voucherPerson = selectedBillPersonData?.id ?? 0;
+                    String voucherNumber = billNoController.text.trim();
+                    String voucherDate =
+                        DateFormat('yyyy-MM-dd').format(DateTime.now());
+                    String voucherTime =
+                        DateFormat('HH:mm:ss').format(DateTime.now());
+                    String receivedTo =
+                        (selectedReceivedTo ?? "cash").toLowerCase();
+                    int accountId = selectedAccountId ?? 0;
+                    int receivedFrom = customerId;
+                    String percent = selectedDiscountType;
+                    double totalAmt = double.tryParse(totalAmount.text) ?? 0;
+                    double paymentAmt =
+                        double.tryParse(paymentAmount.text) ?? 0;
+                    double discountAmt =
+                        double.tryParse(discountAmount.text) ?? 0;
+                    String notes = 'notes';
 
-                    final expenseId = widget.receviedId;
+                    // List<ReceivedVoucherItem> voucherItems = [
+                    //   ReceivedVoucherItem(
+                    //       salesId: "57", amount: totalAmt.toStringAsFixed(2)),
+                    // ];
 
-                    const notes = 'text';
-                    const status = 1;
-                    //final expenseId = "59"; // Pass the correct expense ID
+                    final customerProvider =
+                        Provider.of<CustomerProvider>(context, listen: false);
+                    List<ReceivedVoucherItem> voucherItems = [];
 
-                    final totalAmount =
-                        providerExpense.receiptItems.fold<double>(
-                      0,
-                      (sum, item) =>
-                          sum + (double.tryParse(item.amount.toString()) ?? 0),
-                    );
+                    for (int i = 0;
+                        i < customerProvider.receivedVouchers.length;
+                        i++) {
+                      final ReceivedVoucherCustomer invoice =
+                          customerProvider.receivedVouchers[i];
+                      final TextEditingController? controller =
+                          receiptControllers[i];
 
-                    final List<ExpenseItemPopUp> expenseItems =
-                        providerExpense.receiptItems.map((item) {
-                      return ExpenseItemPopUp(
-                        accountId:
-                            '10', // ✔️ Use correct item-specific account id
-                        narration: item.note,
-                        amount: item.amount.toString(),
-                      );
-                    }).toList();
+                      if (controller != null &&
+                          controller.text.trim().isNotEmpty) {
+                        final double amount =
+                            double.tryParse(controller.text.trim()) ?? 0;
+                        if (amount > 0) {
+                          voucherItems.add(ReceivedVoucherItem(
+                            salesId: invoice.id.toString(),
+                            amount: amount.toStringAsFixed(2),
+                          ));
+                        }
+                      }
+                    }
 
-                    debugPrint('Sending Data:');
-                    debugPrint('User ID: $userId');
-                    debugPrint('Expense No: $invoiceNo');
-                    debugPrint('Date: $date');
-                    debugPrint('Paid To: $paidTo');
-                    debugPrint('Account: $account');
-                    debugPrint('Total Amount: $totalAmount');
-                    debugPrint('Notes: $notes');
-                    debugPrint('Status: $status');
-                    debugPrint(
-                        'Expense Items: ${expenseItems.map((e) => e.toJson()).toList()}');
-
-                    bool success = await providerExpense.updateExpense(
-                      expenseId: expenseId,
+                    final request = ReceivedVoucherRequest(
                       userId: userId,
-                      invoiceNo: invoiceNo,
-                      date: date,
-                      paidTo: paidTo,
-                      account: account,
-                      totalAmount: totalAmount,
+                      custoerID: customerId,
+                      voucherPerson: voucherPerson,
+                      voucherNumber: voucherNumber,
+                      voucherDate: voucherDate,
+                      voucherTime: voucherTime,
+                      receivedTo: receivedTo,
+                      accountId: accountId,
+                      receivedFrom: receivedFrom,
+                      percent: percent,
+                      totalAmount: paymentAmt,
+                      discount: discountAmt,
                       notes: notes,
-                      status: status,
-                      expenseItems: expenseItems,
+                      voucherItems: voucherItems,
                     );
+
+                    final provider = Provider.of<ReceiveVoucherProvider>(
+                        context,
+                        listen: false);
+                    bool success = await provider.storeReceivedVoucher(request);
 
                     if (success) {
-                      providerExpense.receiptItems.clear();
-                      providerExpense.notifyListeners();
+                      // ✅ Clear the selected customer
+                      Provider.of<CustomerProvider>(context, listen: false)
+                          .clearSelectedCustomerRecived();
 
-                      Navigator.pushAndRemoveUntil(
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                          "Received voucher saved successfully!",
+                          style: TextStyle(color: Colors.green),
+                        )),
+                      );
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Expanse()),
-                        (Route<dynamic> route) => false,
+                            builder: (context) => const ReceivedList()),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('Failed to update expense.')),
+                            content: Text("Failed to save received voucher.")),
                       );
                     }
                   },
@@ -732,304 +953,6 @@ class _ReceviedEditState extends State<ReceviedEdit> {
           )
         ]),
       ),
-    );
-  }
-
-  ////expense item create=====>
-  ///
-  void showExpenseCreateDialog(
-    BuildContext context,
-    ExpenseProvider provider,
-  ) async {
-    await provider.fetchPaidFormList();
-
-    // ✅ Move variables OUTSIDE StatefulBuilder
-    TextEditingController amountController = TextEditingController();
-    TextEditingController noteController = TextEditingController();
-    String? selectedPaidTo;
-    PaidFormData? selectedPaidForm;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Dialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.all(6.0),
-                color: Colors.white,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 30,
-                      color: const Color(0xff278d46),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(width: 30),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(width: 5),
-                              Text(
-                                "Paid To",
-                                style: TextStyle(
-                                    color: Colors.yellow,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.grey.shade100,
-                                child: const Icon(Icons.close,
-                                    size: 18, color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      height: 30,
-                      child: provider.isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : CustomDropdownTwo(
-                              hint: '',
-                              items: provider.paidFormList
-                                  .map((e) => e.accountName)
-                                  .toList(),
-                              width: double.infinity,
-                              height: 30,
-                              labelText: 'Paid To',
-                              selectedItem: selectedPaidTo,
-                              onChanged: (selectedItem) {
-                                debugPrint('Selected Paid To: $selectedItem');
-
-                                final matchedAccount = provider.paidFormList
-                                    .firstWhere((element) =>
-                                        element.accountName == selectedItem);
-
-                                setState(() {
-                                  selectedPaidTo = selectedItem;
-                                  selectedPaidForm =
-                                      matchedAccount; // ✅ Track object correctly
-                                });
-                              },
-                            ),
-                    ),
-                    AddSalesFormfield(
-                      label: "",
-                      labelText: "Amount",
-                      controller: amountController,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {},
-                    ),
-                    AddSalesFormfield(
-                      label: "",
-                      labelText: "Note",
-                      controller: noteController,
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) {},
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // TextButton(
-                        //   onPressed: () {},
-                        //   child: const Text('Add & New'),
-                        // ),
-                        TextButton(
-                          onPressed: () {
-                            if (selectedPaidForm != null &&
-                                amountController.text.isNotEmpty) {
-                              provider.addReceiptItem(
-                                ExpenseItem(
-                                  purchaseId: selectedPaidForm!.id,
-                                  receiptFrom: selectedPaidTo!,
-                                  note: noteController.text,
-                                  amount:
-                                      double.tryParse(amountController.text) ??
-                                          0.0,
-                                ),
-                              );
-                              amountController.clear();
-                              noteController.clear();
-                              Navigator.of(context).pop();
-                            } else {
-                              // ✅ Optional: Show warning if not selected
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Please select Paid To'),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text('Add'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  ////expenseItem update
-
-  void showExpenseUpdateDialog(
-    BuildContext context,
-    ExpenseProvider provider,
-    ExpenseItem item, // ✅ Pass the selected item
-  ) async {
-    await provider
-        .fetchPaidFormList(); // ✅ Fetch API data before showing dialog
-
-    TextEditingController amountController =
-        TextEditingController(text: item.amount.toString());
-    TextEditingController noteController =
-        TextEditingController(text: item.note);
-    //String? selectedPaidTo = item.purchaseId.toString(); // ✅ Preselect existing item value
-
-    /// ✅ Preselect account_name instead of ID
-    String? selectedPaidTo = provider.getAccountNameById(item.purchaseId);
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Dialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.all(6.0),
-                color: Colors.white,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 30,
-                      color: const Color(0xff278d46),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(width: 30),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(width: 5),
-                              Text(
-                                "Update Paid Form",
-                                style: TextStyle(
-                                  color: Colors.yellow,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.grey.shade100,
-                                child: const Icon(Icons.close,
-                                    size: 18, color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      height: 30,
-                      child: provider.isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : CustomDropdownTwo(
-                              hint: '',
-                              items: provider.paidFormList
-                                  .map((e) => e.accountName)
-                                  .toList(),
-                              width: double.infinity,
-                              height: 30,
-                              labelText: 'Paid To',
-                              selectedItem: selectedPaidTo,
-                              onChanged: (selectedItem) {
-                                debugPrint('Selected Paid To: $selectedItem');
-                                setState(() {
-                                  selectedPaidTo = selectedItem;
-                                });
-                              },
-                            ),
-                    ),
-                    AddSalesFormfield(
-                      label: "",
-                      labelText: "Amount",
-                      controller: amountController,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {},
-                    ),
-                    AddSalesFormfield(
-                      label: "",
-                      labelText: "Note",
-                      controller: noteController,
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) {},
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            if (selectedPaidTo != null &&
-                                amountController.text.isNotEmpty) {
-                              // ✅ Update the item values
-                              item.receiptFrom = selectedPaidTo!;
-                              item.note = noteController.text;
-                              item.amount =
-                                  double.tryParse(amountController.text) ?? 0.0;
-
-                              provider.notifyListeners(); // ✅ Refresh UI
-                              Navigator.of(context).pop();
-
-                              // Optional: Show a success message
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Expense item updated successfully')),
-                              );
-                            }
-                          },
-                          child: const Text('Update'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }

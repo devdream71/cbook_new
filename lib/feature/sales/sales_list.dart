@@ -1,10 +1,10 @@
-import 'package:cbook_dt/app_const/app_colors.dart';
+ 
 import 'package:cbook_dt/feature/purchase/provider/purchase_provider.dart';
 import 'package:cbook_dt/feature/sales/provider/sales_provider.dart';
 import 'package:cbook_dt/feature/sales/sales_details.dart';
 import 'package:cbook_dt/feature/sales/sales_update.dart';
 import 'package:cbook_dt/feature/sales/sales_view.dart';
-import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
+ 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';

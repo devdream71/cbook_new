@@ -1,5 +1,5 @@
 // models/payment_voucher_model.dart
-class PaymentVoucherCustomer {
+class ReceivedVoucherCustomer {
   final int id;
   final String billNumber;
   final String purchaseDate;
@@ -7,7 +7,7 @@ class PaymentVoucherCustomer {
   final double grossTotal;
   final double due;
 
-  PaymentVoucherCustomer({
+  ReceivedVoucherCustomer({
     required this.id,
     required this.billNumber,
     required this.purchaseDate,
@@ -16,9 +16,9 @@ class PaymentVoucherCustomer {
     required this.due,
   });
 
-  factory PaymentVoucherCustomer.fromJson(Map<String, dynamic> json) {
-    return PaymentVoucherCustomer(
-        id: json['id'],
+  factory ReceivedVoucherCustomer.fromJson(Map<String, dynamic> json) {
+    return ReceivedVoucherCustomer(
+      id: json['id'],
       billNumber: json['bill_number'],
       purchaseDate: json['purchase_date'],
       voucherDate: json['voucher_date'],

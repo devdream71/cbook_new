@@ -1,6 +1,10 @@
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
+import 'package:cbook_dt/feature/Received/model/create_recived_voucher.dart';
+import 'package:cbook_dt/feature/Received/provider/received_provider.dart';
+import 'package:cbook_dt/feature/Received/received_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/customer_create/model/received_voucher_model.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
 import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
@@ -8,7 +12,9 @@ import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_form_two.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReceivedCreateItem extends StatefulWidget {
   const ReceivedCreateItem({super.key});
@@ -29,11 +35,9 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
   // Default to current date
   String? selectedDropdownValue;
 
-
   String? selectedBillPerson;
   int? selectedBillPersonId;
-  BillPersonModel?
-      selectedBillPersonData; 
+  BillPersonModel? selectedBillPersonData;
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -50,31 +54,66 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
 
   TextEditingController billNoController = TextEditingController();
   String billNo = '';
+  Map<int, TextEditingController> receiptControllers = {};
+  TextEditingController totalAmount = TextEditingController();
+  TextEditingController discountAmount = TextEditingController();
+  TextEditingController paymentAmount = TextEditingController();
+  String selectedDiscountType = '%'; // default '%'
+  double dueAmount = 0;
 
   TextStyle ts = const TextStyle(color: Colors.black, fontSize: 12);
-
-  void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
-    // Convert receiptItems to required JSON structure
-    final List<Map<String, dynamic>> incomeItems =
-        provider.receiptItems.map((item) {
-      return {
-        "account_id": selectedAccountId,
-        "narration": item.note,
-        "amount": item.amount.toString(),
-      };
-    }).toList();
-
-    final Map<String, dynamic> finalPayload = {
-      "income_items": incomeItems,
-    };
-
-    // Print JSON string in console
-    debugPrint('Final JSON Payload: $finalPayload');
-  }
 
   //int? selectedIndex; // 🔥 To track which item is expanded
 
   Set<int> expandedIndexes = {};
+
+  /// Calculate sum of all receipts input
+  double get totalReceiptAmount {
+    double total = 0;
+    for (final c in receiptControllers.values) {
+      total += double.tryParse(c.text) ?? 0;
+    }
+    return total;
+  }
+
+  /// Called when discount or receipt amounts change
+  void _recalculatePayment() {
+    double due = totalReceiptAmount; // total receipt entered by user
+
+    final discountText = discountAmount.text.trim();
+    double discountValue = double.tryParse(discountText) ?? 0;
+
+    if (due <= 0) {
+      paymentAmount.text = "0.00";
+      totalAmount.text = "0.00";
+      return;
+    }
+
+    // Clamp discount value
+    if (selectedDiscountType == '%') {
+      if (discountValue > 100) discountValue = 100;
+    } else {
+      if (discountValue > due) discountValue = due;
+    }
+
+    double discountAmountCalculated = selectedDiscountType == '%'
+        ? (discountValue / 100) * due
+        : discountValue;
+
+    double finalPayment = due - discountAmountCalculated;
+
+    if (finalPayment < 0) finalPayment = 0;
+
+    setState(() {
+      totalAmount.text = due.toStringAsFixed(2); // show total before discount
+      paymentAmount.text = finalPayment.toStringAsFixed(2);
+    });
+
+    debugPrint(
+      'Total Receipt: $due, Discount: $discountValue $selectedDiscountType, '
+      'Discount Amt: $discountAmountCalculated, Final Payment: $finalPayment',
+    );
+  }
 
   @override
   void initState() {
@@ -83,8 +122,8 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
         Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
 
     Future.microtask(() =>
-        Provider.of<PaymentVoucherProvider>(context, listen: false).fetchBillPersons());
-            
+        Provider.of<PaymentVoucherProvider>(context, listen: false)
+            .fetchBillPersons());
   }
 
   @override
@@ -215,41 +254,6 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  //bill person
-                  // SizedBox(
-                  //   height: 30,
-                  //   width: 90,
-                  //   child: TextField(
-                  //     style: const TextStyle(
-                  //       color: Colors.black,
-                  //       fontSize: 12,
-                  //     ),
-                  //     controller: TextEditingController(),
-                  //     cursorHeight: 12, // Match cursor height to text size
-                  //     decoration: InputDecoration(
-                  //       isDense: true, // Ensures the field is compact
-                  //       contentPadding:
-                  //           EdgeInsets.zero, // Removes unnecessary padding
-                  //       hintText: "Bill Person",
-                  //       hintStyle: TextStyle(
-                  //           color: Colors.grey.shade400,
-                  //           fontSize: 12,
-                  //           fontWeight: FontWeight.w600),
-                  //       enabledBorder: UnderlineInputBorder(
-                  //         borderSide: BorderSide(
-                  //           color: Colors.grey.shade400,
-                  //           width: 0.5,
-                  //         ),
-                  //       ),
-                  //       focusedBorder: const UnderlineInputBorder(
-                  //         borderSide: BorderSide(
-                  //           color: Colors.green,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Consumer<PaymentVoucherProvider>(
@@ -291,7 +295,7 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                       },
                     ),
                   ),
-                  
+
                   // Bill No Field
 
                   const SizedBox(
@@ -301,7 +305,7 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                   ///bill no, bill person
                   SizedBox(
                     height: 30,
-                    width: 90,
+                    width: 130,
                     child: TextField(
                       style: const TextStyle(
                         color: Colors.black,
@@ -341,7 +345,7 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                   ///bill date
                   SizedBox(
                     height: 30,
-                    width: 90,
+                    width: 130,
                     child: InkWell(
                       // onTap: () => controller.pickDate(
                       //     context), // Trigger the date picker
@@ -429,7 +433,8 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
             customerorSaleslist: "Showing Customer list",
             customerOrSupplierButtonLavel: "",
             color: Colors.grey,
-            onTap: () {
+            isForReceivedVoucher: true,
+            onTap: () async {
               // Add your customer selection logic
             },
           ),
@@ -439,23 +444,24 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
             builder: (context, customerProvider, child) {
               final customerList =
                   customerProvider.customerResponse?.data ?? [];
-              final selectedCustomer = customerProvider.selectedCustomer;
+              final selectedCustomerRecived =
+                  customerProvider.selectedCustomerRecived;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (customerList.isEmpty) const SizedBox(height: 2),
                   if (customerList.isNotEmpty &&
-                      selectedCustomer != null &&
-                      selectedCustomer.id != -1) ...[
+                      selectedCustomerRecived != null &&
+                      selectedCustomerRecived.id != -1) ...[
                     Row(
                       children: [
                         Text(
-                          "${selectedCustomer.type == 'customer' ? 'Receivable' : 'Payable'}: ",
+                          "${selectedCustomerRecived.type == 'customer' ? 'Receivable' : 'Payable'}: ",
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: selectedCustomer.type == 'customer'
+                            color: selectedCustomerRecived.type == 'customer'
                                 ? Colors.green
                                 : Colors.red,
                           ),
@@ -463,7 +469,7 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
                           child: Text(
-                            "৳ ${selectedCustomer.due.toStringAsFixed(2)}",
+                            "৳ ${selectedCustomerRecived.due.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -474,89 +480,198 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                       ],
                     ),
                     const SizedBox(height: 8),
-
-                    /// Sales List (Only show when customer is selected)
                     SizedBox(
                       height: 300,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        //physics: const NeverScrollableScrollPhysics(),
-                        itemCount: 10, // Replace with your sales list count
-                        itemBuilder: (context, index) {
-                          bool isExpanded = expandedIndexes.contains(index);
-                      
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 2, vertical: 1),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3)),
-                              elevation: 1,
-                              margin: const EdgeInsets.only(bottom: 2),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    // Toggle individual expansion
-                                    if (isExpanded) {
-                                      expandedIndexes.remove(index);
-                                    } else {
-                                      expandedIndexes.add(index);
-                                    }
-                                  });
-                                },
-                                child: Padding(
+                      child: customerProvider.receivedVouchers.isEmpty
+                          ? const Center(
+                              child: Text(
+                                "No received voucher found.",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount:
+                                  customerProvider.receivedVouchers.length,
+                              itemBuilder: (context, index) {
+                                final ReceivedVoucherCustomer invoice =
+                                    customerProvider.receivedVouchers[index];
+                                final bool isExpanded =
+                                    expandedIndexes.contains(index);
+
+                                final int salesId = invoice.id;
+
+                                print("Tapped Invoice ID: ${invoice.id}");
+
+                                return Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0, vertical: 6.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Top Row
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('Sales/1254', style: ts),
-                                          Text('12/05/2025', style: ts),
-                                          Text('Bill 5,000', style: ts),
-                                          Text('Due 4,360', style: ts),
-                                          Icon(
-                                            isExpanded
-                                                ? Icons.arrow_drop_up
-                                                : Icons.arrow_drop_down,
-                                            size: 28,
-                                          ),
-                                        ],
-                                      ),
-                                      // Expanded Section
-                                      if (isExpanded) ...[
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                      horizontal: 2, vertical: 1),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(3)),
+                                    elevation: 1,
+                                    margin: const EdgeInsets.only(bottom: 2),
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          if (isExpanded) {
+                                            expandedIndexes.remove(index);
+                                          } else {
+                                            expandedIndexes.add(index);
+                                          }
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6.0, vertical: 6.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text('Receipt', style: ts),
-                                            const SizedBox(width: 10),
-                                            SizedBox(
-                                              height: 30,
-                                              width: 150,
-                                              child: AddSalesFormfield(
-                                                controller:
-                                                    TextEditingController(),
-                                                onChanged: (value) {},
-                                              ),
+                                            /// Top Row
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(invoice.billNumber,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text(invoice.purchaseDate,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text(
+                                                    'Bill ৳${invoice.grossTotal}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Text('Due ৳${invoice.due}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black)),
+                                                Icon(
+                                                  isExpanded
+                                                      ? Icons.arrow_drop_up
+                                                      : Icons.arrow_drop_down,
+                                                  size: 28,
+                                                ),
+                                              ],
                                             ),
+
+                                            if (isExpanded) ...[
+                                              const SizedBox(height: 8),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  const Text('Receipt',
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.black)),
+                                                  const SizedBox(width: 10),
+                                                  SizedBox(
+                                                    height: 30,
+                                                    width: 150,
+                                                    child: TextFormField(
+                                                      controller:
+                                                          receiptControllers[
+                                                                  index] ??=
+                                                              TextEditingController(),
+                                                      keyboardType:
+                                                          const TextInputType
+                                                              .numberWithOptions(
+                                                              decimal: true),
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black,
+                                                      ),
+                                                      decoration:
+                                                          InputDecoration(
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 10),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(4),
+                                                        ),
+                                                      ),
+                                                      onChanged: (value) {
+                                                        final input =
+                                                            double.tryParse(
+                                                                    value) ??
+                                                                0;
+                                                        final due = invoice.due;
+
+                                                        if (input > due) {
+                                                          // Clamp to due
+                                                          receiptControllers[
+                                                                      index]!
+                                                                  .text =
+                                                              due.toStringAsFixed(
+                                                                  2);
+                                                          receiptControllers[
+                                                                      index]!
+                                                                  .selection =
+                                                              TextSelection
+                                                                  .fromPosition(
+                                                            TextPosition(
+                                                                offset: receiptControllers[
+                                                                        index]!
+                                                                    .text
+                                                                    .length),
+                                                          );
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                  'Amount can’t exceed due: ৳${due.toStringAsFixed(2)}'),
+                                                              backgroundColor:
+                                                                  Colors.red,
+                                                              duration:
+                                                                  const Duration(
+                                                                      seconds:
+                                                                          2),
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        // ✅ Always recalculate total
+                                                        double total = 0;
+                                                        for (final controller
+                                                            in receiptControllers
+                                                                .values) {
+                                                          total += double.tryParse(
+                                                                  controller
+                                                                      .text) ??
+                                                              0;
+                                                        }
+                                                        totalAmount.text = total
+                                                            .toStringAsFixed(2);
+
+                                                        _recalculatePayment();
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ]
                                           ],
                                         ),
-                                      ]
-                                    ],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
-                    )
+                    ),
                   ]
                 ],
               );
@@ -581,8 +696,11 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
-                        controller: TextEditingController(),
-                        onChanged: (value) {},
+                        readOnly: true,
+                        controller: totalAmount,
+                        onChanged: (value) {
+                          debugPrint("recived value ${totalAmount.text}");
+                        },
                       ),
                     ),
                   ],
@@ -603,9 +721,16 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                         items: ['%', '৳'],
                         width: double.infinity,
                         height: 30,
-                        labelText: '%',
-                        selectedItem: selectedReceivedTo,
-                        onChanged: (value) {},
+                        labelText: selectedDiscountType,
+                        selectedItem: selectedDiscountType,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDiscountType = value ?? '%';
+                            _recalculatePayment();
+                          });
+                          debugPrint(
+                              'Discount type selected: $selectedDiscountType');
+                        },
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -613,8 +738,10 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                       height: 30,
                       width: 76,
                       child: AddSalesFormfield(
-                        controller: TextEditingController(),
-                        onChanged: (value) {},
+                        controller: discountAmount,
+                        onChanged: (value) {
+                          _recalculatePayment();
+                        },
                       ),
                     ),
                   ],
@@ -631,7 +758,8 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
-                        controller: TextEditingController(),
+                        controller: paymentAmount,
+                        readOnly: true,
                         onChanged: (value) {},
                       ),
                     ),
@@ -663,9 +791,119 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                     foregroundColor: Colors.white, // Button text color
                   ),
                   onPressed: () async {
-                   
-                   
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String? userIdStr = prefs.getInt('user_id')?.toString();
 
+                    if (userIdStr == null) {
+                      debugPrint("User ID is null");
+                      return;
+                    }
+
+                    final selectedCustomer =
+                        Provider.of<CustomerProvider>(context, listen: false)
+                            .selectedCustomerRecived;
+
+                    if (selectedCustomer == null) {
+                      debugPrint('No customer selected.');
+                      return;
+                    }
+
+                    int userId = int.parse(userIdStr);
+                    int customerId = selectedCustomer.id;
+                    int voucherPerson = selectedBillPersonData?.id ?? 0;
+                    String voucherNumber = billNoController.text.trim();
+                    String voucherDate =
+                        DateFormat('yyyy-MM-dd').format(DateTime.now());
+                    String voucherTime =
+                        DateFormat('HH:mm:ss').format(DateTime.now());
+                    String receivedTo =
+                        (selectedReceivedTo ?? "cash").toLowerCase();
+                    int accountId = selectedAccountId ?? 0;
+                    int receivedFrom = customerId;
+                    String percent = selectedDiscountType;
+                    double totalAmt = double.tryParse(totalAmount.text) ?? 0;
+                    double paymentAmt =
+                        double.tryParse(paymentAmount.text) ?? 0;
+                    double discountAmt =
+                        double.tryParse(discountAmount.text) ?? 0;
+                    String notes = 'notes';
+
+                    // List<ReceivedVoucherItem> voucherItems = [
+                    //   ReceivedVoucherItem(
+                    //       salesId: "57", amount: totalAmt.toStringAsFixed(2)),
+                    // ];
+
+                    final customerProvider =
+                        Provider.of<CustomerProvider>(context, listen: false);
+                    List<ReceivedVoucherItem> voucherItems = [];
+
+                    for (int i = 0;
+                        i < customerProvider.receivedVouchers.length;
+                        i++) {
+                      final ReceivedVoucherCustomer invoice =
+                          customerProvider.receivedVouchers[i];
+                      final TextEditingController? controller =
+                          receiptControllers[i];
+
+                      if (controller != null &&
+                          controller.text.trim().isNotEmpty) {
+                        final double amount =
+                            double.tryParse(controller.text.trim()) ?? 0;
+                        if (amount > 0) {
+                          voucherItems.add(ReceivedVoucherItem(
+                            salesId: invoice.id.toString(),
+                            amount: amount.toStringAsFixed(2),
+                          ));
+                        }
+                      }
+                    }
+
+                    final request = ReceivedVoucherRequest(
+                      userId: userId,
+                      custoerID: customerId,
+                      voucherPerson: voucherPerson,
+                      voucherNumber: voucherNumber,
+                      voucherDate: voucherDate,
+                      voucherTime: voucherTime,
+                      receivedTo: receivedTo,
+                      accountId: accountId,
+                      receivedFrom: receivedFrom,
+                      percent: percent,
+                      totalAmount: paymentAmt,
+                      discount: discountAmt,
+                      notes: notes,
+                      voucherItems: voucherItems,
+                    );
+
+                    final provider = Provider.of<ReceiveVoucherProvider>(
+                        context,
+                        listen: false);
+                    bool success = await provider.storeReceivedVoucher(request);
+
+                    if (success) {
+                      // ✅ Clear the selected customer
+                      Provider.of<CustomerProvider>(context, listen: false)
+                          .clearSelectedCustomerRecived();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                          "Received voucher saved successfully!",
+                          style: TextStyle(color: Colors.green),
+                        )),
+                      );
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ReceivedList()),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Failed to save received voucher.")),
+                      );
+                    }
                   },
                   child: const Text("Save"),
                 ),

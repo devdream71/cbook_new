@@ -93,424 +93,426 @@ class _PaymentOutListState extends State<PaymentOutList> {
             ),
           ],
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ///top date start , end and dropdown
-
-            Column(
-              children: [
-                ////this working, but no need now, start date, end date, dropdown
-                // SizedBox(
-                //   width: double.infinity,
-                //   child: DecoratedBox(
-                //     decoration: BoxDecoration(
-                //       color: Colors.white,
-                //       borderRadius: BorderRadius.circular(4),
-                //     ),
-                //     child: Padding(
-                //       padding: const EdgeInsets.all(6.0),
-                //       child: Row(
-                //         children: [
-                //           // Start Date Picker
-                //           SizedBox(
-                //             width: MediaQuery.of(context).size.width * 0.25,
-                //             child: GestureDetector(
-                //               onTap: () => _selectDate(
-                //                   context, selectedStartDate, (date) {
-                //                 setState(() {
-                //                   selectedStartDate = date;
-                //                 });
-                //               }),
-                //               child: Container(
-                //                 height: 30,
-                //                 padding:
-                //                     const EdgeInsets.symmetric(horizontal: 8),
-                //                 decoration: BoxDecoration(
-                //                   // border:
-                //                   //     Border.all(color: Colors.grey.shade100),
-                //                   borderRadius: BorderRadius.circular(4),
-                //                 ),
-                //                 child: Row(
-                //                   mainAxisAlignment:
-                //                       MainAxisAlignment.spaceBetween,
-                //                   children: [
-                //                     Text(
-                //                       "${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}",
-                //                       style: GoogleFonts.notoSansPhagsPa(
-                //                           fontSize: 12, color: Colors.black),
-                //                     ),
-                //                     const Icon(Icons.calendar_today, size: 14),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //           const SizedBox(width: 8),
-                //           Text("To",
-                //               style: GoogleFonts.notoSansPhagsPa(
-                //                   fontSize: 14, color: Colors.black)),
-                //           const SizedBox(width: 8),
-
-                //           // End Date Picker
-                //           SizedBox(
-                //             width: MediaQuery.of(context).size.width * 0.25,
-                //             child: GestureDetector(
-                //               onTap: () =>
-                //                   _selectDate(context, selectedEndDate, (date) {
-                //                 setState(() {
-                //                   selectedEndDate = date;
-                //                 });
-                //               }),
-                //               child: Container(
-                //                 height: 30,
-                //                 padding:
-                //                     const EdgeInsets.symmetric(horizontal: 8),
-                //                 decoration: BoxDecoration(
-                //                   // border:
-                //                   //     Border.all(color: Colors.grey.shade100),
-                //                   borderRadius: BorderRadius.circular(4),
-                //                 ),
-                //                 child: Row(
-                //                   mainAxisAlignment:
-                //                       MainAxisAlignment.spaceBetween,
-                //                   children: [
-                //                     Text(
-                //                       "${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}",
-                //                       style: GoogleFonts.notoSansPhagsPa(
-                //                           fontSize: 12, color: Colors.black),
-                //                     ),
-                //                     const Icon(Icons.calendar_today, size: 14),
-                //                   ],
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //           const SizedBox(width: 8),
-
-                //           const Spacer(),
-
-                //           // Dropdown
-                //           SizedBox(
-                //             width: MediaQuery.of(context).size.width * 0.25,
-                //             child: SizedBox(
-                //               height: 30,
-                //               child: DropdownButtonFormField<String>(
-                //                 decoration: InputDecoration(
-                //                   contentPadding:
-                //                       const EdgeInsets.symmetric(horizontal: 0),
-                //                   enabledBorder: OutlineInputBorder(
-                //                     borderSide:
-                //                         BorderSide(color: Colors.grey.shade100),
-                //                   ),
-                //                   focusedBorder: OutlineInputBorder(
-                //                       borderSide: BorderSide(
-                //                           color: Colors.grey.shade100)),
-                //                   border: OutlineInputBorder(
-                //                     borderRadius: BorderRadius.circular(4),
-                //                     borderSide:
-                //                         BorderSide(color: Colors.grey.shade200),
-                //                   ),
-                //                 ),
-                //                 value: selectedDropdownValue,
-                //                 hint: const Text(""),
-                //                 onChanged: (String? newValue) {
-                //                   setState(() {
-                //                     selectedDropdownValue = newValue;
-                //                   });
-                //                 },
-                //                 items: [
-                //                   "All",
-                //                   "Purchase",
-                //                   "Sale",
-                //                   "P. Return",
-                //                   "S. Return"
-                //                 ].map<DropdownMenuItem<String>>((String value) {
-                //                   return DropdownMenuItem<String>(
-                //                     value: value,
-                //                     child: Padding(
-                //                       padding: const EdgeInsets.symmetric(
-                //                           horizontal: 4.0),
-                //                       child: Text(value,
-                //                           style: GoogleFonts.notoSansPhagsPa(
-                //                               fontSize: 12,
-                //                               color: Colors.black)),
-                //                     ),
-                //                   );
-                //                 }).toList(),
-                //               ),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
-
-                const SizedBox(
-                  height: 5,
-                ),
-
-                Consumer<PaymentVoucherProvider>(
-                    builder: (context, provider, child) {
-                  if (provider.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (provider.vouchers.isEmpty) {
-                    return Center(
-                        child: Text(
-                      'No Payment Vouchers Found.',
-                      style: ts2,
-                    ));
-                  }
-
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: provider.vouchers.length,
-                      itemBuilder: (context, index) {
-                        final voucher = provider.vouchers[index];
-
-                        final voucherId = voucher.id.toString();
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 2, vertical: 0),
-                          child: InkWell(
-                            onLongPress: () {
-                              editDeleteDiolog(context, voucherId);
-                            },
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const PaymentDetails()));
-                            },
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(0)),
-                              elevation: 1,
-                              margin: const EdgeInsets.only(bottom: 2),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6.0, vertical: 6.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: 80,
-                                                child: Row(
-                                                  children: [
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                            voucher.voucherDate,
-                                                            style: ts),
-                                                        Text(
-                                                            voucher
-                                                                .voucherNumber,
-                                                            style: ts),
-                                                        const SizedBox(
-                                                            height: 5),
-                                                        Text(
-                                                            voucher.totalAmount
-                                                                .toStringAsFixed(
-                                                                    2),
-                                                            style: ts2),
-                                                      ],
-                                                    ),
-                                                  ],
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ///top date start , end and dropdown
+          
+              Column(
+                children: [
+                  ////this working, but no need now, start date, end date, dropdown
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: DecoratedBox(
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(4),
+                  //     ),
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(6.0),
+                  //       child: Row(
+                  //         children: [
+                  //           // Start Date Picker
+                  //           SizedBox(
+                  //             width: MediaQuery.of(context).size.width * 0.25,
+                  //             child: GestureDetector(
+                  //               onTap: () => _selectDate(
+                  //                   context, selectedStartDate, (date) {
+                  //                 setState(() {
+                  //                   selectedStartDate = date;
+                  //                 });
+                  //               }),
+                  //               child: Container(
+                  //                 height: 30,
+                  //                 padding:
+                  //                     const EdgeInsets.symmetric(horizontal: 8),
+                  //                 decoration: BoxDecoration(
+                  //                   // border:
+                  //                   //     Border.all(color: Colors.grey.shade100),
+                  //                   borderRadius: BorderRadius.circular(4),
+                  //                 ),
+                  //                 child: Row(
+                  //                   mainAxisAlignment:
+                  //                       MainAxisAlignment.spaceBetween,
+                  //                   children: [
+                  //                     Text(
+                  //                       "${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}",
+                  //                       style: GoogleFonts.notoSansPhagsPa(
+                  //                           fontSize: 12, color: Colors.black),
+                  //                     ),
+                  //                     const Icon(Icons.calendar_today, size: 14),
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           const SizedBox(width: 8),
+                  //           Text("To",
+                  //               style: GoogleFonts.notoSansPhagsPa(
+                  //                   fontSize: 14, color: Colors.black)),
+                  //           const SizedBox(width: 8),
+          
+                  //           // End Date Picker
+                  //           SizedBox(
+                  //             width: MediaQuery.of(context).size.width * 0.25,
+                  //             child: GestureDetector(
+                  //               onTap: () =>
+                  //                   _selectDate(context, selectedEndDate, (date) {
+                  //                 setState(() {
+                  //                   selectedEndDate = date;
+                  //                 });
+                  //               }),
+                  //               child: Container(
+                  //                 height: 30,
+                  //                 padding:
+                  //                     const EdgeInsets.symmetric(horizontal: 8),
+                  //                 decoration: BoxDecoration(
+                  //                   // border:
+                  //                   //     Border.all(color: Colors.grey.shade100),
+                  //                   borderRadius: BorderRadius.circular(4),
+                  //                 ),
+                  //                 child: Row(
+                  //                   mainAxisAlignment:
+                  //                       MainAxisAlignment.spaceBetween,
+                  //                   children: [
+                  //                     Text(
+                  //                       "${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}",
+                  //                       style: GoogleFonts.notoSansPhagsPa(
+                  //                           fontSize: 12, color: Colors.black),
+                  //                     ),
+                  //                     const Icon(Icons.calendar_today, size: 14),
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           const SizedBox(width: 8),
+          
+                  //           const Spacer(),
+          
+                  //           // Dropdown
+                  //           SizedBox(
+                  //             width: MediaQuery.of(context).size.width * 0.25,
+                  //             child: SizedBox(
+                  //               height: 30,
+                  //               child: DropdownButtonFormField<String>(
+                  //                 decoration: InputDecoration(
+                  //                   contentPadding:
+                  //                       const EdgeInsets.symmetric(horizontal: 0),
+                  //                   enabledBorder: OutlineInputBorder(
+                  //                     borderSide:
+                  //                         BorderSide(color: Colors.grey.shade100),
+                  //                   ),
+                  //                   focusedBorder: OutlineInputBorder(
+                  //                       borderSide: BorderSide(
+                  //                           color: Colors.grey.shade100)),
+                  //                   border: OutlineInputBorder(
+                  //                     borderRadius: BorderRadius.circular(4),
+                  //                     borderSide:
+                  //                         BorderSide(color: Colors.grey.shade200),
+                  //                   ),
+                  //                 ),
+                  //                 value: selectedDropdownValue,
+                  //                 hint: const Text(""),
+                  //                 onChanged: (String? newValue) {
+                  //                   setState(() {
+                  //                     selectedDropdownValue = newValue;
+                  //                   });
+                  //                 },
+                  //                 items: [
+                  //                   "All",
+                  //                   "Purchase",
+                  //                   "Sale",
+                  //                   "P. Return",
+                  //                   "S. Return"
+                  //                 ].map<DropdownMenuItem<String>>((String value) {
+                  //                   return DropdownMenuItem<String>(
+                  //                     value: value,
+                  //                     child: Padding(
+                  //                       padding: const EdgeInsets.symmetric(
+                  //                           horizontal: 4.0),
+                  //                       child: Text(value,
+                  //                           style: GoogleFonts.notoSansPhagsPa(
+                  //                               fontSize: 12,
+                  //                               color: Colors.black)),
+                  //                     ),
+                  //                   );
+                  //                 }).toList(),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+          
+                  const SizedBox(
+                    height: 5,
+                  ),
+          
+                  Consumer<PaymentVoucherProvider>(
+                      builder: (context, provider, child) {
+                    if (provider.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+          
+                    if (provider.vouchers.isEmpty) {
+                      return Center(
+                          child: Text(
+                        'No Payment Vouchers Found.',
+                        style: ts2,
+                      ));
+                    }
+          
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: provider.vouchers.length,
+                        itemBuilder: (context, index) {
+                          final voucher = provider.vouchers[index];
+          
+                          final voucherId = voucher.id.toString();
+          
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 2, vertical: 0),
+                            child: InkWell(
+                              onLongPress: () {
+                                editDeleteDiolog(context, voucherId);
+                              },
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const PaymentDetails()));
+                              },
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(0)),
+                                elevation: 1,
+                                margin: const EdgeInsets.only(bottom: 2),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0, vertical: 6.0),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  width: 80,
+                                                  child: Row(
+                                                    children: [
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                              voucher.voucherDate,
+                                                              style: ts),
+                                                          Text(
+                                                              voucher
+                                                                  .voucherNumber,
+                                                              style: ts),
+                                                          const SizedBox(
+                                                              height: 5),
+                                                          Text(
+                                                              voucher.totalAmount
+                                                                  .toStringAsFixed(
+                                                                      2),
+                                                              style: ts2),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Container(
-                                                height: 55,
-                                                width: 2,
-                                                color: Colors.green.shade200,
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 6),
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text('Payment From',
-                                                        style: ts2),
-                                                    Text('Cash In Hand',
-                                                        style: ts),
-                                                    Text('Cash', style: ts),
-                                                  ],
+                                                const SizedBox(width: 5),
+                                                Container(
+                                                  height: 55,
+                                                  width: 2,
+                                                  color: Colors.green.shade200,
+                                                  margin:
+                                                      const EdgeInsets.symmetric(
+                                                          horizontal: 6),
                                                 ),
-                                              ),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text('Payment To',
-                                                        style: ts2),
-                                                    Text(voucher.customer,
-                                                        style: ts),
-                                                    Text('N/A',
-                                                        style:
-                                                            ts), // Add phone if available
-                                                  ],
+                                                const SizedBox(width: 5),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text('Payment From',
+                                                          style: ts2),
+                                                      Text('Cash In Hand',
+                                                          style: ts),
+                                                      Text('Cash', style: ts),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Text('Payment To',
+                                                          style: ts2),
+                                                      Text(voucher.customer,
+                                                          style: ts),
+                                                      Text('N/A',
+                                                          style:
+                                                              ts), // Add phone if available
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      });
-                }),
-
-                //////payment out list
-                // ListView.builder(
-                //   shrinkWrap: true,
-                //   physics:
-                //       const NeverScrollableScrollPhysics(), // Optional: if it's inside another scroll view
-                //   itemCount: 2, // Example: Two cards
-                //   itemBuilder: (context, index) {
-                //     return Padding(
-                //       padding: const EdgeInsets.symmetric(
-                //           horizontal: 2,
-                //           vertical: 0), // 🔥 Reduced vertical gap
-                //       child: InkWell(
-                //         onLongPress: () {
-                //           editDeleteDiolog(context);
-                //         },
-                //         onTap: () {
-                //           Navigator.push(
-                //               context,
-                //               MaterialPageRoute(
-                //                   builder: (context) =>
-                //                       const PaymentDetails()));
-                //         },
-                //         child: Card(
-                //           shape: RoundedRectangleBorder(
-                //               borderRadius: BorderRadius.circular(0)),
-                //           elevation:
-                //               1, // 🔥 Slightly lower elevation to make it look tighter
-                //           margin: const EdgeInsets.only(
-                //               bottom: 2), // 🔥 Remove default margin
-                //           child: Padding(
-                //             padding: const EdgeInsets.symmetric(
-                //                 horizontal: 6.0,
-                //                 vertical: 6.0), // 🔥 Tightened internal padding
-                //             child: Row(
-                //               crossAxisAlignment: CrossAxisAlignment.start,
-                //               children: [
-                //                 // Left Side
-                //                 Expanded(
-                //                   child: Column(
-                //                     crossAxisAlignment:
-                //                         CrossAxisAlignment.start,
-                //                     children: [
-                //                       Row(
-                //                         crossAxisAlignment:
-                //                             CrossAxisAlignment.start,
-                //                         children: [
-                //                           // Right Side
-                //                           Row(
-                //                             children: [
-                //                               Column(
-                //                                 crossAxisAlignment:
-                //                                     CrossAxisAlignment.start,
-                //                                 children: [
-                //                                   Text('01/05/2025', style: ts),
-                //                                   Text('Rec/4581', style: ts),
-                //                                   const SizedBox(height: 5),
-                //                                   Text('550', style: ts2),
-                //                                 ],
-                //                               ),
-                //                             ],
-                //                           ),
-
-                //                           const SizedBox(
-                //                             width: 5,
-                //                           ),
-
-                //                           //Divider (horizontal line)
-                //                           Container(
-                //                             height: 55,
-                //                             width: 2,
-                //                             color: Colors.green.shade200,
-                //                             margin: const EdgeInsets.symmetric(
-                //                                 horizontal: 6),
-                //                           ),
-
-                //                           const SizedBox(
-                //                             width: 5,
-                //                           ),
-
-                //                           // Received To
-                //                           Expanded(
-                //                             child: Column(
-                //                               crossAxisAlignment:
-                //                                   CrossAxisAlignment.start,
-                //                               children: [
-                //                                 Text('Payment From',
-                //                                     style: ts2),
-                //                                 Text('Cash In Hand', style: ts),
-                //                                 Text('Cash', style: ts),
-                //                               ],
-                //                             ),
-                //                           ),
-                //                           // Received From
-                //                           Expanded(
-                //                             child: Column(
-                //                               crossAxisAlignment:
-                //                                   CrossAxisAlignment.end,
-                //                               children: [
-                //                                 Text('Payment To', style: ts2),
-                //                                 Text('Farbi Store', style: ts),
-                //                                 Text('01778344090', style: ts),
-                //                               ],
-                //                             ),
-                //                           ),
-                //                         ],
-                //                       ),
-                //                     ],
-                //                   ),
-                //                 ),
-                //               ],
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // ),
-              ],
-            ),
-
-            ///Bottom
-          ],
+                          );
+                        });
+                  }),
+          
+                  //////payment out list
+                  // ListView.builder(
+                  //   shrinkWrap: true,
+                  //   physics:
+                  //       const NeverScrollableScrollPhysics(), // Optional: if it's inside another scroll view
+                  //   itemCount: 2, // Example: Two cards
+                  //   itemBuilder: (context, index) {
+                  //     return Padding(
+                  //       padding: const EdgeInsets.symmetric(
+                  //           horizontal: 2,
+                  //           vertical: 0), // 🔥 Reduced vertical gap
+                  //       child: InkWell(
+                  //         onLongPress: () {
+                  //           editDeleteDiolog(context);
+                  //         },
+                  //         onTap: () {
+                  //           Navigator.push(
+                  //               context,
+                  //               MaterialPageRoute(
+                  //                   builder: (context) =>
+                  //                       const PaymentDetails()));
+                  //         },
+                  //         child: Card(
+                  //           shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(0)),
+                  //           elevation:
+                  //               1, // 🔥 Slightly lower elevation to make it look tighter
+                  //           margin: const EdgeInsets.only(
+                  //               bottom: 2), // 🔥 Remove default margin
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.symmetric(
+                  //                 horizontal: 6.0,
+                  //                 vertical: 6.0), // 🔥 Tightened internal padding
+                  //             child: Row(
+                  //               crossAxisAlignment: CrossAxisAlignment.start,
+                  //               children: [
+                  //                 // Left Side
+                  //                 Expanded(
+                  //                   child: Column(
+                  //                     crossAxisAlignment:
+                  //                         CrossAxisAlignment.start,
+                  //                     children: [
+                  //                       Row(
+                  //                         crossAxisAlignment:
+                  //                             CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           // Right Side
+                  //                           Row(
+                  //                             children: [
+                  //                               Column(
+                  //                                 crossAxisAlignment:
+                  //                                     CrossAxisAlignment.start,
+                  //                                 children: [
+                  //                                   Text('01/05/2025', style: ts),
+                  //                                   Text('Rec/4581', style: ts),
+                  //                                   const SizedBox(height: 5),
+                  //                                   Text('550', style: ts2),
+                  //                                 ],
+                  //                               ),
+                  //                             ],
+                  //                           ),
+          
+                  //                           const SizedBox(
+                  //                             width: 5,
+                  //                           ),
+          
+                  //                           //Divider (horizontal line)
+                  //                           Container(
+                  //                             height: 55,
+                  //                             width: 2,
+                  //                             color: Colors.green.shade200,
+                  //                             margin: const EdgeInsets.symmetric(
+                  //                                 horizontal: 6),
+                  //                           ),
+          
+                  //                           const SizedBox(
+                  //                             width: 5,
+                  //                           ),
+          
+                  //                           // Received To
+                  //                           Expanded(
+                  //                             child: Column(
+                  //                               crossAxisAlignment:
+                  //                                   CrossAxisAlignment.start,
+                  //                               children: [
+                  //                                 Text('Payment From',
+                  //                                     style: ts2),
+                  //                                 Text('Cash In Hand', style: ts),
+                  //                                 Text('Cash', style: ts),
+                  //                               ],
+                  //                             ),
+                  //                           ),
+                  //                           // Received From
+                  //                           Expanded(
+                  //                             child: Column(
+                  //                               crossAxisAlignment:
+                  //                                   CrossAxisAlignment.end,
+                  //                               children: [
+                  //                                 Text('Payment To', style: ts2),
+                  //                                 Text('Farbi Store', style: ts),
+                  //                                 Text('01778344090', style: ts),
+                  //                               ],
+                  //                             ),
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                ],
+              ),
+          
+              ///Bottom
+            ],
+          ),
         ));
   }
 
@@ -550,7 +552,7 @@ class _PaymentOutListState extends State<PaymentOutList> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            const PaymenyOutEdit(paymentOutId: '44'),
+                              PaymenyOutEdit(paymentOutId: voucherId),
                       ),
                     );
                   },

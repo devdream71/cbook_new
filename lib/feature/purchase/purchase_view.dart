@@ -1344,7 +1344,7 @@ class LayoutState extends State<Layout> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: [
                                                                                   Text(
-                                                                                    "${item.itemName!}",
+                                                                                    item.itemName!,
                                                                                     style: const TextStyle(
                                                                                       overflow: TextOverflow.ellipsis,
                                                                                       color: Colors.black,
@@ -1648,7 +1648,7 @@ class LayoutState extends State<Layout> {
                                                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: [
                                                                                   Text(
-                                                                                    "${item.itemName!}",
+                                                                                    item.itemName!,
                                                                                     style: const TextStyle(
                                                                                       overflow: TextOverflow.ellipsis,
                                                                                       color: Colors.black,
@@ -2524,7 +2524,7 @@ class LayoutState extends State<Layout> {
                                                 height: 30,
                                                 width: 150,
                                                 child: AddSalesFormfield(
-                                                  onChanged: (Value) {
+                                                  onChanged: (value) {
                                                     Provider.of(context)<
                                                         PurchaseController>();
                                                   },

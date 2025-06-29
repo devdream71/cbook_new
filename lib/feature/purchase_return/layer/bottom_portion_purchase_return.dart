@@ -23,7 +23,7 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<PurchaseReturnController>();
-    final colorScheme = Theme.of(context).colorScheme;
+    //final colorScheme = Theme.of(context).colorScheme;
     debugPrint("its bottom portion page");
     debugPrint(saleType);
     debugPrint(customerId);

@@ -287,7 +287,7 @@ class PurchaseUpdateProvider extends ChangeNotifier {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    debugPrint('_selectedDate ${_selectedDate}');
+    debugPrint('_selectedDate $_selectedDate');
 
     final url =
         "http://commercebook.site/api/v1/purchase/update?id=${purchaseEditResponse.data!.purchaseDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${purchaseEditResponse.data!.customerId}&bill_number=${purchaseEditResponse.data!.billNumber}&purchase_date=$_selectedDate&details_notes=notes&gross_total=${getSubTotal()}&discount=0&payment_out=0&payment_amount=${getGrossTotal()}";
@@ -295,7 +295,7 @@ class PurchaseUpdateProvider extends ChangeNotifier {
     // Prepare request body
     final requestBody = {"purchase_items": purchaseUpdateList};
 
-    print('_selectedDate ${_selectedDate}');
+    debugPrint('_selectedDate $_selectedDate');
 
     if (requestBody.isNotEmpty) {
       debugPrint(jsonEncode(requestBody));
@@ -1145,7 +1145,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                           // Centered text and icon
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children:   [
                               Icon(
                                 Icons.add_box,
                                 color: Colors.green,

@@ -786,22 +786,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                   ],
                 ),
 
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   children: [
-                //     Text("Payment", style: ts),
-                //     const SizedBox(width: 24),
-                //     SizedBox(
-                //       height: 30,
-                //       width: 163,
-                //       child: AddSalesFormfield(
-                //         controller: paymentAmount,
-                //         onChanged: (value) {
-                //           debugPrint('Payment Value: ${paymentAmount.text}');
-                //         },
-                //       ),
-                //     ),
-                //   ],
-                // ),
+                
               ],
             ),
           ),
@@ -828,72 +813,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                     foregroundColor: Colors.white, // Button text color
                   ),
                   onPressed: () async {
-                    // SharedPreferences prefs =
-                    //     await SharedPreferences.getInstance();
-                    // String? userId = prefs.getInt('user_id')?.toString();
-
-                    // if (userId == null) {
-                    //   debugPrint("User ID is null");
-                    //   return;
-                    // }
-
-                    // final invoiceNo = billNoController.text.trim();
-                    // const date = "2025-06-10";
-
-                    // const notes = 'text'; // Or from your input field
-                    // const status = 1;
-                    // final account = selectedAccountId.toString();
-
-                    // debugPrint("user id ${userId}");
-                    // debugPrint('note ${notes}');
-                    // debugPrint('status ${status.toString()}');
-                    // debugPrint('invoice number ${invoiceNo}');
-
-                    // debugPrint('total amount ${totalAmount.text}');
-
-                    // debugPrint("payment ${paymentAmount.text}");
-
-                    // debugPrint("discount ${discountAmount.text}");
-
-                    // debugPrint('Discount type selected: $selectedDiscountType');
-
-                    // if (selectedBillPersonData != null) {
-                    //   debugPrint(
-                    //       '- Selected Bill Person id: ${selectedBillPersonData!.id}');
-                    //   // debugPrint(
-                    //   //     '- Selected Bill Person Name: ${selectedBillPersonData!.name}');
-                    //   // debugPrint(
-                    //   //     '- Selected Bill Person Phone: ${selectedBillPersonData!.phone}');
-                    // } else {
-                    //   debugPrint('No Bill Person Selected');
-                    // }
-
-                    // // ///payment from
-                    // // debugPrint(
-                    // //     'Fetched Account Names: ${provider.accountNames}');
-
-                    // ///a/c number
-                    // debugPrint('Account id: $account');
-
-                    // /// ✅ Print Selected Payment From (Dropdown Value)
-                    // debugPrint('Selected Payment From: $selectedReceivedTo');
-
-                    // /// ✅ Print Selected Account ID (Optional)
-                    // debugPrint('Selected Account ID: $account');
-
-                    // /// ✅ Get Selected Customer ID
-                    // final selectedCustomer =
-                    //     Provider.of<CustomerProvider>(context, listen: false)
-                    //         .selectedCustomer;
-
-                    // if (selectedCustomer != null) {
-                    //   debugPrint(
-                    //       'Selected Customer ID: ${selectedCustomer.id}');
-                    //   debugPrint(
-                    //       'Selected Customer Name: ${selectedCustomer.name}');
-                    // } else {
-                    //   debugPrint('No customer selected.');
-                    // }
+                    
 
                     ///final api call here ====== >>>>>>
                     SharedPreferences prefs =
@@ -928,23 +848,49 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                         DateFormat('yyyy-MM-dd').format(DateTime.now());
                     String voucherTime =
                         DateFormat('HH:mm:ss').format(DateTime.now());
-                    String paymentForm =
-                        selectedReceivedTo ?? "cash".toLowerCase(); // adapt this accordingly
+                    String paymentForm = selectedReceivedTo ??
+                        "cash".toLowerCase(); // adapt this accordingly
                     int accountId = selectedAccountId ?? 0;
                     int paymentTo = selectedAccountId ?? 0; // or payment to id
                     String percent =
                         selectedDiscountType; // "%", "percent", or "flat", adjust as needed
                     double totalAmt = double.tryParse(totalAmount.text) ?? 0;
-                    double paymentAmt = double.tryParse(paymentAmount.text) ?? 0;
+                    double paymentAmt =
+                        double.tryParse(paymentAmount.text) ?? 0;
                     double discountAmt =
                         double.tryParse(discountAmount.text) ?? 0;
                     String notes = 'notes'; // from your input
 
-                    List<VoucherItem> voucherItems = [
-                      VoucherItem(
-                          salesId: "57", amount: totalAmt.toStringAsFixed(2)),
-                      // you can dynamically add items here from your form
-                    ];
+                    // List<VoucherItem> voucherItems = [
+                    //   VoucherItem(
+                    //       salesId: "57", amount: totalAmt.toStringAsFixed(2)),
+                    //   // you can dynamically add items here from your form
+                    // ];
+
+                    final customerProvider =
+                        Provider.of<CustomerProvider>(context, listen: false);
+                    List<VoucherItem> voucherItems = [];
+
+                    for (int i = 0;
+                        i < customerProvider.receivedVouchers.length;
+                        i++) {
+                      final PaymentVoucherCustomer invoice =
+                          customerProvider.paymentVouchers[i];
+                      final TextEditingController? controller =
+                          receiptControllers[i];
+
+                      if (controller != null &&
+                          controller.text.trim().isNotEmpty) {
+                        final double amount =
+                            double.tryParse(controller.text.trim()) ?? 0;
+                        if (amount > 0) {
+                          voucherItems.add(VoucherItem(
+                            salesId: invoice.id.toString(),
+                            amount: amount.toStringAsFixed(2),
+                          ));
+                        }
+                      }
+                    }
 
                     final request = PaymentVoucherRequest(
                       userId: userId,
@@ -953,11 +899,12 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       voucherNumber: voucherNumber,
                       voucherDate: voucherDate,
                       voucherTime: voucherTime,
-                      paymentForm: (selectedReceivedTo ?? "cash").toLowerCase(), // ✅ FIXED paymentForm,
+                      paymentForm: (selectedReceivedTo ?? "cash")
+                          .toLowerCase(), // ✅ FIXED paymentForm,
                       accountId: accountId,
-                      paymentTo:   paymentTo,
+                      paymentTo: paymentTo,
                       percent: percent,
-                      totalAmount:  paymentAmt, //totalAmt,
+                      totalAmount: paymentAmt, //totalAmt,
                       discount: discountAmt,
                       notes: notes,
                       voucherItems: voucherItems,
@@ -970,15 +917,18 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
 
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                             content:
                                 Text("Payment voucher saved successfully!")),
                       );
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentOutList()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PaymentOutList()));
                       // Optionally reset form or navigate
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                             content: Text("Failed to save payment voucher.")),
                       );
                     }

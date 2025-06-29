@@ -12,6 +12,11 @@ class AddSalesFormfieldTwo extends StatefulWidget {
   final String? customerOrSupplierButtonLavel;
   final void Function()? onTap;
   final Color? color;
+  final bool isForReceivedVoucher;
+
+  //xyz
+  final String? label2;
+  final TextEditingController? controllerText;
 
   const AddSalesFormfieldTwo({
     super.key,
@@ -20,7 +25,10 @@ class AddSalesFormfieldTwo extends StatefulWidget {
     this.customerorSaleslist,
     this.customerOrSupplierButtonLavel,
     this.onTap,
+    this.label2,
+    this.controllerText,
     this.color,
+    this.isForReceivedVoucher = false,
   });
 
   @override
@@ -119,7 +127,14 @@ class _AddSalesFormfieldTwoState extends State<AddSalesFormfieldTwo> {
                             child: InkWell(
                               onTap: () {
                                 widget.controller.text = customer.name;
-                                provider.setSelectedCustomer(customer);
+                                // provider.setSelectedCustomer(customer);
+                                if (widget.isForReceivedVoucher) {
+                                  provider.setSelectedCustomerRecived(
+                                      customer); // ✅ RECEIVED
+                                } else {
+                                  provider.setSelectedCustomer(
+                                      customer); // ✅ PAYMENT
+                                }
                                 // 👇 Print selected customer ID
                                 debugPrint(
                                     "Selected Customer ID: ${customer.id}");

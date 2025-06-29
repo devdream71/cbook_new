@@ -545,7 +545,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
       child: Scaffold(
         appBar: AppBar(
             backgroundColor: colorScheme.primary,
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white),
             centerTitle: true,
             title: const Text(
               "Update Sale",
@@ -1461,7 +1461,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                           // Centered text and icon
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children:   [
                               Icon(
                                 Icons.add_box,
                                 color: Colors.green,
@@ -1906,7 +1906,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                         height: 30,
                                         selectedItem: controller.selectedUnit,
                                         onChanged: (selectedUnit) {
-                                          print("Selected Unit: $selectedUnit");
+                                          debugPrint("Selected Unit: $selectedUnit");
 
                                           // Update the selected unit in controller
                                           controller.selectedUnit =

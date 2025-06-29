@@ -38,7 +38,7 @@ class TaxProvider with ChangeNotifier {
 
   
   ///tax create ===>
-  Future<void> createTax({
+    Future<void> createTax({
     required int userId,
     required String name,
     required String percent,
@@ -52,10 +52,14 @@ class TaxProvider with ChangeNotifier {
 
     try {
       final response = await http.post(url);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint("Tax created successfully!");
-        // Optionally re-fetch list:
-        await fetchTaxes();
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final newTax = TaxModel.fromJson(data['data']);
+        _taxList.add(newTax);
+        fetchTaxes();
+        notifyListeners();
+        
+        debugPrint("Tax created successfully: ${data['message']}");
       } else {
         debugPrint("Failed to create tax: ${response.body}");
       }
