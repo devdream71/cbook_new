@@ -9,6 +9,8 @@ import 'package:cbook_dt/feature/item/model/unit_model.dart';
 import 'package:cbook_dt/feature/item/provider/item_category.dart';
 import 'package:cbook_dt/feature/item/provider/items_show_provider.dart';
 import 'package:cbook_dt/feature/item/provider/unit_provider.dart';
+import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_form_two.dart';
 import 'package:cbook_dt/feature/settings/ui/bill_invoice_create_form.dart';
 import 'package:cbook_dt/feature/tax/provider/tax_provider.dart';
@@ -48,6 +50,10 @@ class SalesViewState extends State<SalesView> {
             .fetchCategories());
 
     Provider.of<AddItemProvider>(context, listen: false).fetchItems();
+
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false)
+            .fetchBillPersons());
 
     customerController = TextEditingController();
   }
@@ -108,6 +114,10 @@ class _LayoutState extends State<_Layout> {
   List<double> amount = [];
 
   bool showNoteField = false;
+
+  String? selectedBillPerson;
+  int? selectedBillPersonId;
+  BillPersonModel? selectedBillPersonData;
 
   void _onCancel() {
     Navigator.pop(context);
@@ -383,7 +393,7 @@ class _LayoutState extends State<_Layout> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(
-                                          height: 53,
+                                          height: 58,
                                           width: 180,
                                           // Adjusted height for cursor visibility
                                           child: controller.isCash
@@ -1019,42 +1029,59 @@ class _LayoutState extends State<_Layout> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     //bill person
-                                    SizedBox(
-                                      height: 30,
-                                      width: 90,
-                                      child: TextField(
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                        ),
-                                        controller: controller.billPerson,
-                                        cursorHeight:
-                                            12, // Match cursor height to text size
-                                        decoration: InputDecoration(
-                                          isDense:
-                                              true, // Ensures the field is compact
-                                          contentPadding: EdgeInsets
-                                              .zero, // Removes unnecessary padding
-                                          hintText: "Bill Person",
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey.shade400,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.grey.shade400,
-                                              width: 0.5,
-                                            ),
-                                          ),
-                                          focusedBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                        ),
+
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Consumer<PaymentVoucherProvider>(
+                                        builder: (context, provider, child) {
+                                          return SizedBox(
+                                            height: 30,
+                                            width: 130,
+                                            child: provider.isLoading
+                                                ? const Center(
+                                                    child:
+                                                        CircularProgressIndicator())
+                                                : CustomDropdownTwo(
+                                                    hint: '',
+                                                    items: provider
+                                                        .billPersonNames,
+                                                    width: double.infinity,
+                                                    height: 30,
+                                                    labelText: 'Bill Person',
+                                                    selectedItem:
+                                                        selectedBillPerson,
+                                                    onChanged: (value) {
+                                                      debugPrint(
+                                                          '=== Bill Person Selected: $value ===');
+                                                      setState(() {
+                                                        selectedBillPerson =
+                                                            value;
+                                                        selectedBillPersonData =
+                                                            provider.billPersons
+                                                                .firstWhere(
+                                                          (person) =>
+                                                              person.name ==
+                                                              value,
+                                                        ); // ✅ Save the whole object globally
+                                                        selectedBillPersonId =
+                                                            selectedBillPersonData!
+                                                                .id;
+                                                      });
+
+                                                      debugPrint(
+                                                          'Selected Bill Person Details:');
+                                                      debugPrint(
+                                                          '- ID: ${selectedBillPersonData!.id}');
+                                                      debugPrint(
+                                                          '- Name: ${selectedBillPersonData!.name}');
+                                                      debugPrint(
+                                                          '- Phone: ${selectedBillPersonData!.phone}');
+                                                    }),
+                                          );
+                                        },
                                       ),
                                     ),
+
                                     // Bill No Field
 
                                     const SizedBox(
@@ -1064,7 +1091,7 @@ class _LayoutState extends State<_Layout> {
                                     ///bill no, bill person
                                     SizedBox(
                                       height: 30,
-                                      width: 90,
+                                      width: 130,
                                       child: TextField(
                                         style: const TextStyle(
                                           color: Colors.black,
@@ -1104,7 +1131,7 @@ class _LayoutState extends State<_Layout> {
                                     ///bill date
                                     SizedBox(
                                       height: 30,
-                                      width: 90,
+                                      width: 130,
                                       child: InkWell(
                                         onTap: () => controller.pickDate(
                                             context), // Trigger the date picker
@@ -1150,52 +1177,6 @@ class _LayoutState extends State<_Layout> {
                                         ),
                                       ),
                                     ),
-
-                                    // Bill Time Field
-                                    // SizedBox(
-                                    //   height: 30,
-                                    //   width: 90,
-                                    //   child: InkWell(
-                                    //     onTap: () =>
-                                    //         controller.pickTime(context),
-                                    //     child: InputDecorator(
-                                    //       decoration: InputDecoration(
-                                    //         suffixIconConstraints:
-                                    //             const BoxConstraints(
-                                    //           minWidth: 16,
-                                    //           minHeight: 16,
-                                    //         ),
-                                    //         isDense: true,
-                                    //         suffixIcon: Icon(
-                                    //           Icons.timer,
-                                    //           size: 16,
-                                    //           color: Theme.of(context)
-                                    //               .primaryColor,
-                                    //         ),
-                                    //         hintText: "Bill Time",
-                                    //         hintStyle: TextStyle(
-                                    //             color: Colors.grey.shade400,
-                                    //             fontSize: 10),
-                                    //         enabledBorder: UnderlineInputBorder(
-                                    //           borderSide: BorderSide(
-                                    //               color: Colors.grey.shade400,
-                                    //               width: 0.5),
-                                    //         ),
-                                    //         focusedBorder:
-                                    //             const UnderlineInputBorder(
-                                    //           borderSide: BorderSide(
-                                    //               color: Colors.green),
-                                    //         ),
-                                    //       ),
-                                    //       child: Text(
-                                    //         controller.formattedTime,
-                                    //         style: const TextStyle(
-                                    //             color: Colors.black,
-                                    //             fontSize: 12),
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
                                   ],
                                 ),
                               )
@@ -1320,7 +1301,6 @@ class _LayoutState extends State<_Layout> {
                                         controller.itemsCash.isEmpty
                                             ? const SizedBox.shrink()
                                             : Column(
-                                               
                                                 children: List.generate(
                                                     controller.itemsCash.length,
                                                     (index) {
@@ -1330,7 +1310,6 @@ class _LayoutState extends State<_Layout> {
                                                     padding: const EdgeInsets
                                                         .symmetric(vertical: 3),
                                                     child: Row(
-                                                    
                                                       children: [
                                                         Expanded(
                                                           child: InkWell(
@@ -1351,26 +1330,14 @@ class _LayoutState extends State<_Layout> {
                                                               height: 42,
                                                               child:
                                                                   DecoratedBox(
-                                                                decoration: BoxDecoration(
-                                                                    //border: Border.all(color: Colors.grey),
-                                                                    //   boxShadow: [
-                                                                    // BoxShadow(
-                                                                    //   color: Colors
-                                                                    //       .black
-                                                                    //       .withOpacity(
-                                                                    //           0.1),
-                                                                    //   blurRadius:
-                                                                    //       1,
-                                                                    //   offset:
-                                                                    //       const Offset(
-                                                                    //           0,
-                                                                    //           1),
-                                                                    // ),
-                                                                    //],
-                                                                    color: const Color(0xfff4f6ff), //f4f6ff
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                        color: const Color(
+                                                                            0xfff4f6ff), //f4f6ff
 
-                                                                    ///f4f6ff, dddefa
-                                                                    borderRadius: BorderRadius.circular(5)),
+                                                                        ///f4f6ff, dddefa
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(5)),
                                                                 child: Padding(
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
@@ -1396,12 +1363,9 @@ class _LayoutState extends State<_Layout> {
                                                                         Expanded(
                                                                           child:
                                                                               Row(
-                                                                                 
                                                                             crossAxisAlignment:
                                                                                 CrossAxisAlignment.center, // <--- Center vertically
                                                                             children: [
-                                                                              
-                                                                               
                                                                               Text(
                                                                                 "${index + 1}.",
                                                                                 style: const TextStyle(
@@ -1416,7 +1380,8 @@ class _LayoutState extends State<_Layout> {
                                                                                 child: Column(
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: [
-                                                                                    const SizedBox(height: 4,
+                                                                                    const SizedBox(
+                                                                                      height: 4,
                                                                                     ),
                                                                                     Text(
                                                                                       item.itemName!,
@@ -1482,32 +1447,20 @@ class _LayoutState extends State<_Layout> {
                                                                             setState(() {});
                                                                           },
                                                                           child:
-                                                                          Container(
-                                            width: 20,
-                                            height: 20,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey.shade500,
-                                                  width: 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                             
-                                            ),
-                                            child: const Icon(Icons.remove,
-                                                color: Colors.green, size: 18),
-                                          ),
-                                                                          //     const CircleAvatar(
-                                                                          //   radius:
-                                                                          //       12,
-                                                                          //   backgroundColor:
-                                                                          //       Colors.grey,
-                                                                          //   child:
-                                                                          //       Icon(
-                                                                          //     Icons.close,
-                                                                          //     color: Colors.white,
-                                                                          //     size: 20,
-                                                                          //   ),
-                                                                          // ),
+                                                                              Container(
+                                                                            width:
+                                                                                20,
+                                                                            height:
+                                                                                20,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              border: Border.all(color: Colors.grey.shade500, width: 1),
+                                                                              borderRadius: BorderRadius.circular(30),
+                                                                            ),
+                                                                            child: const Icon(Icons.remove,
+                                                                                color: Colors.green,
+                                                                                size: 18),
+                                                                          ),
                                                                         ),
                                                                       ],
                                                                     ),
@@ -1623,26 +1576,15 @@ class _LayoutState extends State<_Layout> {
                                                               setState(() {});
                                                             },
                                                             child: DecoratedBox(
-                                                              decoration: BoxDecoration(
-                                                                  //border: Border.all(color: Colors.grey),
-                                                                  //     boxShadow: [
-                                                                  //   BoxShadow(
-                                                                  //     color: Colors
-                                                                  //         .black
-                                                                  //         .withOpacity(
-                                                                  //             0.1),
-                                                                  //     blurRadius:
-                                                                  //         1,
-                                                                  //     offset:
-                                                                  //         const Offset(
-                                                                  //             0,
-                                                                  //             1),
-                                                                  //   ),
-                                                                  // ],
-                                                                  color: const Color(0xfff4f6ff), //f4f6ff
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      color: const Color(
+                                                                          0xfff4f6ff), //f4f6ff
 
-                                                                  ///f4f6ff, dddefa
-                                                                  borderRadius: BorderRadius.circular(5)),
+                                                                      ///f4f6ff, dddefa
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5)),
                                                               child: Padding(
                                                                 padding: const EdgeInsets
                                                                     .symmetric(
@@ -2614,7 +2556,8 @@ class _LayoutState extends State<_Layout> {
                                       debugPrint(
                                           "No valid units found for this item.");
                                     } else {
-                                      debugPrint("Units Available: $unitIdsList");
+                                      debugPrint(
+                                          "Units Available: $unitIdsList");
                                     }
                                   },
                                 ),
@@ -3188,7 +3131,8 @@ class _LayoutState extends State<_Layout> {
                                       child: Align(
                                         alignment: Alignment.topRight,
                                         child: Text(
-                                          controller.subtotalWithTax.toStringAsFixed(2),
+                                          controller.subtotalWithTax
+                                              .toStringAsFixed(2),
                                           style: const TextStyle(
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold,
@@ -3700,7 +3644,8 @@ class _LayoutState extends State<_Layout> {
                                   }
 
                                   // Debug print to show final unit ID selected
-                                  debugPrint("🆔 Final Unit ID: $finalUnitString");
+                                  debugPrint(
+                                      "🆔 Final Unit ID: $finalUnitString");
 
                                   // Notify listeners to update the UI
                                   controller.notifyListeners();

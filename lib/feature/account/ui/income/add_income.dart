@@ -50,24 +50,24 @@ class _IncomeCreateState extends State<IncomeCreate> {
   TextEditingController billNoController = TextEditingController();
   String billNo = '';
 
-  void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
-    // Convert receiptItems to required JSON structure
-    final List<Map<String, dynamic>> incomeItems =
-        provider.receiptItems.map((item) {
-      return {
-        "account_id": selectedAccountId,
-        "narration": item.note,
-        "amount": item.amount.toString(),
-      };
-    }).toList();
+  // void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
+  //   // Convert receiptItems to required JSON structure
+  //   final List<Map<String, dynamic>> incomeItems =
+  //       provider.receiptItems.map((item) {
+  //     return {
+  //       "account_id": selectedAccountId,
+  //       "narration": item.note,
+  //       "amount": item.amount.toString(),
+  //     };
+  //   }).toList();
 
-    final Map<String, dynamic> finalPayload = {
-      "income_items": incomeItems,
-    };
+  //   final Map<String, dynamic> finalPayload = {
+  //     "income_items": incomeItems,
+  //   };
 
-    // Print JSON string in console
-    debugPrint('Final JSON Payload: $finalPayload');
-  }
+  //   // Print JSON string in console
+  //   debugPrint('Final JSON Payload: $finalPayload');
+  // }
 
   @override
   void initState() {
@@ -616,6 +616,8 @@ class _IncomeCreateState extends State<IncomeCreate> {
                         provider.receiptItems.clear();
                         provider.notifyListeners();
 
+                        await provider.fetchIncomeList();
+
                         // Navigate to Income page (replace with your actual route)
                         Navigator.pushReplacement(
                             context,
@@ -848,4 +850,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
       },
     );
   }
+
+
+
 }

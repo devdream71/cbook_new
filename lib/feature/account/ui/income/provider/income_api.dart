@@ -1,5 +1,6 @@
 // income_provider.dart
 import 'dart:convert';
+import 'package:cbook_dt/feature/account/ui/expense/model/income_edit_model.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/account_model.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_list_model.dart';
@@ -30,6 +31,32 @@ class IncomeProvider with ChangeNotifier {
 
   void clearReceiptItems() {
     receiptItems.clear();
+    notifyListeners();
+  }
+
+  // AccountData? selectedAccountForUpdate;
+
+  // Method to set selected account for update
+  // void setSelectedAccountForUpdate(AccountData? account) {
+  //   selectedAccountForUpdate = account;
+  //   notifyListeners();
+  // }
+
+  // Add this property for selected account during updates
+  AccountData? selectedAccountForUpdate;
+
+  // Add this property for selected received form during updates
+  ReceiptFromData? selectedReceivedFormForUpdate;
+
+  // Method to set selected account for update
+  void setSelectedAccountForUpdate(AccountData? account) {
+    selectedAccountForUpdate = account;
+    notifyListeners();
+  }
+
+  // Method to set selected received form for update
+  void setSelectedReceivedFormForUpdate(ReceiptFromData? receivedForm) {
+    selectedReceivedFormForUpdate = receivedForm;
     notifyListeners();
   }
 
@@ -104,7 +131,8 @@ class IncomeProvider with ChangeNotifier {
         // Print detailed account info
         for (int i = 0; i < accountModel!.data.length; i++) {
           final account = accountModel!.data[i];
-          debugPrint('Account $i: ID=${account.id}, Name=${account.accountName}');
+          debugPrint(
+              'Account $i: ID=${account.id}, Name=${account.accountName}');
         }
       } else {
         debugPrint('API Error: Status ${response.statusCode}');
@@ -127,14 +155,15 @@ class IncomeProvider with ChangeNotifier {
     }
 
     isAccountLoading = false;
-    debugPrint('=== fetchAccounts completed. Loading state: $isAccountLoading ===');
+    debugPrint(
+        '=== fetchAccounts completed. Loading state: $isAccountLoading ===');
     notifyListeners();
   }
 
-  ///income list.
+  ///income list. all
   Future<void> fetchIncomeList() async {
     isLoading = true;
-    notifyListeners();
+    //notifyListeners();
 
     const url = 'https://commercebook.site/api/v1/income/list';
 
@@ -209,9 +238,86 @@ class IncomeProvider with ChangeNotifier {
     }
   }
 
-  ///get the income to edit income.
+    ///expense update
+  IncomeEditModel? editIncomeData;
 
-  /// update the income.
+  ///expense update
+  // Future<void> fetchEditExpense(String id) async {
+  //   isLoading = true;
+  //   notifyListeners();
 
-  ///acoount type
+  //   try {
+  //     final response = await http
+  //         .get(Uri.parse('https://commercebook.site/api/v1/income/edit/$id'));
+
+  //     if (response.statusCode == 200) {
+  //       final result = json.decode(response.body);
+  //       editIncomeData = IncomeEditModel.fromJson(result['data']);
+
+  //       // Map API voucher details to receiptItems for showing in UI
+  //       receiptItems = editIncomeData!.voucherDetails.map((detail) {
+  //         return ExpenseItem(
+  //           purchaseId: detail.purchaseId,
+  //           receiptFrom: editIncomeData!.paidTo,
+  //           note: detail.narration,
+  //           amount: detail.amount,
+  //         );
+  //       }).toList();
+  //     } else {
+  //       debugPrint('Failed to load expense edit data');
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error fetching expense edit data: $e');
+  //   }
+
+  //   isLoading = false;
+  //   notifyListeners();
+  // }
+
+  ///update income.
+  Future<bool> updateIncome({
+    required String incomeId,
+    required String userId,
+    required String invoiceNo,
+    required String date,
+    required String receivedTo,
+    required String account,
+    required double totalAmount,
+    required String notes,
+    required int status,
+    required List<IncomeItem> incomeItems,
+  }) async {
+    final url = Uri.parse('https://commercebook.site/api/v1/income/update?'
+        'id=$incomeId&user_id=$userId&invoice_no=$invoiceNo&date=$date&received_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status');
+
+    final body = IncomeStoreRequest(incomeItems: incomeItems).toJson();
+
+    debugPrint('=== Income Update API Call ===');
+    debugPrint('URL: $url');
+    debugPrint('Body: ${jsonEncode(body)}');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint('✅ Income updated successfully');
+        return true;
+      } else {
+        debugPrint('❌ Failed to update income: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Error updating income: $e');
+      return false;
+    }
+  }
 }

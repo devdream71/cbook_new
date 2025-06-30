@@ -11,6 +11,8 @@ import 'package:cbook_dt/feature/item/model/unit_model.dart';
 import 'package:cbook_dt/feature/item/provider/item_category.dart';
 import 'package:cbook_dt/feature/item/provider/items_show_provider.dart';
 import 'package:cbook_dt/feature/item/provider/unit_provider.dart';
+import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/purchase/purchase_setting.dart';
 import 'package:cbook_dt/feature/sales/sales_view.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_form_two.dart';
@@ -83,6 +85,10 @@ class LayoutState extends State<Layout> {
 
   bool showNoteField = false;
 
+  String? selectedBillPerson;
+  int? selectedBillPersonId;
+  BillPersonModel? selectedBillPersonData;
+
   // String? selectedItem;
 
   @override
@@ -99,6 +105,10 @@ class LayoutState extends State<Layout> {
       Future.microtask(() =>
           Provider.of<CustomerProvider>(context, listen: false)
               .fetchCustomsr());
+
+      Future.microtask(() =>
+          Provider.of<PaymentVoucherProvider>(context, listen: false)
+              .fetchBillPersons());
     });
   }
 
@@ -231,6 +241,7 @@ class LayoutState extends State<Layout> {
                                             ),
                                           ),
                                         ),
+
                                         const SizedBox(
                                           width: 8,
                                         ),
@@ -978,10 +989,62 @@ class LayoutState extends State<Layout> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Consumer<PaymentVoucherProvider>(
+                                        builder: (context, provider, child) {
+                                          return SizedBox(
+                                            height: 30,
+                                            width: 130,
+                                            child: provider.isLoading
+                                                ? const Center(
+                                                    child:
+                                                        CircularProgressIndicator())
+                                                : CustomDropdownTwo(
+                                                    hint: '',
+                                                    items: provider
+                                                        .billPersonNames,
+                                                    width: double.infinity,
+                                                    height: 30,
+                                                    labelText: 'Bill Person',
+                                                    selectedItem:
+                                                        selectedBillPerson,
+                                                    onChanged: (value) {
+                                                      debugPrint(
+                                                          '=== Bill Person Selected: $value ===');
+                                                      setState(() {
+                                                        selectedBillPerson =
+                                                            value;
+                                                        selectedBillPersonData =
+                                                            provider.billPersons
+                                                                .firstWhere(
+                                                          (person) =>
+                                                              person.name ==
+                                                              value,
+                                                        ); // ✅ Save the whole object globally
+                                                        selectedBillPersonId =
+                                                            selectedBillPersonData!
+                                                                .id;
+                                                      });
+
+                                                      debugPrint(
+                                                          'Selected Bill Person Details:');
+                                                      debugPrint(
+                                                          '- ID: ${selectedBillPersonData!.id}');
+                                                      debugPrint(
+                                                          '- Name: ${selectedBillPersonData!.name}');
+                                                      debugPrint(
+                                                          '- Phone: ${selectedBillPersonData!.phone}');
+                                                    }),
+                                          );
+                                        },
+                                      ),
+                                    ),
+
                                     // Bill No Field
                                     SizedBox(
                                       height: 30,
-                                      width: 90,
+                                      width: 130,
                                       child: TextField(
                                         style: const TextStyle(
                                             color: Colors.black,
@@ -1019,7 +1082,7 @@ class LayoutState extends State<Layout> {
 
                                     SizedBox(
                                       height: 30,
-                                      width: 90,
+                                      width: 130,
                                       child: InkWell(
                                         onTap: () => controller.pickDate(
                                             context), // Trigger the date picker
@@ -1056,52 +1119,6 @@ class LayoutState extends State<Layout> {
                                             controller.formattedDate.isNotEmpty
                                                 ? controller.formattedDate
                                                 : "Select Date", // Default text when no date is selected
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    // Bill Time Field
-                                    SizedBox(
-                                      height: 30,
-                                      width: 90,
-                                      child: InkWell(
-                                        onTap: () =>
-                                            controller.pickTime(context),
-                                        child: InputDecorator(
-                                          decoration: InputDecoration(
-                                            suffixIconConstraints:
-                                                const BoxConstraints(
-                                              minWidth: 16,
-                                              minHeight: 16,
-                                            ),
-                                            isDense: true,
-                                            suffixIcon: Icon(
-                                              Icons.timer,
-                                              size: 16,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            ),
-                                            hintText: "Bill Time",
-                                            hintStyle: TextStyle(
-                                                color: Colors.grey.shade400,
-                                                fontSize: 10),
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey.shade400,
-                                                  width: 0.5),
-                                            ),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey.shade400),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            controller.formattedTime,
                                             style: const TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 12,
@@ -1294,7 +1311,6 @@ class LayoutState extends State<Layout> {
                                                               //setState(() {});
                                                             },
                                                             child: DecoratedBox(
-                                                              
                                                                 decoration: BoxDecoration(
                                                                     // boxShadow: [
                                                                     //   BoxShadow(
@@ -1366,7 +1382,7 @@ class LayoutState extends State<Layout> {
                                                                           ],
                                                                         ),
                                                                       ),
-                                                            
+
                                                                       // Column(
                                                                       //   crossAxisAlignment:
                                                                       //       CrossAxisAlignment.start,
@@ -1383,7 +1399,7 @@ class LayoutState extends State<Layout> {
                                                                       //             // "${item.itemName!} ${item.category!}",
                                                                       //             // "${item.itemName!}",
                                                                       //             "${index + 1}. ${item.itemName!}",
-                                                            
+
                                                                       //             style: const TextStyle(overflow: TextOverflow.ellipsis, color: Colors.black, fontWeight: FontWeight.w600, fontSize: 14),
                                                                       //           ),
                                                                       //         ],
@@ -1404,7 +1420,7 @@ class LayoutState extends State<Layout> {
                                                                       //         FontWeight.w600,
                                                                       //   ),
                                                                       // ),
-                                                            
+
                                                                       ///close
                                                                       InkWell(
                                                                         onTap:
@@ -1454,20 +1470,23 @@ class LayoutState extends State<Layout> {
                                                                           });
                                                                         },
                                                                         child:
-                                                                        Container(
-                                            width: 20,
-                                            height: 20,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.grey.shade500,
-                                                  width: 1),
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                             
-                                            ),
-                                            child: const Icon(Icons.remove,
-                                                color: Colors.green, size: 18),
-                                          ),
+                                                                            Container(
+                                                                          width:
+                                                                              20,
+                                                                          height:
+                                                                              20,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            border:
+                                                                                Border.all(color: Colors.grey.shade500, width: 1),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(30),
+                                                                          ),
+                                                                          child: const Icon(
+                                                                              Icons.remove,
+                                                                              color: Colors.green,
+                                                                              size: 18),
+                                                                        ),
                                                                         //     const CircleAvatar(
                                                                         //   radius:
                                                                         //       12,
@@ -3188,7 +3207,7 @@ class LayoutState extends State<Layout> {
                               ],
                             ),
 
-                           SizedBox(height: 5),
+                            SizedBox(height: 5),
 
                             // Item Dropdown
                             // const Align(
@@ -3391,7 +3410,8 @@ class LayoutState extends State<Layout> {
                               }
 
                               if (unitIdsList.isEmpty) {
-                                debugPrint("No valid units found for this item.");
+                                debugPrint(
+                                    "No valid units found for this item.");
                               } else {
                                 debugPrint("Units Available: $unitIdsList");
                               }
@@ -4067,7 +4087,8 @@ class LayoutState extends State<Layout> {
                                   }
 
                                   // Debug print to show final unit ID selected
-                                  debugPrint("🆔 Final Unit ID: $finalUnitString");
+                                  debugPrint(
+                                      "🆔 Final Unit ID: $finalUnitString");
 
                                   // Notify listeners to update the UI
                                   controller.notifyListeners();

@@ -1,3 +1,8 @@
+ 
+
+
+
+
 class PurchaseViewModel {
   bool? success;
   String? message;
@@ -37,7 +42,7 @@ class Data {
   String? disabled;
   dynamic detailsNotes;
   //dynamic ? supplierName;
-  String ? transectionMethod;
+  dynamic  transectionMethod;
   List<PurchaseDetails>? purchaseDetails;
 
   Data(
@@ -62,7 +67,7 @@ class Data {
     grossTotal = json['gross_total'];
     disabled = json['disabled'];
     detailsNotes = json['details_notes'];
-    transectionMethod = json['transection_method'];
+    transectionMethod = json['transection_method']; //transaction_method
    // supplierName = json['supplier_name'];
     if (json['purchase_details'] != null) {
       purchaseDetails = <PurchaseDetails>[];

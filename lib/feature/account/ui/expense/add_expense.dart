@@ -49,6 +49,14 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false)
+            .fetchBillPersons());
+  }
+
+  @override
   void dispose() {
     // Clear receipt items when leaving the page
     final providerExpense =
@@ -611,6 +619,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         return ExpenseItemPopUp(
                           accountId:
                               account, // or item-specific account id if different
+                          //accountId: providerExpense.selectedAccountForUpdate?.id.toString() ?? '',
                           narration: item.note,
                           amount: item.amount.toString(),
                         );
@@ -651,6 +660,8 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         //     MaterialPageRoute(
                         //         builder: (context) => const Expanse()));
 
+                        providerExpense.fetchExpenseList();
+
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
@@ -660,7 +671,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Failed to save income.')),
+                              content: Text('Failed to save expense.')),
                         );
                       }
                     },

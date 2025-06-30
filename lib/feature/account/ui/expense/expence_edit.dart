@@ -5,6 +5,8 @@ import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_popu
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_paid_form_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
@@ -26,48 +28,53 @@ class _ExpenseEditState extends State<ExpenseEdit> {
 
   int? selectedAccountId;
 
-  DateTime selectedStartDate = DateTime.now();
-  // Default to current date
-  DateTime selectedEndDate = DateTime.now();
-  // Default to current date
-  String? selectedDropdownValue;
 
-  Future<void> _selectDate(BuildContext context, DateTime initialDate,
-      Function(DateTime) onDateSelected) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      onDateSelected(picked);
-    }
-  }
+  String? selectedBillPerson;
+  int? selectedBillPersonId;
+  BillPersonModel? selectedBillPersonData;
+
+  //DateTime selectedStartDate = DateTime.now();
+  // Default to current date
+  //DateTime selectedEndDate = DateTime.now();
+  // Default to current date
+  //String? selectedDropdownValue;
+
+  // Future<void> _selectDate(BuildContext context, DateTime initialDate,
+  //     Function(DateTime) onDateSelected) async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: initialDate,
+  //     firstDate: DateTime(2000),
+  //     lastDate: DateTime(2101),
+  //   );
+  //   if (picked != null) {
+  //     onDateSelected(picked);
+  //   }
+  // }
 
   TextEditingController billNoController = TextEditingController();
   late TextEditingController voucherNumberController;
   String billNo = '';
   String billDate = '';
 
-  void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
-    // Convert receiptItems to required JSON structure
-    final List<Map<String, dynamic>> incomeItems =
-        provider.receiptItems.map((item) {
-      return {
-        "account_id": selectedAccountId,
-        "narration": item.note,
-        "amount": item.amount.toString(),
-      };
-    }).toList();
+  // void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
+  //   // Convert receiptItems to required JSON structure
+  //   final List<Map<String, dynamic>> incomeItems =
+  //       provider.receiptItems.map((item) {
+  //     return {
+  //       "account_id": selectedAccountId,
+  //       "narration": item.note,
+  //       "amount": item.amount.toString(),
+  //     };
+  //   }).toList();
 
-    final Map<String, dynamic> finalPayload = {
-      "income_items": incomeItems,
-    };
+  //   final Map<String, dynamic> finalPayload = {
+  //     "income_items": incomeItems,
+  //   };
 
-    // Print JSON string in console
-    debugPrint('Final JSON Payload: $finalPayload');
-  }
+  //   // Print JSON string in console
+  //   debugPrint('Final JSON Payload: $finalPayload');
+  // }
 
   @override
   void initState() {
@@ -207,7 +214,8 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                               labelText: 'Paid To',
                               selectedItem: selectedReceivedTo,
                               onChanged: (value) async {
-                                debugPrint('=== Received To Selected: $value ===');
+                                debugPrint(
+                                    '=== Received To Selected: $value ===');
 
                                 setState(() {
                                   selectedReceivedTo = value;
@@ -270,7 +278,8 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                                             '- ID: ${selectedAccountData.id}');
                                         debugPrint(
                                             '- Name: ${selectedAccountData.accountName}');
-                                        debugPrint('- Type: $selectedReceivedTo');
+                                        debugPrint(
+                                            '- Type: $selectedReceivedTo');
                                       }
                                     },
                                   ),
@@ -281,40 +290,86 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           //bill person
-                          SizedBox(
+                           
+                           Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Consumer<PaymentVoucherProvider>(
+                        builder: (context, provider, child) {
+                          return SizedBox(
                             height: 30,
-                            width: 90,
-                            child: TextField(
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                              ),
-                              controller: TextEditingController(),
-                              cursorHeight:
-                                  12, // Match cursor height to text size
-                              decoration: InputDecoration(
-                                isDense: true, // Ensures the field is compact
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes unnecessary padding
-                                hintText: "Bill Person",
-                                hintStyle: TextStyle(
-                                    color: Colors.grey.shade400,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade400,
-                                    width: 0.5,
-                                  ),
-                                ),
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                            width: 130,
+                            child: provider.isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator())
+                                : CustomDropdownTwo(
+                                    hint: '',
+                                    items: provider.billPersonNames,
+                                    width: double.infinity,
+                                    height: 30,
+                                    labelText: 'Bill Person',
+                                    selectedItem: selectedBillPerson,
+                                    onChanged: (value) {
+                                      debugPrint(
+                                          '=== Bill Person Selected: $value ===');
+                                      setState(() {
+                                        selectedBillPerson = value;
+                                        selectedBillPersonData =
+                                            provider.billPersons.firstWhere(
+                                          (person) => person.name == value,
+                                        ); // ✅ Save the whole object globally
+                                        selectedBillPersonId =
+                                            selectedBillPersonData!.id;
+                                      });
+
+                                      debugPrint(
+                                          'Selected Bill Person Details:');
+                                      debugPrint(
+                                          '- ID: ${selectedBillPersonData!.id}');
+                                      debugPrint(
+                                          '- Name: ${selectedBillPersonData!.name}');
+                                      debugPrint(
+                                          '- Phone: ${selectedBillPersonData!.phone}');
+                                    }),
+                          );
+                        },
+                      ),
+                    ),
+
+
+                          // SizedBox(
+                          //   height: 30,
+                          //   width: 90,
+                          //   child: TextField(
+                          //     style: const TextStyle(
+                          //       color: Colors.black,
+                          //       fontSize: 12,
+                          //     ),
+                          //     controller: TextEditingController(),
+                          //     cursorHeight:
+                          //         12, // Match cursor height to text size
+                          //     decoration: InputDecoration(
+                          //       isDense: true, // Ensures the field is compact
+                          //       contentPadding: EdgeInsets
+                          //           .zero, // Removes unnecessary padding
+                          //       hintText: "Bill Person",
+                          //       hintStyle: TextStyle(
+                          //           color: Colors.grey.shade400,
+                          //           fontSize: 12,
+                          //           fontWeight: FontWeight.w600),
+                          //       enabledBorder: UnderlineInputBorder(
+                          //         borderSide: BorderSide(
+                          //           color: Colors.grey.shade400,
+                          //           width: 0.5,
+                          //         ),
+                          //       ),
+                          //       focusedBorder: const UnderlineInputBorder(
+                          //         borderSide: BorderSide(
+                          //           color: Colors.green,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                           // Bill No Field
 
                           const SizedBox(
@@ -579,6 +634,7 @@ class _ExpenseEditState extends State<ExpenseEdit> {
 
           const Spacer(),
 
+          ///expense update data.
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -672,8 +728,13 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                     final List<ExpenseItemPopUp> expenseItems =
                         providerExpense.receiptItems.map((item) {
                       return ExpenseItemPopUp(
-                        accountId:
-                            '10', // ✔️ Use correct item-specific account id
+                        //accountId:   '10',
+                        //accountId: accountId: selectedPaidForm?.id.toString() ?? '', //  '10', // ✔️ Use correct item-specific account id
+                        //accountId: providerExpense.selectedAccountForUpdate?.id.toString() ?? '',
+
+                        accountId: providerExpense.selectedAccountForUpdate?.id
+                                .toString() ??
+                            '',
                         narration: item.note,
                         amount: item.amount.toString(),
                       );
@@ -707,6 +768,8 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                     if (success) {
                       providerExpense.receiptItems.clear();
                       providerExpense.notifyListeners();
+
+                      await providerExpense.fetchExpenseList();
 
                       Navigator.pushAndRemoveUntil(
                         context,
@@ -824,6 +887,8 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                                   selectedPaidTo = selectedItem;
                                   selectedPaidForm =
                                       matchedAccount; // ✅ Track object correctly
+                                  provider.selectedAccountForUpdate =
+                                      matchedAccount;
                                 });
                               },
                             ),

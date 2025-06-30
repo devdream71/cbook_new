@@ -17,6 +17,9 @@ class ExpenseProvider with ChangeNotifier {
 
   List<ExpenseData> expenseList = [];
 
+  /// ✅ Add this for dynamic account selection
+  PaidFormData? selectedAccountForUpdate;
+
   void addReceiptItem(ExpenseItem item) {
     receiptItems.add(item);
     notifyListeners();
@@ -48,12 +51,10 @@ class ExpenseProvider with ChangeNotifier {
           .get(Uri.parse('https://commercebook.site/api/v1/expense/list'));
 
       if (response.statusCode == 200) {
-     
-
         final result = ExpenseListModel.fromJson(json.decode(response.body));
         expenseList = result.data;
       } else {
-         expenseList = [];
+        expenseList = [];
         debugPrint('Failed to load expense list');
       }
     } catch (e) {
@@ -102,30 +103,24 @@ class ExpenseProvider with ChangeNotifier {
   }
 
   ///expense delete
-   
-   ///expense delete
-Future<void> deleteExpense(String id) async {
-  final url = 'https://commercebook.site/api/v1/expense/remove?id=$id';
 
-  try {
-    final response = await http.post(Uri.parse(url));
-    if (response.statusCode == 200) {
-      // ✅ Correct: remove from the list you are displaying
-      expenseList.removeWhere((expense) => expense.id.toString() == id);
-      notifyListeners(); // This will refresh the UI
-    } else {
-      debugPrint('Failed to delete expense');
+  ///expense delete
+  Future<void> deleteExpense(String id) async {
+    final url = 'https://commercebook.site/api/v1/expense/remove?id=$id';
+
+    try {
+      final response = await http.post(Uri.parse(url));
+      if (response.statusCode == 200) {
+        // ✅ Correct: remove from the list you are displaying
+        expenseList.removeWhere((expense) => expense.id.toString() == id);
+        notifyListeners(); // This will refresh the UI
+      } else {
+        debugPrint('Failed to delete expense');
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
     }
-  } catch (e) {
-    debugPrint('Error: $e');
   }
-}
-
-
-
- 
-
-  
 
   // ✅ API Fetch Method ///expense Paid From list
   Future<void> fetchPaidFormList() async {
@@ -189,69 +184,59 @@ Future<void> deleteExpense(String id) async {
     }
   }
 
- 
+  Future<bool> updateExpense({
+    required String expenseId,
+    required String userId,
+    required String invoiceNo,
+    required String date,
+    required String paidTo,
+    required String account,
+    required double totalAmount,
+    required String notes,
+    required int status,
+    required List<ExpenseItemPopUp> expenseItems,
+  }) async {
+    isLoading = true;
+    notifyListeners();
 
+    final url = Uri.parse(
+        'https://commercebook.site/api/v1/expense/update?id=$expenseId&user_id=$userId&expence_no=$invoiceNo&date=$date&paid_to=$paidTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status');
 
-Future<bool> updateExpense({
-  required String expenseId,
-  required String userId,
-  required String invoiceNo,
-  required String date,
-  required String paidTo,
-  required String account,
-  required double totalAmount,
-  required String notes,
-  required int status,
-  required List<ExpenseItemPopUp> expenseItems,
-}) async {
-  isLoading = true;
-  notifyListeners();
+    debugPrint("url ====> ${url}");
 
-  final url = Uri.parse(
-      'https://commercebook.site/api/v1/expense/update?id=$expenseId&user_id=$userId&expence_no=$invoiceNo&date=$date&paid_to=$paidTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status');
+    final body = json.encode({
+      'expense_items': expenseItems.map((e) => e.toJson()).toList(),
+    });
 
-  debugPrint("url ====> ${url}");
+    debugPrint('Sending Body: $body'); // ✅ Add this to see the payload
 
-  final body = json.encode({
-    'expense_items': expenseItems.map((e) => e.toJson()).toList(),
-  });
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
 
-  debugPrint('Sending Body: $body'); // ✅ Add this to see the payload
+      debugPrint(
+          'Response Status: ${response.statusCode}'); // ✅ Log status code
+      debugPrint('Response Body: ${response.body}'); // ✅ Log response body
 
-  try {
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: body,
-    );
-
-    debugPrint('Response Status: ${response.statusCode}'); // ✅ Log status code
-    debugPrint('Response Body: ${response.body}'); // ✅ Log response body
-
-    if (response.statusCode == 200) {
-      debugPrint('Expense updated successfully.');
-      isLoading = false;
-      notifyListeners();
-      return true;
-    } else {
-      debugPrint('Failed to update expense.');
+      if (response.statusCode == 200) {
+        debugPrint('Expense updated successfully.');
+        isLoading = false;
+        notifyListeners();
+        return true;
+      } else {
+        debugPrint('Failed to update expense.');
+        isLoading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error updating expense: $e');
       isLoading = false;
       notifyListeners();
       return false;
     }
-  } catch (e) {
-    debugPrint('Error updating expense: $e');
-    isLoading = false;
-    notifyListeners();
-    return false;
   }
-}
-
-
-
-
-
-
-
-
 }

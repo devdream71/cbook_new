@@ -441,24 +441,27 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                         Row(
                                           children: [
                                             //date, invoice number
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  formatDate(
-                                                      purchase.pruchaseDate),
-                                                  style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black),
-                                                ),
-                                                Text('${purchase.billNumber}',
+                                            SizedBox(
+                                              width: 90,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    formatDate(
+                                                        purchase.pruchaseDate),
                                                     style: const TextStyle(
                                                         fontSize: 14,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold)),
-                                              ],
+                                                        color: Colors.black),
+                                                  ),
+                                                  Text('${purchase.billNumber}',
+                                                      style: const TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                ],
+                                              ),
                                             ),
 
                                             //divider
@@ -512,37 +515,38 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            Text(
-                                              purchase.transectionMethod!
-                                                          .toLowerCase() ==
-                                                      'cash'
-                                                  ? 'Paid'
-                                                  : 'Unpaid',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                  color: purchase
-                                                              .transectionMethod!
-                                                              .toLowerCase() ==
-                                                          'cash'
-                                                      ? Colors.green
-                                                      : Colors.amber),
-                                            ),
-                                            purchase.transectionMethod!
-                                                        .toLowerCase() ==
-                                                    'cash'
-                                                ? Text(
-                                                    "Due: ${purchase.grossTotal} TK", // Show due amount here
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      // fontWeight:
-                                                      //     FontWeight.w500,
-                                                      color: Colors.black,
-                                                    ),
-                                                  )
-                                                : const SizedBox.shrink(),
+                                            // Text(
+                                            //   purchase.transectionMethod!
+                                            //               .toLowerCase() ==
+                                            //           'cash'
+                                            //       ? 'Paid'
+                                            //       : 'Unpaid',
+                                            //   style: TextStyle(
+                                            //       fontWeight: FontWeight.bold,
+                                            //       fontSize: 14,
+                                            //       color: purchase
+                                            //                   .transectionMethod!
+                                            //                   .toLowerCase() ==
+                                            //               'cash'
+                                            //           ? Colors.green
+                                            //           : Colors.amber),
+                                            // ),
+                                            // purchase.transectionMethod!
+                                            //             .toLowerCase() ==
+                                            //         'cash'
+                                            //     ? Text(
+                                            //         "Due: ${purchase.grossTotal} TK", // Show due amount here
+                                            //         style: const TextStyle(
+                                            //           fontSize: 12,
+                                            //           // fontWeight:
+                                            //           //     FontWeight.w500,
+                                            //           color: Colors.black,
+                                            //         ),
+                                            //       )
+                                            //     : const SizedBox.shrink(),
                                           ],
                                         ),
+
                                         const SizedBox(width: 8),
 
                                         ///3 dot

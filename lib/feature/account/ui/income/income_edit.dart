@@ -1,10 +1,13 @@
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
-import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
-import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_popup.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_paid_form_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
+import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
+import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
+import 'package:cbook_dt/feature/account/ui/income/model/recived_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
@@ -26,48 +29,13 @@ class _IncomeEditState extends State<IncomeEdit> {
 
   int? selectedAccountId;
 
-  DateTime selectedStartDate = DateTime.now();
-  // Default to current date
-  DateTime selectedEndDate = DateTime.now();
-  // Default to current date
-  String? selectedDropdownValue;
-
-  Future<void> _selectDate(BuildContext context, DateTime initialDate,
-      Function(DateTime) onDateSelected) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      onDateSelected(picked);
-    }
-  }
-
-  TextEditingController billNoController = TextEditingController();
   late TextEditingController voucherNumberController;
   String billNo = '';
   String billDate = '';
 
-  void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
-    // Convert receiptItems to required JSON structure
-    final List<Map<String, dynamic>> incomeItems =
-        provider.receiptItems.map((item) {
-      return {
-        "account_id": selectedAccountId,
-        "narration": item.note,
-        "amount": item.amount.toString(),
-      };
-    }).toList();
-
-    final Map<String, dynamic> finalPayload = {
-      "income_items": incomeItems,
-    };
-
-    // Print JSON string in console
-    debugPrint('Final JSON Payload: $finalPayload');
-  }
+  String? selectedBillPerson;
+  int? selectedBillPersonId;
+  BillPersonModel? selectedBillPersonData;
 
   @override
   void initState() {
@@ -81,14 +49,10 @@ class _IncomeEditState extends State<IncomeEdit> {
           Provider.of<IncomeProvider>(context, listen: false); // 👈 Add this
 
       /// ✅ First fetch Paid Form List
-    await providerExpense.fetchPaidFormList();
+      await providerExpense.fetchPaidFormList();
 
-    /// ✅ Then fetch Edit Expense
-    await providerExpense.fetchEditExpense(widget.incomeId);    
-
-      //await providerExpense.fetchEditExpense(widget.expenseId);
-
-      //providerExpense.fetchPaidFormList();
+      /// ✅ Then fetch Edit Expense
+      await providerExpense.fetchEditExpense(widget.incomeId);
 
       voucherNumberController.text =
           providerExpense.editExpenseData?.voucherNumber ?? '';
@@ -103,9 +67,9 @@ class _IncomeEditState extends State<IncomeEdit> {
         selectedReceivedTo = 'Bank';
         await provider.fetchAccounts('bank'); // Fetch related accounts
       }
-      
+
       /// ✅ Preselect Account Name based on accountId
-    //int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
+      //int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
 
       /// ✅ Preselect Account Name based on accountId
       int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
@@ -143,12 +107,13 @@ class _IncomeEditState extends State<IncomeEdit> {
 
     final providerExpense = Provider.of<ExpenseProvider>(context, listen: true);
 
+    final providerIncome = Provider.of<IncomeProvider>(context, listen: true);
+
     TextStyle ts = const TextStyle(color: Colors.black, fontSize: 12);
 
     // List of forms with metadata
 
     // ✅ Show loading indicator while data is fetching
-  
 
     return Scaffold(
       appBar: AppBar(
@@ -162,7 +127,7 @@ class _IncomeEditState extends State<IncomeEdit> {
               width: 5,
             ),
             Text(
-              'Expence Update',
+              'Income Update',
               style: TextStyle(
                   color: Colors.yellow,
                   fontSize: 16,
@@ -208,7 +173,8 @@ class _IncomeEditState extends State<IncomeEdit> {
                               labelText: 'Paid To',
                               selectedItem: selectedReceivedTo,
                               onChanged: (value) async {
-                                debugPrint('=== Received To Selected: $value ===');
+                                debugPrint(
+                                    '=== Received To Selected: $value ===');
 
                                 setState(() {
                                   selectedReceivedTo = value;
@@ -245,7 +211,8 @@ class _IncomeEditState extends State<IncomeEdit> {
                                     labelText: 'Account',
                                     selectedItem: selectedAccount,
                                     onChanged: (value) {
-                                      debugPrint('=== Account Selected: $value ===');
+                                      debugPrint(
+                                          '=== Account Selected: $value ===');
                                       setState(() {
                                         selectedAccount = value;
                                       });
@@ -271,7 +238,8 @@ class _IncomeEditState extends State<IncomeEdit> {
                                             '- ID: ${selectedAccountData.id}');
                                         debugPrint(
                                             '- Name: ${selectedAccountData.accountName}');
-                                        debugPrint('- Type: $selectedReceivedTo');
+                                        debugPrint(
+                                            '- Type: $selectedReceivedTo');
                                       }
                                     },
                                   ),
@@ -282,40 +250,87 @@ class _IncomeEditState extends State<IncomeEdit> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           //bill person
-                          SizedBox(
+                           
+                          Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Consumer<PaymentVoucherProvider>(
+                        builder: (context, provider, child) {
+                          return SizedBox(
                             height: 30,
-                            width: 90,
-                            child: TextField(
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                              ),
-                              controller: TextEditingController(),
-                              cursorHeight:
-                                  12, // Match cursor height to text size
-                              decoration: InputDecoration(
-                                isDense: true, // Ensures the field is compact
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes unnecessary padding
-                                hintText: "Bill Person",
-                                hintStyle: TextStyle(
-                                    color: Colors.grey.shade400,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade400,
-                                    width: 0.5,
-                                  ),
-                                ),
-                                focusedBorder: const UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                            width: 130,
+                            child: provider.isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator())
+                                : CustomDropdownTwo(
+                                    hint: '',
+                                    items: provider.billPersonNames,
+                                    width: double.infinity,
+                                    height: 30,
+                                    labelText: 'Bill Person',
+                                    selectedItem: selectedBillPerson,
+                                    onChanged: (value) {
+                                      debugPrint(
+                                          '=== Bill Person Selected: $value ===');
+                                      setState(() {
+                                        selectedBillPerson = value;
+                                        selectedBillPersonData =
+                                            provider.billPersons.firstWhere(
+                                          (person) => person.name == value,
+                                        ); // ✅ Save the whole object globally
+                                        selectedBillPersonId =
+                                            selectedBillPersonData!.id;
+                                      });
+
+                                      debugPrint(
+                                          'Selected Bill Person Details:');
+                                      debugPrint(
+                                          '- ID: ${selectedBillPersonData!.id}');
+                                      debugPrint(
+                                          '- Name: ${selectedBillPersonData!.name}');
+                                      debugPrint(
+                                          '- Phone: ${selectedBillPersonData!.phone}');
+                                    }),
+                          );
+                        },
+                      ),
+                    ),
+ 
+
+
+                          // SizedBox(
+                          //   height: 30,
+                          //   width: 90,
+                          //   child: TextField(
+                          //     style: const TextStyle(
+                          //       color: Colors.black,
+                          //       fontSize: 12,
+                          //     ),
+                          //     controller: TextEditingController(),
+                          //     cursorHeight:
+                          //         12, // Match cursor height to text size
+                          //     decoration: InputDecoration(
+                          //       isDense: true, // Ensures the field is compact
+                          //       contentPadding: EdgeInsets
+                          //           .zero, // Removes unnecessary padding
+                          //       hintText: "Bill Person",
+                          //       hintStyle: TextStyle(
+                          //           color: Colors.grey.shade400,
+                          //           fontSize: 12,
+                          //           fontWeight: FontWeight.w600),
+                          //       enabledBorder: UnderlineInputBorder(
+                          //         borderSide: BorderSide(
+                          //           color: Colors.grey.shade400,
+                          //           width: 0.5,
+                          //         ),
+                          //       ),
+                          //       focusedBorder: const UnderlineInputBorder(
+                          //         borderSide: BorderSide(
+                          //           color: Colors.green,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                           // Bill No Field
 
                           const SizedBox(
@@ -439,7 +454,7 @@ class _IncomeEditState extends State<IncomeEdit> {
           ),
 
           ///expense item list.
-          if (providerExpense.receiptItems.isNotEmpty)
+          if (provider.receiptItems.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children:
@@ -532,16 +547,14 @@ class _IncomeEditState extends State<IncomeEdit> {
 
           const SizedBox(height: 6),
 
-          ///add new expense item & 2 section
           InkWell(
             onTap: () async {
               await provider
                   .fetchReceiptFromList(); // 🔥 Fetch API before showing dialog
-
-              final expenseProvider =
-                  Provider.of<ExpenseProvider>(context, listen: false);
-              await expenseProvider.fetchPaidFormList();
-              showExpenseCreateDialog(context, expenseProvider);
+              showIncomeCreateDialog(
+                context,
+                provider,
+              ); // Pass provider
             },
             child: Container(
               decoration: BoxDecoration(
@@ -561,7 +574,7 @@ class _IncomeEditState extends State<IncomeEdit> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "Paid From",
+                      "Receipt From",
                       style: TextStyle(color: Colors.white, fontSize: 14),
                     ),
                     InkWell(
@@ -571,7 +584,7 @@ class _IncomeEditState extends State<IncomeEdit> {
                         color: Colors.white,
                         size: 18,
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -616,13 +629,18 @@ class _IncomeEditState extends State<IncomeEdit> {
                   ],
                 ),
               ),
+
+              //update.
+
+              // Income Update Button Implementation
+
+              // Income Update Button Implementation
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5)),
-
                     backgroundColor: Colors.green, // Button background color
                     foregroundColor: Colors.white, // Button text color
                   ),
@@ -637,89 +655,99 @@ class _IncomeEditState extends State<IncomeEdit> {
                     }
 
                     final invoiceNo = voucherNumberController.text.trim();
-                    //final invoiceNo = billNoController.text.trim();
                     if (invoiceNo.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('Expense No cannot be empty')),
+                            content: Text('Income No cannot be empty')),
                       );
                       return;
                     }
 
                     const date = "2025-06-10";
-                    final paidTo =
+                    final receivedTo =
                         (selectedReceivedTo ?? '').toLowerCase().trim() ==
                                 'cash in hand'
                             ? 'cash'
                             : 'bank';
-                    //final account = selectedAccountId.toString();
-                    final String account = providerExpense
-                        .receiptItems.first.purchaseId
-                        .toString(); // ✔️ Use correct account id
-                     
-                    final expenseId = widget.incomeId;
 
-                    const  notes = 'text';
+                    // Get the IncomeProvider instance
+                    final providerIncome =
+                        Provider.of<IncomeProvider>(context, listen: false);
+
+                    // Get account from selected received form (from provider)
+                    final String account = providerIncome
+                            .selectedReceivedFormForUpdate?.id
+                            .toString() ??
+                        '10';
+
+                    final incomeId =
+                        widget.incomeId; // Get income ID from widget
+
+                    const notes = 'text';
                     const status = 1;
-                    //final expenseId = "59"; // Pass the correct expense ID
 
                     final totalAmount =
-                        providerExpense.receiptItems.fold<double>(
+                        providerIncome.receiptItems.fold<double>(
                       0,
                       (sum, item) =>
                           sum + (double.tryParse(item.amount.toString()) ?? 0),
                     );
 
-                    final List<ExpenseItemPopUp> expenseItems =
-                        providerExpense.receiptItems.map((item) {
-                      return ExpenseItemPopUp(
-                        accountId:  '10', // ✔️ Use correct item-specific account id
+                    final List<IncomeItem> incomeItems =
+                        providerIncome.receiptItems.map((item) {
+                      return IncomeItem(
+                        accountId: providerIncome.selectedAccountForUpdate?.id
+                                .toString() ??
+                            '',
                         narration: item.note,
                         amount: item.amount.toString(),
                       );
                     }).toList();
 
-                    
-
-                    debugPrint('Sending Data:');
+                    debugPrint('Sending Income Update Data:');
                     debugPrint('User ID: $userId');
-                    debugPrint('Expense No: $invoiceNo');
+                    debugPrint('Income ID: $incomeId');
+                    debugPrint('Invoice No: $invoiceNo');
                     debugPrint('Date: $date');
-                    debugPrint('Paid To: $paidTo');
+                    debugPrint('Received To: $receivedTo');
                     debugPrint('Account: $account');
                     debugPrint('Total Amount: $totalAmount');
                     debugPrint('Notes: $notes');
                     debugPrint('Status: $status');
                     debugPrint(
-                        'Expense Items: ${expenseItems.map((e) => e.toJson()).toList()}');
+                        'Income Items: ${incomeItems.map((e) => e.toJson()).toList()}');
 
-                    bool success = await providerExpense.updateExpense(
-                      expenseId: expenseId,
+                    bool success = await providerIncome.updateIncome(
+                      incomeId: incomeId,
                       userId: userId,
                       invoiceNo: invoiceNo,
                       date: date,
-                      paidTo: paidTo,
+                      receivedTo: receivedTo,
                       account: account,
                       totalAmount: totalAmount,
                       notes: notes,
                       status: status,
-                      expenseItems: expenseItems,
+                      incomeItems: incomeItems,
                     );
 
                     if (success) {
-                      providerExpense.receiptItems.clear();
-                      providerExpense.notifyListeners();
+                      providerIncome.receiptItems.clear();
+                      providerIncome.notifyListeners();
+
+                      // Refresh the income list after successful update
+                      await providerIncome.fetchIncomeList();
 
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Expanse()),
+                            builder: (context) =>
+                                const Income()), // Replace with your income page
                         (Route<dynamic> route) => false,
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('Failed to update expense.')),
+                            content: Text('Failed to update income.')),
                       );
                     }
                   },
@@ -979,6 +1007,9 @@ class _IncomeEditState extends State<IncomeEdit> {
                                 debugPrint('Selected Paid To: $selectedItem');
                                 setState(() {
                                   selectedPaidTo = selectedItem;
+                                  // providerIncome
+                                  //     .setSelectedReceivedFormForUpdate(
+                                  //         matchedAccount);
                                 });
                               },
                             ),
@@ -1022,6 +1053,156 @@ class _IncomeEditState extends State<IncomeEdit> {
                             }
                           },
                           child: const Text('Update'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void showIncomeCreateDialog(
+    BuildContext context,
+    IncomeProvider provider,
+  ) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController amountController = TextEditingController();
+        TextEditingController noteController = TextEditingController();
+        String? selectedReceiptFrom;
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              insetPadding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.all(6.0),
+                color: Colors.white,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 30,
+                      color: const Color(0xff278d46),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                              width:
+                                  30), // Placeholder for left spacing (can be removed or adjusted)
+
+                          // Centered text and icon
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(width: 5),
+                              Text(
+                                "Receipt From",
+                                style: TextStyle(
+                                    color: Colors.yellow,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: Colors.grey.shade100,
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 18,
+                                    color: Colors.green,
+                                  )),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      height: 30,
+                      child: provider.isReceiptLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : CustomDropdownTwo(
+                              hint: '',
+                              items: provider.receiptFromNames,
+                              width: double.infinity,
+                              height: 30,
+                              labelText: 'Receipt From',
+                              selectedItem: selectedReceiptFrom,
+                              onChanged: (selectedItem) {
+                                debugPrint(
+                                    'Selected Receipt From: $selectedItem');
+                                setState(() {
+                                  selectedReceiptFrom = selectedItem;
+                                });
+                              },
+                            ),
+                    ),
+                    AddSalesFormfield(
+                      label: "",
+                      labelText: "Amount",
+                      controller: amountController,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {},
+                    ),
+                    AddSalesFormfield(
+                      label: "",
+                      labelText: "Note",
+                      controller: noteController,
+                      keyboardType: TextInputType.text,
+                      onChanged: (value) {},
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            if (selectedReceiptFrom != null &&
+                                amountController.text.isNotEmpty) {
+                              provider.addReceiptItem(ReceiptItem(
+                                receiptFrom: selectedReceiptFrom!,
+                                amount: amountController.text,
+                                note: noteController.text,
+                              ));
+                              amountController.clear();
+                              noteController.clear();
+                              setState(() {
+                                selectedReceiptFrom = null;
+                              });
+                            }
+                          },
+                          child: const Text('Add & New'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            if (selectedReceiptFrom != null &&
+                                amountController.text.isNotEmpty) {
+                              provider.addReceiptItem(ReceiptItem(
+                                receiptFrom: selectedReceiptFrom!,
+                                amount: amountController.text,
+                                note: noteController.text,
+                              ));
+                            }
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Add'),
                         ),
                       ],
                     ),

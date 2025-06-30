@@ -633,130 +633,173 @@ class _PaymenyOutEditState extends State<PaymenyOutEdit> {
             },
           ),
 
-
           Consumer<CustomerProvider>(
-  builder: (context, customerProvider, child) {
-    final paymentList = customerProvider.paymentVouchers;
+            builder: (context, customerProvider, child) {
+              final paymentList = customerProvider.paymentVouchers;
 
-    return SizedBox(
-      height: 300,
-      child: paymentList.isEmpty
-          ? const Center(
-              child: Text(
-                "No payment voucher found.",
-                style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
-              ),
-            )
-          : ListView.builder(
-              itemCount: paymentList.length,
-              itemBuilder: (context, index) {
-                final invoice = paymentList[index];
-                final bool isExpanded = expandedIndexes.contains(index);
-                final due = double.tryParse(invoice.due.toString()) ?? 0;
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                  child: Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
-                    elevation: 1,
-                    margin: const EdgeInsets.only(bottom: 2),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          if (isExpanded) {
-                            expandedIndexes.remove(index);
-                          } else {
-                            expandedIndexes.add(index);
-                          }
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /// Top Row
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(invoice.billNumber ?? '',
-                                    style: const TextStyle(fontSize: 14, color: Colors.black)),
-                                Text(invoice.purchaseDate ?? '',
-                                    style: const TextStyle(fontSize: 14, color: Colors.black)),
-                                Text('Bill ৳${invoice.grossTotal ?? 0}',
-                                    style: const TextStyle(fontSize: 14, color: Colors.black)),
-                                Text('Due ৳${invoice.due ?? 0}',
-                                    style: const TextStyle(fontSize: 14, color: Colors.black)),
-                                Icon(
-                                  isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                                  size: 28,
-                                ),
-                              ],
-                            ),
-
-                            if (isExpanded) ...[
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  const Text('Payment',
-                                      style: TextStyle(fontSize: 14, color: Colors.black)),
-                                  const SizedBox(width: 10),
-                                  SizedBox(
-                                    height: 30,
-                                    width: 150,
-                                    child: TextFormField(
-                                      controller: receiptControllers[index] ??=
-                                          TextEditingController(),
-                                      keyboardType: const TextInputType.numberWithOptions(
-                                          decimal: true),
-                                      style: const TextStyle(fontSize: 14, color: Colors.black),
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(horizontal: 10),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                      ),
-                                      onChanged: (value) {
-                                        final input = double.tryParse(value) ?? 0;
-
-                                        if (input > due) {
-                                          receiptControllers[index]!.text =
-                                              due.toStringAsFixed(2);
-                                          receiptControllers[index]!.selection =
-                                              TextSelection.fromPosition(TextPosition(
-                                                  offset:
-                                                      receiptControllers[index]!.text.length));
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  'Amount can’t exceed due: ৳${due.toStringAsFixed(2)}'),
-                                              backgroundColor: Colors.red,
-                                              duration: const Duration(seconds: 2),
-                                            ),
-                                          );
-                                        }
-
-                                        _recalculatePayment();
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ],
+              return SizedBox(
+                height: 300,
+                child: paymentList.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "No payment voucher found.",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-    );
-  },
-),
+                      )
+                    : ListView.builder(
+                        itemCount: paymentList.length,
+                        itemBuilder: (context, index) {
+                          final invoice = paymentList[index];
+                          final bool isExpanded =
+                              expandedIndexes.contains(index);
+                          final due =
+                              double.tryParse(invoice.due.toString()) ?? 0;
 
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 2, vertical: 1),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(3)),
+                              elevation: 1,
+                              margin: const EdgeInsets.only(bottom: 2),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    if (isExpanded) {
+                                      expandedIndexes.remove(index);
+                                    } else {
+                                      expandedIndexes.add(index);
+                                    }
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0, vertical: 6.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      /// Top Row
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(invoice.billNumber ?? '',
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black)),
+                                          Text(invoice.purchaseDate ?? '',
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black)),
+                                          Text(
+                                              'Bill ৳${invoice.grossTotal ?? 0}',
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black)),
+                                          Text('Due ৳${invoice.due ?? 0}',
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black)),
+                                          Icon(
+                                            isExpanded
+                                                ? Icons.arrow_drop_up
+                                                : Icons.arrow_drop_down,
+                                            size: 28,
+                                          ),
+                                        ],
+                                      ),
+
+                                      if (isExpanded) ...[
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            const Text('Payment',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black)),
+                                            const SizedBox(width: 10),
+                                            SizedBox(
+                                              height: 30,
+                                              width: 150,
+                                              child: TextFormField(
+                                                controller: receiptControllers[
+                                                        index] ??=
+                                                    TextEditingController(),
+                                                keyboardType:
+                                                    const TextInputType
+                                                        .numberWithOptions(
+                                                        decimal: true),
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black),
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                      const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                  ),
+                                                ),
+                                                onChanged: (value) {
+                                                  final input =
+                                                      double.tryParse(value) ??
+                                                          0;
+
+                                                  if (input > due) {
+                                                    receiptControllers[index]!
+                                                            .text =
+                                                        due.toStringAsFixed(2);
+                                                    receiptControllers[index]!
+                                                            .selection =
+                                                        TextSelection.fromPosition(
+                                                            TextPosition(
+                                                                offset: receiptControllers[
+                                                                        index]!
+                                                                    .text
+                                                                    .length));
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                            'Amount can’t exceed due: ৳${due.toStringAsFixed(2)}'),
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        duration:
+                                                            const Duration(
+                                                                seconds: 2),
+                                                      ),
+                                                    );
+                                                  }
+
+                                                  _recalculatePayment();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              );
+            },
+          ),
 
           /// Show customer payable/receivable for payment
           // Consumer<CustomerProvider>(
@@ -1071,6 +1114,7 @@ class _PaymenyOutEditState extends State<PaymenyOutEdit> {
                       height: 30,
                       width: 76,
                       child: AddSalesFormfield(
+                        keyboardType: TextInputType.number,
                         controller: discountAmount,
                         onChanged: (value) {
                           _recalculatePayment();
