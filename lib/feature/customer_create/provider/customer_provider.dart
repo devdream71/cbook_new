@@ -41,6 +41,8 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+
   void clearSelectedCustomerRecived() {
     _selectedCustomerRecived = null;
     receivedVouchers.clear();
@@ -57,6 +59,34 @@ class CustomerProvider extends ChangeNotifier {
     customerResponse = null;
     notifyListeners();
   }
+
+
+  
+  // ✅ ADD: Payment customer selection (if you need separate payment customer tracking)
+  Customer? _selectedCustomerPayment;
+  Customer? get selectedCustomerPayment => _selectedCustomerPayment;
+
+  void setSelectedCustomerPayment(Customer customer) {
+    _selectedCustomerPayment = customer;
+    fetchPaymentVouchersByCustomerId(customer.id);
+    notifyListeners();
+  }
+
+  void clearSelectedCustomerPayment() {
+    _selectedCustomerPayment = null;
+    _paymentVouchers.clear();
+    notifyListeners();
+  }
+
+  // ✅ ADD: Set selected payment customer by ID
+  void setSelectedCustomerPaymentById(int customerId) {
+    final customer = findCustomerById(customerId);
+    if (customer != null) {
+      setSelectedCustomerPayment(customer);
+    }
+  }
+
+
 
   bool isLoading = false;
   CustomerResponse? customerResponse;
@@ -97,6 +127,36 @@ class CustomerProvider extends ChangeNotifier {
     isLoading = false;
     notifyListeners(); // Notify after data fetch is completed
   }
+
+
+  // ✅ ADD THIS METHOD - Find customer by ID
+  Customer? findCustomerById(int customerId) {
+    if (customerResponse?.data == null) return null;
+    
+    try {
+      return customerResponse!.data.firstWhere((customer) => customer.id == customerId);
+    } catch (e) {
+      debugPrint('Customer not found with ID: $customerId');
+      return null;
+    }
+  }
+
+  // ✅ ADD THIS METHOD - Set selected customer for received voucher by ID
+  void setSelectedCustomerRecivedById(int customerId) {
+    final customer = findCustomerById(customerId);
+    if (customer != null) {
+      setSelectedCustomerRecived(customer);
+    }
+  }
+
+  // ✅ ADD THIS METHOD - Set selected customer by ID (for regular customer selection)
+  void setSelectedCustomerById(int customerId) {
+    final customer = findCustomerById(customerId);
+    if (customer != null) {
+      setSelectedCustomer(customer);
+    }
+  }
+
 
   ///paymet voucher
   List<PaymentVoucherCustomer> _paymentVouchers = [];

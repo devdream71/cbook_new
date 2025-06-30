@@ -96,6 +96,7 @@ class _ReceviedEditState extends State<ReceviedEdit> {
     );
   }
 
+  // Updated initState method with correct API data mapping
   @override
   void initState() {
     super.initState();
@@ -117,44 +118,165 @@ class _ReceviedEditState extends State<ReceviedEdit> {
       final data = await provider.fetchReceiveVoucherById(widget.receviedId);
 
       if (data != null) {
-        // ✅ Use this data to pre-fill your fields
-
         setState(() {
+          // ✅ Correct field mappings based on API response
           voucherNumberController.text = data['voucher_number'] ?? '';
-          selectedReceivedTo = data['received_to']; //cash or bank //received_to
+
+          // ✅ Map received_to correctly (API returns 'cash' or 'bank')
+          selectedReceivedTo =
+              data['received_to'] == 'cash' ? 'Cash in Hand' : 'Bank';
+
+          // ✅ bill_person_id mapping
           selectedBillPersonId = data['bill_person_id'];
-          selectedAccountId =
-              data['account_type']; // coount type //cash, cash 1,
-          selectedDiscountType = data['discount_type'];
+
+          // ✅ account_type mapping
+          selectedAccountId = data['account_type'];
+
+          // ✅ Handle null discount_type from API
+          selectedDiscountType = data['discount_type'] ?? '%';
+
+          // ✅ Use discount_amount from API
           discountAmount.text = (data['discount_amount'] ?? 0).toString();
+
+          // ✅ Use total_amount from API
           totalAmount.text = (data['total_amount'] ?? 0).toString();
+
+          // ✅ Date mapping
           selectedStartDate =
               DateTime.tryParse(data['voucher_date']) ?? DateTime.now();
           selectedEndDate =
               DateTime.tryParse(data['voucher_date']) ?? DateTime.now();
 
-          // ✅ Fill voucher details list
+          // ✅ Set customer_id if available
+          if (data['customer_id'] != null) {
+            // You'll need to set the selected customer based on customer_id
+            _setSelectedCustomer(data['customer_id']);
+          }
+
+          // ✅ Fill voucher details list - CORRECTED spelling
           if (data['voucher_detaiuls'] is List) {
             final List details = data['voucher_detaiuls'];
+            receiptControllers.clear(); // Clear existing controllers
+
             for (int i = 0; i < details.length; i++) {
               final item = details[i];
               final controller =
-                  TextEditingController(text: item['amount'].toString());
+                  TextEditingController(text: (item['amount'] ?? 0).toString());
               receiptControllers[i] = controller;
+
+              // Add listener to recalculate when amount changes
+              controller.addListener(() {
+                _recalculatePayment();
+              });
             }
           }
 
+          // ✅ Load account dropdown based on received_to
+          _loadAccountDropdown();
+
+          //await _loadAccountDropdown();
+
+          // ✅ Set bill person if ID is available
+          _setBillPerson();
+
           _recalculatePayment();
 
-          debugPrint('receipt to === ${selectedReceivedTo} ');
+          debugPrint('Received To: $selectedReceivedTo');
+          debugPrint('Bill Person ID: $selectedBillPersonId');
+          debugPrint('Account ID: $selectedAccountId');
+          debugPrint('Customer ID: ${data['customer_id']}');
         });
       }
     });
   }
 
+//Helper method to load account dropdown based on received_to
+  void _loadAccountDropdown() async {
+    final provider = Provider.of<IncomeProvider>(context, listen: false);
+
+    if (selectedReceivedTo == 'Cash in Hand') {
+      await provider.fetchAccounts('cash');
+    } else if (selectedReceivedTo == 'Bank') {
+      await provider.fetchAccounts('bank');
+    }
+
+    // Set selected account after loading
+    if (selectedAccountId != null && provider.accountModel != null) {
+      final account = provider.accountModel!.data.firstWhere(
+        (acc) => acc.id == selectedAccountId,
+        orElse: () => provider.accountModel!.data.first,
+      );
+      setState(() {
+        selectedAccount = account.accountName;
+      });
+    }
+  }
+
+// Helper method to set bill person
+  void _setBillPerson() {
+    if (selectedBillPersonId != null) {
+      final provider =
+          Provider.of<PaymentVoucherProvider>(context, listen: false);
+
+      // You might need to wait for bill persons to load first
+      Future.delayed(Duration(milliseconds: 500), () {
+        if (provider.billPersons.isNotEmpty) {
+          try {
+            final billPerson = provider.billPersons.firstWhere(
+              (person) => person.id == selectedBillPersonId,
+            );
+            setState(() {
+              selectedBillPerson = billPerson.name;
+              selectedBillPersonData = billPerson;
+            });
+          } catch (e) {
+            debugPrint('Bill person not found with ID: $selectedBillPersonId');
+          }
+        }
+      });
+    }
+  }
+
+// Helper method to set selected customer
+  void _setSelectedCustomer(int customerId) {
+    final customerProvider =
+        Provider.of<CustomerProvider>(context, listen: false);
+
+    //Wait for customers to load then set the selected one
+    Future.delayed(Duration(milliseconds: 500), () {
+      if (customerProvider.customerResponse?.data != null) {
+        final customer = customerProvider.findCustomerById(customerId);
+
+        if (customer != null) {
+          // Set the customer in the provider
+          customerProvider.setSelectedCustomerRecived(customer);
+
+          // Update the controller text
+          final controller =
+              Provider.of<SalesController>(context, listen: false);
+          controller.customerNameController.text = customer.name;
+
+          debugPrint('Successfully set customer: ${customer.name}');
+        } else {
+          debugPrint('Customer not found with ID: $customerId');
+        }
+      }
+    });
+  }
+
+// Updated dispose method to dispose all controllers
   @override
   void dispose() {
     voucherNumberController.dispose();
+    totalAmount.dispose();
+    discountAmount.dispose();
+
+    // Dispose all receipt controllers
+    for (final controller in receiptControllers.values) {
+      controller.dispose();
+    }
+    receiptControllers.clear();
+
     super.dispose();
   }
 
@@ -823,7 +945,6 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5)),
-
                     backgroundColor: Colors.green, // Button background color
                     foregroundColor: Colors.white, // Button text color
                   ),
@@ -846,6 +967,13 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                       return;
                     }
 
+                 
+
+                    // ⚠️ You need to pass the voucher ID that you want to update
+                    // This should come from your screen/widget parameters or state
+                    String voucherId =
+                        widget.receviedId; // Replace this with actual voucher ID
+
                     int userId = int.parse(userIdStr);
                     int customerId = selectedCustomer.id;
                     int voucherPerson = selectedBillPersonData?.id ?? 0;
@@ -865,11 +993,6 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                     double discountAmt =
                         double.tryParse(discountAmount.text) ?? 0;
                     String notes = 'notes';
-
-                    // List<ReceivedVoucherItem> voucherItems = [
-                    //   ReceivedVoucherItem(
-                    //       salesId: "57", amount: totalAmt.toStringAsFixed(2)),
-                    // ];
 
                     final customerProvider =
                         Provider.of<CustomerProvider>(context, listen: false);
@@ -916,7 +1039,10 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                     final provider = Provider.of<ReceiveVoucherProvider>(
                         context,
                         listen: false);
-                    bool success = await provider.storeReceivedVoucher(request);
+
+                    // 🔄 Call the update method instead of store
+                    bool success = await provider.updateReceivedVoucher(
+                        voucherId, request);
 
                     if (success) {
                       // ✅ Clear the selected customer
@@ -926,10 +1052,12 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text(
-                          "Received voucher saved successfully!",
+                          "Received voucher updated successfully!",
                           style: TextStyle(color: Colors.green),
                         )),
                       );
+
+                       
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -938,7 +1066,8 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text("Failed to save received voucher.")),
+                            content:
+                                Text("Failed to update received voucher.")),
                       );
                     }
                   },

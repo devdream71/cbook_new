@@ -123,4 +123,75 @@ class ReceiveVoucherProvider with ChangeNotifier {
       return null;
     }
   }
+
+  ///update recived api call here 
+  ///update received voucher
+  Future<bool> updateReceivedVoucher(String voucherId, ReceivedVoucherRequest request) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      // Create query parameters for the URL
+      final queryParams = {
+        'id': voucherId,
+        'user_id': request.userId.toString(),
+        'voucher_person': request.voucherPerson.toString(),
+        'voucher_number': request.voucherNumber,
+        'voucher_date': request.voucherDate,
+        'voucher_time': request.voucherTime,
+        'received_to': request.receivedTo,
+        'account_id': request.accountId.toString(),
+        'received_from': request.receivedFrom.toString(),
+        'percent': request.percent,
+        'total_amount': request.totalAmount.toString(),
+        'discount': request.discount.toString(),
+        'notes': request.notes,
+      };
+
+      final uri = Uri.https(
+        'commercebook.site',
+        '/api/v1/receive-vouchers/update',
+        queryParams,
+      );
+
+      // Create body with voucher_items
+      final bodyData = {
+        'voucher_items': request.voucherItems.map((item) => {
+          'sales_id': item.salesId,
+          'amount': item.amount,
+        }).toList(),
+      };
+
+      final bodyJson = json.encode(bodyData);
+
+      debugPrint('--- Update Received Voucher API Request ---');
+      debugPrint('Request URL: $uri');
+      debugPrint('Request Body JSON: $bodyJson');
+      debugPrint('------------------------------------------');
+
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: bodyJson,
+      );
+
+      debugPrint('Update API Status Code: ${response.statusCode}');
+      debugPrint('Update API Response Body: ${response.body}');
+
+      isLoading = false;
+      notifyListeners();
+
+      if (response.statusCode == 200) {
+        // Refresh the vouchers list after successful update
+        await fetchReceiveVouchers();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("Exception in updateReceivedVoucher: $e");
+      isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
 }
