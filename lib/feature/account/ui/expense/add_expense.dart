@@ -25,28 +25,12 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
 
   int? selectedAccountId;
 
-  DateTime selectedStartDate = DateTime.now();
-  // Default to current date
-  DateTime selectedEndDate = DateTime.now();
-  // Default to current date
+
   String? selectedDropdownValue;
 
   String? selectedBillPerson;
   int? selectedBillPersonId;
   BillPersonModel? selectedBillPersonData;
-
-  Future<void> _selectDate(BuildContext context, DateTime initialDate,
-      Function(DateTime) onDateSelected) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      onDateSelected(picked);
-    }
-  }
 
   @override
   void initState() {
@@ -69,29 +53,11 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
   TextEditingController billNoController = TextEditingController();
   String billNo = '';
 
-  void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
-    // Convert receiptItems to required JSON structure
-    final List<Map<String, dynamic>> incomeItems =
-        provider.receiptItems.map((item) {
-      return {
-        "account_id": selectedAccountId,
-        "narration": item.note,
-        "amount": item.amount.toString(),
-      };
-    }).toList();
-
-    final Map<String, dynamic> finalPayload = {
-      "income_items": incomeItems,
-    };
-
-    // Print JSON string in console
-    debugPrint('Final JSON Payload: $finalPayload');
-  }
 
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<SalesController>();
-    //final provider = Provider.of<IncomeProvider>(context);
+
     final provider = context.watch<IncomeProvider>();
 
     final colorScheme = Theme.of(context).colorScheme;
@@ -272,41 +238,6 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         },
                       ),
                     ),
-
-                    // SizedBox(
-                    //   height: 30,
-                    //   width: 90,
-                    //   child: TextField(
-                    //     style: const TextStyle(
-                    //       color: Colors.black,
-                    //       fontSize: 12,
-                    //     ),
-                    //     controller: TextEditingController(),
-                    //     cursorHeight: 12, // Match cursor height to text size
-                    //     decoration: InputDecoration(
-                    //       isDense: true, // Ensures the field is compact
-                    //       contentPadding:
-                    //           EdgeInsets.zero, // Removes unnecessary padding
-                    //       hintText: "Bill Person",
-                    //       hintStyle: TextStyle(
-                    //           color: Colors.grey.shade400,
-                    //           fontSize: 12,
-                    //           fontWeight: FontWeight.w600),
-                    //       enabledBorder: UnderlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //           color: Colors.grey.shade400,
-                    //           width: 0.5,
-                    //         ),
-                    //       ),
-                    //       focusedBorder: const UnderlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //           color: Colors.green,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // Bill No Field
 
                     const SizedBox(
                       height: 8,
@@ -654,11 +585,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         providerExpense.receiptItems.clear();
                         providerExpense.notifyListeners();
 
-                        // Navigate to Income page (replace with your actual route)
-                        // Navigator.pushReplacement(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => const Expanse()));
+                      
 
                         providerExpense.fetchExpenseList();
 

@@ -17,44 +17,6 @@ class PurchaseListApi extends StatefulWidget {
 }
 
 class _PurchaseListApiState extends State<PurchaseListApi> {
-  Future<void> _deletePurchase(int purchaseId) async {
-    final url = Uri.parse(
-        'https://commercebook.site/api/v1/purchase/remove?id=$purchaseId');
-
-    try {
-      final response = await http.post(url);
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        if (data['success'] == true) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating, // Optional: Floating style
-                duration: Duration(seconds: 2),
-                content: Text("Purchase deleted successfully")),
-          );
-
-          Provider.of<PurchaseProvider>(context, listen: false)
-              .fetchPurchases();
-
-          // Remove from UI by updating the provider
-          // Provider.of<PurchaseProvider>(context, listen: false)
-          //     .removePurchase(purchaseId); // This will update the UI
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to delete purchase")),
-          );
-        }
-      } else {
-        throw Exception('Failed to delete purchase');
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error deleting purchase: $error')),
-      );
-    }
-  }
-
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
@@ -403,8 +365,22 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                       final purchase = provider.purchaseData!.data![index];
                       bool isEnabled = purchase.disabled == 'enable';
 
+                      final purchaseId =
+                          purchase.purchaseDetails!.first.purchaseId.toString();
+
                       return InkWell(
-                        onTap: () {},
+                        onLongPress: () {
+                          editDeleteDiolog(context, purchaseId);
+                        },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PurchaseDetailsPage(purchase: purchase),
+                            ),
+                          );
+                        },
                         child: Card(
                           shadowColor: const Color.fromARGB(255, 12, 9, 199),
                           shape: RoundedRectangleBorder(
@@ -423,81 +399,68 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                               children: [
                                 /// Left side: Supplier info
                                 Expanded(
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              PurchaseDetailsPage(
-                                                  purchase: purchase),
-                                        ),
-                                      );
-                                    },
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            //date, invoice number
-                                            SizedBox(
-                                              width: 90,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    formatDate(
-                                                        purchase.pruchaseDate),
-                                                    style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.black),
-                                                  ),
-                                                  Text('${purchase.billNumber}',
-                                                      style: const TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                ],
-                                              ),
-                                            ),
-
-                                            //divider
-                                            Container(
-                                              height: 30,
-                                              width: 2,
-                                              color: Colors.green.shade200,
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 6),
-                                            ),
-
-                                            //cash or customer name, amount
-                                            Column(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          //date, invoice number
+                                          SizedBox(
+                                            width: 90,
+                                            child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  (purchase.supplier == 'N/A')
-                                                      ? 'Cash'
-                                                      : purchase.supplier!,
+                                                  formatDate(
+                                                      purchase.pruchaseDate),
                                                   style: const TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.black),
                                                 ),
-                                                Text(
-                                                    '৳ ${purchase.purchaseDetails!.first.subTotal ?? 0}',
+                                                Text('${purchase.billNumber}',
                                                     style: const TextStyle(
                                                         fontSize: 14,
-                                                        color: Colors.black)),
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                               ],
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                            ),
+                                          ),
+
+                                          //divider
+                                          Container(
+                                            height: 30,
+                                            width: 2,
+                                            color: Colors.green.shade200,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 6),
+                                          ),
+
+                                          //cash or customer name, amount
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                (purchase.supplier == 'N/A')
+                                                    ? 'Cash'
+                                                    : purchase.supplier!,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black),
+                                              ),
+                                              Text(
+                                                  '৳ ${purchase.purchaseDetails!.first.subTotal ?? 0}',
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.black)),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
 
@@ -549,66 +512,66 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
 
                                         const SizedBox(width: 8),
 
-                                        ///3 dot
-                                        SizedBox(
-                                          height: 20,
-                                          width: 50,
-                                          child: PopupMenuButton<String>(
-                                            position: PopupMenuPosition.under,
-                                            iconSize: 30,
-                                            padding: EdgeInsets.zero,
-                                            onSelected: (value) async {
-                                              if (value == 'update' &&
-                                                  isEnabled) {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PurchaseUpdateScreen(
-                                                      purchaseId: purchase
-                                                          .purchaseDetails![0]
-                                                          .purchaseId!,
-                                                    ),
-                                                  ),
-                                                );
-                                              } else if (value == 'delete') {
-                                                bool isConfirmed =
-                                                    await _showDeleteConfirmationDialog(
-                                                        context);
-                                                if (isConfirmed) {
-                                                  await _deletePurchase(purchase
-                                                      .purchaseDetails![0]
-                                                      .purchaseId);
-                                                }
-                                              }
-                                            },
-                                            itemBuilder: (context) => [
-                                              if (isEnabled)
-                                                const PopupMenuItem(
-                                                  value: 'update',
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.edit,
-                                                          color: Colors.blue),
-                                                      SizedBox(width: 8),
-                                                      Text('Update'),
-                                                    ],
-                                                  ),
-                                                ),
-                                              const PopupMenuItem(
-                                                value: 'delete',
-                                                child: Row(
-                                                  children: [
-                                                    Icon(Icons.delete,
-                                                        color: Colors.red),
-                                                    SizedBox(width: 8),
-                                                    Text('Delete'),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                        ///3 dot delete and update.
+                                        // SizedBox(
+                                        //   height: 20,
+                                        //   width: 50,
+                                        //   child: PopupMenuButton<String>(
+                                        //     position: PopupMenuPosition.under,
+                                        //     iconSize: 30,
+                                        //     padding: EdgeInsets.zero,
+                                        //     onSelected: (value) async {
+                                        //       if (value == 'update' &&
+                                        //           isEnabled) {
+                                        //         Navigator.push(
+                                        //           context,
+                                        //           MaterialPageRoute(
+                                        //             builder: (context) =>
+                                        //                 PurchaseUpdateScreen(
+                                        //               purchaseId: purchase
+                                        //                   .purchaseDetails![0]
+                                        //                   .purchaseId!,
+                                        //             ),
+                                        //           ),
+                                        //         );
+                                        //       } else if (value == 'delete') {
+                                        //         bool isConfirmed =
+                                        //             await _showDeleteConfirmationDialog(
+                                        //                 context);
+                                        //         if (isConfirmed) {
+                                        //           await _deletePurchase(purchase
+                                        //               .purchaseDetails![0]
+                                        //               .purchaseId);
+                                        //         }
+                                        //       }
+                                        //     },
+                                        //     itemBuilder: (context) => [
+                                        //       if (isEnabled)
+                                        //         const PopupMenuItem(
+                                        //           value: 'update',
+                                        //           child: Row(
+                                        //             children: [
+                                        //               Icon(Icons.edit,
+                                        //                   color: Colors.blue),
+                                        //               SizedBox(width: 8),
+                                        //               Text('Update'),
+                                        //             ],
+                                        //           ),
+                                        //         ),
+                                        //       const PopupMenuItem(
+                                        //         value: 'delete',
+                                        //         child: Row(
+                                        //           children: [
+                                        //             Icon(Icons.delete,
+                                        //                 color: Colors.red),
+                                        //             SizedBox(width: 8),
+                                        //             Text('Delete'),
+                                        //           ],
+                                        //         ),
+                                        //       ),
+                                        //     ],
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                                   ],
@@ -680,5 +643,125 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
           },
         ) ??
         false;
+  }
+
+  ///show edit and delete list from alart diolog
+  Future<dynamic> editDeleteDiolog(BuildContext context, String purchaseId) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    //Navigate to Edit Page
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, purchaseId);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  ////delete recived item from list
+  void _showDeleteDialog(BuildContext context, String purchaseId) {
+    final colorScheme = Theme.of(context).colorScheme;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Receipt in',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this Receipt in?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Close dialog first
+
+              // ✅ Call delete from Provider
+              await Provider.of<PurchaseProvider>(context, listen: false)
+                  .deletePurchase(context, int.parse(purchaseId));
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
   }
 }

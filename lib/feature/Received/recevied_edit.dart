@@ -35,8 +35,7 @@ class _ReceviedEditState extends State<ReceviedEdit> {
   String billNo = '';
   String billDate = '';
   Map<int, TextEditingController> receiptControllers = {};
-  // late TextEditingController totalAmount = TextEditingController();
-  // late TextEditingController discountAmount = TextEditingController();
+  
   late TextEditingController voucherNumberController;
   late TextEditingController totalAmount;
   late TextEditingController discountAmount;

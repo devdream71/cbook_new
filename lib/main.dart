@@ -114,14 +114,12 @@ void main() async {
           ChangeNotifierProvider(create: (_) => TaxProvider()..fetchTaxes()),
           ChangeNotifierProvider(
               create: (_) => SettingUserProvider()..fetchUsers()),
-            ChangeNotifierProvider(create: (_) => IncomeProvider()),
-            ChangeNotifierProvider(create: (_) => ExpenseProvider()),
-          ChangeNotifierProvider(create: (_) => PaymentVoucherProvider()), 
+          ChangeNotifierProvider(create: (_) => IncomeProvider()),
+          ChangeNotifierProvider(create: (_) => ExpenseProvider()),
+          ChangeNotifierProvider(create: (_) => PaymentVoucherProvider()),
           ChangeNotifierProvider(create: (_) => ReceiveVoucherProvider()),
-          ChangeNotifierProvider(create: (_) => BillPersonProvider()),  
-
-          
-          ],
+          ChangeNotifierProvider(create: (_) => BillPersonProvider()),
+        ],
         child: const MyApp(),
       ),
     ),

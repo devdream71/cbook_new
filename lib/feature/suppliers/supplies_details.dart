@@ -271,8 +271,6 @@ class _SupplierDetailsScreenState extends State<SupplierDetailsScreen> {
                                                       fontSize: 13)),
                                             ],
                                           ),
-                                          // trailing: const Icon(Icons.receipt_long,
-                                          //     color: Colors.blue),
                                         ),
                                       );
                                     },

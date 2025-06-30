@@ -24,9 +24,8 @@ class _IncomeCreateState extends State<IncomeCreate> {
 
   int? selectedAccountId;
 
-  DateTime selectedStartDate = DateTime.now();
-  // Default to current date
-  DateTime selectedEndDate = DateTime.now();
+ 
+ 
   // Default to current date
   String? selectedDropdownValue;
 
@@ -34,40 +33,9 @@ class _IncomeCreateState extends State<IncomeCreate> {
   int? selectedBillPersonId;
   BillPersonModel? selectedBillPersonData;
 
-  Future<void> _selectDate(BuildContext context, DateTime initialDate,
-      Function(DateTime) onDateSelected) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      onDateSelected(picked);
-    }
-  }
 
   TextEditingController billNoController = TextEditingController();
   String billNo = '';
-
-  // void prepareIncomeItems(IncomeProvider provider, String selectedAccountId) {
-  //   // Convert receiptItems to required JSON structure
-  //   final List<Map<String, dynamic>> incomeItems =
-  //       provider.receiptItems.map((item) {
-  //     return {
-  //       "account_id": selectedAccountId,
-  //       "narration": item.note,
-  //       "amount": item.amount.toString(),
-  //     };
-  //   }).toList();
-
-  //   final Map<String, dynamic> finalPayload = {
-  //     "income_items": incomeItems,
-  //   };
-
-  //   // Print JSON string in console
-  //   debugPrint('Final JSON Payload: $finalPayload');
-  // }
 
   @override
   void initState() {
@@ -88,7 +56,6 @@ class _IncomeCreateState extends State<IncomeCreate> {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<SalesController>();
-    //final provider = Provider.of<IncomeProvider>(context);
     final provider = context.watch<IncomeProvider>();
 
     final colorScheme = Theme.of(context).colorScheme;
@@ -631,60 +598,6 @@ class _IncomeCreateState extends State<IncomeCreate> {
                       }
                     },
 
-                    // onPressed: () async {
-                    //   SharedPreferences prefs =
-                    //       await SharedPreferences.getInstance();
-                    //   String? userId = prefs.getInt('user_id')?.toString();
-
-                    //   debugPrint("User ID: $userId");
-                    //   debugPrint("invoice_no : ${billNoController.text}");
-                    //   debugPrint(" Date: ${controller.formattedDate}");
-                    //   debugPrint(
-                    //       'Fetched Account Names: ${provider.accountNames}');
-                    //   debugPrint('ReceivedTo:  $selectedReceivedTo');
-
-                    //   debugPrint(" Account ID: $selectedAccountId");
-
-                    //   debugPrint('- Type: $selectedReceivedTo');
-
-                    //   final totalAmount = provider.receiptItems.fold<double>(
-                    //     0,
-                    //     (sum, item) =>
-                    //         sum + (double.tryParse(item.amount.toString()) ?? 0),
-                    //   );
-
-                    //   // Print to console
-                    //   debugPrint('Total Amount: $totalAmount');
-
-                    //   debugPrint("Receipt Items:");
-                    //   for (var item in provider.receiptItems) {
-                    //     debugPrint(
-                    //         "From: ${item.receiptFrom}, Note: ${item.note}, Amount: ${item.amount}");
-                    //   }
-
-                    //   void prepareIncomeItems(
-                    //       IncomeProvider provider, String selectedAccountId) {
-                    //     // Convert receiptItems to required JSON structure
-                    //     final List<Map<String, dynamic>> incomeItems =
-                    //         provider.receiptItems.map((item) {
-                    //       return {
-                    //         "account_id": "10",
-                    //         "narration": item.note,
-                    //         "amount": item.amount.toString(),
-                    //       };
-                    //     }).toList();
-
-                    //     final Map<String, dynamic> finalPayload = {
-                    //       "income_items": incomeItems,
-                    //     };
-
-                    //     // Print JSON string in console
-                    //     debugPrint('Final JSON Payload: ${finalPayload}');
-                    //   }
-
-                    //   prepareIncomeItems(provider, selectedAccountId.toString());
-
-                    // },
 
                     child: const Text("Save"),
                   ),

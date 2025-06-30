@@ -3,7 +3,6 @@ import 'package:cbook_dt/feature/account/ui/income/income_details.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_edit.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class Income extends StatefulWidget {
@@ -23,27 +22,6 @@ class _IncomeState extends State<Income> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    //DateTime selectedStartDate = DateTime.now();
-    // Default to current date
-    //DateTime selectedEndDate = DateTime.now();
-    // Default to current date
-    //String? selectedDropdownValue;
-
-    // Future<void> _selectDate(BuildContext context, DateTime initialDate,
-    //     Function(DateTime) onDateSelected) async {
-    //   final DateTime? picked = await showDatePicker(
-    //     context: context,
-    //     initialDate: initialDate,
-    //     firstDate: DateTime(2000),
-    //     lastDate: DateTime(2101),
-    //   );
-    //   if (picked != null) {
-    //     onDateSelected(picked);
-    //   }
-    // }
-
-    // List of forms with metadata
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -236,129 +214,6 @@ class _IncomeState extends State<Income> {
                         );
                       },
                     );
-
-                    // return ListView.builder(
-                    //   shrinkWrap: true,
-                    //   itemCount: incomes.length,
-
-                    //   itemBuilder: (context, index) {
-
-                    //     final income = incomes[index];
-                    //     final incomeId = income.id
-                    //         .toString(); // ✅ Correct: get the ID directly from the list item
-
-                    //     return Padding(
-                    //       padding: const EdgeInsets.symmetric(
-                    //           horizontal: 0.0, vertical: 0.0),
-                    //       child: InkWell(
-                    //         onLongPress: () {
-                    //           editDeleteDiolog(context, incomeId);
-                    //         },
-                    //         onTap: () {
-                    //           ///navigation to expense deatils page
-                    //           Navigator.push(
-                    //               context,
-                    //               MaterialPageRoute(
-                    //                   builder: (context) =>
-                    //                       const IncomeDetails()));
-                    //         },
-                    //         child: Container(
-                    //           decoration: BoxDecoration(
-                    //             color: const Color(0xffe3e7fa),
-                    //             borderRadius: BorderRadius.circular(0),
-                    //           ),
-                    //           child: Padding(
-                    //             padding: const EdgeInsets.symmetric(
-                    //                 horizontal: 4.0, vertical: 4.0),
-                    //             child: Row(
-                    //               children: [
-                    //                 /// Left side
-                    //                 Column(
-                    //                   crossAxisAlignment:
-                    //                       CrossAxisAlignment.start,
-                    //                   children: [
-                    //                     const Text(
-                    //                       "Received To",
-                    //                       style: TextStyle(
-                    //                           color: Colors.black,
-                    //                           fontSize: 12,
-                    //                           fontWeight: FontWeight.bold),
-                    //                     ),
-                    //                     Text(
-                    //                       income.receivedTo.toLowerCase() ==
-                    //                               'cash'
-                    //                           ? 'Cash In Hand'
-                    //                           : income.receivedTo
-                    //                                       .toLowerCase() ==
-                    //                                   'bank'
-                    //                               ? 'Bank'
-                    //                               : income.receivedTo,
-                    //                       style: const TextStyle(
-                    //                         color: Colors.black,
-                    //                         fontSize: 12,
-                    //                       ),
-                    //                     ),
-                    //                     Text(
-                    //                       income.accountId == 1
-                    //                           ? 'Cash'
-                    //                           : income.accountId == 11
-                    //                               ? 'PTCash'
-                    //                               : income.accountId == 10
-                    //                                   ? 'PTCash'
-                    //                                   : income.accountId == 13
-                    //                                       ? 'Cash 1'
-                    //                                       : income.accountId ==
-                    //                                               15
-                    //                                           ? 'Cash 2'
-                    //                                           : '${income.accountId}', // Show ID if not matched
-                    //                       style: const TextStyle(
-                    //                         color: Colors.black,
-                    //                         fontSize: 12,
-                    //                       ),
-                    //                     ),
-                    //                   ],
-                    //                 ),
-                    //                 const Spacer(),
-
-                    //                 ///Right side
-                    //                 Row(
-                    //                   children: [
-                    //                     Column(
-                    //                       crossAxisAlignment:
-                    //                           CrossAxisAlignment.end,
-                    //                       children: [
-                    //                         Text(
-                    //                           income.voucherDate,
-                    //                           style: const TextStyle(
-                    //                               color: Colors.black,
-                    //                               fontSize: 12),
-                    //                         ),
-                    //                         Text(
-                    //                           income.voucherNumber,
-                    //                           style: const TextStyle(
-                    //                               color: Colors.black,
-                    //                               fontSize: 12),
-                    //                         ),
-                    //                         Text(
-                    //                           income.totalAmount.toString(),
-                    //                           style: const TextStyle(
-                    //                               color: Colors.black,
-                    //                               fontSize: 12,
-                    //                               fontWeight: FontWeight.bold),
-                    //                         ),
-                    //                       ],
-                    //                     ),
-
-                    //                   ],
-                    //                 )
-                    //               ],
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    // );
                   },
                 )
               ],

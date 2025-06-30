@@ -9,6 +9,78 @@ class PurchaseProvider with ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+
+  Future<void> fetchPurchases() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    final url = Uri.parse('https://commercebook.site/api/v1/purchase/');
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        _purchaseData = PurchaseViewModel.fromJson(data); 
+         _filteredData = _purchaseData;
+        debugPrint(data);
+        debugPrint(_purchaseData.toString());
+      } 
+        else if (response.statusCode==404){
+          _errorMessage = "Error 404: Data Not found";
+
+        } else if (response.statusCode == 500){
+          _errorMessage = "Error 500: Inteernal Server Error.";
+        }  
+      
+      else {
+        //throw Exception('Failed to load purchases');
+        _errorMessage = "Unexpected Error ${response.statusCode}";
+      }
+    } catch (e) {
+      _errorMessage = "Exception occurred $e";
+      debugPrint('Error fetching purchases: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+
+    /// ✅ Delete purchase method (NEW)
+  Future<void> deletePurchase(BuildContext context, int purchaseId) async {
+    final url = Uri.parse(
+        'https://commercebook.site/api/v1/purchase/remove?id=$purchaseId');
+
+    try {
+      final response = await http.post(url);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        if (data['success'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 2),
+              content: Text("Purchase deleted successfully"),
+            ),
+          );
+          await fetchPurchases(); // refresh list
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Failed to delete purchase")),
+          );
+        }
+      } else {
+        throw Exception('Failed to delete purchase');
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting purchase: $error')),
+      );
+    }
+  }
+
   List<PurchaseItemModel> _purchaseItems = [];
   List<PurchaseItemModel> get purchaseItems => _purchaseItems;
 
@@ -113,41 +185,7 @@ class PurchaseProvider with ChangeNotifier {
   //bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetchPurchases() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    final url = Uri.parse('https://commercebook.site/api/v1/purchase/');
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        _purchaseData = PurchaseViewModel.fromJson(data); 
-         _filteredData = _purchaseData;
-        debugPrint(data);
-        debugPrint(_purchaseData.toString());
-      } 
-        else if (response.statusCode==404){
-          _errorMessage = "Error 404: Data Not found";
-
-        } else if (response.statusCode == 500){
-          _errorMessage = "Error 500: Inteernal Server Error.";
-        }  
-      
-      else {
-        //throw Exception('Failed to load purchases');
-        _errorMessage = "Unexpected Error ${response.statusCode}";
-      }
-    } catch (e) {
-      _errorMessage = "Exception occurred $e";
-      debugPrint('Error fetching purchases: $e');
-    }
-
-    _isLoading = false;
-    notifyListeners();
-  }
+  
     
 
     ///filter data 
@@ -214,8 +252,6 @@ class PurchaseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-
   String getItemName(int itemId) {
     return _itemsMap[itemId] ?? "Unknown Item";
   }
@@ -226,12 +262,15 @@ class PurchaseProvider with ChangeNotifier {
   }
 
 
-
   Future<void> fetchPurchasesAndItems() async {
     await fetchPurchases();
     await fetchItems(); // Fetch items along with purchases
      await fetchUnits();
   }
+
+
+
+  
   
 
 

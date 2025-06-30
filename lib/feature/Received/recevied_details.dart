@@ -10,29 +10,13 @@ class ReceviedDetails extends StatefulWidget {
 }
 
 class _ReceviedDetailsState extends State<ReceviedDetails> {
-  DateTime selectedStartDate = DateTime.now();
-  // Default to current date
-  DateTime selectedEndDate = DateTime.now();
   // Default to current date
   String? selectedDropdownValue;
 
-  Future<void> _selectDate(BuildContext context, DateTime initialDate,
-      Function(DateTime) onDateSelected) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      onDateSelected(picked);
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    //Provider.of<ExpenseProvider>(context, listen: false).fetchExpenseList();
     Provider.of<ExpenseProvider>(context, listen: false).fetchExpenseList();
   }
 
@@ -65,7 +49,7 @@ class _ReceviedDetailsState extends State<ReceviedDetails> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ///top date start , end and dropdown
+         
         ],
       ),
     );

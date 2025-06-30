@@ -40,8 +40,7 @@ class AddNewPartyIntro extends StatelessWidget {
                 ///Add customer
                 Container(
                   decoration: const BoxDecoration(
-                      //border: Border.all(color: Colors.green),
-                      //borderRadius: BorderRadius.circular(6)
+                  
                       ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
