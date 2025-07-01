@@ -83,6 +83,15 @@ class PaymentVoucherProvider with ChangeNotifier {
     }
   }
 
+
+  // ✅ Clear/reset bill person list
+void clearBillPersons() {
+  _billPersons = [];
+  notifyListeners();
+}
+
+
+
   ///delete payment voucher
   Future<bool> deletePaymentVoucher(String id) async {
     final url = Uri.parse(

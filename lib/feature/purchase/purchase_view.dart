@@ -246,83 +246,7 @@ class LayoutState extends State<Layout> {
                                           width: 8,
                                         ),
 
-                                        ///customer or supplier name, phone, address show
-                                        // controller.isCash
-                                        //     ? const SizedBox.shrink()
-                                        //     :
-
-                                        //     /////customer or supplier details.
-                                        //     Consumer<CustomerProvider>(
-                                        //         builder: (context,
-                                        //             customerProvider, child) {
-                                        //           final selectedCustomer =
-                                        //               customerProvider
-                                        //                   .selectedCustomer;
-
-                                        //           if (selectedCustomer == null ||
-                                        //               selectedCustomer.id == -1) {
-                                        //             return const SizedBox(); // return nothing if no customer selected
-                                        //           }
-
-                                        //           return Padding(
-                                        //             padding:
-                                        //                 const EdgeInsets.only(
-                                        //                     bottom: 8.0),
-                                        //             child: Column(
-                                        //               crossAxisAlignment:
-                                        //                   CrossAxisAlignment
-                                        //                       .start,
-                                        //               mainAxisAlignment:
-                                        //                   MainAxisAlignment
-                                        //                       .center,
-                                        //               children: [
-                                        //                 Text(
-                                        //                   selectedCustomer.name,
-                                        //                   style: const TextStyle(
-                                        //                     fontSize: 10,
-                                        //                     color: Colors.black,
-                                        //                     fontWeight:
-                                        //                         FontWeight.bold,
-                                        //                     overflow: TextOverflow
-                                        //                         .ellipsis,
-                                        //                   ),
-                                        //                 ),
-                                        //                 Text(
-                                        //                   selectedCustomer
-                                        //                           .phone ??
-                                        //                       '',
-                                        //                   style: const TextStyle(
-                                        //                     fontSize: 10,
-                                        //                     color: Colors.black,
-                                        //                     fontWeight:
-                                        //                         FontWeight.bold,
-                                        //                     overflow: TextOverflow
-                                        //                         .ellipsis,
-                                        //                   ),
-                                        //                 ),
-                                        //                 SizedBox(
-                                        //                   width: 150,
-                                        //                   child: Text(
-                                        //                     selectedCustomer
-                                        //                             .address ??
-                                        //                         '',
-                                        //                     maxLines: 1,
-                                        //                     overflow: TextOverflow
-                                        //                         .ellipsis,
-                                        //                     style:
-                                        //                         const TextStyle(
-                                        //                       fontSize: 10,
-                                        //                       color: Colors.black,
-                                        //                       fontWeight:
-                                        //                           FontWeight.bold,
-                                        //                     ),
-                                        //                   ),
-                                        //                 ),
-                                        //               ],
-                                        //             ),
-                                        //           );
-                                        //         },
-                                        //       ),
+                                       
                                       ],
                                     ),
                                     vPad2,
@@ -409,109 +333,8 @@ class LayoutState extends State<Layout> {
 
                                               //: SizedBox.shrink(),
 
-                                              // TextField(
-                                              //     readOnly: true,
-                                              //     //enabled: false,
-                                              //     enableInteractiveSelection:
-                                              //         true,
-                                              //     onTap: () {
-                                              //       showDialog(
-                                              //         context: context,
-                                              //         builder: (context) =>
-                                              //             Dialog(
-                                              //           child: ReusableForm(
-                                              //             nameController:
-                                              //                 nameController,
-                                              //             phoneController:
-                                              //                 phoneController,
-                                              //             emailController:
-                                              //                 emailController,
-                                              //             addressController:
-                                              //                 addressController,
-                                              //             primaryColor:
-                                              //                 Theme.of(context)
-                                              //                     .primaryColor,
-                                              //             onCancel: _onCancel,
-                                              //             onSubmit: () {
-                                              //               setState(() {
-                                              //                 controller
-                                              //                     .updatedCustomerInfomation(
-                                              //                   nameFrom:
-                                              //                       nameController
-                                              //                           .text,
-                                              //                   phoneFrom:
-                                              //                       phoneController
-                                              //                           .text,
-                                              //                   emailFrom:
-                                              //                       emailController
-                                              //                           .text,
-                                              //                   addressFrom:
-                                              //                       addressController
-                                              //                           .text,
-                                              //                 );
-                                              //               });
-                                              //               Navigator.pop(
-                                              //                   context);
-                                              //             },
-                                              //           ),
-                                              //         ),
-                                              //       );
-                                              //     },
-
-                                              //     controller: controller
-                                              //         .controller, // Managing text field content
-                                              //     style: const TextStyle(
-                                              //       color: Colors.blue,
-                                              //       fontSize: 12,
-                                              //       fontWeight: FontWeight.w600,
-                                              //     ),
-                                              //     decoration: InputDecoration(
-                                              //       // filled: true,
-                                              //       fillColor: Colors.white,
-                                              //       border: UnderlineInputBorder(
-                                              //         borderRadius:
-                                              //             BorderRadius.circular(
-                                              //                 0),
-                                              //         borderSide: BorderSide(
-                                              //           color: Colors.white
-                                              //               .withOpacity(0.2),
-                                              //           width: 1,
-                                              //         ),
-                                              //       ),
-                                              //       enabledBorder:
-                                              //           UnderlineInputBorder(
-                                              //         borderRadius:
-                                              //             BorderRadius.circular(
-                                              //                 0),
-                                              //         borderSide: BorderSide(
-                                              //           color: Colors.white
-                                              //               .withOpacity(0.2),
-                                              //           width: 1,
-                                              //         ),
-                                              //       ),
-                                              //       focusedBorder:
-                                              //           UnderlineInputBorder(
-                                              //         borderRadius:
-                                              //             BorderRadius.circular(
-                                              //                 0),
-                                              //         borderSide: BorderSide(
-                                              //           color: Colors.white
-                                              //               .withOpacity(0.2),
-                                              //           width: 1,
-                                              //         ),
-                                              //       ),
-                                              //       contentPadding:
-                                              //           const EdgeInsets
-                                              //               .symmetric(
-                                              //         vertical: 12,
-                                              //         horizontal: 2,
-                                              //       ),
-                                              //     ),
-                                              //     cursorHeight:
-                                              //         12, // Adjusted cursor height
-                                              //     cursorWidth:
-                                              //         2, // Adjusted cursor width for visibility
-                                              //   )
+                                            
+                                              
                                               : Column(
                                                   children: [
                                                     AddSalesFormfieldTwo(
@@ -608,351 +431,7 @@ class LayoutState extends State<Layout> {
                                                   ],
                                                 ),
 
-                                          //user dropdown. =====> creadit
-                                          // Consumer<CustomerProvider>(
-                                          //     builder: (context,
-                                          //         customerProvider, child) {
-                                          //       final customerList =
-                                          //           customerProvider
-                                          //                   .customerResponse
-                                          //                   ?.data ??
-                                          //               [];
-
-                                          //       return Column(
-                                          //         crossAxisAlignment:
-                                          //             CrossAxisAlignment
-                                          //                 .start,
-                                          //         children: [
-                                          //           // If the customer list is empty, show a SizedBox
-                                          //           if (customerList.isEmpty)
-                                          //             const SizedBox(
-                                          //                 height:
-                                          //                     2), // Adjust height as needed
-
-                                          //           // Otherwise, show the dropdown with customers
-                                          //           if (customerList
-                                          //               .isNotEmpty)
-                                          //             CustomDropdownFour(
-                                          //               items: customerList,
-                                          //               hint:
-                                          //                   "Select Supplier",
-                                          //               width: 350,
-                                          //               height: 25,
-                                          //               selectedItem:
-                                          //                   customerProvider
-                                          //                       .selectedCustomer,
-                                          //               addCustomerOrSupplier:
-                                          //                   "Add New Supplier",
-                                          //               onTap: () {
-                                          //                 Navigator.push(
-                                          //                     context,
-                                          //                     MaterialPageRoute(
-                                          //                       builder:
-                                          //                           (context) =>
-                                          //                               const SuppliersCreate(),
-                                          //                     ));
-                                          //               },
-                                          //               onChanged: (Customer
-                                          //                   selected) {
-                                          //                 customerProvider
-                                          //                     .setSelectedCustomer(
-                                          //                         selected);
-                                          //               },
-                                          //             ),
-
-                                          //           // Check if the selected customer is valid
-                                          //           if (customerProvider
-                                          //                       .selectedCustomer !=
-                                          //                   null &&
-                                          //               customerProvider
-                                          //                       .selectedCustomer!
-                                          //                       .id !=
-                                          //                   -1)
-                                          //             Column(
-                                          //               crossAxisAlignment:
-                                          //                   CrossAxisAlignment
-                                          //                       .start,
-                                          //               children: [
-                                          //                 Text(
-                                          //                   "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
-                                          //                   style: TextStyle(
-                                          //                     fontSize: 10,
-                                          //                     fontWeight:
-                                          //                         FontWeight
-                                          //                             .bold,
-                                          //                     color: customerProvider
-                                          //                                 .selectedCustomer!
-                                          //                                 .type ==
-                                          //                             'customer'
-                                          //                         ? Colors
-                                          //                             .green
-                                          //                         : Colors
-                                          //                             .red,
-                                          //                   ),
-                                          //                 ),
-                                          //               ],
-                                          //             ),
-                                          //         ],
-                                          //       );
-                                          //     },
-                                          //   ),
-
-                                          /////====>working  <=====
-                                          //           Consumer<CustomerProvider>(
-                                          //               builder: (context,
-                                          //                   customerProvider, child) {
-                                          //                 if (customerProvider
-                                          //                     .isLoading) {
-                                          //                   return const Center(
-                                          //                       child:
-                                          //                           CircularProgressIndicator());
-                                          //                 }
-
-                                          //                 if (customerProvider
-                                          //                     .errorMessage
-                                          //                     .isNotEmpty) {
-                                          //                   return Center(
-                                          //                     child: Text(
-                                          //                       customerProvider
-                                          //                           .errorMessage,
-                                          //                       style: const TextStyle(
-                                          //                           color: Colors.red,
-                                          //                           fontSize: 16),
-                                          //                     ),
-                                          //                   );
-                                          //                 }
-
-                                          //                 final customerList =
-                                          //                     customerProvider
-                                          //                             .customerResponse
-                                          //                             ?.data ??
-                                          //                         [];
-
-                                          //                 if (customerList.isEmpty) {
-                                          //                   return const Center(
-                                          //                     child: Text(
-                                          //                       "No Customer Found",
-                                          //                       style: TextStyle(
-                                          //                           fontSize: 10,
-                                          //                           fontWeight:
-                                          //                               FontWeight
-                                          //                                   .w500),
-                                          //                     ),
-                                          //                   );
-                                          //                 }
-
-                                          //                 // ✅ Map customer ID & Name
-                                          //                 final dropdownItems =
-                                          //                     customerList
-                                          //                         .map((customer) =>
-                                          //                             customer
-                                          //                                 .name) // Store both ID and Name //${customer.id}
-                                          //                         .toList();
-
-                                          //                 return Column(
-                                          //                   crossAxisAlignment:
-                                          //                       CrossAxisAlignment
-                                          //                           .start,
-                                          //                   mainAxisAlignment:
-                                          //                       MainAxisAlignment.start,
-                                          //                   children: [
-                                          //                     CustomDropdownThree(
-                                          //                       addCustomerOrSupplier:
-                                          //                           "Add Supplier",
-                                          //                       onTap: () {
-                                          //                         {
-                                          //                           Navigator.push(
-                                          //                             context,
-                                          //                             MaterialPageRoute(
-                                          //                               builder:
-                                          //                                   (context) =>
-                                          //                                       const SuppliersCreate(),
-                                          //                             ),
-                                          //                           );
-                                          //                         }
-                                          //                       },
-                                          //                       items: dropdownItems,
-                                          //                       hint: "Select Supplier",
-                                          //                       width: 350,
-                                          //                       height: 25,
-                                          //                       selectedItem:
-                                          //                           selectedCustomer, // Set initially selected item
-                                          //                       onChanged: (value) {
-                                          //                         setState(() {
-                                          //                           selectedCustomer =
-                                          //                               value;
-                                          //                           if (selectedCustomer !=
-                                          //                               null) {
-                                          //                             selectedCustomerObject =
-                                          //                                 customerList
-                                          //                                     .firstWhere(
-                                          //                               (customer) =>
-                                          //                                   customer
-                                          //                                       .name ==
-                                          //                                   selectedCustomer,
-                                          //                               orElse: () =>
-                                          //                                   Customer(
-                                          //                                 id: -1,
-                                          //                                 userId: 0,
-                                          //                                 name: '',
-                                          //                                 proprietorName:
-                                          //                                     '',
-                                          //                                 due: 0,
-                                          //                                 purchases: [],
-                                          //                               ),
-                                          //                             );
-
-                                          //                             selectedCustomerId =
-                                          //                                 selectedCustomerObject!
-                                          //                                     .id
-                                          //                                     .toString();
-
-                                          //                             // ✅ Update AddItemProvider with selected customer ID
-                                          //                             Provider.of<AddItemProvider>(
-                                          //                                     context,
-                                          //                                     listen:
-                                          //                                         false)
-                                          //                                 .setSelectedCustomerId(
-                                          //                                     selectedCustomerId!);
-
-                                          //                             // Find the selected customer object based on the ID
-
-                                          //                             ///working ====>
-                                          //                             // selectedCustomerObject =
-                                          //                             //     customerList
-                                          //                             //         .firstWhere(
-                                          //                             //   (customer) =>
-                                          //                             //       customer.id
-                                          //                             //           .toString() ==
-                                          //                             //       selectedCustomerId,
-                                          //                             //   orElse: () =>
-                                          //                             //       Customer(
-                                          //                             //     id: -1,
-                                          //                             //     userId: 0,
-                                          //                             //     name: '',
-                                          //                             //     proprietorName:
-                                          //                             //         '',
-                                          //                             //     due: 0,
-                                          //                             //     purchases: [],
-                                          //                             //   ),
-                                          //                             // );
-
-                                          //                             final selected =
-                                          //                                 customerList
-                                          //                                     .firstWhere(
-                                          //                               (customer) =>
-                                          //                                   customer
-                                          //                                       .name ==
-                                          //                                   selectedCustomer,
-                                          //                               orElse: () => Customer(
-                                          //                                   id: -1,
-                                          //                                   userId: 0,
-                                          //                                   name: '',
-                                          //                                   proprietorName:
-                                          //                                       '',
-                                          //                                   due: 0,
-                                          //                                   purchases: []),
-                                          //                             );
-
-                                          //                             selectedCustomerObject =
-                                          //                                 selected;
-                                          //                             selectedCustomerId =
-                                          //                                 selected.id
-                                          //                                     .toString();
-
-                                          // // Update provider globally
-                                          //                             Provider.of<CustomerProvider>(
-                                          //                                     context,
-                                          //                                     listen:
-                                          //                                         false)
-                                          //                                 .setSelectedCustomer(
-                                          //                                     selected);
-                                          //                           }
-                                          //                         });
-
-                                          //                         debugPrint(
-                                          //                             "Selected Customer ID: $selectedCustomerId"); // Debugging
-                                          //                       },
-                                          //                     ),
-
-                                          //                     // Show the due amount of the selected customer
-                                          //                     if (selectedCustomerObject !=
-                                          //                             null &&
-                                          //                         selectedCustomerObject!
-                                          //                                 .id !=
-                                          //                             -1)
-                                          //                       Padding(
-                                          //                         padding:
-                                          //                             const EdgeInsets
-                                          //                                 .only(
-                                          //                                 top: 0.0),
-                                          //                         child: Column(
-                                          //                           mainAxisAlignment:
-                                          //                               MainAxisAlignment
-                                          //                                   .start,
-                                          //                           crossAxisAlignment:
-                                          //                               CrossAxisAlignment
-                                          //                                   .start,
-                                          //                           //mainAxisSize: MainAxisSize.min,
-                                          //                           children: [
-                                          //                             Row(
-                                          //                               mainAxisAlignment:
-                                          //                                   MainAxisAlignment
-                                          //                                       .start,
-                                          //                               crossAxisAlignment:
-                                          //                                   CrossAxisAlignment
-                                          //                                       .start,
-                                          //                               children: [
-                                          //                                 Text(
-                                          //                                   "${selectedCustomerObject!.type == 'customer' ? 'Receivable' : 'Payable'}:",
-                                          //                                   style:
-                                          //                                       TextStyle(
-                                          //                                     fontSize:
-                                          //                                         10,
-                                          //                                     color: selectedCustomerObject!.type ==
-                                          //                                             'customer'
-                                          //                                         ? Colors
-                                          //                                             .green
-                                          //                                         : Colors
-                                          //                                             .red,
-                                          //                                     fontWeight:
-                                          //                                         FontWeight
-                                          //                                             .bold,
-                                          //                                     overflow:
-                                          //                                         TextOverflow
-                                          //                                             .ellipsis,
-                                          //                                   ),
-                                          //                                 ),
-                                          //                                 const SizedBox(
-                                          //                                   width: 2,
-                                          //                                 ),
-                                          //                                 Text(
-                                          //                                   "৳ ${selectedCustomerObject!.due.toStringAsFixed(2)}",
-                                          //                                   style:
-                                          //                                       const TextStyle(
-                                          //                                     fontSize:
-                                          //                                         10,
-                                          //                                     color: Colors
-                                          //                                         .black,
-                                          //                                     fontWeight:
-                                          //                                         FontWeight
-                                          //                                             .bold,
-                                          //                                     overflow:
-                                          //                                         TextOverflow
-                                          //                                             .ellipsis,
-                                          //                                   ),
-                                          //                                 ),
-                                          //                               ],
-                                          //                             ),
-
-                                          //                             //
-                                          //                           ],
-                                          //                         ),
-                                          //                       ),
-                                          //                   ],
-                                          //                 );
-                                          //               },
-                                          //             ),
+                                       
                                         ),
 
                                         hPad3, // Space between TextField and Icon
@@ -982,13 +461,104 @@ class LayoutState extends State<Layout> {
                                 ),
                               ),
 
-                              //hPad10,
+                           
 
-                              ///bill no
+                              ///bill no, bill date, bill person
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
+
+                                     // Bill No Field
+                                    SizedBox(
+                                      height: 30,
+                                      width: 130,
+                                      child: TextField(
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600),
+                                        controller: billController,
+                                        cursorHeight:
+                                            12, // Match cursor height to text size
+                                        decoration: InputDecoration(
+                                          isDense:
+                                              true, // Ensures the field is compact
+                                          contentPadding: EdgeInsets
+                                              .zero, // Removes unnecessary padding
+                                          hintText: "Bill no",
+                                          hintStyle: TextStyle(
+                                            color: Colors.grey.shade400,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w200,
+                                          ),
+                                          enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: Colors.grey.shade400,
+                                              width: 0.5,
+                                            ),
+                                          ),
+                                          focusedBorder:
+                                              const UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: Colors.green,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+
+                                     ///bill date
+                                    SizedBox(
+                                      height: 30,
+                                      width: 130,
+                                      child: InkWell(
+                                        onTap: () => controller.pickDate(
+                                            context), // Trigger the date picker
+                                        child: InputDecorator(
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            suffixIcon: Icon(
+                                              Icons.calendar_today,
+                                              size: 16,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
+                                            suffixIconConstraints:
+                                                const BoxConstraints(
+                                              minWidth: 16,
+                                              minHeight: 16,
+                                            ), // Adjust constraints to align icon closely
+                                            hintText: "Bill Date",
+                                            hintStyle: TextStyle(
+                                              color: Colors.grey.shade400,
+                                              fontSize: 9,
+                                            ),
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey.shade400,
+                                                  width: 0.5),
+                                            ),
+                                            focusedBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey.shade400),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            controller.formattedDate.isNotEmpty
+                                                ? controller.formattedDate
+                                                : "Select Date", // Default text when no date is selected
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    ///bill person
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
                                       child: Consumer<PaymentVoucherProvider>(
@@ -1041,92 +611,9 @@ class LayoutState extends State<Layout> {
                                       ),
                                     ),
 
-                                    // Bill No Field
-                                    SizedBox(
-                                      height: 30,
-                                      width: 130,
-                                      child: TextField(
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600),
-                                        controller: billController,
-                                        cursorHeight:
-                                            12, // Match cursor height to text size
-                                        decoration: InputDecoration(
-                                          isDense:
-                                              true, // Ensures the field is compact
-                                          contentPadding: EdgeInsets
-                                              .zero, // Removes unnecessary padding
-                                          hintText: "Bill no",
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey.shade400,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.grey.shade400,
-                                              width: 0.5,
-                                            ),
-                                          ),
-                                          focusedBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                   
 
-                                    SizedBox(
-                                      height: 30,
-                                      width: 130,
-                                      child: InkWell(
-                                        onTap: () => controller.pickDate(
-                                            context), // Trigger the date picker
-                                        child: InputDecorator(
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            suffixIcon: Icon(
-                                              Icons.calendar_today,
-                                              size: 16,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            ),
-                                            suffixIconConstraints:
-                                                const BoxConstraints(
-                                              minWidth: 16,
-                                              minHeight: 16,
-                                            ), // Adjust constraints to align icon closely
-                                            hintText: "Bill Date",
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey.shade400,
-                                              fontSize: 9,
-                                            ),
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey.shade400,
-                                                  width: 0.5),
-                                            ),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey.shade400),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            controller.formattedDate.isNotEmpty
-                                                ? controller.formattedDate
-                                                : "Select Date", // Default text when no date is selected
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                   
                                   ],
                                 ),
                               )

@@ -405,7 +405,12 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
       create: (_) =>
           PurchaseUpdateProvider()..fetchPurchaseData(widget.purchaseId),
       child: Scaffold(
-        appBar: AppBar(title: const Text("Update Purchase")),
+        appBar: AppBar(
+           backgroundColor: colorScheme.primary,
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+          automaticallyImplyLeading: true,
+          title: const Text("Update Purchase", style: TextStyle(color: Colors.yellow, fontSize: 16),)),
         body: SingleChildScrollView(
           child: Consumer<PurchaseUpdateProvider>(
             builder: (context, provider, child) {

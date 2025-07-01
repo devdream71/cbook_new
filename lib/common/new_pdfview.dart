@@ -2199,6 +2199,9 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                                 ),
                               ],
                             ),
+                         
+                         
+                         
                           ],
                         ),
                       ),

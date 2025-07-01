@@ -56,6 +56,7 @@ class AddSalesFormfield extends StatelessWidget {
 
             ///underline
             decoration: decoration.copyWith(
+              fillColor: Colors.white,
               labelText: labelText,
               labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
               floatingLabelStyle: const TextStyle(

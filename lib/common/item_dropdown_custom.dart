@@ -4,12 +4,14 @@ import 'package:cbook_dt/feature/item/provider/items_show_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+///item dropdown to show item list new one.
+
 class ItemCustomDropDownTextField extends StatefulWidget {
   final String? label;
   final TextEditingController controller;
   final Color? color;
   final ItemsModel? initialItem;
-  
+
   final void Function()? onTap;
 
   // New callback to send selected item to parent
@@ -22,7 +24,7 @@ class ItemCustomDropDownTextField extends StatefulWidget {
     this.color,
     this.onTap,
     this.onItemSelected,
-    this.initialItem, 
+    this.initialItem,
   });
 
   @override
@@ -50,10 +52,9 @@ class _ItemCustomDropDownTextFieldState
       }
     });
 
-     if (widget.initialItem != null) {
-    widget.controller.text = widget.initialItem!.name;
-  }
-  
+    if (widget.initialItem != null) {
+      widget.controller.text = widget.initialItem!.name;
+    }
 
     final fetchStockQuantity =
         Provider.of<AddItemProvider>(context, listen: false);
@@ -254,34 +255,32 @@ class _ItemCustomDropDownTextFieldState
                       fontWeight: FontWeight.bold)),
             const SizedBox(height: 5),
             SizedBox(
-              height: 30,
+              height: 35,
               child: TextFormField(
                 controller: widget.controller,
                 focusNode: _focusNode,
                 onChanged: (value) => _onChanged(value, itemProvider),
+                onTap: () {
+                  // Select all text when tapping
+                  widget.controller.selection = TextSelection(
+                    baseOffset: 0,
+                    extentOffset: widget.controller.text.length,
+                  );
+                },
                 cursorHeight: 14,
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 12,
-                  //fontWeight: FontWeight.bold
                 ),
                 decoration: InputDecoration(
+                  fillColor: Colors.white,
                   labelText: "Item",
                   labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
                   floatingLabelStyle:
                       const TextStyle(color: Colors.green, fontSize: 12),
-
                   filled: true,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  // border: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(4),
-                  //   borderSide: BorderSide(color: Colors.grey.shade400),
-                  // ),
-                  // focusedBorder: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(4),
-                  //   borderSide: const BorderSide(color: Colors.blue),
-                  // ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(3),
                     borderSide:
@@ -298,6 +297,44 @@ class _ItemCustomDropDownTextFieldState
                 ),
               ),
             ),
+
+            // SizedBox(
+            //   height: 30,
+            //   child: TextFormField(
+            //     controller: widget.controller,
+            //     focusNode: _focusNode,
+            //     onChanged: (value) => _onChanged(value, itemProvider),
+            //     cursorHeight: 14,
+            //     style: const TextStyle(
+            //       color: Colors.black,
+            //       fontSize: 12,
+            //       //fontWeight: FontWeight.bold
+            //     ),
+            //     decoration: InputDecoration(
+            //       fillColor: Colors.white,
+            //       labelText: "Item",
+            //       labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
+            //       floatingLabelStyle:
+            //           const TextStyle(color: Colors.green, fontSize: 12),
+            //       filled: true,
+            //       contentPadding:
+            //           const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+            //       enabledBorder: OutlineInputBorder(
+            //         borderRadius: BorderRadius.circular(3),
+            //         borderSide:
+            //             BorderSide(color: Colors.grey.shade400, width: 1),
+            //       ),
+            //       border: OutlineInputBorder(
+            //         borderRadius: BorderRadius.circular(3),
+            //         borderSide:
+            //             BorderSide(color: Colors.grey.shade400, width: 1),
+            //       ),
+            //       focusedBorder: const OutlineInputBorder(
+            //         borderSide: BorderSide(color: Colors.green),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         );
       },

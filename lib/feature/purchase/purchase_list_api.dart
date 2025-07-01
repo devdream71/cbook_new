@@ -192,7 +192,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                   ),
                   SizedBox(width: 3),
                   Text(
-                    'Bill',
+                    'Purchase',
                     style: TextStyle(color: Colors.yellow, fontSize: 16),
                   ),
                 ],
@@ -512,66 +512,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
 
                                         const SizedBox(width: 8),
 
-                                        ///3 dot delete and update.
-                                        // SizedBox(
-                                        //   height: 20,
-                                        //   width: 50,
-                                        //   child: PopupMenuButton<String>(
-                                        //     position: PopupMenuPosition.under,
-                                        //     iconSize: 30,
-                                        //     padding: EdgeInsets.zero,
-                                        //     onSelected: (value) async {
-                                        //       if (value == 'update' &&
-                                        //           isEnabled) {
-                                        //         Navigator.push(
-                                        //           context,
-                                        //           MaterialPageRoute(
-                                        //             builder: (context) =>
-                                        //                 PurchaseUpdateScreen(
-                                        //               purchaseId: purchase
-                                        //                   .purchaseDetails![0]
-                                        //                   .purchaseId!,
-                                        //             ),
-                                        //           ),
-                                        //         );
-                                        //       } else if (value == 'delete') {
-                                        //         bool isConfirmed =
-                                        //             await _showDeleteConfirmationDialog(
-                                        //                 context);
-                                        //         if (isConfirmed) {
-                                        //           await _deletePurchase(purchase
-                                        //               .purchaseDetails![0]
-                                        //               .purchaseId);
-                                        //         }
-                                        //       }
-                                        //     },
-                                        //     itemBuilder: (context) => [
-                                        //       if (isEnabled)
-                                        //         const PopupMenuItem(
-                                        //           value: 'update',
-                                        //           child: Row(
-                                        //             children: [
-                                        //               Icon(Icons.edit,
-                                        //                   color: Colors.blue),
-                                        //               SizedBox(width: 8),
-                                        //               Text('Update'),
-                                        //             ],
-                                        //           ),
-                                        //         ),
-                                        //       const PopupMenuItem(
-                                        //         value: 'delete',
-                                        //         child: Row(
-                                        //           children: [
-                                        //             Icon(Icons.delete,
-                                        //                 color: Colors.red),
-                                        //             SizedBox(width: 8),
-                                        //             Text('Delete'),
-                                        //           ],
-                                        //         ),
-                                        //       ),
-                                        //     ],
-                                        //   ),
-                                        // ),
+                                         
                                       ],
                                     ),
                                   ],
@@ -608,42 +549,42 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
     );
   }
 
-  Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
-    return await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Purchase Delete",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                  //Text(" Confirm Delete"),
-                ],
-              ),
-              content: const Text(
-                "Are you sure you want to delete this Purchase Bill?",
-                style: TextStyle(color: Colors.black),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child:
-                      const Text("Delete", style: TextStyle(color: Colors.red)),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-  }
+  // Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
+  //   return await showDialog(
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           return AlertDialog(
+  //             title: const Column(
+  //               mainAxisAlignment: MainAxisAlignment.start,
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   "Purchase Delete",
+  //                   style: TextStyle(color: Colors.blue),
+  //                 ),
+  //                 //Text(" Confirm Delete"),
+  //               ],
+  //             ),
+  //             content: const Text(
+  //               "Are you sure you want to delete this Purchase Bill?",
+  //               style: TextStyle(color: Colors.black),
+  //             ),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () => Navigator.of(context).pop(false),
+  //                 child: const Text("Cancel"),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () => Navigator.of(context).pop(true),
+  //                 child:
+  //                     const Text("Delete", style: TextStyle(color: Colors.red)),
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       ) ??
+  //       false;
+  // }
 
   ///show edit and delete list from alart diolog
   Future<dynamic> editDeleteDiolog(BuildContext context, String purchaseId) {
@@ -701,6 +642,14 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                   onTap: () {
                     Navigator.of(context).pop();
                     //Navigate to Edit Page
+                     //Navigate to Edit Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            PurchaseUpdateScreen(purchaseId: int.parse(purchaseId)),
+                      ),
+                    );
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -735,12 +684,12 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text(
-          'Delete Receipt in',
+          'Delete Purchase',
           style: TextStyle(
               color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
         ),
         content: const Text(
-          'Are you sure you want to delete this Receipt in?',
+          'Are you sure you want to delete this Purchase?',
           style: TextStyle(color: Colors.black, fontSize: 12),
         ),
         actions: [
@@ -764,4 +713,6 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
       ),
     );
   }
+  
+
 }

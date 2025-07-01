@@ -11,6 +11,7 @@ import '../sales_view.dart';
 import 'package:http/http.dart' as http;
 
 class SalesController extends ChangeNotifier {
+
   void updateItem(int index, ItemModel updatedItem) {
     if (index >= 0 && index < itemsCash.length) {
       itemsCash[index] = updatedItem;
@@ -263,7 +264,6 @@ class SalesController extends ChangeNotifier {
   }
 
 
-
   //cash discount amount
   void updateDiscountCashAmount(String value) {
     if (value.isEmpty || double.tryParse(value) == null) {
@@ -302,7 +302,6 @@ class SalesController extends ChangeNotifier {
 
     notifyListeners();
   }
-
 
 
   void clearPercentance() {
@@ -425,20 +424,6 @@ class SalesController extends ChangeNotifier {
   }
 
 
-    //////cash discount total
-
-
-  ////XYZ
-  String get ReceivedAmount {
-    double subtotal = double.tryParse(addAmount()) ?? 0.0;
-    double discount = double.tryParse(discountController.text) ?? 0.0;
-    double total = subtotal - discount;
-
-    debugPrint('recived amount total $total');
-
-    return total.toStringAsFixed(2);
-  }
-  
 
   ///sales tax vat provider. 
   double? selectedTaxPercent;
@@ -530,6 +515,8 @@ class SalesController extends ChangeNotifier {
     double demodiscounAmout = double.tryParse(discountAmount.text) ?? 0.0;
 
     double itemTotal = ((price * quantity) - demodiscounAmout) + taxAmount;
+
+    
 
     itemsCredit.add(ItemModel(
       category: selectedCategory ?? "Category1",

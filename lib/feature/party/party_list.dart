@@ -333,42 +333,83 @@ class _PartyState extends State<Party> {
                               alignment: Alignment.centerLeft,
                               child: Row(
                                 children: [
-                                  //const SizedBox(width: 6),
-
-                                  ///name, phone,
+            
+                                  ///name, customers.proprietorName // phone, // address
                                   Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        customers.name,
-                                        style: GoogleFonts.notoSansPhagsPa(
-                                          fontSize: 13,
-                                          color: Colors.black,
-                                          //fontWeight: FontWeight.w400
-                                        ),
-                                      ),
-                                      Text(
-                                          "N/A",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.notoSansPhagsPa(
-                                          fontSize: 12,
-                                          color: Colors.black,
-                                          //fontWeight: FontWeight.w400
-                                        ),
-                                      ),
-                                      Text(
-                                        customers.address != null
-                                            ? customers.phone.toString()
-                                            : "No Phone",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.notoSansPhagsPa(
-                                          fontSize: 12,
-                                          color: Colors.grey[800],
-                                          //fontWeight: FontWeight.w400
-                                        ),
-                                      ),
+
+                                        // Always show the customer's name
+    Text(
+      customers.name,
+      style: GoogleFonts.notoSansPhagsPa(
+        fontSize: 13,
+        color: Colors.black,
+      ),
+    ),
+
+    // Show proprietorName if not null or empty, else show phone number
+    Text(
+      (customers.proprietorName != null && customers.proprietorName!.trim().isNotEmpty)
+          ? customers.proprietorName!
+          : customers.phone ?? 'No Phone',
+      overflow: TextOverflow.ellipsis,
+      style: GoogleFonts.notoSansPhagsPa(
+        fontSize: 12,
+        color: Colors.black,
+      ),
+    ),
+
+    // If proprietorName was null/empty and phone was shown above, show address here
+    // Otherwise show the phone number here
+    Text(
+      (customers.proprietorName != null && customers.proprietorName!.trim().isNotEmpty)
+          ? customers.phone ?? 'No Phone'
+          : customers.address ?? 'No Address',
+      overflow: TextOverflow.ellipsis,
+      style: GoogleFonts.notoSansPhagsPa(
+        fontSize: 12,
+        color: Colors.grey[800],
+      ),
+    ),
+
+
+                                      // Text(
+                                      //   customers.name,
+                                      //   style: GoogleFonts.notoSansPhagsPa(
+                                      //     fontSize: 13,
+                                      //     color: Colors.black,
+                                      //     //fontWeight: FontWeight.w400
+                                      //   ),
+                                      // ),
+
+                                      // //customers.proprietorName == null || customers.empty  
+                                      // //proprietorName name null then show here phone number.
+                                      // //no need to show 'N/A' , instate of below show phone number and in phone number place show address.
+                                      // Text(
+                                      //     "N/A",
+                                      //   overflow: TextOverflow.ellipsis,
+                                      //   style: GoogleFonts.notoSansPhagsPa(
+                                      //     fontSize: 12,
+                                      //     color: Colors.black,
+                                      //     //fontWeight: FontWeight.w400
+                                      //   ),
+                                      // ),
+                                      // //phone. 
+                                      // ////if phone showing above then show  here address,  ${customers.address}
+                                      // Text(
+                                      //   customers.address != null
+                                      //       ? customers.phone.toString() //customers.address
+                                      //       : "No Phone",
+                                      //   overflow: TextOverflow.ellipsis,
+                                      //   style: GoogleFonts.notoSansPhagsPa(
+                                      //     fontSize: 12,
+                                      //     color: Colors.grey[800],
+                                      //     //fontWeight: FontWeight.w400
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ],

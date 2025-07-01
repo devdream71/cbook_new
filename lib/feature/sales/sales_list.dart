@@ -1,10 +1,9 @@
- 
 import 'package:cbook_dt/feature/purchase/provider/purchase_provider.dart';
 import 'package:cbook_dt/feature/sales/provider/sales_provider.dart';
 import 'package:cbook_dt/feature/sales/sales_details.dart';
 import 'package:cbook_dt/feature/sales/sales_update.dart';
 import 'package:cbook_dt/feature/sales/sales_view.dart';
- 
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -169,55 +168,7 @@ class _SalesScreenState extends State<SalesScreen> {
                       ),
                     ),
                   ),
-
-                  // IconButton(
-                  //   iconSize: 16, // Set icon size here
-                  //   color: Colors.white, // Icon color
-                  //   icon: Icon(isSearching ? Icons.close : Icons.search),
-                  //   onPressed: () {
-                  //     setState(() {
-                  //       isSearching = !isSearching;
-                  //       if (!isSearching) {
-                  //         searchController.clear();
-                  //         Provider.of<SalesProvider>(context, listen: false)
-                  //             .resetFilter();
-                  //       }
-                  //     });
-                  //   },
-                  // ),
                 ),
-
-                //Container(
-                //   decoration: BoxDecoration(
-                //     color: isSearching ? Colors.red : Colors.green,
-                //     shape: BoxShape.circle,
-                //     border: isSearching
-                //         ? null
-                //         : Border.all(color: Colors.white, width: 2),
-                //   ),
-                //   padding: const EdgeInsets.all(6),
-                //   child: IconButton(
-                //     iconSize: 16,
-                //     color: Colors.white,
-                //     icon: Icon(isSearching ? Icons.close : Icons.search),
-                //     onPressed: () {
-                //       setState(() {
-                //         isSearching = !isSearching;
-                //         if (!isSearching) {
-                //           searchController.clear();
-                //           Provider.of<SalesProvider>(context, listen: false)
-                //               .resetFilter();
-                //         }
-                //       });
-                //     },
-                //   ),
-
-                //   // Icon(
-                //   //   isSearching ? Icons.close : Icons.search,
-                //   //   color: Colors.white,
-                //   //   size: 16,
-                //   // ),
-                // ),
               ),
             ),
 
@@ -249,7 +200,7 @@ class _SalesScreenState extends State<SalesScreen> {
                     ),
                     SizedBox(width: 3),
                     Text(
-                      'Bill',
+                      'Sales',
                       style: TextStyle(color: Colors.yellow, fontSize: 16),
                     ),
                   ],
@@ -439,7 +390,12 @@ class _SalesScreenState extends State<SalesScreen> {
                             ? sale.purchaseDetails.first.purchaseId
                             : null;
 
+                        final salesID = sale.purchaseDetails.first.purchaseId;
+
                         return InkWell(
+                          onLongPress: () {
+                            editDeleteDiolog(context, salesID.toString());
+                          },
                           onTap: () {
                             // Navigator.push(
                             //   context,
@@ -469,13 +425,14 @@ class _SalesScreenState extends State<SalesScreen> {
                                   // Left Side Info
                                   Expanded(
                                     child: InkWell(
-                                      onTap: (){
-                                         Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SalesDetails(sale: sale),
-                              ),
-                            );
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SalesDetails(sale: sale),
+                                          ),
+                                        );
                                       },
                                       child: Column(
                                         crossAxisAlignment:
@@ -491,7 +448,8 @@ class _SalesScreenState extends State<SalesScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    formatDate(sale.purchaseDate),
+                                                    formatDate(
+                                                        sale.purchaseDate),
                                                     style: const TextStyle(
                                                       fontSize: 12,
                                                       color: Colors.black,
@@ -507,7 +465,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                                   ),
                                                 ],
                                               ),
-                                      
+
                                               ///horozontal divider
                                               //Divider (horizontal line)
                                               Container(
@@ -518,7 +476,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 6),
                                               ),
-                                      
+
                                               //cash andf amount
                                               Column(
                                                 crossAxisAlignment:
@@ -533,7 +491,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                                         color: Colors.black,
                                                         fontSize: 12),
                                                   ),
-                                      
+
                                                   //amount
                                                   Text(
                                                     '${sale.grossTotal} TK',
@@ -607,89 +565,7 @@ class _SalesScreenState extends State<SalesScreen> {
 
                                             const SizedBox(width: 4),
 
-                                            SizedBox(
-                                              height: 20,
-                                              width: 40,
-                                              child: PopupMenuButton(
-                                                iconSize: 30,
-                                                //offset: const Offset(0, 40),
-                                                position:
-                                                    PopupMenuPosition.under,
-                                                padding: EdgeInsets.zero,
-                                                itemBuilder: (context) {
-                                                  List<PopupMenuEntry<String>>
-                                                      items = [];
-
-                                                  if (sale.disabled ==
-                                                      'enable') {
-                                                    items.add(
-                                                      const PopupMenuItem(
-                                                        value: 'edit',
-                                                        child: Row(
-                                                          children: [
-                                                            Icon(Icons.edit,
-                                                                color: Colors
-                                                                    .blue),
-                                                            SizedBox(width: 5),
-                                                            Text('Edit',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .blue)),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-
-                                                  items.add(
-                                                    const PopupMenuItem(
-                                                      value: 'delete',
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(Icons.delete,
-                                                              color:
-                                                                  Colors.red),
-                                                          SizedBox(width: 5),
-                                                          Text('Delete',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .red)),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-
-                                                  return items;
-                                                },
-                                                onSelected: (value) {
-                                                  if (value == 'edit' &&
-                                                      sale2 != null) {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            salesUpdateScreen(
-                                                                salesId: sale2),
-                                                      ),
-                                                    );
-                                                  } else if (value == 'edit') {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                            "No purchase ID available for this sale"),
-                                                      ),
-                                                    );
-                                                  }
-
-                                                  if (value == 'delete') {
-                                                    conformDelete(
-                                                        context, sale2!);
-                                                  }
-                                                },
-                                              ),
-                                            ),
+                                            
                                           ],
                                         ),
                                       ],
@@ -710,57 +586,171 @@ class _SalesScreenState extends State<SalesScreen> {
     );
   }
 
-  Future<void> conformDelete(context, int saleId) async {
+  ////old delete button.
+  // Future<void> conformDelete(context, int saleId) async {
+  //   return showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text("Confirm Deletion"),
+  //         content: const Text(
+  //           "Are you sure you want to delete this sale?",
+  //           style: TextStyle(color: Colors.black),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.pop(context); // Close the dialog
+  //             },
+  //             child: const Text("Cancel"),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               // Call your delete function here
+  //               Provider.of<SalesProvider>(context, listen: false).deleteSale(
+  //                 saleId,
+  //               );
+  //               Navigator.pop(context);
+
+  //               debugPrint("Sale deleted"); // Replace with actual delete logic
+  //             },
+  //             child: const Text(
+  //               "Delete",
+  //               style: TextStyle(color: Colors.red),
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
+  ///show edit and delete list from alart diolog
+  Future<dynamic> editDeleteDiolog(BuildContext context, String salesID) {
+    final colorScheme = Theme.of(context).colorScheme;
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Confirm Deletion"),
-          content: const Text(
-            "Are you sure you want to delete this sale?",
-            style: TextStyle(color: Colors.black),
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    //Navigate to Edit Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            salesUpdateScreen(salesId: int.parse(salesID)),
+                      ),
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, salesID);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close the dialog
-              },
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                // Call your delete function here
-                Provider.of<SalesProvider>(context, listen: false).deleteSale(
-                  saleId,
-                );
-                Navigator.pop(context);
-
-                debugPrint("Sale deleted"); // Replace with actual delete logic
-              },
-              child: const Text(
-                "Delete",
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
         );
       },
     );
   }
 
-  void showFeatureNotAvailableDialog(BuildContext context) {
+  ////delete recived item from list
+  void _showDeleteDialog(BuildContext context, String salesID) {
+    final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Feature Not Available'),
+        title: const Text(
+          'Delete Sales Voucher',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
         content: const Text(
-          'This feature is not available right now.',
-          style: TextStyle(color: Colors.black),
+          'Are you sure you want to delete this Sales?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              //Navigator.of(context).pop(); // Close dialog first
+
+              // ✅ Call delete from Provider
+              // await Provider.of<PurchaseProvider>(context, listen: false)
+              //     .deletePurchase(context, int.parse(purchaseId));
+
+              Provider.of<SalesProvider>(context, listen: false).deleteSale(
+                int.parse(salesID),
+              );
+              Navigator.pop(context);
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

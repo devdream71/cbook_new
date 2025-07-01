@@ -1,4 +1,3 @@
-
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/feature_not_available.dart';
 import 'package:cbook_dt/feature/Received/received_list.dart';
@@ -315,8 +314,12 @@ class _ItemViewState extends State<ItemView> {
                           shrinkWrap: true,
                           padding: EdgeInsets.zero, // No padding
                           itemCount: itemProvider.items.length,
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: 1), // 1px space
+
+                          separatorBuilder: (context, index) => const SizedBox(
+                            height: 1,
+                          ),
+
+                          // 1px space
                           itemBuilder: (context, index) {
                             ItemsModel item = itemProvider.items[index];
                             debugPrint("Item from provider: ${item.name}");
@@ -356,6 +359,7 @@ class _ItemViewState extends State<ItemView> {
                                     borderRadius: BorderRadius.circular(
                                         2), // 🔥 Rounded corner radius here
                                   ),
+                                  shadowColor: const Color(0xff396be8),
                                   elevation: 1, // Optional: add shadow
                                   margin: EdgeInsets.zero, // No margin
                                   child: ListTile(
@@ -430,7 +434,7 @@ class _ItemViewState extends State<ItemView> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    "MRP: ${item.mrp}",
+                                                    "Stock: ${item.openingStock} $unitName",
                                                     style: GoogleFonts
                                                         .notoSansPhagsPa(
                                                       fontSize: 11,
@@ -441,29 +445,35 @@ class _ItemViewState extends State<ItemView> {
                                               ),
 
                                               /// Prices
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    "Sales Price: ${item.salesPrice}",
-                                                    style: GoogleFonts
-                                                        .notoSansPhagsPa(
-                                                      fontSize: 12,
-                                                      color: Colors.black87,
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 2.0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    FittedBox(
+                                                      child: Text(
+                                                        "S. Price: ${item.salesPrice}",
+                                                        style: GoogleFonts
+                                                            .notoSansPhagsPa(
+                                                          fontSize: 12,
+                                                          color: Colors.black87,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                  Text(
-                                                    "Purchase: ${item.purchasePrice}",
-                                                    style: GoogleFonts
-                                                        .notoSansPhagsPa(
-                                                      fontSize: 12,
-                                                      color: Colors.black87,
+                                                    Text(
+                                                      "Purchase: ${item.purchasePrice}",
+                                                      style: GoogleFonts
+                                                          .notoSansPhagsPa(
+                                                        fontSize: 12,
+                                                        color: Colors.black87,
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),

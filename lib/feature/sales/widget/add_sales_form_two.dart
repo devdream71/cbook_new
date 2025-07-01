@@ -245,11 +245,13 @@ class _AddSalesFormfieldTwoState extends State<AddSalesFormfieldTwo> {
               height: 35,
               child: TextFormField(
                 cursorHeight: 18,
+                
                 controller: widget.controller,
                 focusNode: _focusNode,
                 onChanged: (value) => _onChanged(value, customerProvider),
                 style: const TextStyle(color: Colors.black, fontSize: 14),
                 decoration: InputDecoration(
+                  fillColor: Colors.white,
                   labelText: "Customer",
                   labelStyle: const TextStyle(fontSize: 14),
                   floatingLabelStyle:
