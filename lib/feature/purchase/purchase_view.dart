@@ -241,12 +241,9 @@ class LayoutState extends State<Layout> {
                                             ),
                                           ),
                                         ),
-
                                         const SizedBox(
                                           width: 8,
                                         ),
-
-                                       
                                       ],
                                     ),
                                     vPad2,
@@ -333,8 +330,6 @@ class LayoutState extends State<Layout> {
 
                                               //: SizedBox.shrink(),
 
-                                            
-                                              
                                               : Column(
                                                   children: [
                                                     AddSalesFormfieldTwo(
@@ -430,8 +425,6 @@ class LayoutState extends State<Layout> {
                                                     ),
                                                   ],
                                                 ),
-
-                                       
                                         ),
 
                                         hPad3, // Space between TextField and Icon
@@ -461,15 +454,12 @@ class LayoutState extends State<Layout> {
                                 ),
                               ),
 
-                           
-
                               ///bill no, bill date, bill person
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-
-                                     // Bill No Field
+                                    // Bill No Field
                                     SizedBox(
                                       height: 30,
                                       width: 130,
@@ -508,8 +498,7 @@ class LayoutState extends State<Layout> {
                                       ),
                                     ),
 
-
-                                     ///bill date
+                                    ///bill date
                                     SizedBox(
                                       height: 30,
                                       width: 130,
@@ -610,10 +599,6 @@ class LayoutState extends State<Layout> {
                                         },
                                       ),
                                     ),
-
-                                   
-
-                                   
                                   ],
                                 ),
                               )
@@ -856,7 +841,8 @@ class LayoutState extends State<Layout> {
                                                                                     ),
                                                                                   ),
                                                                                   Text(
-                                                                                    "৳ ${item.mrp!} x ${item.quantity!} ${item.unit} = ${item.total}",
+                                                                                    //"৳ ${item.mrp!} x ${item.quantity!} ${item.unit} =  ${item.total} ",
+                                                                                    "৳ ${item.mrp!} x ${item.quantity!} ${item.unit} = ৳ ${(double.parse(item.mrp!) * int.parse(item.quantity!)).toStringAsFixed(2)}",
                                                                                     style: const TextStyle(
                                                                                       color: Colors.grey,
                                                                                       fontSize: 14,
@@ -1163,7 +1149,7 @@ class LayoutState extends State<Layout> {
                                                                                     ),
                                                                                   ),
                                                                                   Text(
-                                                                                    "৳ ${item.mrp!} x ${item.quantity!} ${item.unit} = ${item.total}",
+                                                                                    "৳ ${item.mrp!} x ${item.quantity!} ${item.unit} = ৳ ${(double.parse(item.mrp!) * int.parse(item.quantity!)).toStringAsFixed(2)} ", //${item.total}
                                                                                     style: const TextStyle(
                                                                                       color: Colors.grey,
                                                                                       fontSize: 14,
@@ -2350,7 +2336,16 @@ class LayoutState extends State<Layout> {
                                   amount: amount,
                                   // customerId: selectedCustomerId ??
                                   //     "Cash", // ✅ Use selectedCustomerId
-                                  customerId: selectedCustomerId ?? "cash",
+                                  //customerId: selectedCustomerId ?? "cash",
+
+                                  customerId: controller.isCash
+                                      ? "cash"
+                                      : Provider.of<CustomerProvider>(context,
+                                                  listen: false)
+                                              .selectedCustomer
+                                              ?.id
+                                              .toString() ??
+                                          "cash",
                                   saleType:
                                       controller.isCash ? "cash" : "credit",
                                   discount: discount,
@@ -2489,10 +2484,6 @@ class LayoutState extends State<Layout> {
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.add_box,
-                                color: Colors.white,
-                              ),
                               SizedBox(width: 5),
                               Text(
                                 "Add Item & service",
@@ -2606,7 +2597,7 @@ class LayoutState extends State<Layout> {
                                 //   ],
                                 // ),
 
-                                const SizedBox(width: 10),
+                                SizedBox(width: 10),
 
                                 /////===>sub category working.
                                 // Column(
@@ -2871,7 +2862,7 @@ class LayoutState extends State<Layout> {
 
                                   // Create final unit string like: "24_Pces_1"
                                   String finalUnitString =
-                                      "${unit.id}_${unit.name}_1";
+                                      "${unit.id}_${unit.name}"; //"${unit.id}_${unit.name}_1";
                                   controller.selectedUnitIdWithNameFunction(
                                       finalUnitString);
                                 }
@@ -3453,7 +3444,7 @@ class LayoutState extends State<Layout> {
 
                                           // Create the final unit string for the selected unit
                                           String finalUnitString =
-                                              "${unit.id}_${unit.name}_1"; // Default to qty=1
+                                              "${unit.id}_${unit.name}"; // Default to qty=1 //_1 //"${unit.id}_${unit.name}_1";
                                           controller
                                               .selectedUnitIdWithNameFunction(
                                                   finalUnitString);
@@ -3568,7 +3559,7 @@ class LayoutState extends State<Layout> {
                                   // Fallback if no valid unit string was found
                                   if (finalUnitString.isEmpty) {
                                     finalUnitString =
-                                        "${selectedUnitObj.id}_${selectedUnit}_1"; // Default to 1 if no match
+                                        "${selectedUnitObj.id}_${selectedUnit}"; // Default to 1 if no match //"${selectedUnitObj.id}_${selectedUnit}_1";
                                     controller.selectedUnitIdWithNameFunction(
                                         finalUnitString);
                                   }

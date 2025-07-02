@@ -11,7 +11,6 @@ import '../sales_view.dart';
 import 'package:http/http.dart' as http;
 
 class SalesController extends ChangeNotifier {
-
   void updateItem(int index, ItemModel updatedItem) {
     if (index >= 0 && index < itemsCash.length) {
       itemsCash[index] = updatedItem;
@@ -222,8 +221,6 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
   //credit discount amount
   void updateDiscountCreditAmount(String value) {
     if (value.isEmpty || double.tryParse(value) == null) {
@@ -239,7 +236,6 @@ class SalesController extends ChangeNotifier {
     percentController.text = percent.toStringAsFixed(2);
     notifyListeners();
   }
-
 
   ///credit discount percentance
   void updateDiscountCreditPercent(String value) {
@@ -263,7 +259,6 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-
   //cash discount amount
   void updateDiscountCashAmount(String value) {
     if (value.isEmpty || double.tryParse(value) == null) {
@@ -279,7 +274,6 @@ class SalesController extends ChangeNotifier {
     percentController.text = percent.toStringAsFixed(2);
     notifyListeners();
   }
-
 
   ///cash discount percentance
   void updateDiscountCashPercent(String value) {
@@ -302,7 +296,6 @@ class SalesController extends ChangeNotifier {
 
     notifyListeners();
   }
-
 
   void clearPercentance() {
     percentController.clear();
@@ -423,9 +416,7 @@ class SalesController extends ChangeNotifier {
     // Format to 2 decimal places
   }
 
-
-
-  ///sales tax vat provider. 
+  ///sales tax vat provider.
   double? selectedTaxPercent;
   String taxPercentValue = "";
   String totaltaxPercentValue = "";
@@ -461,35 +452,35 @@ class SalesController extends ChangeNotifier {
 
     // Add to item list
     itemsCash.add(ItemModel(
-      category: selectedCategory ?? "Category1",
-      subCategory: selectedSubCategory ?? "Sub Category1",
-      itemName: seletedItemName ?? "Item1",
-      discountAmount: discountAmount.text,
-      discountPercentance: discountPercentance.text,
-      vatAmount: taxAmount,
-      vatPerentace: selectedTaxPercent ?? "",
-      // no discount
-      itemCode: codeController.text,
-      unit: selectedUnit ?? "N/A",
-      mrp: mrpController.text,
-      quantity: qtyController.text,
-      total: itemTotal.toStringAsFixed(2), // direct total
-    ));
+        category: selectedCategory ?? "Category1",
+        subCategory: selectedSubCategory ?? "Sub Category1",
+        itemName: seletedItemName ?? "Item1",
+        discountAmount: discountAmount.text,
+        discountPercentance: discountPercentance.text,
+        vatAmount: taxAmount,
+        vatPerentace: '1_10' ?? "",
+        // no discount
+        itemCode: codeController.text,
+        unit: selectedUnit ?? "N/A",
+        mrp: mrpController.text,
+        quantity: qtyController.text,
+        total: itemTotal.toStringAsFixed(2), // direct total
+        description: 'd'));
 
     notifyListeners();
 
     // Add to sale list
     saleItem.add(SaleItemModel(
-      itemId: selcetedItemId,
-      price: mrpController.text,
-      qty: qtyController.text,
-      subTotal: itemTotal.toStringAsFixed(2),
-      unitId: selectedUnitIdWithName,
-      discountAmount: discountAmount.text,
-      discountPercentage: discountPercentance.text,
-      taxAmount: taxAmount,
-      taxPercent: taxPercentValue,
-    ));
+        itemId: selcetedItemId,
+        price: mrpController.text,
+        qty: qtyController.text,
+        subTotal: itemTotal.toStringAsFixed(2),
+        unitId: selectedUnitIdWithName,
+        discountAmount: discountAmount.text,
+        discountPercentage: discountPercentance.text,
+        taxAmount: taxAmount,
+        taxPercent: '1_10',
+        description: 'b'));
 
     notifyListeners();
     // Clear input fields
@@ -515,8 +506,6 @@ class SalesController extends ChangeNotifier {
     double demodiscounAmout = double.tryParse(discountAmount.text) ?? 0.0;
 
     double itemTotal = ((price * quantity) - demodiscounAmout) + taxAmount;
-
-    
 
     itemsCredit.add(ItemModel(
       category: selectedCategory ?? "Category1",
@@ -622,8 +611,30 @@ class SalesController extends ChangeNotifier {
       // final url =
       //     "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=$newBillNumber&sale_date=$encodedDate&details_notes=notes&gross_total=${customerId.isNotEmpty ? totalAmount2 : totalAmount}&discount=$discount&payment_out=1&payment_amount=${customerId.isNotEmpty ? totalAmount2 : totalAmount}";
 
-      final url =
-          "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'Cash'}&bill_number=$billNo&sale_date=$encodedDate&details_notes=$note&discount_percent=${discountPercentance.text}&tax=$taxAmount&tax_percents=$totaltaxPercentValue&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount : totalAmount2}";
+      // final url =
+      //     "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'Cash'}&bill_number=$billNo&sale_date=$encodedDate&details_notes=$note&discount_percent=${discountPercentance.text}&tax=82&tax_percents=$totaltaxPercentValue&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount : totalAmount2}&total_item_vats=20";
+
+      // final url =
+      //     "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'Cash'}&bill_number=$billNo&sale_date=$encodedDate&details_notes=$note&total_item_discounts=15&discount=5&discount_percent=&tax=82&tax_percents=$totaltaxPercentValue&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=20&total_item_vats=20";
+
+      //final discount = discountTotalController.text.trim();
+      final taxPercents = "5_10"; // if backend supports comma-separated
+// or remove entirely if not needed
+
+      final url = "https://commercebook.site/api/v1/sales/store"
+          "?user_id=20"
+          "&customer_id=Cash"
+          "&bill_number=g"
+          "&sale_date=2025-07-02"
+          "&details_notes="
+          "&total_item_discounts=15"
+          "&discount=${discount.isEmpty ? '0' : discount}"
+          "&tax=82"
+          "&tax_percents=${taxPercents}"
+          "&gross_total=298.76"
+          "&payment_out=1"
+          "&payment_amount=20"
+          "&total_item_vats=20";
 
       debugPrint("API URL: $url");
 
@@ -1048,7 +1059,6 @@ class SalesController extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
 
   //sales field portion date tax and vat
   String? selectedTotalTaxId;

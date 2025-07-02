@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'package:cbook_dt/common/close_button_icon.dart';
 import 'package:cbook_dt/common/item_details_pop_up.dart';
 import 'package:cbook_dt/common/item_details_pop_up_two.dart';
 import 'package:cbook_dt/feature/item/update_item.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-
 
 class ItemDetailsView extends StatefulWidget {
   final int itemId;
@@ -44,6 +44,12 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
   @override
   void initState() {
     super.initState();
+
+    // Future.microtask(() {
+    //   Provider.of<ItemProvider>(context, listen: false)
+    //       .fetchItemById(widget.itemId);
+    // });
+
     fetchItemDetails();
   }
 
@@ -88,6 +94,10 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
     final colorScheme = Theme.of(context).colorScheme;
     final itemName = itemDetails?['name'] as String? ?? '';
 
+    final purchasePrice = itemDetails?['purchase_price']?.toString() ?? 'N/A';
+    final salesPrice = itemDetails?['sales_price']?.toString() ?? 'N/A';
+    final mrpspricesPrice = itemDetails?['mrps_price']?.toString() ?? 'N/A';
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -107,9 +117,15 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
           ],
         ),
         actions: [
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> UpdateItem(itemId: widget.itemId),));
-          }, icon: const Icon(Icons.edit_document))
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UpdateItem(itemId: widget.itemId),
+                    ));
+              },
+              icon: const Icon(Icons.edit_document))
         ],
       ),
       body: isLoading
@@ -181,38 +197,39 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                                           color: Colors.white,
                                           borderRadius:
                                               BorderRadius.circular(6)),
-                                      child: const Padding(
-                                          padding: EdgeInsets.only(left: 2.0),
-                                          child: Column(
-                                            children: [
-                                              ItemDetailsPopUpTwo(
-                                                leftTest: "Vat/Tax 15%",
-                                                rightText: 'Exclusive',
-                                                last: "Inclusive",
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              ItemDetailsPopUpTwo(
-                                                leftTest: "Pur Price",
-                                                rightText: '100',
-                                                last: "120",
-                                              ),
-                                              ItemDetailsPopUpTwo(
-                                                leftTest: "Sales. Price",
-                                                rightText: '120',
-                                                last: "140",
-                                              ),
-                                              ItemDetailsPopUpTwo(
-                                                leftTest: "Discount",
-                                                rightText: '5%',
-                                                last: " ",
-                                              ),
-                                              ItemDetailsPopUpTwo(
-                                                leftTest: "MRP",
-                                                rightText: '145',
-                                                last: "",
-                                              ),
-                                            ],
-                                          )),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 2.0),
+                                        child: Column(
+                                          children: [
+                                            const ItemDetailsPopUpTwo(
+                                              leftTest: "Vat/Tax 15%",
+                                              rightText: 'Exclusive',
+                                              last: "Inclusive",
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            ItemDetailsPopUpTwo(
+                                              leftTest: "Pur Price",
+                                              rightText: purchasePrice,
+                                              last: purchasePrice,
+                                            ),
+                                            ItemDetailsPopUpTwo(
+                                              leftTest: "Sales. Price",
+                                              rightText: salesPrice,
+                                              last: salesPrice,
+                                            ),
+                                            const ItemDetailsPopUpTwo(
+                                              leftTest: "Discount",
+                                              rightText: '5%',
+                                              last: " ",
+                                            ),
+                                            ItemDetailsPopUpTwo(
+                                              leftTest: "MRP",
+                                              rightText: mrpspricesPrice,
+                                              last: mrpspricesPrice,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     )
                                   ],
                                 ),
@@ -316,13 +333,6 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                           ),
                         ),
                       ),
-
-                      ///===>>>item details section
-                      // const Text("Item Details:",
-                      //     style: TextStyle(
-                      //         fontSize: 14,
-                      //         fontWeight: FontWeight.bold,
-                      //         color: Colors.black)),
 
                       purchaseDetails.isEmpty
                           ? const Center(
@@ -500,17 +510,13 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
                       ),
 
                       // Cancel icon on the right
+
                       Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: InkWell(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: CloseButtonIconNew(
                           onTap: () {
                             Navigator.pop(context);
                           },
-                          child: const Icon(
-                            Icons.cancel,
-                            size: 20,
-                            color: Colors.grey,
-                          ),
                         ),
                       ),
                     ],

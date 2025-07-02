@@ -493,6 +493,7 @@ class PurchaseController extends ChangeNotifier {
         "purchase_items": purchaseItem.map((item) => item.toJson()).toList(),
         // "details_notes": note ?? "",
       };
+      
       debugPrint("Request Body: $requestBody");
 
       final response = await http.post(

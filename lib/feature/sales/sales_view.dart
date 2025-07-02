@@ -86,7 +86,6 @@ class _LayoutState extends State<_Layout> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-
   TextEditingController searchController = TextEditingController();
   TextEditingController billController = TextEditingController();
 
@@ -149,6 +148,7 @@ class _LayoutState extends State<_Layout> {
         color: AppColors.primaryColor,
         child: SafeArea(
           child: Scaffold(
+            resizeToAvoidBottomInset: true, //keybord hold up the content.
             backgroundColor: Colors.white,
 
             ///app bar
@@ -190,10 +190,11 @@ class _LayoutState extends State<_Layout> {
                     ))
               ],
             ),
+
             body: GestureDetector(
-              //behavior: HitTestBehavior.translucent,
+              behavior: HitTestBehavior.translucent,
               onTap: () {
-                //FocusScope.of(context).unfocus();
+                FocusScope.of(context).unfocus();
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,11 +237,6 @@ class _LayoutState extends State<_Layout> {
                                                         context,
                                                         listen: false)
                                                     .clearSelectedCustomer();
-
-                                                // Provider.of<PaymentVoucherProvider>(
-                                                //         context,
-                                                //         listen: false)
-                                                //     .clearBillPersons();
                                               },
                                               child: DecoratedBox(
                                                 decoration: BoxDecoration(
@@ -3417,6 +3413,7 @@ class ItemModel {
   dynamic discountPercentance;
   dynamic vatAmount;
   dynamic vatPerentace;
+  dynamic description;
 
   ItemModel(
       {this.category,
@@ -3431,5 +3428,7 @@ class ItemModel {
       this.discountAmount,
       this.discountPercentance,
       this.vatAmount,
-      this.vatPerentace});
+      this.vatPerentace,
+      this.description
+      });
 }

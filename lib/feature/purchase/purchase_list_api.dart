@@ -452,7 +452,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                                     color: Colors.black),
                                               ),
                                               Text(
-                                                  '৳ ${purchase.purchaseDetails!.first.subTotal ?? 0}',
+                                                  '৳ ${purchase.grossTotal ?? 0}',
                                                   style: const TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.black)),
@@ -509,10 +509,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                             //     : const SizedBox.shrink(),
                                           ],
                                         ),
-
                                         const SizedBox(width: 8),
-
-                                         
                                       ],
                                     ),
                                   ],
@@ -642,12 +639,12 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                   onTap: () {
                     Navigator.of(context).pop();
                     //Navigate to Edit Page
-                     //Navigate to Edit Page
+                    //Navigate to Edit Page
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            PurchaseUpdateScreen(purchaseId: int.parse(purchaseId)),
+                        builder: (context) => PurchaseUpdateScreen(
+                            purchaseId: int.parse(purchaseId)),
                       ),
                     );
                   },
@@ -713,6 +710,4 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
       ),
     );
   }
-  
-
 }

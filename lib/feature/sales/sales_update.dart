@@ -827,7 +827,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                                           .spaceBetween,
                                                   children: [
                                                     const Text(
-                                                      "Products",
+                                                      "Add Item & Service",
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 14),
@@ -883,7 +883,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                                           .spaceBetween,
                                                   children: [
                                                     const Text(
-                                                      "Products",
+                                                      "Add Item & Service",
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 14),

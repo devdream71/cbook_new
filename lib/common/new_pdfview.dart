@@ -1044,7 +1044,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                         "${widget.discountAmount}"),
                     buildDottedLine(),
                     customDiscount(
-                        "Vat/Tax ${taxPercentOnly}%", "${widget.taxAmount}"),
+                        "Vat/Tax $taxPercentOnly%", "${widget.taxAmount}"),
                     buildDottedLine(),
                     customDiscount("Total Amount", formattedTotalAmount),
                     buildDottedLine(),
@@ -1443,7 +1443,7 @@ class _NewInvoicePageState extends State<NewInvoicePage> {
                         "${widget.discountAmount}"),
                     buildDottedLine(),
                     customDiscount(
-                        "Vat/Tax ${taxPercentOnly}%", "${widget.taxAmount}"),
+                        "Vat/Tax $taxPercentOnly%", "${widget.taxAmount}"),
                     buildDottedLine(),
                     customDiscount("Total Amount", formattedTotalAmount),
                     buildDottedLine(),

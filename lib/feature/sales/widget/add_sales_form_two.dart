@@ -135,6 +135,10 @@ class _AddSalesFormfieldTwoState extends State<AddSalesFormfieldTwo> {
                                   provider.setSelectedCustomer(
                                       customer); // ✅ PAYMENT
                                 }
+
+                               // selectedCustomerId = customer.id.toString();
+
+
                                 // 👇 Print selected customer ID
                                 debugPrint(
                                     "Selected Customer ID: ${customer.id}");

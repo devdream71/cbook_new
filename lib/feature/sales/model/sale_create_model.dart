@@ -8,6 +8,7 @@ class SaleItemModel {
   dynamic discountAmount;
   dynamic taxPercent;
   dynamic taxAmount;
+  String ? description;
 
   SaleItemModel({
      this.itemId,
@@ -19,6 +20,7 @@ class SaleItemModel {
      this.discountAmount,
      this.taxPercent,
      this.taxAmount,
+     this.description,
   });
 
   // Factory constructor to create an object from JSON
@@ -33,6 +35,7 @@ class SaleItemModel {
       discountAmount: json['discount_amount'],
       taxPercent: json['tax_percent'],
       taxAmount: json['tax_amount'],
+      description: json['description'],
     );
   }
 
@@ -48,6 +51,7 @@ class SaleItemModel {
       'discount_amount': discountAmount,
       'tax_percent': taxPercent,
       'tax_amount': taxAmount,
+      'description' : description,
     };
   }
 }

@@ -146,7 +146,7 @@ class _PartyState extends State<Party> {
                 icon: const CircleAvatar(
                     radius: 12,
                     backgroundColor: Colors.white,
-                    child: const Icon(Icons.add, color: Colors.green)),
+                    child: Icon(Icons.add, color: Colors.green)),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -164,7 +164,7 @@ class _PartyState extends State<Party> {
         body: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
                 color: Color(0xffdddefa),
               ),
@@ -194,7 +194,7 @@ class _PartyState extends State<Party> {
                   ),
 
                   // Vertical Divider
-                  Container(
+                  SizedBox(
                     height: 35,
                     width: 35,
                     //color: Colors.green.shade800,
@@ -293,7 +293,7 @@ class _PartyState extends State<Party> {
                             visualDensity:
                                 const VisualDensity(vertical: 0, horizontal: 0),
                             contentPadding: EdgeInsets.zero,
-                            leading: Container(
+                            leading: SizedBox(
                               //color: Colors.red,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 6.0),

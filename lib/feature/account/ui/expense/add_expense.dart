@@ -693,7 +693,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                                   labelText: 'Paid To',
                                   selectedItem: selectedPaidTo,
                                   onChanged: (selectedItem) {
-                                    print('Selected Paid To: $selectedItem');
+                                    debugPrint('Selected Paid To: $selectedItem');
                                     setState(() {
                                       selectedPaidTo = selectedItem;
                                     });

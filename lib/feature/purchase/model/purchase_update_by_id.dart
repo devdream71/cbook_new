@@ -63,16 +63,16 @@ class PurchaseData {
 }
 
 class PurchaseDetail {
-  final int? id;
-  final int? purchaseId;
+   int? id;
+   int? purchaseId;
   //final dynamic? purchaseDetailsId;
-  final String? type;
-  final String? purchaseDate;
-  final int? itemId;
-  final dynamic  defaultQty;
+   String? type;
+   String? purchaseDate;
+   int? itemId;
+   dynamic  defaultQty;
   dynamic  qty;
-  final dynamic  rawQty;
-  final int ? unitId;
+   dynamic  rawQty;
+   int ? unitId;
   dynamic price;
   dynamic  subTotal;
   final dynamic  salesQty;

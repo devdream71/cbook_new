@@ -92,7 +92,7 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
         automaticallyImplyLeading: true,
         backgroundColor: colorScheme.primary,
         centerTitle: true,
-        title: Text("Update Party",
+        title: const Text("Update Party",
             style: TextStyle(color: Colors.yellow, fontSize: 14)),
       ),
       body: Padding(

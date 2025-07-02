@@ -1,4 +1,3 @@
-
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/purchase/purchase_update.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
@@ -11,8 +10,8 @@ class UpdatePurchaseItemView extends StatefulWidget {
   final index;
   final PurchaseUpdateProvider provider;
   final PurchaseUpdateModel itemDetail;
-  final Map<int, String> itemMap;  
-  final Map<int, String> unitMap;  
+  final Map<int, String> itemMap;
+  final Map<int, String> unitMap;
 
   const UpdatePurchaseItemView({
     super.key,
@@ -52,16 +51,53 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
         TextEditingController(text: widget.itemDetail.price.toString());
     widget.provider.subTotalController =
         TextEditingController(text: widget.itemDetail.subTotal.toString());
-  
+
+    // selectedItemName = widget.itemDetail != null
+    //     ? widget.itemDetail.itemId.toString()
+    //     : 'No Items Available';
+
     selectedItemName = widget.itemDetail != null
-        ? widget.itemDetail.itemId.toString()
+        ? widget.itemMap[int.tryParse(widget.itemDetail.itemId) ?? 0] ??
+            'No Items Available'
         : 'No Items Available';
 
     selectedUnitName = widget.itemDetail != null
-    ? widget.unitMap[widget.itemDetail.unitId] ?? 'Pc'
-    : 'No Units Available';    
-      
+        ? widget.unitMap[widget.itemDetail.unitId] ?? 'Pc'
+        : 'No Units Available';
   }
+
+  // void updateItem() {
+  //   debugPrint("Updating item:");
+  //   debugPrint("Selected Item: $selectedItemName");
+  //   debugPrint("Selected Unit: $selectedUnitName");
+  //   debugPrint("Qty: ${qtyController.text}");
+  //   debugPrint("Price: ${priceController.text}");
+  //   debugPrint("Subtotal: ${subTotalController.text}");
+
+  //   // Pass the updated values back to the provider
+  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
+  //       .updateSelectedItem(
+  //           selectedItemName ?? ''); // Update item name in provider
+  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
+  //       .updateSelectedUnit(
+  //           selectedUnitName ?? ''); // Update unit name in provider
+
+  //   // Pass updated values to other relevant fields
+  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
+  //       .qtyController
+  //       .text = qtyController.text;
+  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
+  //       .priceController
+  //       .text = priceController.text;
+  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
+  //       .subTotalController
+  //       .text = subTotalController.text;
+
+  //   setState(() {});
+
+  //   // Navigate back with the updated data
+  //   Navigator.pop(context);
+  // }
 
   void updateItem() {
     debugPrint("Updating item:");
@@ -71,44 +107,74 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
     debugPrint("Price: ${priceController.text}");
     debugPrint("Subtotal: ${subTotalController.text}");
 
-    // Pass the updated values back to the provider
-    Provider.of<PurchaseUpdateProvider>(context, listen: false)
-        .updateSelectedItem(
-            selectedItemName ?? ''); // Update item name in provider
-    Provider.of<PurchaseUpdateProvider>(context, listen: false)
-        .updateSelectedUnit(
-            selectedUnitName ?? ''); // Update unit name in provider
+    // Find itemId from selectedItemName (reverse lookup)
+    int? updatedItemId = widget.itemMap.entries
+        .firstWhere((entry) => entry.value == selectedItemName,
+            orElse: () => MapEntry(0, ''))
+        .key;
 
-    // Pass updated values to other relevant fields
-    Provider.of<PurchaseUpdateProvider>(context, listen: false)
-        .qtyController
-        .text = qtyController.text;
-    Provider.of<PurchaseUpdateProvider>(context, listen: false)
-        .priceController
-        .text = priceController.text;
-    Provider.of<PurchaseUpdateProvider>(context, listen: false)
-        .subTotalController
-        .text = subTotalController.text;
+    // Find unitId from selectedUnitName (reverse lookup)
+    int? updatedUnitId = widget.unitMap.entries
+        .firstWhere((entry) => entry.value == selectedUnitName,
+            orElse: () => MapEntry(0, ''))
+        .key;
 
-    setState(() {});
+    if (updatedItemId == 0 || updatedUnitId == 0) {
+      // Invalid selection, show error or return
+      debugPrint("Invalid item or unit selection");
+      return;
+    }
 
-    // Navigate back with the updated data
+    // Update the purchaseUpdateList item at index
+    widget.provider.purchaseUpdateList[widget.index] = PurchaseUpdateModel(
+      itemId: updatedItemId.toString(),
+      price: priceController.text,
+      qty: qtyController.text,
+      subTotal: subTotalController.text,
+      unitId: "${updatedUnitId}_$selectedUnitName",
+    );
+
+    // Also update any response models if necessary
+    if (widget.provider.purchaseEditResponse.data?.purchaseDetails != null) {
+      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
+          .itemId = updatedItemId;
+      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
+          .unitId = updatedUnitId;
+      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
+          .price = int.tryParse(priceController.text) ?? 0;
+      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
+          .qty = int.tryParse(qtyController.text) ?? 0;
+      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
+          .subTotal = double.tryParse(subTotalController.text) ?? 0.0;
+    }
+
+    widget.provider.notifyListeners();
+
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-
     final itemPurchaseProvider =
         Provider.of<PurchaseUpdateProvider>(context, listen: true);
 
     widget.provider.priceController.addListener(calculateSubtotal);
     widget.provider.qtyController.addListener(calculateSubtotal);
-    
+
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Purchase Update Item")),
+      appBar: AppBar(
+          backgroundColor: colorScheme.primary,
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+          automaticallyImplyLeading: true,
+          title: const Text(
+            "Purchase Update Item",
+            style: TextStyle(color: Colors.yellow, fontSize: 16),
+          )),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal:  8.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -137,7 +203,6 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
               "Unit",
               style: TextStyle(color: Colors.black, fontSize: 14),
             ),
-
             SizedBox(
               width: double.infinity,
               child: CustomDropdownTwo(
@@ -155,7 +220,6 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
                 },
               ),
             ),
-
             AddSalesFormfield(
                 label: "Price", controller: widget.provider.priceController),
             AddSalesFormfield(
@@ -163,7 +227,6 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
             AddSalesFormfield(
                 label: "Subtotal",
                 controller: widget.provider.subTotalController),
-
             const SizedBox(height: 20),
             Row(
               children: [
@@ -183,9 +246,7 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 5),
-
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
@@ -205,7 +266,7 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
                     ),
                     child: const Text(
                       "Update ",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ),
                 ),
