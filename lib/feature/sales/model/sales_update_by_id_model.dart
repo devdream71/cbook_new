@@ -32,6 +32,7 @@ class SaleData {
   final dynamic discount;
   final dynamic grossTotal;
   final String? detailsNotes;
+
   final List<SaleDetail>? salesDetails;
 
   SaleData({
@@ -78,6 +79,7 @@ class SaleDetail {
   dynamic   discountPercentage;
   dynamic   discountAmount;
   dynamic   taxPercent;
+  dynamic   taxid;
   dynamic   taxAmount;
   final dynamic salesQty;
   final dynamic returnQty;
@@ -102,6 +104,7 @@ class SaleDetail {
     this.discountAmount,
     this.taxAmount,
     this.taxPercent,
+    this.taxid,
     this.salesQty,
     this.returnQty,
     this.deletedAt,
@@ -126,6 +129,8 @@ class SaleDetail {
       discountPercentage: map['discount_percentage'] ?? 0,
       discountAmount: map['discount_amount'] ?? 0,
       taxPercent: map['tax_percent'] ?? 0,
+      taxid: map['tax_id'] ?? 0,
+
       taxAmount: map['tax_amount'] ?? 0,
       salesQty: map['sales_qty'] ?? 0,
       returnQty: map['return_qty'] ?? 0,

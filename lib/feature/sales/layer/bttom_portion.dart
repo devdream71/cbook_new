@@ -385,7 +385,10 @@ class BottomPortion extends StatelessWidget {
                       context,
                       date: date,
                       amount: amount,
-                      customerId: customerId ?? "Cash",
+                      // customerId: customerId ?? "cash",
+                       customerId: controller.getCustomerId(context),
+                       
+                      
                       saleType: saleType,
                       billNo: controller.billController.text,
                       total: total,

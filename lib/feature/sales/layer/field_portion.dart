@@ -11,6 +11,8 @@ class _FieldPortionState extends State<FieldPortion> {
   late TextEditingController taxAmountController;
   TextEditingController totalAmountController = TextEditingController();
 
+  String? selectedTaxId;
+
   @override
   void initState() {
     super.initState();
@@ -175,42 +177,93 @@ class _FieldPortionState extends State<FieldPortion> {
                                   selectedItem: selectedTaxName,
     
                                   onChanged: (newValue) {
-                                    debugPrint(
-                                        "Selected raw value from dropdown: $newValue");
-                                    setState(() {
-                                      selectedTaxName = newValue;
+
+
+                                     setState(() {
+                                                selectedTaxName = newValue;
+
+                                                final nameOnly = newValue
+                                                    ?.split(" - ")
+                                                    .first;
+
+                                                final selected = taxProvider
+                                                    .taxList
+                                                    .firstWhere(
+                                                  (tax) => tax.name == nameOnly,
+                                                  orElse: () =>
+                                                      taxProvider.taxList.first,
+                                                );
+
+                                                selectedTaxId =
+                                                    selected.id.toString();
+
+                                                controller.selectedTaxPercent =
+                                                    double.tryParse(
+                                                        selected.percent);
+
+                                                controller
+                                                    .taxPercent = controller
+                                                        .selectedTaxPercent ??
+                                                    0.0;
+
+                                                controller.selectedTaxId =
+                                                    selected.id.toString();
+                                                controller.selectedTaxPercent =
+                                                    double.tryParse(
+                                                        selected.percent);
+
+                                                // controller.updateTaxPaecentId(
+                                                //     '${selectedTaxId}_${controller.selectedTaxPercent}');
+
+                                                final taxPercent = (controller
+                                                            .selectedTaxPercent ??
+                                                        0)
+                                                    .toStringAsFixed(0);
+                                                controller.updateTaxPaecentId(
+                                                    '${selectedTaxId}_$taxPercent');
+
+                                                debugPrint(
+                                                    'tax_percent: "${controller.taxPercentValue}"');
+                                                debugPrint(
+                                                    "Selected Tax ID: $selectedTaxId");
+                                                debugPrint(
+                                                    "Selected Tax Percent: ${controller.selectedTaxPercent}");
+                                    // debugPrint(
+                                    //     "Selected raw value from dropdown: $newValue");
+                                    // setState(() {
+                                    //   selectedTaxName = newValue;
     
-                                      // Find tax by percent
-                                      final selected =
-                                          taxProvider.taxList.firstWhere(
-                                        (tax) => tax.percent == newValue,
-                                        orElse: () =>
-                                            taxProvider.taxList.first,
-                                      );
+                                    //   // Find tax by percent
+                                    //   final selected =
+                                    //       taxProvider.taxList.firstWhere(
+                                    //     (tax) => tax.percent == newValue,
+                                    //     orElse: () =>
+                                    //         taxProvider.taxList.first,
+                                    //   );
     
-                                      // Store ID and Percent
-                                      controller.selectedTotalTaxId =
-                                          selected.id.toString();
-                                      controller.selectedTotalTaxPercent =
-                                          double.tryParse(selected.percent)!;
+                                    //   // Store ID and Percent
+                                    //   controller.selectedTotalTaxId =
+                                    //       selected.id.toString();
+                                    //   controller.selectedTotalTaxPercent =
+                                    //       double.tryParse(selected.percent)!;
     
-                                      // Calculate tax/total
-                                      controller.taxPercent =
-                                          controller.selectedTotalTaxPercent;
-                                      controller.calculateTax();
-                                      controller.calculateTotal();
+                                    //   // Calculate tax/total
+                                    //   controller.taxPercent =
+                                    //       controller.selectedTotalTaxPercent;
+                                    //   controller.calculateTax();
+                                    //   controller.calculateTotal();
     
-                                      // Print required format: tax_percent: "3_12.0"
+                                    //   // Print required format: tax_percent: "3_12.0"
     
-                                      controller.updateTotalTaxId(
-                                          '${controller.selectedTotalTaxId}_${controller.selectedTotalTaxPercent}');
-                                      debugPrint(
-                                          'tax_percent: "${controller.taxPercentValue}"'); // ✅ This is what you want
+                                    //   controller.updateTotalTaxId(
+                                    //       '${controller.selectedTotalTaxId}_${controller.selectedTotalTaxPercent}');
+                                    //   debugPrint(
+                                    //       'tax_percent: "${controller.taxPercentValue}"'); // ✅ This is what you want
     
-                                      controller.selectTotalCreditTaxDropdown(
-                                          double.parse(
-                                              controller.addAmount2()),
-                                          newValue);
+                                    //   controller.selectTotalCreditTaxDropdown(
+                                    //       double.parse(
+                                    //           controller.addAmount2()),
+                                    //       newValue);
                                     });
                                   },
                                 ),

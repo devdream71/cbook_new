@@ -1885,6 +1885,9 @@ class _LayoutState extends State<_Layout> {
   //                         ),
   //                       ),
 
+  
+  
+  ////show sales diolog.
   void showSalesDialog(BuildContext context, SalesController controller) async {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final categoryProvider =
@@ -2365,7 +2368,6 @@ class _LayoutState extends State<_Layout> {
                                       return const Center(
                                           child: CircularProgressIndicator());
                                     }
-
                                     if (taxProvider.taxList.isEmpty) {
                                       return const Center(
                                         child: Text(
@@ -2422,8 +2424,21 @@ class _LayoutState extends State<_Layout> {
                                                         .selectedTaxPercent ??
                                                     0.0;
 
+                                                controller.selectedTaxId =
+                                                    selected.id.toString();
+                                                controller.selectedTaxPercent =
+                                                    double.tryParse(
+                                                        selected.percent);
+
+                                                // controller.updateTaxPaecentId(
+                                                //     '${selectedTaxId}_${controller.selectedTaxPercent}');
+
+                                                final taxPercent = (controller
+                                                            .selectedTaxPercent ??
+                                                        0)
+                                                    .toStringAsFixed(0);
                                                 controller.updateTaxPaecentId(
-                                                    '${selectedTaxId}_${controller.selectedTaxPercent}');
+                                                    '${selectedTaxId}_$taxPercent');
 
                                                 debugPrint(
                                                     'tax_percent: "${controller.taxPercentValue}"');
@@ -3429,6 +3444,5 @@ class ItemModel {
       this.discountPercentance,
       this.vatAmount,
       this.vatPerentace,
-      this.description
-      });
+      this.description});
 }

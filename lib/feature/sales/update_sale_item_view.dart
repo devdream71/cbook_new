@@ -8,6 +8,7 @@ import 'package:cbook_dt/feature/tax/provider/tax_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
 class UpdateSaleItemView extends StatefulWidget {
   final index;
   final SaleUpdateProvider provider;
@@ -55,6 +56,14 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
     // final fetchStockQuantity =
     //     Provider.of<AddItemProvider>(context, listen: false);
 
+     // Get the item and unit name using the maps
+  selectedItemName = widget.itemMap[int.tryParse(widget.itemDetail.itemId)] ?? 'Select Item';
+
+    // unitId is in the format: "5_Packet_1" => we only need the first part
+  final unitIdOnly = int.tryParse(widget.itemDetail.unitId.split("_")[0]);
+  selectedUnitName = widget.unitMap[unitIdOnly] ?? 'Select Unit';
+
+
     widget.provider.saveData(
       itemId: widget.itemDetail != null
           ? widget.itemDetail.itemId.toString()
@@ -96,7 +105,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
         .text = subTotalController.text;
 
     Provider.of<SaleUpdateProvider>(context, listen: false).qtyController.text =
-        qtyController.text;
+        qtyController.text;    
 
     setState(() {});
 
@@ -120,7 +129,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
           backgroundColor: colorScheme.primary,
           iconTheme: const IconThemeData(color: Colors.white),
           title: const Text(
-            "Update Item",
+            "Sales Update Item",
             style: TextStyle(color: Colors.yellow, fontSize: 16),
           )),
       body: Padding(
@@ -141,6 +150,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                     ? widget.itemMap.values.toList()
                     : ['No Items Available'], // Show a default message if empty
                 hint: selectedItemName ?? 'Select Item', // ✅ Show selected item
+                selectedItem: selectedItemName,
                 width: double.infinity,
                 height: 30,
                 onChanged: (String? newValue) {
@@ -223,6 +233,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                           hint: selectedUnitName ??
                               'Select Unit', // Show selected unit or default hint
                           width: double.infinity,
+                          selectedItem: selectedUnitName, 
                           height: 30,
                           onChanged: (String? newValue) {
                             setState(() {
@@ -403,7 +414,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                     ),
                     onPressed: () {}, // Ensure this function is implemented
                     child: const Text(
-                      "Delete   ",
+                      "Delete",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),

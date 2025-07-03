@@ -564,8 +564,6 @@ class _SalesScreenState extends State<SalesScreen> {
                                             ),
 
                                             const SizedBox(width: 4),
-
-                                            
                                           ],
                                         ),
                                       ],
@@ -699,7 +697,9 @@ class _SalesScreenState extends State<SalesScreen> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
-                    _showDeleteDialog(context, salesID);
+                    setState(() {
+                      _showDeleteDialog(context, salesID);
+                    });
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -739,16 +739,34 @@ class _SalesScreenState extends State<SalesScreen> {
           ),
           TextButton(
             onPressed: () async {
+              // Close dialog after deletion, not before
+              final provider =
+                  Provider.of<SalesProvider>(context, listen: false);
+
+              await provider.deleteSale(int.parse(salesID)); // ⬅️ AWAIT this
+
+              // No need to call fetchItems() again if it's already inside deleteSale()
+              // await provider.fetchItems();
+
+              Navigator.pop(context); // ⬅️ Close after update
+
               //Navigator.of(context).pop(); // Close dialog first
 
               // ✅ Call delete from Provider
               // await Provider.of<PurchaseProvider>(context, listen: false)
               //     .deletePurchase(context, int.parse(purchaseId));
 
-              Provider.of<SalesProvider>(context, listen: false).deleteSale(
-                int.parse(salesID),
-              );
-              Navigator.pop(context);
+              // Provider.of<SalesProvider>(context, listen: false).deleteSale(
+              //   int.parse(salesID),
+              // );
+
+              // setState(() {
+
+              //    Provider.of<SalesProvider>(context, listen: false).fetchItems();
+
+              // });
+
+              // Navigator.pop(context);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),

@@ -9,6 +9,8 @@ class SaleItemModel {
   dynamic taxPercent;
   dynamic taxAmount;
   String ? description;
+  // dynamic totalItemVats;
+  // dynamic totalItemDiscounts;
 
   SaleItemModel({
      this.itemId,
@@ -21,6 +23,8 @@ class SaleItemModel {
      this.taxPercent,
      this.taxAmount,
      this.description,
+    //  this.totalItemVats,
+    //  this.totalItemDiscounts,
   });
 
   // Factory constructor to create an object from JSON
@@ -36,6 +40,8 @@ class SaleItemModel {
       taxPercent: json['tax_percent'],
       taxAmount: json['tax_amount'],
       description: json['description'],
+      // totalItemDiscounts: json['total_item_discounts'],
+      // totalItemVats: json['total_item_vats'],
     );
   }
 
@@ -52,6 +58,8 @@ class SaleItemModel {
       'tax_percent': taxPercent,
       'tax_amount': taxAmount,
       'description' : description,
+      // 'total_item_vats' : totalItemVats,
+      // 'total_item_discounts' : totalItemDiscounts,
     };
   }
 }

@@ -433,6 +433,11 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
     Future.microtask(() =>
         Provider.of<PaymentVoucherProvider>(context, listen: false)
             .fetchBillPersons());
+
+     Future.microtask(() =>
+        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());       
+
+
   }
 
   @override
@@ -793,11 +798,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                             ),
                                           ),
 
-                                          ///Xyz
-                                          Container(
-                                            decoration: BoxDecoration(),
-                                          ),
-
+                                      
                                           ///bill person
                                           Padding(
                                             padding:

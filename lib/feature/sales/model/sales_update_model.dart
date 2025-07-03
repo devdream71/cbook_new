@@ -1,8 +1,3 @@
- 
-
-
-
-
 class SaleUpdateModel {
   //dynamic purchaseDetailsId;
   String itemId;
@@ -15,6 +10,7 @@ class SaleUpdateModel {
   dynamic salesUpdateDiscountAmount;
   dynamic salesUpdateVATTAXAmount;
   dynamic salesUpdateVATTAXPercentance;
+  dynamic dis;
 
   SaleUpdateModel({
     //required this.purchaseDetailsId,
@@ -27,7 +23,8 @@ class SaleUpdateModel {
       this.salesUpdateDiscountPercentace,
       this.salesUpdateDiscountAmount,
       this.salesUpdateVATTAXAmount,
-      this.salesUpdateVATTAXPercentance
+      this.salesUpdateVATTAXPercentance,
+      this.dis,
   });
 
   // Factory constructor to create an instance from JSON
@@ -43,7 +40,8 @@ class SaleUpdateModel {
       salesUpdateDiscountPercentace: json['discount_percentage'] ?? '',
       salesUpdateDiscountAmount: json['discount_amount'] ?? '',
       salesUpdateVATTAXAmount: json['tax_amount'] ?? '',
-      salesUpdateVATTAXPercentance: json['tax_percent'] ?? ''
+      salesUpdateVATTAXPercentance: json['tax_percent'] ?? '',
+      dis: json['description'] ?? ''
 
     );
   }
@@ -62,6 +60,7 @@ class SaleUpdateModel {
       'discount_amount': salesUpdateDiscountAmount,
       'tax_amount': salesUpdateVATTAXAmount,
       'tax_percent': salesUpdateVATTAXPercentance,
+      'description': dis,
     };
   }
 }
