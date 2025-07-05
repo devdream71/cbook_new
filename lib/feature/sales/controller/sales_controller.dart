@@ -13,21 +13,82 @@ import '../sales_view.dart';
 import 'package:http/http.dart' as http;
 
 class SalesController extends ChangeNotifier {
-  void updateItem(int index, ItemModel updatedItem) {
+
+
+  bool hasCustomPrice = false;
+  double _taxPercent = 0.0;
+  double _taxAmount = 0.0;
+  double get taxPercent => _taxPercent;
+  double get taxAmount => _taxAmount;
+  double get totalWithTax => _subtotal + _taxAmount;
+  double get subtotalWithTax => subtotal + taxAmount;
+  TextEditingController mrpController = TextEditingController();
+  TextEditingController qtyController = TextEditingController();
+  TextEditingController saleNoteController = TextEditingController();
+  TextEditingController customerNameController = TextEditingController();
+  TextEditingController saleUpdateNoteController = TextEditingController();
+  ///discount amount and discount percentance.
+  TextEditingController discountAmount = TextEditingController();
+  TextEditingController discountPercentance = TextEditingController();
+
+  String lastChanged = '';
+
+  double _subtotal = 0.0;
+  double get subtotal => _subtotal;
+
+   bool isOnlineMoneyChecked = false;
+
+  TextEditingController billController = TextEditingController();
+  TextEditingController billPerson = TextEditingController();
+
+  TextEditingController receivedAmountController = TextEditingController();
+  TextEditingController discountController =
+      TextEditingController(); // Ensure discount input is controlled
+
+  TextEditingController percentController = TextEditingController();
+
+   ///add item cash
+  List<SaleItemModel> saleItem = [];
+
+  ///add item cash
+  List<ItemModel> itemsCash = [];
+
+  List<ItemModel> itemsCredit = [];
+
+  List<String> unitIdsList = [];
+
+  bool isCash = true;
+  bool isReceived = true;
+
+  bool isCreditSale = true; // Default to credit sale, update as needed
+
+   ///sales tax vat provider.
+  double? selectedTaxPercent;
+  String taxPercentValue = "";
+  String totaltaxPercentValue = "";
+
+  String? selectedTaxId;
+
+  double totalItemDiscounts = 0.0;
+  double totalItemVats = 0.0;
+
+
+  salesControllerItemamount() {
+    salesControllerItem();
+  }
+
+    void updateItem(int index, ItemModel updatedItem) {
     if (index >= 0 && index < itemsCash.length) {
       itemsCash[index] = updatedItem;
       //notifyListeners();
     }
   }
 
-  bool hasCustomPrice = false;
-
-  double _taxPercent = 0.0;
-  double _taxAmount = 0.0;
-
-  double get taxPercent => _taxPercent;
-  double get taxAmount => _taxAmount;
-  double get totalWithTax => _subtotal + _taxAmount;
+  salesControllerItem() {
+    qtyController.addListener(calculateSubtotal);
+    mrpController.addListener(calculateSubtotal);
+    discountAmount.addListener(calculateSubtotal);
+  }
 
   void calculateTax() {
     _taxAmount = (_subtotal * _taxPercent) / 100;
@@ -48,35 +109,6 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  double get subtotalWithTax => subtotal + taxAmount;
-
-  TextEditingController mrpController = TextEditingController();
-  TextEditingController qtyController = TextEditingController();
-
-  TextEditingController saleNoteController = TextEditingController();
-
-  TextEditingController customerNameController = TextEditingController();
-
-  TextEditingController saleUpdateNoteController = TextEditingController();
-
-  ///discount amount and discount percentance.
-  TextEditingController discountAmount = TextEditingController();
-  TextEditingController discountPercentance = TextEditingController();
-
-  String lastChanged = '';
-
-  double _subtotal = 0.0;
-  double get subtotal => _subtotal;
-
-  salesControllerItemamount() {
-    salesControllerItem();
-  }
-
-  salesControllerItem() {
-    qtyController.addListener(calculateSubtotal);
-    mrpController.addListener(calculateSubtotal);
-    discountAmount.addListener(calculateSubtotal);
-  }
 
   void calculateSubtotal() {
     double qty = double.tryParse(qtyController.text) ?? 0;
@@ -131,31 +163,14 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  ///add item cash
-  List<SaleItemModel> saleItem = [];
-
-  ///add item cash
-  List<ItemModel> itemsCash = [];
-
-  List<ItemModel> itemsCredit = [];
-
-  List<String> unitIdsList = [];
+ 
 
   void updateUnitIds(List<String> units) {
     unitIdsList = units;
     notifyListeners();
   }
 
-  bool isOnlineMoneyChecked = false;
-
-  TextEditingController billController = TextEditingController();
-  TextEditingController billPerson = TextEditingController();
-
-  TextEditingController receivedAmountController = TextEditingController();
-  TextEditingController discountController =
-      TextEditingController(); // Ensure discount input is controlled
-
-  TextEditingController percentController = TextEditingController();
+ 
 
   void updateDiscountAmount(String value) {
     if (value.isEmpty || double.tryParse(value) == null) {
@@ -314,15 +329,14 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool isCreditSale = true; // Default to credit sale, update as needed
+ 
 
   void setSaleType(bool isCredit) {
     isCreditSale = isCredit;
     notifyListeners();
   }
 
-  bool isCash = true;
-  bool isReceived = true;
+ 
 
   void updateCash(context) {
     isCash = !isCash;
@@ -340,7 +354,7 @@ class SalesController extends ChangeNotifier {
           .clearSelectedCustomer();
     }
 
-    
+
 
     // Provider.of<CustomerProvider>(context, listen: false)
     //     .clearSelectedCustomer();
@@ -435,10 +449,7 @@ class SalesController extends ChangeNotifier {
     // Format to 2 decimal places
   }
 
-  ///sales tax vat provider.
-  double? selectedTaxPercent;
-  String taxPercentValue = "";
-  String totaltaxPercentValue = "";
+ 
 
   updateTotalTaxId(String value) {
     totaltaxPercentValue = value;
@@ -450,11 +461,7 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? selectedTaxId;
-
-  double totalItemDiscounts = 0.0;
-  double totalItemVats = 0.0;
-
+  
   //saleItem.clear();
 
   ///cash

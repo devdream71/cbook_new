@@ -732,7 +732,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                           SizedBox(
                                             width: double.infinity,
                                             child: AddSalesFormfield(
-                                              label: "Bill Number",
+                                              labelText: "Bill Number",
                                               controller:
                                                   provider.billNumberController,
                                               onChanged: (value) {
@@ -1218,19 +1218,22 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                         SizedBox(
                                           //color: Colors.amber,
                                           width: 150,
-                                          height: 25,
-                                          child: TextField(
-                                            enabled: false,
+                                          height: 30,
+                                          child: AddSalesFormfield(
+                                            labelText: "Subtotal",
+                                            //enabled: false,
                                             controller: TextEditingController(
                                                 text: provider.getSubTotal()),
-                                            style: const TextStyle(
-                                                color: Colors.black),
+                                            // style: const TextStyle(
+                                            //     color: Colors.black),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                 ),
+
+                                SizedBox(height: 8,),
 
                                 // //===>Discount
                                 Align(
@@ -1249,8 +1252,9 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                         const SizedBox(width: 10),
                                         SizedBox(
                                           width: 150,
-                                          height: 25,
-                                          child: TextField(
+                                          height: 30,
+                                          child: AddSalesFormfield(
+                                            labelText: "Discount",
                                             // controller: provider
                                             //     .discountTotalController,
                                             controller: provider
@@ -1259,14 +1263,16 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                               provider
                                                   .updateGrossTotal(); // Trigger the update for Gross Total
                                             },
-                                            style: const TextStyle(
-                                                color: Colors.black),
+                                             
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                 ),
+
+                               const      SizedBox(height: 8,),
+
 
                                 // ////===>gross total
                                 Align(
@@ -1282,22 +1288,22 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                         const SizedBox(width: 10),
                                         SizedBox(
                                           width: 150,
-                                          height: 25,
+                                          height: 30,
                                           child:
                                               Consumer<PurchaseUpdateProvider>(
                                             builder:
                                                 (context, provider, child) {
-                                              return TextField(
+                                              return AddSalesFormfield(
                                                 //  controller: TextEditingController(
                                                 // text: provider.getSubTotal()),
+                                                labelText: "Gross Total",
                                                 controller:
                                                     TextEditingController(
                                                         text: provider
                                                             .getGrossTotal()),
 
                                                 readOnly: true,
-                                                style: const TextStyle(
-                                                    color: Colors.black),
+                                                
                                               );
                                             },
                                           ),

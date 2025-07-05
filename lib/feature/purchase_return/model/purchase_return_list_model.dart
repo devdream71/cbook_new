@@ -17,64 +17,25 @@ class PurchaseReturnResponse {
       );
 }
 
-// class PurchaseReturn {
-//   final int userId;
-//   final int supplierId;
-//   final String? supplierName;
-//   final String? transactionMethod;
-//   final String billNumber;
-//   final String? purchaseDate;
-//   final double discount;
-//   final dynamic grossTotal;
-//   final String? detailsNotes;
-//   final String disabled;
-//   final List<PurchaseDetail> purchaseDetails;
 
-//   PurchaseReturn({
-//     required this.userId,
-//     required this.supplierId,
-//     required this.supplierName,
-//     this.transactionMethod,
-//     required this.billNumber,
-//     this.purchaseDate,
-//     required this.discount,
-//     required this.grossTotal,
-//     this.detailsNotes,
-//     required this.disabled,
-//     required this.purchaseDetails,
-//   });
-
-//   factory PurchaseReturn.fromMap(Map<String, dynamic> json) => PurchaseReturn(
-//         userId: json["user_id"],
-//         supplierId: json["supplier_id"],
-//         supplierName: json["supplier_name"],
-//         transactionMethod: json["transection_method"],
-//         billNumber: json["bill_number"],
-//         purchaseDate: json["pruchase_date"],
-//         discount: (json["discount"] ?? 0).toDouble(),
-//         grossTotal: (json["gross_total"] ?? 0).toDouble(),
-//         detailsNotes: json["details_notes"],
-//         disabled: json["disabled"],
-//         purchaseDetails: List<PurchaseDetail>.from(
-//             json["purchase_details"].map((x) => PurchaseDetail.fromMap(x))),
-//       );
-// }
 
 
 class PurchaseReturn {
-  final int? userId;
-  final int? supplierId;
-  final String? supplierName;
-  final String? transactionMethod;
-  final String billNumber;
-  final String? purchaseDate;
-  final double discount;
+  final dynamic id;
+  final dynamic userId;
+  final dynamic supplierId;
+  final dynamic supplierName;
+  final dynamic transactionMethod;
+  final dynamic billNumber;
+  final dynamic purchaseDate;
+  final dynamic discount;
   final dynamic grossTotal;
-  final String? detailsNotes;
-  final String disabled;
+  final dynamic detailsNotes;
+  final dynamic disabled;
   final List<PurchaseDetail> purchaseDetails;
 
   PurchaseReturn({
+    this.id,
     this.userId,
     this.supplierId,
     this.supplierName,
@@ -89,12 +50,13 @@ class PurchaseReturn {
   });
 
   factory PurchaseReturn.fromMap(Map<String, dynamic> json) => PurchaseReturn(
+        id: json["id"] as int?,
         userId: json["user_id"] as int?, // safely nullable
         supplierId: json["supplier_id"] as int?,
         supplierName: json["supplier_name"],
         transactionMethod: json["transection_method"],
         billNumber: json["bill_number"],
-        purchaseDate: json["pruchase_date"],
+        purchaseDate: json["purchase_date"],
         discount: (json["discount"] ?? 0).toDouble(),
         grossTotal: (json["gross_total"] ?? 0).toDouble(),
         detailsNotes: json["details_notes"],
@@ -105,16 +67,16 @@ class PurchaseReturn {
 }
 
 class PurchaseDetail {
-  final int id;
-  final int purchaseId;
-  final String ? purchaseDetailsId;
-  final String type;
-  final String purchaseDate;
-  final int itemId;
+  final dynamic id;
+  final dynamic purchaseId;
+  final dynamic  purchaseDetailsId;
+  final dynamic type;
+  final dynamic purchaseDate;
+  final dynamic itemId;
   final dynamic defaultQty;
   final dynamic qty;
   final dynamic rawQty;
-  final int ? unitId;
+  final dynamic unitId;
   final dynamic price;
   final dynamic subTotal;
 
@@ -144,7 +106,7 @@ class PurchaseDetail {
         qty: json["qty"],
         rawQty: json["raw_qty"],
         unitId: json["unit_id"],
-        price: (json["price"] ?? 0).toDouble(),
-        subTotal: (json["sub_total"] ?? 0).toDouble(),
+        price: json["price"] ,
+        subTotal: json["sub_total"] ,
       );
 }

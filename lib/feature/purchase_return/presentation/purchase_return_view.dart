@@ -7,6 +7,8 @@ import 'package:cbook_dt/feature/item/model/unit_model.dart';
 import 'package:cbook_dt/feature/item/provider/item_category.dart';
 import 'package:cbook_dt/feature/item/provider/items_show_provider.dart';
 import 'package:cbook_dt/feature/item/provider/unit_provider.dart';
+import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/purchase_return/controller/purchase_return_controller.dart';
 import 'package:cbook_dt/feature/purchase_return/layer/bottom_portion_purchase_return.dart';
 import 'package:cbook_dt/feature/purchase_return/purchase_return_item_details.dart';
@@ -38,6 +40,10 @@ class _PurchaseReturnViewState extends State<PurchaseReturnView> {
             .fetchCategories());
 
     Provider.of<AddItemProvider>(context, listen: false).fetchItems();
+
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false)
+            .fetchBillPersons());
   }
 
   @override
@@ -64,6 +70,10 @@ class _LayoutState extends State<_Layout> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+
+  String? selectedBillPerson;
+  int? selectedBillPersonId;
+  BillPersonModel? selectedBillPersonData;
 
   String? selectedItem;
   Customer? selectedCustomerObject;
@@ -541,16 +551,10 @@ class _LayoutState extends State<_Layout> {
                                 children: [
                                   // Bill No Field
                                   SizedBox(
-                                    height: 25,
-                                    width: 90,
-                                    child: TextField(
+                                    height: 30,
+                                    width: 127,
+                                    child: AddSalesFormfield(
                                       controller: controller.billNoController,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                      ),
-                                      cursorHeight:
-                                          12, // Match cursor height to text size
                                       decoration: InputDecoration(
                                         isDense:
                                             true, // Ensures the field is compact
@@ -567,7 +571,8 @@ class _LayoutState extends State<_Layout> {
                                             width: 0.5,
                                           ),
                                         ),
-                                        focusedBorder: const UnderlineInputBorder(
+                                        focusedBorder:
+                                            const UnderlineInputBorder(
                                           borderSide: BorderSide(
                                             color: Colors.green,
                                           ),
@@ -578,7 +583,7 @@ class _LayoutState extends State<_Layout> {
 
                                   SizedBox(
                                     height: 25,
-                                    width: 90,
+                                    width: 127,
                                     child: InkWell(
                                       onTap: () => controller.pickDate(
                                           context), // Trigger the date picker
@@ -606,7 +611,8 @@ class _LayoutState extends State<_Layout> {
                                                 color: Colors.grey.shade400,
                                                 width: 0.5),
                                           ),
-                                          focusedBorder: const UnderlineInputBorder(
+                                          focusedBorder:
+                                              const UnderlineInputBorder(
                                             borderSide:
                                                 BorderSide(color: Colors.green),
                                           ),
@@ -624,48 +630,56 @@ class _LayoutState extends State<_Layout> {
                                     ),
                                   ),
 
-                                  // Bill Time Field
-                                  SizedBox(
-                                    height: 25,
-                                    width: 90,
-                                    child: InkWell(
-                                      onTap: () => controller.pickTime(context),
-                                      child: InputDecorator(
-                                        decoration: InputDecoration(
-                                          suffixIconConstraints:
-                                              const BoxConstraints(
-                                            minWidth: 16,
-                                            minHeight: 16,
-                                          ),
-                                          isDense: true,
-                                          suffixIcon: Icon(
-                                            Icons.timer,
-                                            size: 16,
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                          ),
-                                          hintText: "Bill Time",
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey.shade400,
-                                              fontSize: 10),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade400,
-                                                width: 0.5),
-                                          ),
-                                          focusedBorder:
-                                              const UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.green),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          controller.formattedTime,
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12),
-                                        ),
-                                      ),
+                                  ///bill person
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Consumer<PaymentVoucherProvider>(
+                                      builder: (context, provider, child) {
+                                        return SizedBox(
+                                          height: 30,
+                                          width: double.infinity,
+                                          child: provider.isLoading
+                                              ? const Center(
+                                                  child:
+                                                      CircularProgressIndicator())
+                                              : CustomDropdownTwo(
+                                                  hint: '',
+                                                  items:
+                                                      provider.billPersonNames,
+                                                  width: double.infinity,
+                                                  height: 30,
+                                                  labelText: 'Bill Person',
+                                                  selectedItem:
+                                                      selectedBillPerson,
+                                                  onChanged: (value) {
+                                                    debugPrint(
+                                                        '=== Bill Person Selected: $value ===');
+                                                    setState(() {
+                                                      selectedBillPerson =
+                                                          value;
+                                                      selectedBillPersonData =
+                                                          provider.billPersons
+                                                              .firstWhere(
+                                                        (person) =>
+                                                            person.name ==
+                                                            value,
+                                                      ); // ✅ Save the whole object globally
+                                                      selectedBillPersonId =
+                                                          selectedBillPersonData!
+                                                              .id;
+                                                    });
+
+                                                    debugPrint(
+                                                        'Selected Bill Person Details:');
+                                                    debugPrint(
+                                                        '- ID: ${selectedBillPersonData!.id}');
+                                                    debugPrint(
+                                                        '- Name: ${selectedBillPersonData!.name}');
+                                                    debugPrint(
+                                                        '- Phone: ${selectedBillPersonData!.phone}');
+                                                  }),
+                                        );
+                                      },
                                     ),
                                   ),
                                 ],

@@ -4,18 +4,18 @@ class BillPersonModel {
   final String nickName;
   final String? email;
   final String phone;
-  final int designationId;
+  final int? designationId;
   final dynamic avatar;
-  final dynamic  date;
+  final dynamic date;
   final int status;
 
   BillPersonModel({
     required this.id,
     required this.name,
     required this.nickName,
-    required this.email,
+    this.email,
     required this.phone,
-    required this.designationId,
+    this.designationId,
     required this.avatar,
     required this.date,
     required this.status,

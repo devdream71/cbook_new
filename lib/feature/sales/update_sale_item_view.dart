@@ -8,7 +8,6 @@ import 'package:cbook_dt/feature/tax/provider/tax_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class UpdateSaleItemView extends StatefulWidget {
   final index;
   final SaleUpdateProvider provider;
@@ -56,13 +55,13 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
     // final fetchStockQuantity =
     //     Provider.of<AddItemProvider>(context, listen: false);
 
-     // Get the item and unit name using the maps
-  selectedItemName = widget.itemMap[int.tryParse(widget.itemDetail.itemId)] ?? 'Select Item';
+    // Get the item and unit name using the maps
+    selectedItemName =
+        widget.itemMap[int.tryParse(widget.itemDetail.itemId)] ?? 'Select Item';
 
     // unitId is in the format: "5_Packet_1" => we only need the first part
-  final unitIdOnly = int.tryParse(widget.itemDetail.unitId.split("_")[0]);
-  selectedUnitName = widget.unitMap[unitIdOnly] ?? 'Select Unit';
-
+    final unitIdOnly = int.tryParse(widget.itemDetail.unitId.split("_")[0]);
+    selectedUnitName = widget.unitMap[unitIdOnly] ?? 'Select Unit';
 
     widget.provider.saveData(
       itemId: widget.itemDetail != null
@@ -105,7 +104,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
         .text = subTotalController.text;
 
     Provider.of<SaleUpdateProvider>(context, listen: false).qtyController.text =
-        qtyController.text;    
+        qtyController.text;
 
     setState(() {});
 
@@ -233,7 +232,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                           hint: selectedUnitName ??
                               'Select Unit', // Show selected unit or default hint
                           width: double.infinity,
-                          selectedItem: selectedUnitName, 
+                          selectedItem: selectedUnitName,
                           height: 30,
                           onChanged: (String? newValue) {
                             setState(() {
@@ -260,7 +259,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                     //discount percentance
                     AddSalesFormfield(
                       label: "Discount (%)",
-                      controller: widget.provider.discountPercentance,
+                      controller: widget.provider.updateDiscountPercentance,
                       keyboardType: TextInputType.number,
                       onChanged: (value) {
                         widget.provider.lastChanged = 'percent';
@@ -279,7 +278,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                   children: [
                     AddSalesFormfield(
                       label: "Discount (Amount)",
-                      controller: widget.provider.discountAmount,
+                      controller: widget.provider.updateDiscountAmount,
                       keyboardType: TextInputType.number,
                       onChanged: (value) {
                         widget.provider.lastChanged = 'amount';
@@ -424,9 +423,8 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                   child: ElevatedButton(
                     onPressed: () {
                       updateItem();
-                      widget.provider.updateSaleDetail(
-                        widget.index,
-                      );
+                      widget.provider
+                          .updateSaleDetail(widget.index); // global update
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor:

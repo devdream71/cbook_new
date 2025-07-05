@@ -22,6 +22,7 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: "Amount",
                       controller:
                           TextEditingController(text: controller.addAmount2()),
                       //style: const TextStyle(fontSize: 12, color: Colors.black),
@@ -75,6 +76,7 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: "Discount",
                       controller: controller.discountController,
                       //style: const TextStyle(fontSize: 12, color: Colors.black),
                       onChanged: (value) {
@@ -131,6 +133,7 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: 'Total',
                       controller:
                           TextEditingController(text: controller.totalAmount()),
                       //style: const TextStyle(fontSize: 12, color: Colors.black),
@@ -178,6 +181,7 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: 'Amount',
                       controller:
                           TextEditingController(text: controller.addAmount()),
                       //style: const TextStyle(fontSize: 12, color: Colors.black),
@@ -229,6 +233,7 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: "Discount",
                       controller: controller.discountController,
                       onChanged: (value) {
                         TextEditingController(text: controller.totalAmount());
@@ -283,6 +288,7 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: "Total",
                       controller: TextEditingController(
                           text: controller.totalAmount2()),
                       onChanged: (value) {

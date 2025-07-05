@@ -113,6 +113,7 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final controller =
         Provider.of<PurchaseReturnController>(context, listen: false);
 
@@ -168,7 +169,15 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
         }
 
         return Scaffold(
-          appBar: AppBar(title: const Text("Purchase Return Details")),
+          appBar: AppBar(
+              //  backgroundColor: colorScheme.surface,
+              backgroundColor: colorScheme.primary,
+              //actionsIconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: const IconThemeData(color: Colors.white),
+              title: const Text(
+                "Purchase Return Details",
+                style: TextStyle(color: Colors.yellow, fontSize: 16),
+              )),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -253,7 +262,7 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                         style: const TextStyle(
                                             color: Colors.black),
                                       ),
-                                      
+
                                       Text(
                                           "Account Name: ${history.supplierName.isEmpty ? 'N/A' : history.supplierName}",
                                           style: const TextStyle(

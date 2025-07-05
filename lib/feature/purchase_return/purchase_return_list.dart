@@ -33,45 +33,6 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
     }
   }
 
-  void _confirmDelete(BuildContext context, int purchaseReturnID) async {
-    final confirm = await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Confirm Delete"),
-          content: const Text(
-            "Are you sure you want to delete this Purchase Return?",
-            style: TextStyle(color: Colors.black),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: const Text("Delete", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirm == true) {
-      await context
-          .read<PurchaseReturnProvider>()
-          .deletePurchaseReturn(purchaseReturnID);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Purchase Return Delete successfully!"),
-          backgroundColor: Colors.green,
-        ),
-      );
-    }
-  }
-
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -119,54 +80,12 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
               ),
             ),
           )
-
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-          //   child: GestureDetector(
-          //     onTap: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //             builder: (context) => const PurchaseReturnView()),
-          //       );
-          //     },
-          //     child: Container(
-          //       width: 60,
-          //       padding:
-          //           const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          //       decoration: BoxDecoration(
-          //         color: Colors.blueAccent,
-          //         borderRadius: BorderRadius.circular(8),
-          //         boxShadow: [
-          //           BoxShadow(
-          //             color: Colors.blueAccent.withOpacity(0.4),
-          //             blurRadius: 10,
-          //             offset: const Offset(0, 4),
-          //           ),
-          //         ],
-          //       ),
-          //       child: const Center(
-          //         child: Icon(Icons.add_circle_outline,
-          //             color: Colors.white, size: 24),
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: AddSalesFormfield(
-                label: "Search",
-                controller: _searchController,
-                keyboardType: TextInputType.number,
-                onChanged: (value) {},
-              ),
-            ),
             const SizedBox(
               height: 8,
             ),
@@ -191,129 +110,19 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
                     ));
                   }
 
-                  // return ListView.builder(
-                  //   itemCount: provider.purchaseReturns.length,
-                  //   itemBuilder: (context, index) {
-                  //     final item = provider.purchaseReturns[index];
-
-                  //     return InkWell(
-                  //         onTap: () {
-                  //           Navigator.push(
-                  //             context,
-                  //             MaterialPageRoute(
-                  //               builder: (_) =>
-                  //                   PurchaseReturnDetails(purchaseReturn: item),
-                  //             ),
-                  //           );
-                  //         },
-                  //         child: Card(
-                  //           margin: const EdgeInsets.symmetric(
-                  //               vertical: 8, horizontal: 5),
-                  //           shape: RoundedRectangleBorder(
-                  //               borderRadius: BorderRadius.circular(10)),
-                  //           child: ListTile(
-                  //             contentPadding: const EdgeInsets.only(left: 16),
-                  //             subtitle: Column(
-                  //               crossAxisAlignment: CrossAxisAlignment.start,
-                  //               children: [
-                  //                 Text(
-                  //                   "${item.supplierName}",
-                  //                   style: const TextStyle(fontSize: 12),
-                  //                 ),
-                  //                 Text("Total: ৳ ${item.grossTotal}",
-                  //                     style: const TextStyle(fontSize: 12)),
-                  //                 const SizedBox(
-                  //                   height: 30,
-                  //                 ),
-                  //                 Text(
-                  //                   '${item.purchaseDetails.first.itemId}',
-                  //                   style: const TextStyle(
-                  //                     color: Colors.amberAccent,
-                  //                     fontSize: 14,
-                  //                     wordSpacing: 3.0,
-                  //                   ),
-                  //                 )
-                  //               ],
-                  //             ),
-                  //             trailing: Column(
-                  //               mainAxisSize: MainAxisSize.min,
-                  //               children: [
-                  //                 Text("${item.purchaseDate ?? 'N/A'}",
-                  //                     style: const TextStyle(fontSize: 12)),
-                  //                 Text("${item.billNumber ?? 'N/A'}",
-                  //                     style: const TextStyle(fontSize: 12)),
-                  //                 Row(
-                  //                   mainAxisSize: MainAxisSize.min,
-                  //                   mainAxisAlignment:
-                  //                       MainAxisAlignment.spaceAround,
-                  //                   children: [
-                  //                     Container(
-                  //                       decoration: BoxDecoration(
-                  //                         color: Colors.yellow.shade400,
-                  //                         borderRadius:
-                  //                             BorderRadius.circular(10),
-                  //                       ),
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                           vertical: 5, horizontal: 5),
-                  //                       child: const Text(
-                  //                         'Unpaid',
-                  //                         style: TextStyle(
-                  //                           fontWeight: FontWeight.bold,
-                  //                           fontSize: 14,
-                  //                           color: Colors.red,
-                  //                         ),
-                  //                       ),
-                  //                     ),
-                  //                     SizedBox(
-                  //                       height: 20,
-                  //                       child: PopupMenuButton<String>(
-                  //                         iconSize: 18,
-                  //                         position: PopupMenuPosition.under,
-                  //                         menuPadding: EdgeInsets.all(0),
-                  //                         padding: EdgeInsets.all(0),
-                  //                         onSelected: (value) async {
-                  //                           if (value == 'Edit') {
-                  //                             //debugPrint("Edit Category ID: ${category.id}");
-                  //                           } else if (value == 'delete') {
-                  //                             //_confirmDelete(context, item.purchaseDetails[index].);
-                  //                           }
-                  //                         },
-                  //                         itemBuilder: (context) => [
-                  //                           const PopupMenuItem(
-                  //                             value: 'Edit',
-                  //                             child: ListTile(
-                  //                               leading: Icon(Icons.edit,
-                  //                                   color: Colors.blue),
-                  //                               title: Text('Edit'),
-                  //                             ),
-                  //                           ),
-                  //                           const PopupMenuItem(
-                  //                             value: 'delete',
-                  //                             child: ListTile(
-                  //                               leading: Icon(Icons.delete,
-                  //                                   color: Colors.red),
-                  //                               title: Text('Delete'),
-                  //                             ),
-                  //                           ),
-                  //                         ],
-                  //                         icon: const Icon(Icons.more_vert),
-                  //                       ),
-                  //                     ),
-                  //                   ],
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //         ));
-                  //   },
-                  // );
-
                   return ListView.builder(
                     itemCount: provider.purchaseReturns.length,
                     itemBuilder: (context, index) {
                       final item = provider.purchaseReturns[index];
 
+                      final returnPurchaseID =
+                          provider.purchaseReturns[index].id;
+
                       return InkWell(
+                        onLongPress: () {
+                          editDeleteDiolog(
+                              context, returnPurchaseID.toString());
+                        },
                         onTap: () {
                           Navigator.push(
                             context,
@@ -324,6 +133,7 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
                           );
                         },
                         child: Card(
+                          color: const Color(0xfff4f6ff),
                           margin: const EdgeInsets.symmetric(
                               vertical: 2, horizontal: 0),
                           shape: RoundedRectangleBorder(
@@ -335,111 +145,80 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // Left: Supplier and Amount
-                                Expanded(
+                                SizedBox(
+                                  width: 90,
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        item.supplierName ?? "N/A",
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      Text(
-                                        "৳ ${item.grossTotal ?? 0}",
+                                        item.purchaseDate,
                                         style: const TextStyle(
                                             fontSize: 14, color: Colors.black),
                                       ),
-                                      const SizedBox(height: 20),
+                                      Text(
+                                        item.billNumber ?? 'N/A',
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ],
                                   ),
                                 ),
 
-                                // Right: Date, Bill, Status, Menu
+                                //divider
+                                Container(
+                                  height: 45,
+                                  width: 2,
+                                  color: Colors.green.shade200,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                ),
+
+                                // Right: cash and amount
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
-                                      item.billNumber ?? 'N/A',
+                                      item.supplierName == 'N/A'
+                                          ? "Cash"
+                                          : item.supplierName,
                                       style: const TextStyle(
-                                          fontSize: 12, color: Colors.black),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
                                     ),
-
-                                    // Text(
-                                    //   item.purchaseDate ?? 'N/A',
-                                    //   style: const TextStyle(fontSize: 12, color: Colors.black),
-                                    // ),
-
                                     Text(
-                                      formatDate(item.purchaseDate),
+                                      "৳ ${item.grossTotal ?? 0}",
                                       style: const TextStyle(
                                           fontSize: 14, color: Colors.black),
                                     ),
+                                  ],
+                                ),
 
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.yellow.shade400,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 4, horizontal: 6),
-                                          child: const Text(
-                                            'Unpaid',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12,
-                                                color: Colors.red),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 5),
-                                        SizedBox(
-                                          height: 20,
-                                          width: 15,
-                                          child: PopupMenuButton<String>(
-                                            icon: const Icon(Icons.more_vert,
-                                                size: 18),
-                                            padding: EdgeInsets.zero,
-                                            onSelected: (value) {
-                                              if (value == 'Edit') {
-                                                // handle edit
-                                              } else if (value == 'delete') {
-                                                //_confirmDelete(context, item.id!);
-                                              }
-                                            },
-                                            itemBuilder: (context) => [
-                                              const PopupMenuItem(
-                                                value: 'Edit',
-                                                child: Row(
-                                                  children: [
-                                                    Icon(Icons.edit,
-                                                        color: Colors.blue),
-                                                    SizedBox(width: 5),
-                                                    Text('Edit'),
-                                                  ],
-                                                ),
-                                              ),
-                                              const PopupMenuItem(
-                                                value: 'delete',
-                                                child: Row(
-                                                  children: [
-                                                    Icon(Icons.delete,
-                                                        color: Colors.red),
-                                                    SizedBox(width: 5),
-                                                    Text('Delete'),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                Spacer(),
+
+                                //unpaid
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.yellow.shade400,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4, horizontal: 6),
+                                      child: const Text(
+                                        'Unpaid',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                            color: Colors.red),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -455,6 +234,135 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<dynamic> editDeleteDiolog(
+      BuildContext context, String returnPurchaseID) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+
+                    //Navigate to Edit Page
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => PurchaseUpdateScreen(
+                    //         purchaseId: int.parse(purchaseId)),
+                    //   ),
+                    // );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, returnPurchaseID);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  ////delete recived item from list
+  void _showDeleteDialog(BuildContext context, String returnPurchaseID) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final provider =
+        Provider.of<PurchaseReturnProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Purchase Return',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this Purchase Return?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Close confirmation dialog
+
+              await provider.deletePurchaseReturn(returnPurchaseID, context);
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }
