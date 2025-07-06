@@ -486,37 +486,13 @@ class _PaymenyOutEditState extends State<PaymenyOutEdit> {
                   SizedBox(
                     height: 30,
                     width: 130,
-                    child: TextField(
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
+                    child: AddSalesFormfield(
+                      labelText: "Bill No",
                       controller: voucherNumberController, //billNoController,
-                      cursorHeight: 12,
+
                       onChanged: (value) {
                         billNo = value;
                       }, // Match cursor height to text size
-                      decoration: InputDecoration(
-                        isDense: true, // Ensures the field is compact
-                        contentPadding:
-                            EdgeInsets.zero, // Removes unnecessary padding
-                        hintText: "Bill no",
-                        hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade400,
-                            width: 0.5,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.green,
-                          ),
-                        ),
-                      ),
                     ),
                   ),
 
@@ -806,6 +782,7 @@ class _PaymenyOutEditState extends State<PaymenyOutEdit> {
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
+                        labelText: "Amount",
                         readOnly: true,
                         controller: totalAmount,
                         onChanged: (value) {
@@ -850,6 +827,7 @@ class _PaymenyOutEditState extends State<PaymenyOutEdit> {
                       height: 30,
                       width: 76,
                       child: AddSalesFormfield(
+                        labelText: "Amount",
                         keyboardType: TextInputType.number,
                         controller: discountAmount,
                         onChanged: (value) {
@@ -871,6 +849,7 @@ class _PaymenyOutEditState extends State<PaymenyOutEdit> {
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
+                        labelText: "Payment",
                         controller: paymentAmount,
                         readOnly:
                             true, // user should not edit final payment manually

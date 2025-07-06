@@ -8,8 +8,7 @@ class PurchaseReturnDetails extends StatelessWidget {
   final PurchaseReturn purchaseReturn;
 
   const PurchaseReturnDetails({super.key, required this.purchaseReturn});
-  
-  
+
   String formatDate(String? rawDate) {
     if (rawDate == null || rawDate.isEmpty) return 'N/A';
     try {
@@ -22,17 +21,21 @@ class PurchaseReturnDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     debugPrint(purchaseReturn.toString());
 
-     // Ensure the PurchaseReturnProvider is available in the context
+    // Ensure the PurchaseReturnProvider is available in the context
     final provider = Provider.of<PurchaseReturnProvider>(context);
-    
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+          backgroundColor: colorScheme.primary,
+          iconTheme: const IconThemeData(color: Colors.white),
           title: Text(
-        "Purchase Return Details: ${purchaseReturn.billNumber}",
-        style: const TextStyle(fontSize: 13),
-      )),
+            "Purchase Return Details: ${purchaseReturn.billNumber}",
+            style: const TextStyle(fontSize: 13, color: Colors.yellow),
+          )),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -50,15 +53,13 @@ class PurchaseReturnDetails extends StatelessWidget {
                 fontSize: 13,
               ),
             ),
-
             Text(
-              "Date: ${formatDate(purchaseReturn.purchaseDate)}  ?? 'N/A'}",
+              "Date: ${formatDate(purchaseReturn.purchaseDate)}",
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 13,
               ),
             ),
-
             Text(
               "Status: ${purchaseReturn.disabled}",
               style: const TextStyle(
@@ -79,22 +80,20 @@ class PurchaseReturnDetails extends StatelessWidget {
                   final detail = purchaseReturn.purchaseDetails[index];
                   return Card(
                     child: ListTile(
-                      title: 
-                      // Text(
-                      //   "Item ID: ${detail.itemId}",
-                      //   style: const TextStyle(
-                      //     fontSize: 13,
-                      //   ),
-                      // ),
-                       Text(
+                      title:
+                          // Text(
+                          //   "Item ID: ${detail.itemId}",
+                          //   style: const TextStyle(
+                          //     fontSize: 13,
+                          //   ),
+                          // ),
+                          Text(
                         "Item: ${provider.getItemName(detail.itemId)}", // Updated to show item name
                         style: const TextStyle(
                           fontSize: 13,
                         ),
                       ),
-
-                      
-                      subtitle: Column( 
+                      subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -134,14 +133,3 @@ class PurchaseReturnDetails extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
- 

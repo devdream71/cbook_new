@@ -13,8 +13,6 @@ import '../sales_view.dart';
 import 'package:http/http.dart' as http;
 
 class SalesController extends ChangeNotifier {
-
-
   bool hasCustomPrice = false;
   double _taxPercent = 0.0;
   double _taxAmount = 0.0;
@@ -27,16 +25,61 @@ class SalesController extends ChangeNotifier {
   TextEditingController saleNoteController = TextEditingController();
   TextEditingController customerNameController = TextEditingController();
   TextEditingController saleUpdateNoteController = TextEditingController();
+
   ///discount amount and discount percentance.
   TextEditingController discountAmount = TextEditingController();
   TextEditingController discountPercentance = TextEditingController();
+
+  TextEditingController controller = TextEditingController(text: "Cash");
+
+  String? selectedCategory;
+  String? selectedWarehouse;
+  String? selectedSubCategory;
+  String? selectedStatus;
+  String? price;
+  // bool isOnlineMoneyChecked = false;
+  String? selectedReceiptType;
+
+  String customerName = "";
+  String phone = "";
+  String email = "";
+  String address = "";
+
+  TextEditingController amountController = TextEditingController();
+  TextEditingController amountController2 = TextEditingController();
+  TextEditingController discountPercentageController = TextEditingController();
+  TextEditingController discountAmountController = TextEditingController();
+  TextEditingController additionalCostController = TextEditingController();
+  TextEditingController subtotalController = TextEditingController();
+  TextEditingController receivedMoneyController = TextEditingController();
+  TextEditingController returnController = TextEditingController();
+  TextEditingController dueController = TextEditingController();
+
+  TextEditingController codeController = TextEditingController();
+
+  TextEditingController unitController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController totalAmountController = TextEditingController();
+
+  TextEditingController totalController = TextEditingController();
+
+  //add item
+  TextEditingController nameAddItemController = TextEditingController();
+
+  ////add item stock and price
+  TextEditingController stockAddItemController = TextEditingController();
+  TextEditingController priceAddItemController = TextEditingController();
+
+  TextEditingController valueAddItemController = TextEditingController();
 
   String lastChanged = '';
 
   double _subtotal = 0.0;
   double get subtotal => _subtotal;
 
-   bool isOnlineMoneyChecked = false;
+  bool isOnlineMoneyChecked = false;
+
+  String? seletedItemName;
 
   TextEditingController billController = TextEditingController();
   TextEditingController billPerson = TextEditingController();
@@ -47,7 +90,7 @@ class SalesController extends ChangeNotifier {
 
   TextEditingController percentController = TextEditingController();
 
-   ///add item cash
+  ///add item cash
   List<SaleItemModel> saleItem = [];
 
   ///add item cash
@@ -62,7 +105,7 @@ class SalesController extends ChangeNotifier {
 
   bool isCreditSale = true; // Default to credit sale, update as needed
 
-   ///sales tax vat provider.
+  ///sales tax vat provider.
   double? selectedTaxPercent;
   String taxPercentValue = "";
   String totaltaxPercentValue = "";
@@ -72,12 +115,31 @@ class SalesController extends ChangeNotifier {
   double totalItemDiscounts = 0.0;
   double totalItemVats = 0.0;
 
+  //sales field portion date tax and vat
+  String? selectedTotalTaxId;
+  double selectedTotalTaxPercent = 0.00;
+  double totalTaxAmountl = 0.00;
+
+  //for form settiing
+  bool isAmount = true;
+  bool isDisocunt = true;
+  bool isVatTax = true;
+  bool isAdditionalCost = true;
+  bool isSubTotoal = true;
+  bool isReciptType = true;
+  bool isRecivedMoney = true;
+  bool isReturn = true;
+
+  bool isBillRecipt = true;
+  bool isPreviousRecipt = true;
+  bool isAdvance = true;
+  bool isBillTotal = true;
 
   salesControllerItemamount() {
     salesControllerItem();
   }
 
-    void updateItem(int index, ItemModel updatedItem) {
+  void updateItem(int index, ItemModel updatedItem) {
     if (index >= 0 && index < itemsCash.length) {
       itemsCash[index] = updatedItem;
       //notifyListeners();
@@ -108,7 +170,6 @@ class SalesController extends ChangeNotifier {
     calculateTax(); // 🔁 only recalculate tax when percent changes
     notifyListeners();
   }
-
 
   void calculateSubtotal() {
     double qty = double.tryParse(qtyController.text) ?? 0;
@@ -163,14 +224,10 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
- 
-
   void updateUnitIds(List<String> units) {
     unitIdsList = units;
     notifyListeners();
   }
-
- 
 
   void updateDiscountAmount(String value) {
     if (value.isEmpty || double.tryParse(value) == null) {
@@ -329,14 +386,10 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
- 
-
   void setSaleType(bool isCredit) {
     isCreditSale = isCredit;
     notifyListeners();
   }
-
- 
 
   void updateCash(context) {
     isCash = !isCash;
@@ -348,26 +401,19 @@ class SalesController extends ChangeNotifier {
     itemsCash.clear();
     itemsCredit.clear();
 
-     // Clear selected customer if switching to cash
+    // Clear selected customer if switching to cash
     if (isCash) {
       Provider.of<CustomerProvider>(context, listen: false)
           .clearSelectedCustomer();
     }
-
-
-
-    // Provider.of<CustomerProvider>(context, listen: false)
-    //     .clearSelectedCustomer();
     notifyListeners();
   }
 
   String getCustomerId(BuildContext context) {
-    final customer = Provider.of<CustomerProvider>(context, listen: false).selectedCustomer;
+    final customer =
+        Provider.of<CustomerProvider>(context, listen: false).selectedCustomer;
     return isCash ? 'cash' : customer?.id.toString() ?? '';
   }
-
-
-   
 
   ///credit ===>
   String addAmount() {
@@ -397,22 +443,6 @@ class SalesController extends ChangeNotifier {
     }
     return "0.00";
   }
-
-  ///==> cash total ////===>>>with out adjust total its working
-  // String get totalAmount {
-  //   double subtotal = double.tryParse(addAmount2()) ?? 0.0;
-  //   double discount = double.tryParse(discountController.text) ?? 0.0;
-  //   double total = subtotal - discount + taxAmount + totalTaxAmountl;
-
-  //   //notifyListeners();
-
-  //   debugPrint(
-  //       "cash amount: $subtotal, cash Discount: $discount, cash Total: $total"); // Debugging
-
-  //   //notifyListeners();
-
-  //   return total.toStringAsFixed(2);
-  // }
 
   ///===> adjust total
   String get totalAmount {
@@ -449,8 +479,6 @@ class SalesController extends ChangeNotifier {
     // Format to 2 decimal places
   }
 
- 
-
   updateTotalTaxId(String value) {
     totaltaxPercentValue = value;
     notifyListeners();
@@ -461,7 +489,6 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  
   //saleItem.clear();
 
   ///cash
@@ -480,44 +507,40 @@ class SalesController extends ChangeNotifier {
     double discountAmt = double.tryParse(discountAmount.text) ?? 0.0;
     double vatAmount = taxAmount;
 
-  //   double itemSubTotal = (price * quantity) - discountAmt;
-  // double itemTotal = itemSubTotal + vatAmount;
- 
+    //   double itemSubTotal = (price * quantity) - discountAmt;
+    // double itemTotal = itemSubTotal + vatAmount;
 
     // ✅ Format taxPercent like "1_10"
     String formattedTaxPercent =
         "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
 
-     
     // ✅ Update total discount and VAT trackers
-totalItemDiscounts += discountAmt;
-totalItemVats += vatAmount;
+    totalItemDiscounts += discountAmt;
+    totalItemVats += vatAmount;
 
 // ✅ Debug for tracking after updating totals
-debugPrint("✅ Added item with:");
-debugPrint("→ VAT: $vatAmount");
-debugPrint("→ Discount: $discountAmt");
-debugPrint("→ Total Discounts (Running): $totalItemDiscounts");
-debugPrint("→ Total VATs (Running): $totalItemVats");
- 
+    debugPrint("✅ Added item with:");
+    debugPrint("→ VAT: $vatAmount");
+    debugPrint("→ Discount: $discountAmt");
+    debugPrint("→ Total Discounts (Running): $totalItemDiscounts");
+    debugPrint("→ Total VATs (Running): $totalItemVats");
 
- 
     // Add to item list
     itemsCash.add(ItemModel(
-        category: selectedCategory ?? "Category1",
-        subCategory: selectedSubCategory ?? "Sub Category1",
-        itemName: seletedItemName ?? "Item1",
-        discountAmount: discountAmount.text,
-        discountPercentance: discountPercentance.text,
-        vatAmount: taxAmount,
-        vatPerentace: formattedTaxPercent,
-        itemCode: codeController.text,
-        unit: selectedUnit ?? "N/A",
-        mrp: mrpController.text,
-        quantity: qtyController.text,
-        total: itemTotal.toStringAsFixed(2), // direct total
-        description: 'd',
-        ));
+      category: selectedCategory ?? "Category1",
+      subCategory: selectedSubCategory ?? "Sub Category1",
+      itemName: seletedItemName ?? "Item1",
+      discountAmount: discountAmount.text,
+      discountPercentance: discountPercentance.text,
+      vatAmount: taxAmount,
+      vatPerentace: formattedTaxPercent,
+      itemCode: codeController.text,
+      unit: selectedUnit ?? "N/A",
+      mrp: mrpController.text,
+      quantity: qtyController.text,
+      total: itemTotal.toStringAsFixed(2), // direct total
+      description: 'd',
+    ));
 
     notifyListeners();
 
@@ -599,298 +622,119 @@ debugPrint("→ Total VATs (Running): $totalItemVats");
     notifyListeners();
   }
 
-  //======> sale store /// working, ///==> stock not found not showing. fix it. 
-  // Future<bool> storeSales(BuildContext context,
-  //     {required String date,
-  //     required String amount,
-  //     required String customerId,
-  //     required String total,
-  //     required String billNo,
-  //     required double taxPercent,
-  //     required String taxAmount,
-  //     required String discount,
-  //     required String discountPercent,
-  //     required saleType}) async {
-  //   // Notify UI about loading state
+  ///sales store, with stock not found scafault messge
+  Future<bool> storeSales(
+    BuildContext context, {
+    required String date,
+    required String amount,
+    required String customerId,
+    required String total,
+    required String billNo,
+    required double taxPercent,
+    required String taxAmount,
+    required String discount,
+    required String discountPercent,
+    required saleType,
+  }) async {
+    try {
+      debugPrint('bill number: $billNo');
 
-  //   try {
-  //     debugPrint('bill bumber $billNo');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     // Check if bill_number exists, if not, set an initial value
-  //     if (!prefs.containsKey("bill_number")) {
-  //       await prefs.setInt("bill_number", 521444); // Set default bill number
-  //     }
+      if (!prefs.containsKey("bill_number")) {
+        await prefs.setInt("bill_number", 521444);
+      }
 
-  //     // Get the last bill number and increment it
-  //     int lastBillNumber = prefs.getInt("bill_number") ?? 521444;
-  //     int newBillNumber = lastBillNumber + 1;
+      int lastBillNumber = prefs.getInt("bill_number") ?? 521444;
+      int newBillNumber = lastBillNumber + 1;
+      await prefs.setInt("bill_number", newBillNumber);
 
-  //     // Save the updated bill number
-  //     await prefs.setInt("bill_number", newBillNumber);
+      DateTime parsedDate = DateFormat("dd-MM-yyyy").parse(date);
+      String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
+      String encodedDate = Uri.encodeComponent(formattedDate);
 
-  //     // Calculate total amount
+      final String note = saleNoteController.text;
 
-  //     // ✅ Convert String date to DateTime before formatting
-  //     DateTime parsedDate = DateFormat("dd-MM-yyyy").parse(date);
+      debugPrint("Cash Subtotal: ${addAmount2()}");
+      debugPrint("Cash Total (after discount): $totalAmount");
+      debugPrint("discountPercent: $discountPercent");
+      debugPrint("taxAmount: $taxAmount");
+      debugPrint("taxPercent: $taxPercent");
+      debugPrint("discount amount: $discount");
 
-  //     // ✅ Format the date properly
-  //     String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
+      String formattedTaxPercent =
+          "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
 
-  //     // ✅ Encode the formatted date to avoid errors in the URL
-  //     String encodedDate = Uri.encodeComponent(formattedDate);
+      final url = "https://commercebook.site/api/v1/sales/store"
+          "?user_id=${prefs.getInt("user_id").toString()}"
+          "&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}"
+          "&bill_number=$billNo"
+          "&sale_date=$encodedDate"
+          "&details_notes=$note"
+          "&discount=${discount.isEmpty ? '0' : discount}"
+          "&total_item_discounts=${totalItemDiscounts.toStringAsFixed(2)}"
+          "&discount_percent="
+          "&tax=$taxAmount"
+          "&tax_percents=$formattedTaxPercent"
+          "&total_item_vats=${totalItemVats.toStringAsFixed(2)}"
+          "&gross_total=$totalAmount"
+          "&payment_out=1"
+          "&payment_amount=${totalAmount}"; // ✅ Only send integer
 
-  //     debugPrint('sales note  ${saleNoteController.text}');
+      debugPrint("API URL: $url");
 
-  //     final String note = saleNoteController.text;
+      final requestBody = {
+        "sales_items": saleItem.map((item) => item.toJson()).toList(),
+      };
 
-  //     debugPrint(
-  //         "amount =====>${customerId.isNotEmpty ? addAmount() : addAmount2()}");
-  //     debugPrint(
-  //         "total =====>${customerId.isNotEmpty ? totalAmount2 : totalAmount}");
-  //     debugPrint("discount =====>${discountController.text}");
+      debugPrint("Request Body: $requestBody");
 
-  //     debugPrint("discount amount =====>${discount}");
-
-  //     debugPrint("customerId =====>${customerId.toLowerCase()}");
-  //     debugPrint("date =====>$date");
-
-  //     debugPrint("Cash Subtotal: ${addAmount2()}");
-  //     debugPrint("Cash Total (after discount): $totalAmount");
-
-  //     debugPrint("discountPercent: $discountPercent");
-  //     debugPrint("taxAmount: $taxAmount");
-  //     debugPrint("taxPercent: $taxPercent");
-  //     debugPrint("discount amount: $discount");
-
-  //     String formattedTaxPercent =
-  //         "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
-
-  //     // var discount = discountController.text;
-
-  //     // final url =
-  //     //     "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=$newBillNumber&sale_date=$encodedDate&details_notes=notes&gross_total=${customerId.isNotEmpty ? totalAmount2 : totalAmount}&discount=$discount&payment_out=1&payment_amount=${customerId.isNotEmpty ? totalAmount2 : totalAmount}";
-
-  //     // final url =
-  //     //     "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'Cash'}&bill_number=$billNo&sale_date=$encodedDate&details_notes=$note&discount_percent=${discountPercentance.text}&tax=82&tax_percents=$totaltaxPercentValue&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount : totalAmount2}&total_item_vats=20";
-
-  //     // final url =
-  //     //     "https://commercebook.site/api/v1/sales/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'Cash'}&bill_number=$billNo&sale_date=$encodedDate&details_notes=$note&total_item_discounts=15&discount=5&discount_percent=&tax=82&tax_percents=$totaltaxPercentValue&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=20&total_item_vats=20";
-
-  //     //final discount = discountTotalController.text.trim();
-  //     //final taxPercents = "5_10"; // if backend supports comma-separated
-  //     // or remove entirely if not needed
-
-  //     final url = "https://commercebook.site/api/v1/sales/store"
-  //         "?user_id=${prefs.getInt("user_id").toString()}"
-  //         "&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}"
-  //         "&bill_number=$billNo"
-  //         "&sale_date=$encodedDate"
-  //         "&details_notes=$note"
-  //         //"&total_item_discounts=15"
-  //         "&discount=${discount.isEmpty ? '0' : discount}"
-  //         "&total_item_discounts=${totalItemDiscounts.toStringAsFixed(2)}"
-  //         "&discount_percent="
-  //         "&tax=$taxAmount"
-  //         "&tax_percents=$formattedTaxPercent"
-  //         "&total_item_vats=${totalItemVats.toStringAsFixed(2)}"
-  //         "&gross_total=$totalAmount"
-  //         "&payment_out=1"
-  //         "&payment_amount=$totalAmount"
-          
-  //         ;
-
-  //     debugPrint("API URL: $url");
-
-  //     // Prepare request body
-  //     final requestBody = {
-  //       "sales_items": saleItem.map((item) => item.toJson()).toList()
-  //     };
-
-  //     debugPrint("Request Body: $requestBody");
-
-  //     final response = await http.post(
-  //       Uri.parse(url),
-  //       headers: {"Content-Type": "application/json"},
-  //       body: json.encode(requestBody),
-  //     );
-
-  //     debugPrint("API Response: ${response.body}"); // Debugging
-
-  //     if (response.statusCode == 200) {
-  //       final data = json.decode(response.body);
-
-  //       if (data["success"] == true) {
-  //         notifyListeners();
-
-  //         //After sales successfully clear the sale list.
-
-  //         saleItem.clear();
-
-  //         Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(
-  //                 builder: (BuildContext context)        => const HomeView()));
-
-  //         return true;
-  //       } else {
-  //         // Show the actual API message dynamically
-
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(
-  //             content: Text(data["message"] ?? "An error occurred."),
-  //             backgroundColor: Colors.red,
-  //           ),
-  //         );
-
-  //         notifyListeners();
-  //         return false;
-  //       }
-  //     } else {
-  //       // Handle error responses with a dynamic message
-  //       final errorData = json.decode(response.body);
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text(errorData["message"] ??
-  //               "Failed to process sale. Please try again."),
-  //           backgroundColor: Colors.red,
-  //         ),
-  //       );
-  //       notifyListeners();
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text("An unexpected error occurred. Please try again."),
-  //         backgroundColor: Colors.red,
-  //       ),
-  //     );
-  //     debugPrint(e.toString());
-  //     return false;
-  //   }
-  // }
-
-  
-  
-
-
-  
-
-   ///sales store, with stock not found scafault messge
-   Future<bool> storeSales(
-  BuildContext context, {
-  required String date,
-  required String amount,
-  required String customerId,
-  required String total,
-  required String billNo,
-  required double taxPercent,
-  required String taxAmount,
-  required String discount,
-  required String discountPercent,
-  required saleType,
-}) async {
-  try {
-    debugPrint('bill number: $billNo');
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (!prefs.containsKey("bill_number")) {
-      await prefs.setInt("bill_number", 521444);
-    }  
-
-    int lastBillNumber = prefs.getInt("bill_number") ?? 521444;
-    int newBillNumber = lastBillNumber + 1;
-    await prefs.setInt("bill_number", newBillNumber);
-
-    DateTime parsedDate = DateFormat("dd-MM-yyyy").parse(date);
-    String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
-    String encodedDate = Uri.encodeComponent(formattedDate);
-
-    final String note = saleNoteController.text;
-
-    debugPrint("Cash Subtotal: ${addAmount2()}");
-    debugPrint("Cash Total (after discount): $totalAmount");
-    debugPrint("discountPercent: $discountPercent");
-    debugPrint("taxAmount: $taxAmount");
-    debugPrint("taxPercent: $taxPercent");
-    debugPrint("discount amount: $discount");
-
-    String formattedTaxPercent =
-        "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
-
-    final url = "https://commercebook.site/api/v1/sales/store"
-        "?user_id=${prefs.getInt("user_id").toString()}"
-        "&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}"
-        "&bill_number=$billNo"
-        "&sale_date=$encodedDate"
-        "&details_notes=$note"
-        "&discount=${discount.isEmpty ? '0' : discount}"
-        "&total_item_discounts=${totalItemDiscounts.toStringAsFixed(2)}"
-        "&discount_percent="
-        "&tax=$taxAmount"
-        "&tax_percents=$formattedTaxPercent"
-        "&total_item_vats=${totalItemVats.toStringAsFixed(2)}"
-        "&gross_total=$totalAmount"
-        "&payment_out=1"
-        "&payment_amount=${totalAmount}"; // ✅ Only send integer
-
-    debugPrint("API URL: $url");
-
-    final requestBody = {
-      "sales_items": saleItem.map((item) => item.toJson()).toList(),
-    };
-
-    debugPrint("Request Body: $requestBody");
-
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(requestBody),
-    );
-
-    debugPrint("API Response: ${response.body}");
-
-    final data = json.decode(response.body);
-
-    if (response.statusCode == 200 && data["success"] == true) {
-      notifyListeners();
-      saleItem.clear();
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => const HomeView()),
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(requestBody),
       );
 
-      return true;
-    } else {
-      // ✅ Show message for success=false or non-200
-      _showErrorSnackBar(context, data["message"] ?? "An error occurred.");
-      notifyListeners();
+      debugPrint("API Response: ${response.body}");
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 && data["success"] == true) {
+        notifyListeners();
+        saleItem.clear();
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => const HomeView()),
+        );
+
+        return true;
+      } else {
+        // ✅ Show message for success=false or non-200
+        _showErrorSnackBar(context, data["message"] ?? "An error occurred.");
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _showErrorSnackBar(
+          context, "An unexpected error occurred. Please try again.");
+      debugPrint("❌ Exception: $e");
       return false;
     }
-  } catch (e) {
-    _showErrorSnackBar(context, "An unexpected error occurred. Please try again.");
-    debugPrint("❌ Exception: $e");
-    return false;
   }
-}
 
 // ✅ Safe way to show error message from API
-void _showErrorSnackBar(BuildContext context, String message) {
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
-  });
-}
-
-
-
+  void _showErrorSnackBar(BuildContext context, String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    });
+  }
 
   // bool isOnlineMoneyChecked = false;
 
@@ -952,60 +796,6 @@ void _showErrorSnackBar(BuildContext context, String message) {
     notifyListeners();
   }
 
-  TextEditingController controller = TextEditingController(text: "Cash");
-
-  String text = "Cash";
-  List<String> category = ["Category1", "Category2", "Category3"];
-  List<String> warehouse = ["Warehouse1", "Warehouse2", "Warehouse3"];
-  List<String> status = ["Active", "inactive"];
-
-  List<String> subCategory = [
-    "Sub Category1",
-    "Sub Category2",
-    "Sub Category3"
-  ];
-
-  List<String> itemName = ["Item1", "Item2", "Item3"];
-  String? selectedCategory;
-  String? selectedWarehouse;
-  String? selectedSubCategory;
-  String? selectedStatus;
-  String? price;
-  // bool isOnlineMoneyChecked = false;
-  String? selectedReceiptType;
-
-  String customerName = "";
-  String phone = "";
-  String email = "";
-  String address = "";
-
-  TextEditingController amountController = TextEditingController();
-  TextEditingController amountController2 = TextEditingController();
-  TextEditingController discountPercentageController = TextEditingController();
-  TextEditingController discountAmountController = TextEditingController();
-  TextEditingController additionalCostController = TextEditingController();
-  TextEditingController subtotalController = TextEditingController();
-  TextEditingController receivedMoneyController = TextEditingController();
-  TextEditingController returnController = TextEditingController();
-  TextEditingController dueController = TextEditingController();
-
-  TextEditingController codeController = TextEditingController();
-
-  TextEditingController unitController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController totalAmountController = TextEditingController();
-
-  TextEditingController totalController = TextEditingController();
-
-  //add item
-  TextEditingController nameAddItemController = TextEditingController();
-
-  ////add item stock and price
-  TextEditingController stockAddItemController = TextEditingController();
-  TextEditingController priceAddItemController = TextEditingController();
-
-  TextEditingController valueAddItemController = TextEditingController();
-
   void salesControllerAS() {
     stockAddItemController.addListener(_calculateValue);
     priceAddItemController.addListener(_calculateValue);
@@ -1045,29 +835,6 @@ void _showErrorSnackBar(BuildContext context, String message) {
 
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
-
-  ////==>XXYY
-  void clearDateAfter() {
-    stockAddItemController.clear();
-    priceAddItemController.clear();
-    valueAddItemController.clear();
-    notifyListeners();
-  }
-
-  //for form settiing
-  bool isAmount = true;
-  bool isDisocunt = true;
-  bool isVatTax = true;
-  bool isAdditionalCost = true;
-  bool isSubTotoal = true;
-  bool isReciptType = true;
-  bool isRecivedMoney = true;
-  bool isReturn = true;
-
-  bool isBillRecipt = true;
-  bool isPreviousRecipt = true;
-  bool isAdvance = true;
-  bool isBillTotal = true;
 
   void updateIsAmount() {
     isAmount = !isAmount;
@@ -1173,8 +940,6 @@ void _showErrorSnackBar(BuildContext context, String message) {
     debugPrint("as $customerName");
   }
 
-  String? seletedItemName;
-
   //===>credit
 
   void updateWarehouse(String? newValue) {
@@ -1245,11 +1010,6 @@ void _showErrorSnackBar(BuildContext context, String message) {
     }
     notifyListeners();
   }
-
-  //sales field portion date tax and vat
-  String? selectedTotalTaxId;
-  double selectedTotalTaxPercent = 0.00;
-  double totalTaxAmountl = 0.00;
 
   selectTotalTaxDropdown(double totalAmount, String tax) {
     selectedTotalTaxPercent = double.parse(tax);

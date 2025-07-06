@@ -1,5 +1,6 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
+import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/item/model/unit_model.dart';
 import 'package:cbook_dt/feature/item/provider/items_show_provider.dart';
 import 'package:cbook_dt/feature/item/provider/unit_provider.dart';
@@ -22,23 +23,15 @@ class PurchaseReturnDetailsPage extends StatefulWidget {
 }
 
 class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
-  //late TextEditingController unitPriceController;
-
   final Map<int, TextEditingController> _reductionControllers = {};
+  TextEditingController priceController = TextEditingController();
+
   double totalReductionQty = 0;
   double totalPrice = 0;
-
-  List<String> unitIdsList = [];
 
   @override
   void initState() {
     super.initState();
-
-    // unitPriceController = TextEditingController(
-    //   text:
-    //       widget.purchaseHistory.first.unitPrice.toString(), // or initial value //need price
-    // );
-
     // Fetch units when the page initializes
     Future.delayed(Duration.zero, () {
       Provider.of<UnitProvider>(context, listen: false).fetchUnits();
@@ -55,12 +48,7 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
         Provider.of<PurchaseReturnController>(context, listen: false);
 
     controller.clearReductionQty();
-
-    final purchaseHistory = widget.purchaseHistory;
-    final haseDetailsHistoryID = purchaseHistory.first.purchaseDetailsId;
   }
-
-  TextEditingController priceController = TextEditingController();
 
   // Function to calculate total reduction quantity
   void calculateTotalReductionQty() {
@@ -74,27 +62,25 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
       totalReductionQty = total;
     });
 
-    calculateTotalPrice(); // Ensure total price updates correctly
+    calculateTotalPrice(); // 🔁 Triggers price update
   }
 
-  // Function to calculate total price
+  ///calculate total price.
   void calculateTotalPrice() {
+    var controller =
+        Provider.of<PurchaseReturnController>(context, listen: false);
     double total = 0;
 
-    for (var history in widget.purchaseHistory) {
-      double reductionQty = double.tryParse(
-              _reductionControllers[history.purchaseDetailsId]?.text.trim() ??
-                  '0') ??
-          0;
+    for (int i = 0; i < widget.purchaseHistory.length; i++) {
+      final history = widget.purchaseHistory[i];
+      final reductionText = controller.reductionQtyList[i].text.trim();
+      double reductionQty = double.tryParse(reductionText) ?? 0;
 
-      // Ensure Reduction Qty doesn't exceed Current Qty
       if (reductionQty > history.currentQty) {
         reductionQty = history.currentQty;
       }
 
-      double unitQty = history.unitPrice.toDouble(); // Ensure unitQty is double
-
-      total += reductionQty * unitQty;
+      total += reductionQty * history.unitPrice;
     }
 
     setState(() {
@@ -118,7 +104,7 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
         Provider.of<PurchaseReturnController>(context, listen: false);
 
     return Consumer<UnitProvider>(
-      builder: (context, unitProvider, child) {
+      builder: (context, unitProvider, child)  {
         if (unitProvider.units.isEmpty) {
           return Scaffold(
             appBar: AppBar(title: const Text("Purchase Return Details")),
@@ -128,6 +114,8 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
 
         String primaryUnitName = '';
         String secondaryUnitName = '';
+
+        if (widget.purchaseHistory.isNotEmpty) {}
 
         if (widget.purchaseHistory.isNotEmpty) {
           final firstHistory = widget.purchaseHistory.first;
@@ -168,7 +156,17 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
           }
         }
 
+        String _getDefaultUnitName(
+            PurchaseHistoryModel history, UnitProvider unitProvider) {
+          final baseUnit = unitProvider.units.firstWhere(
+            (unit) => unit.id == history.unitID,
+            orElse: () => Unit(id: 0, name: "Unknown", symbol: "", status: 0),
+          );
+          return baseUnit.name;
+        }
+
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
               //  backgroundColor: colorScheme.surface,
               backgroundColor: colorScheme.primary,
@@ -185,11 +183,6 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Scrollable history list
-
-                // Text(
-                //   '${widget.itemName} (1 ${primaryUnitName}${secondaryUnitName.isNotEmpty ? ' =     $secondaryUnitName' : ''})',
-                //   style: const TextStyle(color: Colors.black, fontSize: 13),
-                // ),
 
                 Text(
                   '${widget.itemName} (1 $primaryUnitName$conversionText)',
@@ -256,18 +249,13 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.black)),
-                                      //==>
                                       Text(
-                                        '${history.rate}',
+                                        "Account Name: ${history.supplierName == null || history.supplierName.toString().trim().isEmpty ? 'Cash' : history.supplierName}",
                                         style: const TextStyle(
-                                            color: Colors.black),
+                                          fontSize: 13,
+                                          color: Colors.black,
+                                        ),
                                       ),
-
-                                      Text(
-                                          "Account Name: ${history.supplierName.isEmpty ? 'N/A' : history.supplierName}",
-                                          style: const TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.black)),
                                       Text(
                                         "Date: ${history.purchaseDate}",
                                         style: const TextStyle(
@@ -276,14 +264,14 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                         ),
                                       ),
                                       Text(
-                                        "Bill Qty: ${history.billQty}",
+                                        "Rate: ${history.rate}",
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 13,
                                         ),
                                       ),
                                       Text(
-                                        "Rate: ${history.rate}",
+                                        "Bill Qty: ${history.billQty}",
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 13,
@@ -301,6 +289,7 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 13,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       Text(
@@ -310,13 +299,6 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                           fontSize: 13,
                                         ),
                                       ),
-                                      // Text(
-                                      //   "Unit Price: ${history.unitPrice}",
-                                      //   style: const TextStyle(
-                                      //     color: Colors.black,
-                                      //     fontSize: 13,
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                   Column(
@@ -325,21 +307,15 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       const SizedBox(
-                                        height: 10,
+                                        height: 6,
                                       ),
 
-                                      const Text(
-                                        "Unit Price",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-
+                                      ///unit price.
                                       SizedBox(
                                         width: 150,
                                         height: 30,
                                         child: AddSalesFormfield(
+                                          labelText: 'Unit Price',
                                           controller: unitPriceController,
                                           keyboardType: TextInputType.number,
                                           onChanged: (value) {
@@ -348,106 +324,28 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                         ),
                                       ),
 
-//                                       SizedBox(
-//   width: 150,
-//   height: 30,
-//   child: AddSalesFormfield(
-//     controller: unitPriceController,
-//     keyboardType: TextInputType.number,
-//     onChanged: (value) {
-//       debugPrint("unit price changed: $value");
-//       // You can update your model or state here if needed
-//     },
-//   ),
-// ),
-
                                       const SizedBox(height: 6),
-                                      const Text("Reduction Qty",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12)),
-                                      const SizedBox(height: 3),
-                                      SizedBox(
-                                        width: 150,
-                                        height: 30,
-                                        child: AddSalesFormfield(
-                                          controller: controller
-                                              .reductionQtyList[index],
-                                          keyboardType: TextInputType.number,
-                                          onChanged: (value) {
-                                            debugPrint("top most $value");
-
-                                            final reductionText = controller
-                                                .reductionQtyList[index].text;
-
-                                            final reductionQty =
-                                                int.tryParse(reductionText) ??
-                                                    0;
-
-                                            if (reductionQty >
-                                                history.currentQty) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(const SnackBar(
-                                                content: Text(
-                                                  "Reduction QTY can't be above current QTY",
-                                                ),
-                                                backgroundColor: Colors.red,
-                                              ));
-                                            }
-
-                                            controller.savePrucahseReturn(
-                                                itemId:
-                                                    history.itemId.toString(),
-                                                qty: controller
-                                                    .reductionQtyList[index]
-                                                    .value
-                                                    .text,
-                                                index: index,
-                                                price: history.unitPrice
-                                                    .toString(),
-                                                purchaseDetailsId: history
-                                                    .purchaseDetailsId
-                                                    .toString(),
-                                                itemName: Provider.of<
-                                                            AddItemProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .getItemName(
-                                                        history.itemId),
-                                                unitName: controller
-                                                    .selectedUnit
-                                                    .toString());
-                                          },
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 6),
-
-                                      const Text(
-                                        "Unit",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 12),
-                                      ),
 
                                       ///primary and secondary unit
-
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 0.0),
                                         child: CustomDropdownTwo(
+                                          labelText: 'Unit',
                                           hint: 'Choose a unit',
                                           items: allowedUnits,
                                           width: 150,
                                           height: 30,
-                                          selectedItem: allowedUnits.isNotEmpty
-                                              ? allowedUnits.first
-                                              : null,
+                                          selectedItem: controller
+                                                  .getSelectedUnit(index) ??
+                                              _getDefaultUnitName(
+                                                  history, unitProvider),
                                           onChanged: (selectedUnit) {
                                             debugPrint(
                                                 "Selected Unit: $selectedUnit");
 
-                                            controller.selectedUnit =
-                                                selectedUnit;
+                                            controller.setSelectedUnit(
+                                                index, selectedUnit!);
 
                                             final selectedUnitObj =
                                                 unitProvider.units.firstWhere(
@@ -481,75 +379,121 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                                         "${selectedUnitId}_${selectedUnit}_1");
                                               }
                                             }
-
-                                            controller.notifyListeners();
-
-                                            // If unit selected is "pieces", calculate the new quantity and total price
-                                            if (selectedUnitObj.name
-                                                    .toLowerCase() ==
-                                                "pices") {
-                                              double enteredQty =
-                                                  double.tryParse(
-                                                        _reductionControllers[
-                                                                    history
-                                                                        .purchaseDetailsId]
-                                                                ?.text ??
-                                                            '0',
-                                                      ) ??
-                                                      0;
-
-                                              // Calculate new quantity based on the entered quantity and unit quantity (unitQty)
-                                              double newQty = enteredQty /
-                                                  history
-                                                      .unitQty; // Reduction quantity in pieces
-
-                                              // Calculate the new total price based on the unit price and new quantity in pieces
-                                              double newTotalPrice =
-                                                  newQty * history.unitPrice;
-
-                                              // Update the reduction quantity text and total price
-                                              _reductionControllers[history
-                                                          .purchaseDetailsId]
-                                                      ?.text =
-                                                  newQty.toStringAsFixed(
-                                                      2); // Update the reduction quantity
-                                              setState(() {
-                                                totalPrice +=
-                                                    newTotalPrice; // Update the total price
-                                              });
-                                            } else if (selectedUnitObj.name
-                                                    .toLowerCase() ==
-                                                "packet") {
-                                              // If unit selected is "packet", retain the current quantity logic
-                                              double enteredQty =
-                                                  double.tryParse(
-                                                        _reductionControllers[
-                                                                    history
-                                                                        .purchaseDetailsId]
-                                                                ?.text ??
-                                                            '0',
-                                                      ) ??
-                                                      0;
-
-                                              // Calculate total price for packet based on the original entered quantity
-                                              double totalPacketPrice =
-                                                  enteredQty *
-                                                      history.unitPrice;
-
-                                              // Update total price
-                                              setState(() {
-                                                totalPrice +=
-                                                    totalPacketPrice; // Update total price when unit is packet
-                                              });
-                                            }
-
                                             calculateTotalReductionQty();
                                             calculateTotalPrice();
-
-                                            // Recalculate the total reduction quantity and total price after unit change
                                           },
                                         ),
                                       ),
+
+                                      const SizedBox(
+                                        height: 6,
+                                      ),
+
+                                      /// reduction qty.
+                                      SizedBox(
+                                        width: 150,
+                                        height: 30,
+                                        child: AddSalesFormfield(
+                                          labelText: 'Reduction Qty',
+                                          controller: controller
+                                              .reductionQtyList[index],
+                                          keyboardType: TextInputType.number,
+                                          onChanged: (value) {
+                                            final reductionText = controller
+                                                .reductionQtyList[index].text;
+                                            final enteredQty = double.tryParse(
+                                                    reductionText) ??
+                                                0;
+
+                                            if (enteredQty >
+                                                history.currentQty) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(const SnackBar(
+                                                content: Text(
+                                                    "Reduction QTY can't be above current QTY"),
+                                                backgroundColor: Colors.red,
+                                              ));
+                                            }
+
+                                            // Auto-switch to packet if applicable
+                                            final selectedUnit =
+                                                controller.selectedUnit;
+                                            final primaryUnitId =
+                                                history.unitID;
+                                            final secondaryUnitId =
+                                                history.secondaryUnitID;
+                                            final primaryUnitName = unitProvider
+                                                .units
+                                                .firstWhere(
+                                                    (u) =>
+                                                        u.id == primaryUnitId,
+                                                    orElse: () => Unit(
+                                                        id: 0,
+                                                        name: 'Unknown',
+                                                        symbol: '',
+                                                        status: 0))
+                                                .name;
+
+                                            final secondaryUnitName =
+                                                secondaryUnitId != null
+                                                    ? unitProvider.units
+                                                        .firstWhere(
+                                                            (u) =>
+                                                                u.id ==
+                                                                secondaryUnitId,
+                                                            orElse: () => Unit(
+                                                                id: 0,
+                                                                name: 'Unknown',
+                                                                symbol: '',
+                                                                status: 0))
+                                                        .name
+                                                    : null;
+
+                                            if (secondaryUnitName != null &&
+                                                selectedUnit ==
+                                                    primaryUnitName &&
+                                                enteredQty >= history.unitQty) {
+                                              setState(() {
+                                                controller.selectedUnit =
+                                                    secondaryUnitName;
+                                              });
+
+                                              controller
+                                                  .selectedUnitIdWithNameFunction(
+                                                      "${secondaryUnitId}_${secondaryUnitName}_${history.unitQty}");
+                                            }
+
+                                            // Save to controller (optional for API)
+                                            controller.savePrucahseReturn(
+                                              itemId: history.itemId.toString(),
+                                              qty: reductionText,
+                                              index: index,
+                                              price:
+                                                  history.unitPrice.toString(),
+                                              purchaseDetailsId: history
+                                                  .purchaseDetailsId
+                                                  .toString(),
+                                              itemName:
+                                                  Provider.of<AddItemProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .getItemName(
+                                                          history.itemId),
+                                              unitName: controller
+                                                      .getSelectedUnit(index) ??
+                                                  '',
+                                            );
+
+                                            /// 👇 This ensures everything is updated correctly
+                                            setState(() {
+                                              calculateTotalReductionQty();
+                                              calculateTotalPrice();
+                                            });
+                                          },
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 6),
                                     ],
                                   )
                                 ],
@@ -571,15 +515,17 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                           style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold)),
-                      Text("PTK: $totalReductionQty",
+                      Text("PTK: ${controller.getAllQty()}",
                           style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold)),
                       Text(
-                        "Total Price: ${controller.getTotalPrice(widget.purchaseHistory)}",
+                        "Total Price: ${controller.getTotalPrice(widget.purchaseHistory)}", //
                         style: const TextStyle(
                             color: Colors.black, fontWeight: FontWeight.bold),
-                      )
+                      ),
+
+                      ///Text('put', style: TextStyle(),),
                     ],
                   ),
                 ),
@@ -591,10 +537,11 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                       onPressed: () async {
-                        setState(() {
-                          calculateTotalReductionQty();
-                          calculateTotalPrice();
-                        });
+                        debugPrint(
+                            'selected unit =====>  ${controller.selectedUnit}');
+
+                        debugPrint(
+                            "purchase item return  ${controller.itemsCashReuturn.length}");
 
                         final bool isSucces = controller.isCash
                             ? await controller.savePurchaseReturnData()

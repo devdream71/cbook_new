@@ -66,38 +66,7 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
         : 'No Units Available';
   }
 
-  // void updateItem() {
-  //   debugPrint("Updating item:");
-  //   debugPrint("Selected Item: $selectedItemName");
-  //   debugPrint("Selected Unit: $selectedUnitName");
-  //   debugPrint("Qty: ${qtyController.text}");
-  //   debugPrint("Price: ${priceController.text}");
-  //   debugPrint("Subtotal: ${subTotalController.text}");
-
-  //   // Pass the updated values back to the provider
-  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
-  //       .updateSelectedItem(
-  //           selectedItemName ?? ''); // Update item name in provider
-  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
-  //       .updateSelectedUnit(
-  //           selectedUnitName ?? ''); // Update unit name in provider
-
-  //   // Pass updated values to other relevant fields
-  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
-  //       .qtyController
-  //       .text = qtyController.text;
-  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
-  //       .priceController
-  //       .text = priceController.text;
-  //   Provider.of<PurchaseUpdateProvider>(context, listen: false)
-  //       .subTotalController
-  //       .text = subTotalController.text;
-
-  //   setState(() {});
-
-  //   // Navigate back with the updated data
-  //   Navigator.pop(context);
-  // }
+   
 
   void updateItem() {
     debugPrint("Updating item:");
@@ -178,17 +147,17 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Item",
-              style: TextStyle(color: Colors.black, fontSize: 14),
-            ),
+             
+
             SizedBox(
               width: double.infinity,
               child: CustomDropdownTwo(
+                labelText: 'Item',
                 items: widget.itemMap.isNotEmpty
                     ? widget.itemMap.values.toList()
                     : ['No Items Available'], // Show a default message if empty
                 hint: selectedItemName ?? 'Select Item', // ✅ Show selected item
+                selectedItem: selectedItemName,
                 width: double.infinity,
                 height: 30,
                 onChanged: (String? newValue) {
@@ -198,20 +167,18 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
                 },
               ),
             ),
+
             const SizedBox(height: 5),
-            const Text(
-              "Unit",
-              style: TextStyle(color: Colors.black, fontSize: 14),
-            ),
             SizedBox(
-              width: double.infinity,
               child: CustomDropdownTwo(
+                labelText: 'Unit',
                 items: widget.unitMap.isNotEmpty
                     ? widget.unitMap.values.toList()
                     : ['No Units Available'], // Show a default message if empty
                 hint: selectedUnitName ??
                     'Select Unit', // Show selected unit or default hint
                 width: double.infinity,
+                selectedItem: selectedUnitName,
                 height: 30,
                 onChanged: (String? newValue) {
                   setState(() {
@@ -220,12 +187,18 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
                 },
               ),
             ),
+            const SizedBox(
+              height: 8,
+            ),
             AddSalesFormfield(
-                label: "Price", controller: widget.provider.priceController),
+                labelText: "Price",
+                controller: widget.provider.priceController),
+            const SizedBox(height: 8),
             AddSalesFormfield(
-                label: "Qty", controller: widget.provider.qtyController),
+                labelText: "Qty", controller: widget.provider.qtyController),
+            const SizedBox(height: 8),
             AddSalesFormfield(
-                label: "Subtotal",
+                labelText: "Subtotal",
                 controller: widget.provider.subTotalController),
             const SizedBox(height: 20),
             Row(

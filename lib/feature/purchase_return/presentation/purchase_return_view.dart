@@ -1,5 +1,7 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
+import 'package:cbook_dt/common/item_dropdown_custom.dart';
+import 'package:cbook_dt/feature/customer_create/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/invoice/invoice_model.dart';
@@ -12,6 +14,7 @@ import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/purchase_return/controller/purchase_return_controller.dart';
 import 'package:cbook_dt/feature/purchase_return/layer/bottom_portion_purchase_return.dart';
 import 'package:cbook_dt/feature/purchase_return/purchase_return_item_details.dart';
+import 'package:cbook_dt/feature/sales/widget/add_sales_form_two.dart';
 import 'package:cbook_dt/utils/custom_padding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,23 +32,6 @@ class PurchaseReturnView extends StatefulWidget {
 }
 
 class _PurchaseReturnViewState extends State<PurchaseReturnView> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() =>
-        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
-
-    Future.microtask(() =>
-        Provider.of<ItemCategoryProvider>(context, listen: false)
-            .fetchCategories());
-
-    Provider.of<AddItemProvider>(context, listen: false).fetchItems();
-
-    Future.microtask(() =>
-        Provider.of<PaymentVoucherProvider>(context, listen: false)
-            .fetchBillPersons());
-  }
-
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<PurchaseReturnController>();
@@ -70,6 +56,13 @@ class _LayoutState extends State<_Layout> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+
+  TextEditingController customerNameController = TextEditingController();
+
+  final TextEditingController itemController = TextEditingController();
+
+  String? localSelectedUnit;
+  bool isItemSelected = false;
 
   String? selectedBillPerson;
   int? selectedBillPersonId;
@@ -96,9 +89,30 @@ class _LayoutState extends State<_Layout> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() =>
+        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
+
+    Future.microtask(() =>
+        Provider.of<ItemCategoryProvider>(context, listen: false)
+            .fetchCategories());
+
+    Provider.of<AddItemProvider>(context, listen: false).fetchItems();
+
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false)
+            .fetchBillPersons());
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final controller = context.watch<PurchaseReturnController>();
+
+    final unitProvider = Provider.of<UnitProvider>(context, listen: false);
+    final fetchStockQuantity =
+        Provider.of<AddItemProvider>(context, listen: false);
 
     List<InvoiceItem> invoiceItems = controller.itemsCashReuturn.map((item) {
       return InvoiceItem(
@@ -121,7 +135,7 @@ class _LayoutState extends State<_Layout> {
         color: AppColors.primaryColor,
         child: SafeArea(
           child: Scaffold(
-            backgroundColor: colorScheme.surface,
+            backgroundColor: Colors.white,
             appBar: AppBar(
               backgroundColor: colorScheme.primary,
               leading: InkWell(
@@ -220,7 +234,7 @@ class _LayoutState extends State<_Layout> {
                                   Row(
                                     children: [
                                       SizedBox(
-                                        height: 50,
+                                        height: 58,
                                         width: 190,
                                         // Adjusted height for cursor visibility
                                         child: controller.isCash
@@ -322,205 +336,112 @@ class _LayoutState extends State<_Layout> {
                                                 cursorWidth:
                                                     2, // Adjusted cursor width for visibility
                                               )
-                                            : Consumer<CustomerProvider>(
-                                                builder: (context,
-                                                    customerProvider, child) {
-                                                  if (customerProvider
-                                                      .isLoading) {
-                                                    return const Center(
-                                                        child:
-                                                            CircularProgressIndicator());
-                                                  }
+                                            : Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  ///show text field search ====>
+                                                  AddSalesFormfieldTwo(
+                                                    controller: controller
+                                                        .customerNameController,
+                                                    customerorSaleslist:
+                                                        "Showing Customer list",
+                                                    customerOrSupplierButtonLavel:
+                                                        "Add customer",
+                                                    color: Colors.grey,
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const CustomerCreate()));
+                                                    },
+                                                    //label: "Customer",
+                                                  ),
 
-                                                  if (customerProvider
-                                                      .errorMessage
-                                                      .isNotEmpty) {
-                                                    return Center(
-                                                      child: Text(
-                                                        customerProvider
-                                                            .errorMessage,
-                                                        style: const TextStyle(
-                                                            color: Colors.red,
-                                                            fontSize: 16),
-                                                      ),
-                                                    );
-                                                  }
+                                                  /// show bottom payable or recivedable.
+                                                  Consumer<CustomerProvider>(
+                                                    builder: (context,
+                                                        customerProvider,
+                                                        child) {
+                                                      final customerList =
+                                                          customerProvider
+                                                                  .customerResponse
+                                                                  ?.data ??
+                                                              [];
 
-                                                  final customerList =
-                                                      customerProvider
-                                                              .customerResponse
-                                                              ?.data ??
-                                                          [];
+                                                      return Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          // If the customer list is empty, show a SizedBox
+                                                          if (customerList
+                                                              .isEmpty)
+                                                            const SizedBox(
+                                                                height:
+                                                                    2), // Adjust height as needed
 
-                                                  if (customerList.isEmpty) {
-                                                    return const Center(
-                                                      child: Text(
-                                                        "No Customer Found",
-                                                        style: TextStyle(
-                                                            fontSize: 10,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500),
-                                                      ),
-                                                    );
-                                                  }
+                                                          // Otherwise, show the dropdown with customers
+                                                          if (customerList
+                                                              .isNotEmpty)
 
-                                                  // ✅ Map customer ID & Name
-                                                  final dropdownItems =
-                                                      customerList
-                                                          .map((customer) =>
-                                                              "${customer.name}") // Store both ID and Name
-                                                          .toList();
-
-                                                  return Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      CustomDropdownTwo(
-                                                        items: dropdownItems,
-                                                        hint: "Select Customer",
-                                                        width: 350,
-                                                        height: 25,
-                                                        selectedItem:
-                                                            selectedCustomer, // Set initially selected item
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            selectedCustomer =
-                                                                value;
-                                                            if (selectedCustomer !=
-                                                                null) {
-                                                              selectedCustomerObject =
-                                                                  customerList
-                                                                      .firstWhere(
-                                                                (customer) =>
-                                                                    customer
-                                                                        .name ==
-                                                                    selectedCustomer,
-                                                                orElse: () =>
-                                                                    Customer(
-                                                                  id: -1,
-                                                                  userId: 0,
-                                                                  name: '',
-                                                                  proprietorName:
-                                                                      '',
-                                                                  due: 0,
-                                                                  purchases: [],
-                                                                ),
-                                                              );
-
-                                                              selectedCustomerId =
-                                                                  selectedCustomerObject!
-                                                                      .id
-                                                                      .toString();
-
-                                                              // ✅ Update AddItemProvider with selected customer ID
-                                                              Provider.of<AddItemProvider>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .setSelectedCustomerId(
-                                                                      selectedCustomerId!);
-
-                                                              // Find the selected customer object based on the ID
-                                                              selectedCustomerObject =
-                                                                  customerList
-                                                                      .firstWhere(
-                                                                (customer) =>
-                                                                    customer.id
-                                                                        .toString() ==
-                                                                    selectedCustomerId,
-                                                                orElse: () =>
-                                                                    Customer(
-                                                                  id: -1,
-                                                                  userId: 0,
-                                                                  name: '',
-                                                                  proprietorName:
-                                                                      '',
-                                                                  due: 0,
-                                                                  purchases: [],
-                                                                ),
-                                                              );
-                                                            }
-                                                          });
-
-                                                          debugPrint(
-                                                              "Selected Customer ID: $selectedCustomerId"); // Debugging
-                                                        },
-                                                      ),
-
-                                                      // Show the due amount of the selected customer
-                                                      if (selectedCustomerObject !=
-                                                              null &&
-                                                          selectedCustomerObject!
-                                                                  .id !=
-                                                              -1)
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  top: 8.0),
-                                                          child: Text(
-                                                            "Customer Due: ৳ ${selectedCustomerObject!.due.toStringAsFixed(2)}",
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 10,
-                                                              color: Colors.red,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      // Text(
-                                                      //     "${selectedCustomerObject!.type == 'customer' ? 'Receivable' : 'Payable'}: ৳ ${selectedCustomerObject!.due.toStringAsFixed(2)}"
-                                                      //     "\nName: ${selectedCustomerObject!.name}"
-                                                      //     "\nPhone: ${selectedCustomerObject!.phone}"
-                                                      //     "\nAddress: ${selectedCustomerObject!.address}",
-                                                      //     style: TextStyle(
-                                                      //       fontSize: 9,
-                                                      //       color: selectedCustomerObject!
-                                                      //                   .type ==
-                                                      //               'customer'
-                                                      //           ? Colors.green
-                                                      //           : Colors.red,
-                                                      //       fontWeight:
-                                                      //           FontWeight
-                                                      //               .bold,
-                                                      //       overflow:
-                                                      //           TextOverflow
-                                                      //               .ellipsis,
-                                                      //     ),
-                                                      //   ),),
-                                                    ],
-                                                  );
-                                                },
+                                                            // Check if the selected customer is valid
+                                                            if (customerProvider
+                                                                        .selectedCustomer !=
+                                                                    null &&
+                                                                customerProvider
+                                                                        .selectedCustomer!
+                                                                        .id !=
+                                                                    -1)
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          10,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: customerProvider.selectedCustomer!.type ==
+                                                                              'customer'
+                                                                          ? Colors
+                                                                              .green
+                                                                          : Colors
+                                                                              .red,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            2.0),
+                                                                    child: Text(
+                                                                      "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            10,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                        color: Colors
+                                                                            .black,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                                ],
                                               ),
-                                      ),
-                                      hPad3, // Space between TextField and Icon
-                                      // InkWell(
-                                      //   onTap: () {
-                                      //     ScaffoldMessenger.of(context)
-                                      //         .showSnackBar(
-                                      //       SnackBar(
-                                      //         backgroundColor:
-                                      //             colorScheme.primary,
-                                      //         duration:
-                                      //             const Duration(seconds: 1),
-                                      //         content: const Text(
-                                      //           'Fetch Successfully',
-                                      //           style: TextStyle(
-                                      //               color: Colors.white),
-                                      //         ),
-                                      //       ),
-                                      //     );
-                                      //   },
-                                      //   child: const Icon(
-                                      //     Icons.sync,
-                                      //     size: 18,
-                                      //     color: Colors.green,
-                                      //   ),
-                                      // ),
+                                      )
                                     ],
                                   ),
                                   vPad5,
@@ -555,29 +476,7 @@ class _LayoutState extends State<_Layout> {
                                     width: 127,
                                     child: AddSalesFormfield(
                                       controller: controller.billNoController,
-                                      decoration: InputDecoration(
-                                        isDense:
-                                            true, // Ensures the field is compact
-                                        contentPadding: EdgeInsets
-                                            .zero, // Removes unnecessary padding
-                                        hintText: "Bill no",
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600),
-                                        enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey.shade400,
-                                            width: 0.5,
-                                          ),
-                                        ),
-                                        focusedBorder:
-                                            const UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                      ),
+                                      labelText: "Bill No",
                                     ),
                                   ),
 
@@ -818,89 +717,6 @@ class _LayoutState extends State<_Layout> {
                           height: 10,
                         ),
 
-                        ////=====> cash product.
-                        // controller.isCash
-                        //     ? controller.itemsCashReuturn.isEmpty
-                        //         ? Container(
-                        //             decoration: BoxDecoration(
-                        //               color: colorScheme.primary,
-                        //               borderRadius: BorderRadius.circular(5),
-                        //               boxShadow: [
-                        //                 BoxShadow(
-                        //                   color: Colors.black.withOpacity(0.2),
-                        //                   blurRadius: 5,
-                        //                   offset: const Offset(0, 3),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //             child: Padding(
-                        //               padding: const EdgeInsets.all(4.0),
-                        //               child: Row(
-                        //                 mainAxisAlignment:
-                        //                     MainAxisAlignment.spaceBetween,
-                        //                 children: [
-                        //                   const Text(
-                        //                     "Products",
-                        //                     style: TextStyle(
-                        //                         color: Colors.white, fontSize: 14),
-                        //                   ),
-                        //                   InkWell(
-                        //                     onTap: () {
-                        //                       showSalesDialog(context, controller);
-                        //                       setState(() {});
-                        //                     },
-                        //                     child: const Icon(
-                        //                       Icons.add,
-                        //                       color: Colors.white,
-                        //                       size: 18,
-                        //                     ),
-                        //                   )
-                        //                 ],
-                        //               ),
-                        //             ),
-                        //           )
-                        //         : const SizedBox.shrink()
-                        //     : controller.itemsCreditReturn.isEmpty
-                        //         ? Container(
-                        //             decoration: BoxDecoration(
-                        //               color: colorScheme.primary,
-                        //               borderRadius: BorderRadius.circular(5),
-                        //               boxShadow: [
-                        //                 BoxShadow(
-                        //                   color: Colors.black.withOpacity(0.2),
-                        //                   blurRadius: 5,
-                        //                   offset: const Offset(0, 3),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //             child: Padding(
-                        //               padding: const EdgeInsets.all(4.0),
-                        //               child: Row(
-                        //                 mainAxisAlignment:
-                        //                     MainAxisAlignment.spaceBetween,
-                        //                 children: [
-                        //                   const Text(
-                        //                     "Products",
-                        //                     style: TextStyle(
-                        //                         color: Colors.white, fontSize: 14),
-                        //                   ),
-                        //                   InkWell(
-                        //                     onTap: () {
-                        //                       showSalesDialog(context, controller);
-                        //                       setState(() {});
-                        //                     },
-                        //                     child: const Icon(
-                        //                       Icons.add,
-                        //                       color: Colors.white,
-                        //                       size: 18,
-                        //                     ),
-                        //                   )
-                        //                 ],
-                        //               ),
-                        //             ),
-                        //           )
-                        //         : const SizedBox.shrink(),
-
                         vPad20,
 
                         //////cash item list
@@ -965,7 +781,7 @@ class _LayoutState extends State<_Layout> {
                                                                             .start,
                                                                     children: [
                                                                       Text(
-                                                                        // "${item.itemName!} ${item.category!}",
+                                                                        // "${item.itemName!}",
                                                                         item.itemName!,
 
                                                                         style: const TextStyle(
@@ -974,13 +790,13 @@ class _LayoutState extends State<_Layout> {
                                                                             fontSize: 14),
                                                                       ),
 
-                                                                      //${item.unit}
+                                                                      //item mrp, qty , unit, total price
 
                                                                       Text(
-                                                                        "৳ ${item.mrp!} x ${item.quantity!}   = ${(int.tryParse(item.quantity!) ?? 0) * (double.tryParse(item.mrp!) ?? 0)}",
+                                                                        "৳ ${item.mrp!} x ${item.quantity!} ${controller.extractUnitName(item.unit ?? '')} = ${(int.tryParse(item.quantity!) ?? 0) * (double.tryParse(item.mrp!) ?? 0)}",
                                                                         style: const TextStyle(
                                                                             color:
-                                                                                Colors.black,
+                                                                                Colors.grey,
                                                                             fontSize: 14),
                                                                       ),
                                                                     ],
@@ -1053,55 +869,9 @@ class _LayoutState extends State<_Layout> {
                                                 );
                                               }),
                                             ),
-
                                       controller.itemsCashReuturn.isEmpty
                                           ? const SizedBox()
                                           : vPad10,
-
-                                      // controller.itemsCashReuturn.isNotEmpty
-                                      //     ? Container(
-                                      //         decoration: BoxDecoration(
-                                      //           color: colorScheme.primary,
-                                      //           borderRadius:
-                                      //               BorderRadius.circular(5),
-                                      //           boxShadow: [
-                                      //             BoxShadow(
-                                      //               color:
-                                      //                   Colors.black.withOpacity(0.2),
-                                      //               blurRadius: 5,
-                                      //               offset: const Offset(0, 3),
-                                      //             ),
-                                      //           ],
-                                      //         ),
-                                      //         child: Padding(
-                                      //           padding: const EdgeInsets.all(4.0),
-                                      //           child: Row(
-                                      //             mainAxisAlignment:
-                                      //                 MainAxisAlignment.spaceBetween,
-                                      //             children: [
-                                      //               const Text(
-                                      //                 "Products",
-                                      //                 style: TextStyle(
-                                      //                     color: Colors.white,
-                                      //                     fontSize: 14),
-                                      //               ),
-                                      //               InkWell(
-                                      //                 onTap: () {
-                                      //                   showSalesDialog(
-                                      //                       context, controller);
-                                      //                   setState(() {});
-                                      //                 },
-                                      //                 child: const Icon(
-                                      //                   Icons.add,
-                                      //                   color: Colors.white,
-                                      //                   size: 18,
-                                      //                 ),
-                                      //               )
-                                      //             ],
-                                      //           ),
-                                      //         ),
-                                      //       )
-                                      //     : const SizedBox.shrink()
                                     ],
                                   ),
                                 ),
@@ -1170,7 +940,7 @@ class _LayoutState extends State<_Layout> {
                                                                     "৳ ${item.mrp!} x ${item.quantity!} pc  = ${(int.tryParse(item.quantity!) ?? 0) * (double.tryParse(item.mrp!) ?? 0)}",
                                                                     style: const TextStyle(
                                                                         color: Colors
-                                                                            .black,
+                                                                            .grey,
                                                                         fontSize:
                                                                             14),
                                                                   ),
@@ -1276,9 +1046,9 @@ class _LayoutState extends State<_Layout> {
                                                     ),
                                                     InkWell(
                                                       onTap: () {
-                                                        showSalesDialog(context,
-                                                            controller);
-                                                        setState(() {});
+                                                        // showSalesDialog(context,
+                                                        //     controller);
+                                                        // setState(() {});
                                                       },
                                                       child: const Icon(
                                                         Icons.add,
@@ -1401,501 +1171,501 @@ class _LayoutState extends State<_Layout> {
     );
   }
 
-  void showSalesDialog(
-      BuildContext context, PurchaseReturnController controller) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final categoryProvider =
-        Provider.of<ItemCategoryProvider>(context, listen: false);
-    final unitProvider = Provider.of<UnitProvider>(context, listen: false);
-    final fetchStockQuantity =
-        Provider.of<AddItemProvider>(context, listen: false);
+  // void showSalesDialog(
+  //     BuildContext context, PurchaseReturnController controller) {
+  //   final ColorScheme colorScheme = Theme.of(context).colorScheme;
+  //   final categoryProvider =
+  //       Provider.of<ItemCategoryProvider>(context, listen: false);
+  //   final unitProvider = Provider.of<UnitProvider>(context, listen: false);
+  //   final fetchStockQuantity =
+  //       Provider.of<AddItemProvider>(context, listen: false);
 
-    // Define local state variables
-    String? selectedCategoryId;
-    String? selectedSubCategoryId;
+  //   // Define local state variables
+  //   String? selectedCategoryId;
+  //   String? selectedSubCategoryId;
 
-    //String? selectedItemNameInvoice;
-    List<String> unitIdsList = [];
+  //   //String? selectedItemNameInvoice;
+  //   List<String> unitIdsList = [];
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(builder: (context, setState) {
-          // ✅ Use StatefulBuilder to update UI
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return StatefulBuilder(builder: (context, setState) {
+  //         // ✅ Use StatefulBuilder to update UI
 
-          // ✅ Declare invoiceItems here before using it
+  //         // ✅ Declare invoiceItems here before using it
 
-          return Dialog(
-              backgroundColor: Colors.grey.shade400,
-              child: Container(
-                height: 490,
-                decoration: BoxDecoration(
-                  color: const Color(0xffe7edf4),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.cancel,
-                                size: 15,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
+  //         return Dialog(
+  //             backgroundColor: Colors.grey.shade400,
+  //             child: Container(
+  //               height: 490,
+  //               decoration: BoxDecoration(
+  //                 color: const Color(0xffe7edf4),
+  //                 borderRadius: BorderRadius.circular(5),
+  //               ),
+  //               child: Column(
+  //                 children: [
+  //                   Padding(
+  //                     padding: const EdgeInsets.all(8.0),
+  //                     child: Column(
+  //                       children: [
+  //                         Align(
+  //                           alignment: Alignment.centerRight,
+  //                           child: InkWell(
+  //                             onTap: () {
+  //                               Navigator.pop(context);
+  //                             },
+  //                             child: const Icon(
+  //                               Icons.cancel,
+  //                               size: 15,
+  //                               color: Colors.red,
+  //                             ),
+  //                           ),
+  //                         ),
 
-                          const SizedBox(
-                            height: 3,
-                          ),
+  //                         const SizedBox(
+  //                           height: 3,
+  //                         ),
 
-                          // Category and Subcategory Row
+  //                         // Category and Subcategory Row
 
-                          const SizedBox(
-                            height: 5,
-                          ),
+  //                         const SizedBox(
+  //                           height: 5,
+  //                         ),
 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ///// Category Dropdown
+  //                         Row(
+  //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                           children: [
+  //                             ///// Category Dropdown
 
-                              Expanded(
-                                flex: 4,
-                                child: categoryProvider.isLoading
-                                    ? const Center(
-                                        child: CircularProgressIndicator())
-                                    : CustomDropdownTwo(
-                                        hint: 'Select Category',
-                                        items: categoryProvider.categories
-                                            .map((category) => category.name)
-                                            .toList(),
-                                        width:
-                                            double.infinity, // Adjust as needed
-                                        height: 30, // Adjust as needed
-                                        // Set the initial value
-                                        onChanged: (value) async {
-                                          final selectedCategory =
-                                              categoryProvider.categories
-                                                  .firstWhere((cat) =>
-                                                      cat.name == value);
+  //                             Expanded(
+  //                               flex: 4,
+  //                               child: categoryProvider.isLoading
+  //                                   ? const Center(
+  //                                       child: CircularProgressIndicator())
+  //                                   : CustomDropdownTwo(
+  //                                       hint: 'Select Category',
+  //                                       items: categoryProvider.categories
+  //                                           .map((category) => category.name)
+  //                                           .toList(),
+  //                                       width:
+  //                                           double.infinity, // Adjust as needed
+  //                                       height: 30, // Adjust as needed
+  //                                       // Set the initial value
+  //                                       onChanged: (value) async {
+  //                                         final selectedCategory =
+  //                                             categoryProvider.categories
+  //                                                 .firstWhere((cat) =>
+  //                                                     cat.name == value);
 
-                                          setState(() {
-                                            selectedCategoryId =
-                                                selectedCategory.id.toString();
-                                            selectedSubCategoryId =
-                                                null; // Reset subcategory
-                                          });
+  //                                         setState(() {
+  //                                           selectedCategoryId =
+  //                                               selectedCategory.id.toString();
+  //                                           selectedSubCategoryId =
+  //                                               null; // Reset subcategory
+  //                                         });
 
-                                          // Fetch subcategories & update UI when done
-                                          await categoryProvider
-                                              .fetchSubCategories(
-                                                  selectedCategory.id);
-                                          setState(() {});
-                                        },
-                                        // Set the initial item (if selectedCategoryId is not null)
-                                        selectedItem: selectedCategoryId != null
-                                            ? categoryProvider.categories
-                                                .firstWhere(
-                                                  (cat) =>
-                                                      cat.id.toString() ==
-                                                      selectedCategoryId,
-                                                  orElse: () => categoryProvider
-                                                      .categories.first,
-                                                )
-                                                .name
-                                            : null,
-                                      ),
-                              ),
-                              const SizedBox(width: 10),
+  //                                         // Fetch subcategories & update UI when done
+  //                                         await categoryProvider
+  //                                             .fetchSubCategories(
+  //                                                 selectedCategory.id);
+  //                                         setState(() {});
+  //                                       },
+  //                                       // Set the initial item (if selectedCategoryId is not null)
+  //                                       selectedItem: selectedCategoryId != null
+  //                                           ? categoryProvider.categories
+  //                                               .firstWhere(
+  //                                                 (cat) =>
+  //                                                     cat.id.toString() ==
+  //                                                     selectedCategoryId,
+  //                                                 orElse: () => categoryProvider
+  //                                                     .categories.first,
+  //                                               )
+  //                                               .name
+  //                                           : null,
+  //                                     ),
+  //                             ),
+  //                             const SizedBox(width: 10),
 
-                              /// Subcategory Dropdown
-                              Expanded(
-                                flex: 4,
-                                child: categoryProvider.isSubCategoryLoading
-                                    ? const SizedBox()
-                                    : categoryProvider.subCategories.isNotEmpty
-                                        ? CustomDropdownTwo(
-                                            hint: 'Sel Sub Category',
-                                            items: categoryProvider
-                                                .subCategories
-                                                .map((subCategory) =>
-                                                    subCategory.name)
-                                                .toList(),
-                                            width: double
-                                                .infinity, // Adjust as needed
-                                            height: 30, // Adjust as needed
-                                            onChanged: (value) {
-                                              final selectedSubCategory =
-                                                  categoryProvider.subCategories
-                                                      .firstWhere((subCat) =>
-                                                          subCat.name == value);
+  //                             /// Subcategory Dropdown
+  //                             Expanded(
+  //                               flex: 4,
+  //                               child: categoryProvider.isSubCategoryLoading
+  //                                   ? const SizedBox()
+  //                                   : categoryProvider.subCategories.isNotEmpty
+  //                                       ? CustomDropdownTwo(
+  //                                           hint: 'Sel Sub Category',
+  //                                           items: categoryProvider
+  //                                               .subCategories
+  //                                               .map((subCategory) =>
+  //                                                   subCategory.name)
+  //                                               .toList(),
+  //                                           width: double
+  //                                               .infinity, // Adjust as needed
+  //                                           height: 30, // Adjust as needed
+  //                                           onChanged: (value) {
+  //                                             final selectedSubCategory =
+  //                                                 categoryProvider.subCategories
+  //                                                     .firstWhere((subCat) =>
+  //                                                         subCat.name == value);
 
-                                              setState(() {
-                                                selectedSubCategoryId =
-                                                    selectedSubCategory.id
-                                                        .toString();
-                                              });
+  //                                             setState(() {
+  //                                               selectedSubCategoryId =
+  //                                                   selectedSubCategory.id
+  //                                                       .toString();
+  //                                             });
 
-                                              debugPrint(
-                                                  "Selected Sub Category ID: ${selectedSubCategory.id}");
-                                            },
-                                            // Set the initial item (if selectedSubCategoryId is not null)
-                                            selectedItem:
-                                                selectedSubCategoryId != null
-                                                    ? categoryProvider
-                                                        .subCategories
-                                                        .firstWhere(
-                                                          (sub) =>
-                                                              sub.id
-                                                                  .toString() ==
-                                                              selectedSubCategoryId,
-                                                          orElse: () =>
-                                                              categoryProvider
-                                                                  .subCategories
-                                                                  .first,
-                                                        )
-                                                        .name
-                                                    : null,
-                                          )
-                                        : const Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              "No subcategories available",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 13),
-                                            ),
-                                          ),
-                              ),
-                            ],
-                          ),
+  //                                             debugPrint(
+  //                                                 "Selected Sub Category ID: ${selectedSubCategory.id}");
+  //                                           },
+  //                                           // Set the initial item (if selectedSubCategoryId is not null)
+  //                                           selectedItem:
+  //                                               selectedSubCategoryId != null
+  //                                                   ? categoryProvider
+  //                                                       .subCategories
+  //                                                       .firstWhere(
+  //                                                         (sub) =>
+  //                                                             sub.id
+  //                                                                 .toString() ==
+  //                                                             selectedSubCategoryId,
+  //                                                         orElse: () =>
+  //                                                             categoryProvider
+  //                                                                 .subCategories
+  //                                                                 .first,
+  //                                                       )
+  //                                                       .name
+  //                                                   : null,
+  //                                         )
+  //                                       : const Align(
+  //                                           alignment: Alignment.topLeft,
+  //                                           child: Text(
+  //                                             "No subcategories available",
+  //                                             style: TextStyle(
+  //                                                 color: Colors.black,
+  //                                                 fontSize: 13),
+  //                                           ),
+  //                                         ),
+  //                             ),
+  //                           ],
+  //                         ),
 
-                          const SizedBox(
-                            height: 5,
-                          ),
+  //                         const SizedBox(
+  //                           height: 5,
+  //                         ),
 
-                          // Item Dropdown
-                          SizedBox(
-                            height: 30,
-                            child: Consumer<AddItemProvider>(
-                                builder: (context, itemProvider, child) {
-                              if (itemProvider.isLoading) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
+  //                         // Item Dropdown
+  //                         SizedBox(
+  //                           height: 30,
+  //                           child: Consumer<AddItemProvider>(
+  //                               builder: (context, itemProvider, child) {
+  //                             if (itemProvider.isLoading) {
+  //                               return const Center(
+  //                                   child: CircularProgressIndicator());
+  //                             }
 
-                              if (itemProvider.items.isEmpty) {
-                                return const Center(
-                                  child: Text(
-                                    'No items available.',
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                );
-                              }
+  //                             if (itemProvider.items.isEmpty) {
+  //                               return const Center(
+  //                                 child: Text(
+  //                                   'No items available.',
+  //                                   style: TextStyle(color: Colors.black),
+  //                                 ),
+  //                               );
+  //                             }
 
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                child: CustomDropdownTwo(
-                                  hint: 'Choose an item',
-                                  items: itemProvider.items
-                                      .map((item) => item.name)
-                                      .toList(),
-                                  width: double.infinity,
-                                  height: 30,
-                                  selectedItem: controller.seletedItemName,
-                                  onChanged: (selectedItemName) async {
-                                    setState(() {
-                                      controller.seletedItemName =
-                                          selectedItemName; // Update controller's selectedItemName
-                                      itemProvider.items.forEach((e) {
-                                        if (selectedItemName == e.name) {
-                                          controller.selcetedItemId =
-                                              e.id.toString();
-                                        }
-                                      });
+  //                             return Padding(
+  //                               padding:
+  //                                   const EdgeInsets.symmetric(horizontal: 5.0),
+  //                               child: CustomDropdownTwo(
+  //                                 hint: 'Choose an item',
+  //                                 items: itemProvider.items
+  //                                     .map((item) => item.name)
+  //                                     .toList(),
+  //                                 width: double.infinity,
+  //                                 height: 30,
+  //                                 selectedItem: controller.seletedItemName,
+  //                                 onChanged: (selectedItemName) async {
+  //                                   setState(() {
+  //                                     controller.seletedItemName =
+  //                                         selectedItemName; // Update controller's selectedItemName
+  //                                     itemProvider.items.forEach((e) {
+  //                                       if (selectedItemName == e.name) {
+  //                                         controller.selcetedItemId =
+  //                                             e.id.toString();
+  //                                       }
+  //                                     });
 
-                                      // Fetch stock quantity based on selected item
-                                      if (controller.selcetedItemId != null) {
-                                        fetchStockQuantity.fetchStockQuantity(
-                                            controller.selcetedItemId!);
-                                      }
-                                    });
+  //                                     // Fetch stock quantity based on selected item
+  //                                     if (controller.selcetedItemId != null) {
+  //                                       fetchStockQuantity.fetchStockQuantity(
+  //                                           controller.selcetedItemId!);
+  //                                     }
+  //                                   });
 
-                                    // Find the selected item
-                                    final selected =
-                                        itemProvider.items.firstWhere(
-                                      (item) => item.name == selectedItemName,
-                                      orElse: () => itemProvider.items.first,
-                                    );
+  //                                   // Find the selected item
+  //                                   final selected =
+  //                                       itemProvider.items.firstWhere(
+  //                                     (item) => item.name == selectedItemName,
+  //                                     orElse: () => itemProvider.items.first,
+  //                                   );
 
-                                    // Ensure unitProvider is loaded
-                                    if (unitProvider.units.isEmpty) {
-                                      await unitProvider
-                                          .fetchUnits(); // Ensure units are fetched
-                                    }
+  //                                   // Ensure unitProvider is loaded
+  //                                   if (unitProvider.units.isEmpty) {
+  //                                     await unitProvider
+  //                                         .fetchUnits(); // Ensure units are fetched
+  //                                   }
 
-                                    // Update unit dropdown list based on selected item
-                                    unitIdsList.clear(); // Clear previous units
+  //                                   // Update unit dropdown list based on selected item
+  //                                   unitIdsList.clear(); // Clear previous units
 
-                                    // Debugging: Print unitId and secondaryUnitId for comparison
-                                    debugPrint(
-                                        "Selected item unitId: ${selected.unitId}");
-                                    debugPrint(
-                                        "Selected item secondaryUnitId: ${selected.secondaryUnitId}");
+  //                                   // Debugging: Print unitId and secondaryUnitId for comparison
+  //                                   debugPrint(
+  //                                       "Selected item unitId: ${selected.unitId}");
+  //                                   debugPrint(
+  //                                       "Selected item secondaryUnitId: ${selected.secondaryUnitId}");
 
-                                    // Update the unitIdsList population logic to handle null values properly
+  //                                   // Update the unitIdsList population logic to handle null values properly
 
-                                    // Safely handle the unitId and secondaryUnitId as Strings, using toString() to avoid errors
-                                    if (selected.unitId != null &&
-                                        selected.unitId != '') {
-                                      final unit =
-                                          unitProvider.units.firstWhere(
-                                        (unit) {
-                                          // Ensure that unit.id is treated as a String for comparison
-                                          debugPrint(
-                                              "Checking unit id: ${unit.id} against selected.unitId: ${selected.unitId?.toString()}");
-                                          return unit.id.toString() ==
-                                              selected.unitId
-                                                  ?.toString(); // Convert to String
-                                        },
-                                        orElse: () => Unit(
-                                            id: 0,
-                                            name: 'Unknown Unit',
-                                            symbol: '',
-                                            status: 0), // Default Unit
-                                      );
-                                      if (unit.id != 0) {
-                                        unitIdsList.add(unit
-                                            .name); // Add valid primary unit to list
-                                      } else {
-                                        debugPrint("Primary unit not found.");
-                                      }
-                                    }
+  //                                   // Safely handle the unitId and secondaryUnitId as Strings, using toString() to avoid errors
+  //                                   if (selected.unitId != null &&
+  //                                       selected.unitId != '') {
+  //                                     final unit =
+  //                                         unitProvider.units.firstWhere(
+  //                                       (unit) {
+  //                                         // Ensure that unit.id is treated as a String for comparison
+  //                                         debugPrint(
+  //                                             "Checking unit id: ${unit.id} against selected.unitId: ${selected.unitId?.toString()}");
+  //                                         return unit.id.toString() ==
+  //                                             selected.unitId
+  //                                                 ?.toString(); // Convert to String
+  //                                       },
+  //                                       orElse: () => Unit(
+  //                                           id: 0,
+  //                                           name: 'Unknown Unit',
+  //                                           symbol: '',
+  //                                           status: 0), // Default Unit
+  //                                     );
+  //                                     if (unit.id != 0) {
+  //                                       unitIdsList.add(unit
+  //                                           .name); // Add valid primary unit to list
+  //                                     } else {
+  //                                       debugPrint("Primary unit not found.");
+  //                                     }
+  //                                   }
 
-                                    // Add secondary unit (secondaryUnitId)
-                                    if (selected.secondaryUnitId != null &&
-                                        selected.secondaryUnitId != '') {
-                                      final secondaryUnit =
-                                          unitProvider.units.firstWhere(
-                                        (unit) {
-                                          // Ensure that unit.id is treated as a String for comparison
-                                          debugPrint(
-                                              "Checking unit id: ${unit.id} against selected.secondaryUnitId: ${selected.secondaryUnitId?.toString()}");
-                                          return unit.id.toString() ==
-                                              selected.secondaryUnitId
-                                                  ?.toString(); // Convert to String
-                                        },
-                                        orElse: () => Unit(
-                                            id: 0,
-                                            name: 'Unknown Unit',
-                                            symbol: '',
-                                            status: 0), // Default Unit
-                                      );
-                                      if (secondaryUnit.id != 0) {
-                                        unitIdsList.add(secondaryUnit
-                                            .name); // Add valid secondary unit to list
-                                      } else {
-                                        debugPrint("Secondary unit not found.");
-                                      }
-                                    }
+  //                                   // Add secondary unit (secondaryUnitId)
+  //                                   if (selected.secondaryUnitId != null &&
+  //                                       selected.secondaryUnitId != '') {
+  //                                     final secondaryUnit =
+  //                                         unitProvider.units.firstWhere(
+  //                                       (unit) {
+  //                                         // Ensure that unit.id is treated as a String for comparison
+  //                                         debugPrint(
+  //                                             "Checking unit id: ${unit.id} against selected.secondaryUnitId: ${selected.secondaryUnitId?.toString()}");
+  //                                         return unit.id.toString() ==
+  //                                             selected.secondaryUnitId
+  //                                                 ?.toString(); // Convert to String
+  //                                       },
+  //                                       orElse: () => Unit(
+  //                                           id: 0,
+  //                                           name: 'Unknown Unit',
+  //                                           symbol: '',
+  //                                           status: 0), // Default Unit
+  //                                     );
+  //                                     if (secondaryUnit.id != 0) {
+  //                                       unitIdsList.add(secondaryUnit
+  //                                           .name); // Add valid secondary unit to list
+  //                                     } else {
+  //                                       debugPrint("Secondary unit not found.");
+  //                                     }
+  //                                   }
 
-                                    if (unitIdsList.isEmpty) {
-                                      debugPrint(
-                                          "No valid units found for this item.");
-                                    } else {
-                                      debugPrint(
-                                          "Units Available: $unitIdsList"); // Check both units are added
-                                    }
-                                  },
-                                ),
-                              );
-                            }),
-                          ),
+  //                                   if (unitIdsList.isEmpty) {
+  //                                     debugPrint(
+  //                                         "No valid units found for this item.");
+  //                                   } else {
+  //                                     debugPrint(
+  //                                         "Units Available: $unitIdsList"); // Check both units are added
+  //                                   }
+  //                                 },
+  //                               ),
+  //                             );
+  //                           }),
+  //                         ),
 
-                          Consumer<AddItemProvider>(
-                            builder: (context, stockProvider, child) {
-                              //controller.mrpController.text = stockProvider.stockData!.price.toString();
-                              if (stockProvider.stockData != null) {
-                                controller.mrpController.text =
-                                    stockProvider.stockData!.price.toString();
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "   Stock Available: ${stockProvider.stockData!.stocks} (${stockProvider.stockData!.unitStocks}) - ৳ ${stockProvider.stockData!.price} ",
-                                      style: const TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                              return const Padding(
-                                padding: EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  "   ", // Updated message for empty stock
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+  //                         Consumer<AddItemProvider>(
+  //                           builder: (context, stockProvider, child) {
+  //                             //controller.mrpController.text = stockProvider.stockData!.price.toString();
+  //                             if (stockProvider.stockData != null) {
+  //                               controller.mrpController.text =
+  //                                   stockProvider.stockData!.price.toString();
+  //                               return Padding(
+  //                                 padding: const EdgeInsets.only(top: 8.0),
+  //                                 child: Align(
+  //                                   alignment: Alignment.centerLeft,
+  //                                   child: Text(
+  //                                     "   Stock Available: ${stockProvider.stockData!.stocks} (${stockProvider.stockData!.unitStocks}) - ৳ ${stockProvider.stockData!.price} ",
+  //                                     style: const TextStyle(
+  //                                       fontSize: 10,
+  //                                       fontWeight: FontWeight.bold,
+  //                                       color: Colors.black,
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               );
+  //                             }
+  //                             return const Padding(
+  //                               padding: EdgeInsets.only(top: 8.0),
+  //                               child: Text(
+  //                                 "   ", // Updated message for empty stock
+  //                                 style: TextStyle(
+  //                                   fontSize: 10,
+  //                                   fontWeight: FontWeight.bold,
+  //                                   color: Colors.black,
+  //                                 ),
+  //                               ),
+  //                             );
+  //                           },
+  //                         ),
 
-                          vPad5,
+  //                         vPad5,
 
-                          // Unit Dropdown
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 5.0),
-                            child: CustomDropdownTwo(
-                              hint: 'Choose a unit',
-                              items: unitIdsList,
-                              width: double.infinity,
-                              height: 30,
-                              selectedItem: unitIdsList.isNotEmpty
-                                  ? unitIdsList.first
-                                  : null,
-                              onChanged: (selectedUnit) {
-                                debugPrint("Selected Unit: $selectedUnit");
+  //                         // Unit Dropdown
+  //                         Padding(
+  //                           padding:
+  //                               const EdgeInsets.symmetric(horizontal: 5.0),
+  //                           child: CustomDropdownTwo(
+  //                             hint: 'Choose a unit',
+  //                             items: unitIdsList,
+  //                             width: double.infinity,
+  //                             height: 30,
+  //                             selectedItem: unitIdsList.isNotEmpty
+  //                                 ? unitIdsList.first
+  //                                 : null,
+  //                             onChanged: (selectedUnit) {
+  //                               debugPrint("Selected Unit: $selectedUnit");
 
-                                controller.selectedUnit = selectedUnit;
+  //                               controller.selectedUnit = selectedUnit;
 
-                                final selectedUnitObj =
-                                    unitProvider.units.firstWhere(
-                                  (unit) => unit.name == selectedUnit,
-                                  orElse: () => Unit(
-                                      id: 0,
-                                      name: "Unknown Unit",
-                                      symbol: "",
-                                      status: 0),
-                                );
+  //                               final selectedUnitObj =
+  //                                   unitProvider.units.firstWhere(
+  //                                 (unit) => unit.name == selectedUnit,
+  //                                 orElse: () => Unit(
+  //                                     id: 0,
+  //                                     name: "Unknown Unit",
+  //                                     symbol: "",
+  //                                     status: 0),
+  //                               );
 
-                                controller.selectedUnitIdWithNameFunction(
-                                    "${selectedUnitObj.id}_$selectedUnit");
+  //                               controller.selectedUnitIdWithNameFunction(
+  //                                   "${selectedUnitObj.id}_$selectedUnit");
 
-                                debugPrint(
-                                    "🆔 Selected Unit ID: ${selectedUnitObj.id}_$selectedUnit");
-                              },
-                            ),
-                          ),
+  //                               debugPrint(
+  //                                   "🆔 Selected Unit ID: ${selectedUnitObj.id}_$selectedUnit");
+  //                             },
+  //                           ),
+  //                         ),
 
-                          vPad5,
-                          Row(
-                            children: [
-                              ///qty
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: AddSalesFormfield(
-                                    label: "Qty",
-                                    controller: controller.qtyController,
-                                    keyboardType: TextInputType.number,
-                                  ),
-                                ),
-                              ),
-                              hPad10,
+  //                         vPad5,
+  //                         Row(
+  //                           children: [
+  //                             ///qty
+  //                             Expanded(
+  //                               child: Padding(
+  //                                 padding: const EdgeInsets.only(left: 8.0),
+  //                                 child: AddSalesFormfield(
+  //                                   label: "Qty",
+  //                                   controller: controller.qtyController,
+  //                                   keyboardType: TextInputType.number,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                             hPad10,
 
-                              ///unit //===> its will be dropdown, base unit and second unit.
-                            ],
-                          ),
+  //                             ///unit //===> its will be dropdown, base unit and second unit.
+  //                           ],
+  //                         ),
 
-                          vPad5,
-                          Row(
-                            children: [
-                              ///mrp
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: AddSalesFormfield(
-                                    label: "Price",
-                                    controller: controller.mrpController,
-                                    keyboardType: TextInputType.number,
-                                  ),
-                                ),
-                              ),
+  //                         vPad5,
+  //                         Row(
+  //                           children: [
+  //                             ///mrp
+  //                             Expanded(
+  //                               child: Padding(
+  //                                 padding: const EdgeInsets.only(left: 8.0),
+  //                                 child: AddSalesFormfield(
+  //                                   label: "Price",
+  //                                   controller: controller.mrpController,
+  //                                   keyboardType: TextInputType.number,
+  //                                 ),
+  //                               ),
+  //                             ),
 
-                              hPad10,
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: InkWell(
-                          onTap: () async {
-                            debugPrint("Add Item");
+  //                             hPad10,
+  //                           ],
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   const Spacer(),
+  //                   Padding(
+  //                     padding: const EdgeInsets.all(8.0),
+  //                     child: Align(
+  //                       alignment: Alignment.bottomRight,
+  //                       child: InkWell(
+  //                         onTap: () async {
+  //                           debugPrint("Add Item");
 
-                            setState(() {
-                              controller.isCash
-                                  ? controller.addCashItem()
-                                  : controller.addCreditItem();
-                              controller.addAmount();
-                            });
+  //                           setState(() {
+  //                             controller.isCash
+  //                                 ? controller.addCashItem()
+  //                                 : controller.addCreditItem();
+  //                             controller.addAmount();
+  //                           });
 
-                            setState(() {});
+  //                           setState(() {});
 
-                            Provider.of<PurchaseReturnController>(context,
-                                    listen: false)
-                                .notifyListeners();
+  //                           Provider.of<PurchaseReturnController>(context,
+  //                                   listen: false)
+  //                               .notifyListeners();
 
-                            controller.mrpController.clear();
-                            controller.qtyController.clear();
+  //                           controller.mrpController.clear();
+  //                           controller.qtyController.clear();
 
-                            await Future.delayed(
-                                const Duration(milliseconds: 300));
+  //                           await Future.delayed(
+  //                               const Duration(milliseconds: 300));
 
-                            setState(() {});
+  //                           setState(() {});
 
-                            // debugPrint(controller.items.length.toString());
-                            Navigator.pop(context);
-                          },
-                          child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: colorScheme.primary,
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 6.0, vertical: 2),
-                                child: Text(
-                                  "Add Item",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 14),
-                                ),
-                              )),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                ),
-              ));
-        });
-      },
-    );
-  }
+  //                           // debugPrint(controller.items.length.toString());
+  //                           Navigator.pop(context);
+  //                         },
+  //                         child: DecoratedBox(
+  //                             decoration: BoxDecoration(
+  //                               borderRadius: BorderRadius.circular(10),
+  //                               color: colorScheme.primary,
+  //                             ),
+  //                             child: const Padding(
+  //                               padding: EdgeInsets.symmetric(
+  //                                   horizontal: 6.0, vertical: 2),
+  //                               child: Text(
+  //                                 "Add Item",
+  //                                 style: TextStyle(
+  //                                     color: Colors.white, fontSize: 14),
+  //                               ),
+  //                             )),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   const SizedBox(
+  //                     height: 10,
+  //                   ),
+  //                 ],
+  //               ),
+  //             ));
+  //       });
+  //     },
+  //   );
+  // }
 }
 
 class ItemModel {

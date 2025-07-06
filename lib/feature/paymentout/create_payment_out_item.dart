@@ -329,37 +329,13 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                   SizedBox(
                     height: 30,
                     width: 130,
-                    child: TextField(
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
+                    child: AddSalesFormfield(
+                      labelText: "Bill NO",
                       controller: billNoController,
-                      cursorHeight: 12,
+
                       onChanged: (value) {
                         billNo = value;
                       }, // Match cursor height to text size
-                      decoration: InputDecoration(
-                        isDense: true, // Ensures the field is compact
-                        contentPadding:
-                            EdgeInsets.zero, // Removes unnecessary padding
-                        hintText: "Bill no",
-                        hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade400,
-                            width: 0.5,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.green,
-                          ),
-                        ),
-                      ),
                     ),
                   ),
 
@@ -714,6 +690,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
+                        labelText: "Amount",
                         readOnly: true,
                         controller: totalAmount,
                         onChanged: (value) {
@@ -758,6 +735,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       height: 30,
                       width: 76,
                       child: AddSalesFormfield(
+                        labelText: "Amount",
                         controller: discountAmount,
                         onChanged: (value) {
                           _recalculatePayment();
@@ -778,6 +756,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
+                        labelText: 'Payment',
                         controller: paymentAmount,
                         readOnly:
                             true, // user should not edit final payment manually
@@ -785,8 +764,6 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                     ),
                   ],
                 ),
-
-                
               ],
             ),
           ),
@@ -813,8 +790,6 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                     foregroundColor: Colors.white, // Button text color
                   ),
                   onPressed: () async {
-                    
-
                     ///final api call here ====== >>>>>>
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();

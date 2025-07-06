@@ -4,6 +4,7 @@ class PurchaseReturnCreateItemModel {
   String ?unitId;
   dynamic price;
   dynamic subTotal;
+   
 
   PurchaseReturnCreateItemModel({
      this.itemId,
@@ -11,6 +12,7 @@ class PurchaseReturnCreateItemModel {
      this.unitId,
      this.price,
      this.subTotal,
+   
   });
 
   // Factory constructor to c  reate an object from JSON
@@ -21,6 +23,7 @@ class PurchaseReturnCreateItemModel {
       unitId: json['unit_id'],
       price: json['price'],
       subTotal: json['sub_total'],
+     
     );
   }
 
@@ -32,6 +35,7 @@ class PurchaseReturnCreateItemModel {
       'unit_id': unitId,
       'price': price,
       'sub_total': subTotal,
+       
     };
   }
 }

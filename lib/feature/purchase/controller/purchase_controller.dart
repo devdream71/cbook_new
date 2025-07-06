@@ -15,36 +15,43 @@ class PurchaseController extends ChangeNotifier {
 
   TextEditingController mrpController = TextEditingController();
   TextEditingController qtyController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
 
-  double _subtotalItemDialog = 0.0;
-  double get subtotalItemDiolog => _subtotalItemDialog;
+  TextEditingController amountController = TextEditingController();
+  TextEditingController amountController2 = TextEditingController();
+  TextEditingController discountPercentageController = TextEditingController();
+  TextEditingController discountAmountController = TextEditingController();
+  TextEditingController additionalCostController = TextEditingController();
+  TextEditingController subtotalController = TextEditingController();
+  TextEditingController receivedMoneyController = TextEditingController();
+  TextEditingController returnController = TextEditingController();
+  TextEditingController dueController = TextEditingController();
+  TextEditingController billReceiptController = TextEditingController();
+  TextEditingController previousReceiptController = TextEditingController();
+  TextEditingController advancedController = TextEditingController();
+  TextEditingController billTotal = TextEditingController();
+  TextEditingController codeController = TextEditingController();
+  TextEditingController unitController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+  TextEditingController totalAmountController = TextEditingController();
+  TextEditingController amountCreditController = TextEditingController();
+  TextEditingController amountCreditController2 = TextEditingController();
+  TextEditingController subtotalCreditController = TextEditingController();
+  TextEditingController additionalCostCreditController =
+      TextEditingController();
+  TextEditingController discountPercentageCreditController =
+      TextEditingController();
+  TextEditingController purchaseNoteController =
+      TextEditingController();    
 
-   bool _isListenerAttached = false;
+    TextEditingController controller = TextEditingController(text: "Cash");
 
-  void dialogtotalController() {
-    if (_isListenerAttached) return;
-    mrpController.addListener(_dialogSubtotal);
-    qtyController.addListener(_dialogSubtotal);
-    _isListenerAttached = true;
-  }
+  TextEditingController receivedAmountController = TextEditingController();
 
-  void _dialogSubtotal() {
-    final price = double.tryParse(mrpController.text) ?? 0;
-    final qty = double.tryParse(qtyController.text) ?? 0;
-    _subtotalItemDialog = price * qty;
-    notifyListeners();
-  }
+  TextEditingController discountController =
+      TextEditingController();     
 
-  void clearFields() {
-    mrpController.clear();
-    qtyController.clear();
-    _subtotalItemDialog = 0.0;
-    _isListenerAttached = false;
-  }
-
-
-
-  List<ItemModel> itemsCash = [];
+       List<ItemModel> itemsCash = [];
   List<ItemModel> itemsCredit = [];
   List<PurchaseItemModel> purchaseItem = [];
   List<String> unitIdsList = [];
@@ -92,71 +99,47 @@ class PurchaseController extends ChangeNotifier {
   bool isBillTotal = true;
   bool isDue = true;
 
-  List<String> category = ["Category1", "Category2", "Category3"];
 
-  List<String> subCategory = [
-    "Sub Category1",
-    "Sub Category2",
-    "Sub Category3"
-  ];
 
-  //List<String> itemName = ["Item1", "Item2", "Item3"];
-  List<String> warehouse = ["Warehouse1", "Warehouse2", "Warehouse3"];
+  double _subtotalItemDialog = 0.0;
+  double get subtotalItemDiolog => _subtotalItemDialog;
+
+   bool _isListenerAttached = false;
+
+  void dialogtotalController() {
+    if (_isListenerAttached) return;
+    mrpController.addListener(_dialogSubtotal);
+    qtyController.addListener(_dialogSubtotal);
+    _isListenerAttached = true;
+  }
+
+  void _dialogSubtotal() {
+    final price = double.tryParse(mrpController.text) ?? 0;
+    final qty = double.tryParse(qtyController.text) ?? 0;
+    _subtotalItemDialog = price * qty;
+    notifyListeners();
+  }
+
+  void clearFields() {
+    mrpController.clear();
+    qtyController.clear();
+    _subtotalItemDialog = 0.0;
+    _isListenerAttached = false;
+  }
+
+
 
   void updateUnitIds(List<String> units) {
     unitIdsList = units;
     notifyListeners();
   }
 
-  TextEditingController controller = TextEditingController(text: "Cash");
-
-  TextEditingController receivedAmountController = TextEditingController();
-
-  TextEditingController discountController =
-      TextEditingController(); // Ensure discount input is controlled
+// Ensure discount input is controlled
 
   void updateDiscount(String value) {
     discountController.text = value;
     notifyListeners();
   }
-
-  TextEditingController noteController = TextEditingController();
-
-  TextEditingController amountController = TextEditingController();
-  TextEditingController amountController2 = TextEditingController();
-  TextEditingController discountPercentageController = TextEditingController();
-  TextEditingController discountAmountController = TextEditingController();
-  TextEditingController additionalCostController = TextEditingController();
-  TextEditingController subtotalController = TextEditingController();
-  TextEditingController receivedMoneyController = TextEditingController();
-  TextEditingController returnController = TextEditingController();
-  TextEditingController dueController = TextEditingController();
-  TextEditingController billReceiptController = TextEditingController();
-  TextEditingController previousReceiptController = TextEditingController();
-  TextEditingController advancedController = TextEditingController();
-  TextEditingController billTotal = TextEditingController();
-
-  TextEditingController codeController = TextEditingController();
-  
-  
-  TextEditingController unitController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController totalAmountController = TextEditingController();
-
-  TextEditingController amountCreditController = TextEditingController();
-  TextEditingController amountCreditController2 = TextEditingController();
-  TextEditingController subtotalCreditController = TextEditingController();
-  TextEditingController additionalCostCreditController =
-      TextEditingController();
-  TextEditingController discountPercentageCreditController =
-      TextEditingController();
-
-  TextEditingController purchaseNoteController =
-      TextEditingController();    
-
-
-
-
 
 
 

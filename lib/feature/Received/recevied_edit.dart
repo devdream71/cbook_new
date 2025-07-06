@@ -35,7 +35,7 @@ class _ReceviedEditState extends State<ReceviedEdit> {
   String billNo = '';
   String billDate = '';
   Map<int, TextEditingController> receiptControllers = {};
-  
+
   late TextEditingController voucherNumberController;
   late TextEditingController totalAmount;
   late TextEditingController discountAmount;
@@ -465,37 +465,13 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                   SizedBox(
                     height: 30,
                     width: 130,
-                    child: TextField(
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
+                    child: AddSalesFormfield(
+                      labelText: "Bill No",
                       controller: voucherNumberController,
-                      cursorHeight: 12,
+
                       onChanged: (value) {
                         billNo = value;
                       }, // Match cursor height to text size
-                      decoration: InputDecoration(
-                        isDense: true, // Ensures the field is compact
-                        contentPadding:
-                            EdgeInsets.zero, // Removes unnecessary padding
-                        hintText: "Bill no",
-                        hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade400,
-                            width: 0.5,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.green,
-                          ),
-                        ),
-                      ),
                     ),
                   ),
 
@@ -854,6 +830,7 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
+                        labelText: "Amount",
                         readOnly: true,
                         controller: totalAmount,
                         onChanged: (value) {
@@ -896,6 +873,7 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                       height: 30,
                       width: 76,
                       child: AddSalesFormfield(
+                        labelText: "Amount",
                         controller: discountAmount,
                         onChanged: (value) {
                           _recalculatePayment();
@@ -910,12 +888,13 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text("Received", style: ts),
+                    Text("Receive", style: ts),
                     const SizedBox(width: 24),
                     SizedBox(
                       height: 30,
                       width: 163,
                       child: AddSalesFormfield(
+                        labelText: "Receive",
                         controller: paymentAmount,
                         readOnly: true,
                         onChanged: (value) {},
@@ -966,12 +945,10 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                       return;
                     }
 
-                 
-
                     // ⚠️ You need to pass the voucher ID that you want to update
                     // This should come from your screen/widget parameters or state
-                    String voucherId =
-                        widget.receviedId; // Replace this with actual voucher ID
+                    String voucherId = widget
+                        .receviedId; // Replace this with actual voucher ID
 
                     int userId = int.parse(userIdStr);
                     int customerId = selectedCustomer.id;
@@ -1056,7 +1033,6 @@ class _ReceviedEditState extends State<ReceviedEdit> {
                         )),
                       );
 
-                       
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

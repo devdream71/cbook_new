@@ -138,13 +138,11 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ////==>Item
-            const Text(
-              "Item",
-              style: TextStyle(color: Colors.black),
-            ),
+
             SizedBox(
               width: double.infinity,
               child: CustomDropdownTwo(
+                labelText: 'Item',
                 items: widget.itemMap.isNotEmpty
                     ? widget.itemMap.values.toList()
                     : ['No Items Available'], // Show a default message if empty
@@ -173,7 +171,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "   Stock Available:  ${stockProvider.stockData!.unitStocks} ৳ ${stockProvider.stockData!.price} ",
+                        "Stock Available:  ${stockProvider.stockData!.unitStocks} ৳ ${stockProvider.stockData!.price} ",
                         //"   Stock Available: ${stockProvider.stockData!.stocks} (${stockProvider.stockData!.unitStocks}) ৳ ${stockProvider.stockData!.price} ",
 
                         style: const TextStyle(
@@ -207,7 +205,9 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                 //qty
                 Expanded(
                   child: AddSalesFormfield(
-                      label: "Qty", controller: widget.provider.qtyController),
+                      labelText: 'QTY',
+                      //label: "Qty",
+                      controller: widget.provider.qtyController),
                 ),
                 const SizedBox(
                   width: 5,
@@ -218,12 +218,9 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Unit",
-                        style: TextStyle(color: Colors.black, fontSize: 12),
-                      ),
                       SizedBox(
                         child: CustomDropdownTwo(
+                          labelText: 'Unit',
                           items: widget.unitMap.isNotEmpty
                               ? widget.unitMap.values.toList()
                               : [
@@ -247,9 +244,19 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
               ],
             ),
 
+            const SizedBox(
+              height: 8,
+            ),
+
             //price
             AddSalesFormfield(
-                label: "Price", controller: widget.provider.priceController),
+                labelText: "Price",
+                //label: "Price",
+                controller: widget.provider.priceController),
+
+            const SizedBox(
+              height: 8,
+            ),
 
             //discout amount, discount percentance
             Row(children: [
@@ -258,7 +265,8 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                   children: [
                     //discount percentance
                     AddSalesFormfield(
-                      label: "Discount (%)",
+                      labelText: "Discount (%)",
+                      //label: "Discount (%)",
                       controller: widget.provider.updateDiscountPercentance,
                       keyboardType: TextInputType.number,
                       onChanged: (value) {
@@ -277,7 +285,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                 child: Column(
                   children: [
                     AddSalesFormfield(
-                      label: "Discount (Amount)",
+                      labelText: "Discount (Amount)",
                       controller: widget.provider.updateDiscountAmount,
                       keyboardType: TextInputType.number,
                       onChanged: (value) {
@@ -289,6 +297,10 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                 ),
               ),
             ]),
+
+            const SizedBox(
+              height: 10,
+            ),
 
             // ✅ VAT/TAX Dropdown Row
             Row(
@@ -318,13 +330,10 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ///tax
-                              const Text(
-                                "VAT/TAX (%)",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 14),
-                              ),
+
                               CustomDropdownTwo(
-                                hint: 'Select VAT/TAX',
+                                labelText: 'Vat/Tax',
+                                //hint: 'Select VAT/TAX',
                                 items: taxProvider.taxList
                                     .map((tax) =>
                                         "${tax.name} - (${tax.percent})")
@@ -383,7 +392,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                 ///tax amount
                 Expanded(
                   child: AddSalesFormfield(
-                    label: "TAX amount",
+                    labelText: "TAX amount",
                     controller: TextEditingController(
                       text: widget.provider.taxAmount
                           .toStringAsFixed(2), // 👈 show calculated tax
@@ -395,9 +404,11 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
               ],
             ),
 
+            const SizedBox(height: 8),
+
             AddSalesFormfield(
                 readOnly: true,
-                label: "Subtotal",
+                labelText: "Subtotal",
                 controller: widget.provider.subTotalController),
             const SizedBox(height: 20),
             Row(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class PurchaseReturnProvider with ChangeNotifier {
+
   List<PurchaseReturn> _purchaseReturns = [];
   bool _isLoading = false;
   String _errorMessage = '';
@@ -60,7 +61,7 @@ class PurchaseReturnProvider with ChangeNotifier {
           fetchPurchaseReturns();
           // Optionally: show snackbar
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Purchase return deleted")),
+            const SnackBar(content: Text("Purchase return deleted", style: TextStyle(color: Colors.green),)),
           );
           notifyListeners();
           debugPrint("✅ Purchase Return Deleted Successfully");
@@ -86,21 +87,9 @@ class PurchaseReturnProvider with ChangeNotifier {
   String getItemName(int itemId) {
     return _itemsMap[itemId] ?? "Unknown Item";
   }
+  
 
-  //  Future<void> _fetchItemNames() async {
-  //   // Example API call to fetch item names (you should implement this based on your API)
-  //   const itemUrl = "https://commercebook.site/api/v1/items";  // Update with your item details endpoint
-  //   final response = await http.get(Uri.parse(itemUrl));
-
-  //   if (response.statusCode == 200) {
-  //     final List<dynamic> items = jsonDecode(response.body);
-  //     for (var item in items) {
-  //       _itemsMap[item['id']] = item['name'];  // Assuming 'id' and 'name' are fields
-  //     }
-  //   } else {
-  //     debugPrint("Failed to fetch items: ${response.statusCode}");
-  //   }
-  // }
+  ///fetch item name.
 
   Future<void> _fetchItemNames() async {
     // Example API call to fetch item names
@@ -123,4 +112,9 @@ class PurchaseReturnProvider with ChangeNotifier {
       debugPrint("Failed to fetch items: ${response.statusCode}");
     }
   }
+
+
+  
+
+
 }

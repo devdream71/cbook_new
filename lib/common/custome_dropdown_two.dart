@@ -1,4 +1,4 @@
-///working but for unit auto showing its changing 
+///working but for unit auto showing its changing
 ///
 import 'package:flutter/material.dart';
 
@@ -41,38 +41,67 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
     selectedItem = widget.selectedItem ?? widget.value;
   }
 
+  // @override
+  // void didUpdateWidget(covariant CustomDropdownTwo oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+
+  //   // Update selectedItem when widget.selectedItem changes
+  //   if (widget.selectedItem != oldWidget.selectedItem) {
+  //     setState(() {
+  //       selectedItem = widget.selectedItem;
+  //     });
+  //   }
+
+  //   // Also handle widget.value changes
+  //   if (widget.value != oldWidget.value && widget.value != null) {
+  //     setState(() {
+  //       selectedItem = widget.value;
+  //     });
+  //   }
+
+  //   // If items list changed and current selection is not in the new list, clear selection
+  //   if (widget.items != oldWidget.items) {
+  //     if (selectedItem != null && !widget.items.contains(selectedItem)) {
+  //       setState(() {
+  //         selectedItem = null;
+  //       });
+  //     }
+  //   }
+  // }
+
   @override
   void didUpdateWidget(covariant CustomDropdownTwo oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
-    // Update selectedItem when widget.selectedItem changes
-    if (widget.selectedItem != oldWidget.selectedItem) {
+
+    // Only update if value actually changed
+    if (widget.selectedItem != oldWidget.selectedItem &&
+        widget.selectedItem != selectedItem) {
       setState(() {
         selectedItem = widget.selectedItem;
       });
     }
-    
-    // Also handle widget.value changes
-    if (widget.value != oldWidget.value && widget.value != null) {
+
+    if (widget.value != oldWidget.value &&
+        widget.value != selectedItem &&
+        widget.value != null) {
       setState(() {
         selectedItem = widget.value;
       });
     }
 
-    // If items list changed and current selection is not in the new list, clear selection
-    if (widget.items != oldWidget.items) {
-      if (selectedItem != null && !widget.items.contains(selectedItem)) {
-        setState(() {
-          selectedItem = null;
-        });
-      }
+    if (widget.items != oldWidget.items &&
+        selectedItem != null &&
+        !widget.items.contains(selectedItem)) {
+      setState(() {
+        selectedItem = null;
+      });
     }
   }
 
   void _toggleDropdown() {
     // Don't allow dropdown to open if no items available
     if (widget.items.isEmpty) return;
-    
+
     if (isDropdownOpen) {
       _removeDropdown();
     } else {
@@ -130,8 +159,11 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
                       children: widget.items.map((item) {
                         return ListTile(
                           dense: true,
-                          title: Text(item, style: const TextStyle(fontSize: 13)),
-                          tileColor: selectedItem == item ? Colors.grey.shade200 : null,
+                          title:
+                              Text(item, style: const TextStyle(fontSize: 13)),
+                          tileColor: selectedItem == item
+                              ? Colors.grey.shade200
+                              : null,
                           onTap: () {
                             setState(() => selectedItem = item);
                             widget.onChanged(item);
@@ -166,10 +198,12 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
     return CompositedTransformTarget(
       link: _layerLink,
       child: GestureDetector(
-        onTap: isEnabled ? () {
-          _focusNode.requestFocus();
-          _toggleDropdown();
-        } : null,
+        onTap: isEnabled
+            ? () {
+                _focusNode.requestFocus();
+                _toggleDropdown();
+              }
+            : null,
         child: SizedBox(
           width: widget.width,
           height: widget.height,
@@ -182,31 +216,28 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
               fillColor: isEnabled ? Colors.white : Colors.grey.shade100,
               labelText: widget.labelText,
               labelStyle: TextStyle(
-                fontSize: 12, 
-                color: isEnabled ? Colors.grey : Colors.grey.shade400
-              ),
+                  fontSize: 12,
+                  color: isEnabled ? Colors.grey : Colors.grey.shade400),
               floatingLabelStyle: TextStyle(
-                fontSize: 12, 
-                color: isEnabled ? Colors.green : Colors.grey.shade400
-              ),
+                  fontSize: 12,
+                  color: isEnabled ? Colors.green : Colors.grey.shade400),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3),
                 borderSide: BorderSide(
-                  color: isEnabled ? Colors.grey.shade400 : Colors.grey.shade300, 
-                  width: 1
-                ),
+                    color:
+                        isEnabled ? Colors.grey.shade400 : Colors.grey.shade300,
+                    width: 1),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(3),
                 borderSide: BorderSide(
-                  color: isEnabled ? Colors.grey.shade400 : Colors.grey.shade300, 
-                  width: 1
-                ),
+                    color:
+                        isEnabled ? Colors.grey.shade400 : Colors.grey.shade300,
+                    width: 1),
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: isEnabled ? Colors.green : Colors.grey.shade300
-                ),
+                    color: isEnabled ? Colors.green : Colors.grey.shade300),
               ),
               contentPadding: EdgeInsets.symmetric(
                   horizontal: 10, vertical: verticalPadding),
@@ -219,7 +250,7 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
                     hasValue ? selectedItem! : widget.hint ?? '',
                     style: TextStyle(
                       fontSize: 13,
-                      color: hasValue 
+                      color: hasValue
                           ? (isEnabled ? Colors.black : Colors.grey.shade500)
                           : Colors.grey.shade600,
                     ),
@@ -227,10 +258,9 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
                   ),
                 ),
                 Icon(
-                  isDropdownOpen
-                      ? Icons.arrow_drop_up
-                      : Icons.arrow_drop_down,
-                  color: isEnabled ? Colors.grey.shade700 : Colors.grey.shade400,
+                  isDropdownOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                  color:
+                      isEnabled ? Colors.grey.shade700 : Colors.grey.shade400,
                 ),
               ],
             ),
@@ -240,4 +270,3 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
     );
   }
 }
-

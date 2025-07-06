@@ -25,7 +25,6 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
 
   int? selectedAccountId;
 
-
   String? selectedDropdownValue;
 
   String? selectedBillPerson;
@@ -52,7 +51,6 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
 
   TextEditingController billNoController = TextEditingController();
   String billNo = '';
-
 
   @override
   Widget build(BuildContext context) {
@@ -247,37 +245,12 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                     SizedBox(
                       height: 30,
                       width: 130,
-                      child: TextField(
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                        ),
+                      child: AddSalesFormfield(
+                        labelText: "Bill No",
                         controller: billNoController,
-                        cursorHeight: 12,
                         onChanged: (value) {
                           billNo = value;
                         }, // Match cursor height to text size
-                        decoration: InputDecoration(
-                          isDense: true, // Ensures the field is compact
-                          contentPadding:
-                              EdgeInsets.zero, // Removes unnecessary padding
-                          hintText: "Bill no",
-                          hintStyle: TextStyle(
-                              color: Colors.grey.shade400,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade400,
-                              width: 0.5,
-                            ),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.green,
-                            ),
-                          ),
-                        ),
                       ),
                     ),
 
@@ -585,8 +558,6 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         providerExpense.receiptItems.clear();
                         providerExpense.notifyListeners();
 
-                      
-
                         providerExpense.fetchExpenseList();
 
                         Navigator.pushAndRemoveUntil(
@@ -693,7 +664,8 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                                   labelText: 'Paid To',
                                   selectedItem: selectedPaidTo,
                                   onChanged: (selectedItem) {
-                                    debugPrint('Selected Paid To: $selectedItem');
+                                    debugPrint(
+                                        'Selected Paid To: $selectedItem');
                                     setState(() {
                                       selectedPaidTo = selectedItem;
                                     });

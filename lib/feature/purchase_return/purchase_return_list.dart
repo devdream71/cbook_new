@@ -207,7 +207,7 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.yellow.shade400,
+                                        //color: Colors.yellow.shade400,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       padding: const EdgeInsets.symmetric(
@@ -217,7 +217,7 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 12,
-                                            color: Colors.red),
+                                            color: Colors.amber),
                                       ),
                                     ),
                                   ],
@@ -356,9 +356,10 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.of(context).pop(); // Close confirmation dialog
-
+             // Close confirmation dialog
               await provider.deletePurchaseReturn(returnPurchaseID, context);
+
+               Navigator.of(context).pop(); 
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),

@@ -45,7 +45,7 @@ class PurchaseHistoryModel {
       billQty: json["bill_qty"],
       outQty: (json["out_qty"] ?? 0).toDouble(),
       currentQty: (json["current_qty"] ?? 0).toDouble(),
-      supplierName: json["supplier_name"] ?? "N/A",
+      supplierName: json["supplier_name"] ?? "",
       unitID: int.tryParse(json["unit_id"].toString()) ?? 0,
       secondaryUnitID: json["secondary_unit_id"],
       unitQty: json["unit_qty"],

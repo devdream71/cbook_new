@@ -2,12 +2,12 @@ class ItemModel {
   String? category;
   String? subCategory;
   String? itemName;
-  String? itemCode;
-  String? mrp;
-  String? quantity;
-  String? total;
-  String? price;
-  String? unit;
+  dynamic itemCode;
+  dynamic mrp;
+  dynamic quantity;
+  dynamic total;
+  dynamic price;
+  dynamic unit;
 
   ItemModel({
     this.category,
