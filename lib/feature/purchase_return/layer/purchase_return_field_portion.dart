@@ -72,10 +72,6 @@ class FieldPortion extends StatelessWidget {
 
         // const SizedBox(height: 2,),
 
-        // controller.isCash && controller.isDisocunt
-        //     ? vPad5
-        //     : const SizedBox.shrink(),
-
         // purchase return Total //cash
         controller.isCash && controller.isDisocunt
             ? Row(

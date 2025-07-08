@@ -139,7 +139,9 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: Container(
+                          child: 
+                          
+                          Container(
                             padding: const EdgeInsets.all(12),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,

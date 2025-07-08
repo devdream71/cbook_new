@@ -492,14 +492,7 @@ class PurchaseController extends ChangeNotifier {
 
         if (data["success"] == true) {
           clearPurchaseForm();
-
           notifyListeners();
-
-          // Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (BuildContext context) => const HomeView()));
-
           return true;
         } else {
           notifyListeners();

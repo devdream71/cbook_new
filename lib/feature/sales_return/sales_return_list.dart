@@ -16,7 +16,6 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<SalesReturnProvider>(context, listen: false).fetchSalesReturn();
     final provider = Provider.of<SalesReturnProvider>(context, listen: false);
     provider.fetchSalesReturn();
     provider.fetchItems();
@@ -37,7 +36,6 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
         ),
         backgroundColor: colorScheme.primary,
         leading: const BackButton(color: Colors.white),
-        //centerTitle: true,
         actions: [
           InkWell(
             onTap: () {
@@ -48,7 +46,7 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
               );
             },
             child: const Padding(
-              padding:   EdgeInsets.only(right: 8.0),
+              padding: EdgeInsets.only(right: 8.0),
               child: Row(
                 children: [
                   CircleAvatar(
@@ -59,10 +57,8 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
                         size: 20,
                         color: Colors.green,
                       )),
-                  SizedBox(
-                    width: 3,
-                  ),
-                    Text(
+                  SizedBox(width: 3),
+                  Text(
                     'Sales Return',
                     style: TextStyle(color: Colors.yellow, fontSize: 16),
                   ),
@@ -70,143 +66,254 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
               ),
             ),
           )
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-          //   child: GestureDetector(
-          //     onTap: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //             builder: (context) => const SalesReturnView()),
-          //       );
-          //     },
-          //     child: Container(
-          //       width: 60,
-          //       padding:
-          //           const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          //       decoration: BoxDecoration(
-          //         color: Colors.blueAccent,
-          //         borderRadius: BorderRadius.circular(8),
-          //         boxShadow: [
-          //           BoxShadow(
-          //             color: Colors.blueAccent.withOpacity(0.4),
-          //             blurRadius: 10,
-          //             offset: const Offset(0, 4),
-          //           ),
-          //         ],
-          //       ),
-          //       child: const Center(
-          //         child: Icon(Icons.add_circle_outline,
-          //             color: Colors.white, size: 24),
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: AddSalesFormfield(
-                label: "Search",
-                controller: _searchController,
-                keyboardType: TextInputType.number,
-                onChanged: (value) {},
-              ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            const SizedBox(height: 10),
-            provider.isLoading
-                ? const CircularProgressIndicator()
-                : provider.salesReturns.isEmpty
-                    ? const Center(
-                        child: Text("No sales return data available.",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black)),
-                      )
-                    : Expanded(
-                        child: ListView.builder(
-                          itemCount: provider.salesReturns.length,
-                          itemBuilder: (context, index) {
-                            final item = provider.salesReturns[index];
+      body: provider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : provider.salesReturns.isEmpty
+              ? const Center(
+                  child: Text(
+                    "No sales return data available.",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black),
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: ListView.builder(
+                    itemCount: provider.salesReturns.length,
+                    itemBuilder: (context, index) {
+                      final item = provider.salesReturns[index];
 
-                            return InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => SalesReturnDetailsPage(
-                                        salesReturn: item),
-                                  ),
-                                );
-                              },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6)),
-                                margin: const EdgeInsets.all(10),
-                                elevation: 2,
-                                child: ListTile(
-                                  contentPadding:
-                                      const EdgeInsets.only(left: 16),
+                      final salesReturnId = provider.salesReturns[index].id;
 
-                                  title: Text(
-                                    "Bill: ${item.billNumber}\nItem: ${provider.getItemName(item.purchaseDetails.first.itemId)}",
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 12),
-                                  ),
-                                  subtitle: Text(
-                                    "Supplier: ${item.supplierName} \nTotal: ৳ ${item.grossTotal} \nDate: ${item.purchaseDate}",
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 12),
-                                  ),
-                                  //trailing: const Icon(Icons.arrow_forward_ios),
-                                  trailing: PopupMenuButton<String>(
-                                    position: PopupMenuPosition.under,
-                                    menuPadding: const EdgeInsets.all(0),
-                                    padding: const EdgeInsets.all(0),
-                                    onSelected: (value) async {
-                                      if (value == 'Edit') {
-                                        //debugPrint("Edit Category ID: ${category.id}");
-                                      } else if (value == 'delete') {
-                                        //_confirmDelete(context, item.purchaseDetails[index].);
-                                      }
-                                    },
-                                    itemBuilder: (context) => [
-                                      const PopupMenuItem(
-                                        value: 'Edit',
-                                        child: ListTile(
-                                          leading: Icon(Icons.edit,
-                                              color: Colors.blue),
-                                          title: Text('Edit'),
-                                        ),
+                      return InkWell(
+                        onLongPress: () {
+                          editDeleteDiolog(context, salesReturnId.toString());
+                        },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  SalesReturnDetailsPage(salesReturn: item),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          color: const Color(0xfff4f6ff),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 90,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.purchaseDate != null
+                                            ? item.purchaseDate!
+                                            : 'No Date',
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      const PopupMenuItem(
-                                        value: 'delete',
-                                        child: ListTile(
-                                          leading: Icon(Icons.delete,
-                                              color: Colors.red),
-                                          title: Text('Delete'),
-                                        ),
+                                      Text(
+                                        "${item.billNumber}",
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 12),
                                       ),
                                     ],
-                                    icon: const Icon(Icons.more_vert),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+
+                                // Divider
+                                Container(
+                                  height: 45,
+                                  width: 2,
+                                  color: Colors.green.shade200,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                ),
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.supplierName == "N/A"
+                                          ? "Cash"
+                                          : item.supplierName,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "৳ ${item.grossTotal}",
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+
+                                const Spacer(),
+
+                                // Unpaid tag
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4, horizontal: 6),
+                                      child: const Text(
+                                        'Unpaid',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                            color: Colors.amber),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+    );
+  }
+
+  Future<dynamic> editDeleteDiolog(BuildContext context, String salesReturnId) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
                         ),
                       ),
-          ],
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, salesReturnId);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  ////delete recived item from list
+  void _showDeleteDialog(BuildContext context, String salesReturnId) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final provider = Provider.of<SalesReturnProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Sales Return',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
         ),
+        content: const Text(
+          'Are you sure you want to delete this Sales Return?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Close confirmation dialog
+              await provider.deleteSalesReturn(
+                  int.tryParse(salesReturnId), context);
+              await provider.fetchSalesReturn();
+
+              Navigator.of(context).pop();
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

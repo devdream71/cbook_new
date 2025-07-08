@@ -8,8 +8,7 @@ class SalesReturnDetailsPage extends StatelessWidget {
   final SalesReturnData salesReturn;
 
   const SalesReturnDetailsPage({super.key, required this.salesReturn});
-  
-  
+
   String formatDate(String? rawDate) {
     if (rawDate == null || rawDate.isEmpty) return 'N/A';
     try {
@@ -22,21 +21,33 @@ class SalesReturnDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar:
-          AppBar(title: Text("Details for Bill: ${salesReturn.billNumber}")),
+      appBar: AppBar(
+          backgroundColor: colorScheme.primary,
+          leading: const BackButton(color: Colors.white),
+          title: Text("Sales Details: ${salesReturn.billNumber}",
+              style: const TextStyle(color: Colors.yellow, fontSize: 16))),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Supplier: ${salesReturn.supplierName}",
-                style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
+            Text(
+              salesReturn.supplierName.trim().toLowerCase() == 'n/a'
+                  ? 'Cash'
+                  : salesReturn.supplierName,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
 
-            Text("Date: ${formatDate(salesReturn.purchaseDate)} ,", style: const TextStyle(fontSize: 12, color: Colors.black),),  
+            Text(
+              "Date: ${formatDate(salesReturn.purchaseDate)} ,",
+              style: const TextStyle(fontSize: 12, color: Colors.black),
+            ),
 
             // Text("Date: ${salesReturn.purchaseDate}",
             //     style: const TextStyle(fontSize: 12, color: Colors.black)),
@@ -95,5 +106,3 @@ class SalesReturnDetailsPage extends StatelessWidget {
     );
   }
 }
-
-

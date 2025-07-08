@@ -76,8 +76,6 @@ class BottomPortionSaleReturn extends StatelessWidget {
                       ),
                     );
                   }
-
-                
                 },
                 child: const CustomBox(
                   color: Colors.white,
@@ -88,79 +86,78 @@ class BottomPortionSaleReturn extends StatelessWidget {
               hPad5,
 
               ///=====>View A5
-              InkWell(
-                onTap: () {
-                  if (controller.saleReturnItemModel.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.red,
-                        duration: Duration(seconds: 1),
-                        content: Text("No Item added"),
-                      ),
-                    );
-                  } else {
-                    List<InvoiceItem> invoiceItems = (controller.isCash
-                            ? controller.itemsCashReuturn
-                            : controller.itemsCashReuturn)
-                        .map((item) {
-                      return InvoiceItem(
-                        itemName: item.itemName ?? "",
-                        unit: item.unit ?? "PC",
-                        quantity: int.tryParse(item.quantity ?? "0") ?? 0,
-                        amount: (int.tryParse(item.quantity ?? "0") ?? 0) *
-                            (double.tryParse(item.mrp ?? "0") ?? 0.0),
-                        discount: double.tryParse(
-                                controller.discountController.text) ??
-                            0.0,
-                      );
-                    }).toList();
+              // InkWell(
+              //   onTap: () {
+              //     if (controller.saleReturnItemModel.isEmpty) {
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //         const SnackBar(
+              //           backgroundColor: Colors.red,
+              //           duration: Duration(seconds: 1),
+              //           content: Text("No Item added"),
+              //         ),
+              //       );
+              //     } else {
+              //       List<InvoiceItem> invoiceItems = (controller.isCash
+              //               ? controller.itemsCashReuturn
+              //               : controller.itemsCashReuturn)
+              //           .map((item) {
+              //         return InvoiceItem(
+              //           itemName: item.itemName ?? "",
+              //           unit: item.unit ?? "PC",
+              //           quantity: int.tryParse(item.quantity ?? "0") ?? 0,
+              //           amount: (int.tryParse(item.quantity ?? "0") ?? 0) *
+              //               (double.tryParse(item.mrp ?? "0") ?? 0.0),
+              //           discount: double.tryParse(
+              //                   controller.discountController.text) ??
+              //               0.0,
+              //         );
+              //       }).toList();
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => InvoiceA5(items: invoiceItems),
-                      ),
-                    );
-                  }
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (context) => InvoiceA5(items: invoiceItems),
+              //         ),
+              //       );
+              //     }
 
-                  
-                },
-                child: const CustomBox(
-                  color: Colors.white,
-                  textColor: Colors.black,
-                  text: "View A5",
-                ),
-              ),
+              //   },
+              //   child: const CustomBox(
+              //     color: Colors.white,
+              //     textColor: Colors.black,
+              //     text: "View A5",
+              //   ),
+              // ),
+
               hPad5,
-              InkWell(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: Colors.red,
-                      duration: Duration(seconds: 1),
-                      content: Text("No Fuction Called"),
-                    ),
-                  );
-                },
-                child: const CustomBox(
-                  color: Colors.white,
-                  textColor: Colors.black,
-                  text: "Save & View",
-                ),
-              ),
+              // InkWell(
+              //   onTap: () {
+              //     ScaffoldMessenger.of(context).showSnackBar(
+              //       const SnackBar(
+              //         backgroundColor: Colors.red,
+              //         duration: Duration(seconds: 1),
+              //         content: Text("No Fuction Called"),
+              //       ),
+              //     );
+              //   },
+              //   child: const CustomBox(
+              //     color: Colors.white,
+              //     textColor: Colors.black,
+              //     text: "Save & View",
+              //   ),
+              // ),
               hPad5,
               /////====
               /// save <=====
               ////===
               InkWell(
-                 
-
                 onTap: () async {
                   debugPrint(
                       "item length ====== > ${controller.demoPurchaseReturnModelList.length}");
                   debugPrint(
                       "item length ====== > ${controller.itemsCashReuturn.length}");
-                  debugPrint("item length ====== > ${controller.itemsCash.length}");
+                  debugPrint(
+                      "item length ====== > ${controller.itemsCash.length}");
 
                   if (controller.billNoController.text.trim().isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -174,7 +171,7 @@ class BottomPortionSaleReturn extends StatelessWidget {
                         ? controller.addAmount2()
                         : controller.addAmount();
 
-                    String discount = controller.discountController.toString();
+                    String discount = controller.discountController.text;
 
                     String total = controller.isCash
                         ? controller.totalAmount()
@@ -192,10 +189,10 @@ class BottomPortionSaleReturn extends StatelessWidget {
                       final isSuccess = await controller.storeSalesReturen(
                           //date: date,
                           amount: amount,
-                          customerId: customerId ?? "Cash",
+                          customerId: customerId ?? "cash",
                           saleType: saleType,
                           discount: discount,
-                          billNo : controller.billNoController.text,
+                          billNo: controller.billNoController.text,
                           total: total);
 
                       if (isSuccess.isNotEmpty) {

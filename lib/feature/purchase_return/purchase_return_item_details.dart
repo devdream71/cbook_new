@@ -104,7 +104,7 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
         Provider.of<PurchaseReturnController>(context, listen: false);
 
     return Consumer<UnitProvider>(
-      builder: (context, unitProvider, child)  {
+      builder: (context, unitProvider, child) {
         if (unitProvider.units.isEmpty) {
           return Scaffold(
             appBar: AppBar(title: const Text("Purchase Return Details")),
@@ -293,7 +293,7 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                         ),
                                       ),
                                       Text(
-                                        "Unit Qty: ${history.unitQty}",
+                                        "Unit Price: ${history.unitQty}",
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 13,
@@ -379,8 +379,6 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                                         "${selectedUnitId}_${selectedUnit}_1");
                                               }
                                             }
-                                            calculateTotalReductionQty();
-                                            calculateTotalPrice();
                                           },
                                         ),
                                       ),
@@ -464,24 +462,23 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                                             }
 
                                             // Save to controller (optional for API)
+
+                                           
+
                                             controller.savePrucahseReturn(
                                               itemId: history.itemId.toString(),
-                                              qty: reductionText,
+                                              qty: controller
+                                                  .reductionQtyList[index].text,
                                               index: index,
                                               price:
                                                   history.unitPrice.toString(),
                                               purchaseDetailsId: history
                                                   .purchaseDetailsId
                                                   .toString(),
-                                              itemName:
-                                                  Provider.of<AddItemProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .getItemName(
-                                                          history.itemId),
-                                              unitName: controller
-                                                      .getSelectedUnit(index) ??
-                                                  '',
+                                              itemName: widget
+                                                  .itemName, // fallback from parent
+                                              history: history,
+                                              unitProvider: unitProvider,
                                             );
 
                                             /// 👇 This ensures everything is updated correctly
@@ -515,7 +512,7 @@ class PurchaseReturnDetailsPageState extends State<PurchaseReturnDetailsPage> {
                           style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold)),
-                      Text("PTK: ${controller.getAllQty()}",
+                      Text("PC: ${controller.getAllQty()}",
                           style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold)),

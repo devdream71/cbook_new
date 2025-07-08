@@ -22,37 +22,14 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: 'Amount',
                       controller:
                           TextEditingController(text: controller.addAmount2()),
-                      // style: const TextStyle(fontSize: 12, color: Colors.black),
                       onChanged: (value) {
                         Provider.of(context)<SalesReturnController>();
                         controller.amountController.text =
                             controller.addAmount2();
                       },
-                      decoration: InputDecoration(
-                        // filled: true,
-                        fillColor: Colors.white,
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 2,
-                        ),
-                      ),
                     ),
                   ),
                 ],
@@ -60,7 +37,7 @@ class FieldPortion extends StatelessWidget {
             : const SizedBox.shrink(),
 
         const SizedBox(
-          height: 3,
+          height: 4,
         ),
 
         //sell return discount //cash
@@ -75,94 +52,85 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: 'Discount',
                       controller: controller.discountController,
-                      //style: const TextStyle(fontSize: 12, color: Colors.black),
                       onChanged: (value) {
                         TextEditingController(text: controller.totalAmount());
                         controller.discountController.text = value;
                       },
-                      decoration: InputDecoration(
-                        hintText: "",
-                        hintStyle: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade400),
-                        // filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 2,
-                        ),
-                      ),
                     ),
                   ),
                 ],
               )
             : const SizedBox.shrink(),
 
-        controller.isCash && controller.isDisocunt
-            ? vPad5
-            : const SizedBox.shrink(),
+        const SizedBox(
+          height: 4,
+        ),
 
-        // sell return Total //cash
-        controller.isCash && controller.isDisocunt
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Text("Total",
-                      style: TextStyle(fontSize: 12, color: Colors.black)),
-                  hPad5,
-                  SizedBox(
-                    height: 30,
-                    width: 150,
-                    child: AddSalesFormfield(
-                      controller:
-                          TextEditingController(text: controller.totalAmount()),
-                      //style: const TextStyle(fontSize: 12, color: Colors.black),
-                      onChanged: (value) {
-                        Provider.of(context)<SalesReturnController>();
-                      },
-                      decoration: InputDecoration(
-                        // filled: true,
-                        fillColor: Colors.white,
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
+        // sell return payment //cash
+        controller.isDisocunt && controller.isCash
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 2.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          //color: Colors.pink,
+                          child: SizedBox(
+                              height: 30,
+                              child: Checkbox(
+                                value: controller.isDisocunt,
+                                onChanged: (bool? value) {
+                                  if (controller.isCash) {
+                                    // Allow checking, but prevent unchecking
+                                    if (value == true) {
+                                      controller.isDisocunt = true;
+                                      controller.notifyListeners();
+                                    }
+                                  } else {
+                                    // Allow normal toggling when not cash
+                                    controller.isDisocunt = value ?? false;
+                                    controller.notifyListeners();
+                                  }
+                                },
+                              )),
                         ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 2,
-                        ),
-                      ),
+                        const Text("",
+                            style:
+                                TextStyle(color: Colors.green, fontSize: 12)),
+                      ],
                     ),
-                  ),
-                ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Text("Payment",
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.black)),
+                        const SizedBox(width: 5),
+                        SizedBox(
+                          height: 30,
+                          width: 150,
+                          child: AddSalesFormfield(
+                            labelText: 'Payment',
+                            //readOnly: true,
+                            onChanged: (value) {},
+                            controller: TextEditingController(
+                                text: controller.totalAmount()),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               )
             : const SizedBox.shrink(),
+
+        const SizedBox(
+          height: 4,
+        ),
 
         ////===> sell return credit ////amount
         controller.isCash == false && controller.isAmountCredit
@@ -176,35 +144,13 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: 'Amount',
                       controller:
                           TextEditingController(text: controller.addAmount()),
                       //style: const TextStyle(fontSize: 12, color: Colors.black),
                       onChanged: (value) {
                         Provider.of(context)<SalesReturnController>();
                       },
-                      decoration: InputDecoration(
-                        // filled: true,
-                        fillColor: Colors.white,
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 2,
-                        ),
-                      ),
                     ),
                   ),
                 ],
@@ -212,10 +158,10 @@ class FieldPortion extends StatelessWidget {
             : const SizedBox.shrink(),
 
         const SizedBox(
-          height: 3,
+          height: 4,
         ),
 
-        //credit sell return  //discount
+        //sell return  //discount //credit
         controller.isCash == false && controller.isDiscountCredit
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -227,38 +173,13 @@ class FieldPortion extends StatelessWidget {
                     height: 30,
                     width: 150,
                     child: AddSalesFormfield(
+                      labelText: 'Discount',
                       controller: controller.discountController,
                       onChanged: (value) {
                         TextEditingController(text: controller.totalAmount());
                         controller.discountController.text = value;
                       },
                       //style: const TextStyle(fontSize: 12, color: Colors.black),
-                      decoration: InputDecoration(
-                        hintText: "",
-                        hintStyle: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade400),
-                        // filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 2,
-                        ),
-                      ),
                     ),
                   ),
                 ],
@@ -269,50 +190,64 @@ class FieldPortion extends StatelessWidget {
           height: 3,
         ),
 
-        ///sell return total /// credit
+        ///sell return payment /// credit
+
         controller.isCash == false && controller.isSubTotalCredit
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Text("Total",
-                      style: TextStyle(fontSize: 12, color: Colors.black)),
-                  const SizedBox(width: 5),
-                  SizedBox(
-                    height: 30,
-                    width: 150,
-                    child: AddSalesFormfield(
-                      controller: TextEditingController(
-                          text: controller.totalAmount2()),
-                      onChanged: (value) {
-                        Provider.of(context)<SalesReturnController>();
-                      },
-                      //style: const TextStyle(fontSize: 12, color: Colors.black),
-                      decoration: InputDecoration(
-                        // filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 2.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          //color: Colors.pink,
+                          child: SizedBox(
+                              height: 30,
+                              child: Checkbox(
+                                value: controller.isDisocunt,
+                                onChanged: (bool? value) {
+                                  if (controller.isCash) {
+                                    // Allow checking, but prevent unchecking
+                                    if (value == true) {
+                                      controller.isDisocunt = true;
+                                      controller.notifyListeners();
+                                    }
+                                  } else {
+                                    // Allow normal toggling when not cash
+                                    controller.isDisocunt = value ?? false;
+                                    controller.notifyListeners();
+                                  }
+                                },
+                              )),
                         ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade400, width: 1),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 2,
-                        ),
-                      ),
+                        const Text("",
+                            style:
+                                TextStyle(color: Colors.green, fontSize: 12)),
+                      ],
                     ),
-                  ),
-                ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Text("Payment",
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.black)),
+                        const SizedBox(width: 5),
+                        SizedBox(
+                          height: 30,
+                          width: 150,
+                          child: AddSalesFormfield(
+                            labelText: 'Payment',
+                            //readOnly: true,
+                            onChanged: (value) {},
+                            controller: TextEditingController(
+                                text: controller.totalAmount()),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               )
             : const SizedBox.shrink(),
       ],

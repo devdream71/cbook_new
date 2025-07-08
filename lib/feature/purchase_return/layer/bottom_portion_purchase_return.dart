@@ -35,7 +35,7 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             hPad5,
-      
+
             ///=====>View A4
             // InkWell(
             //   onTap: () {
@@ -65,7 +65,7 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
             //               0.0,
             //         );
             //       }).toList();
-      
+
             //       Navigator.push(
             //         context,
             //         MaterialPageRoute(
@@ -81,9 +81,9 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
             //     text: "View A4",
             //   ),
             // ),
-            
+
             hPad5,
-      
+
             ///=====>View A5
             // InkWell(
             //   onTap: () {
@@ -111,17 +111,16 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
             //               0.0,
             //         );
             //       }).toList();
-      
+
             //       debugPrint("item name   ");
-      
+
             //       Navigator.push(
             //           context,
             //           MaterialPageRoute(
             //               builder: (context) =>
             //                   InvoiceA5(items: invoiceItems)));
             //     }
-      
-                
+
             //   },
             //   child: const CustomBox(
             //     color: Colors.white,
@@ -129,7 +128,7 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
             //     text: "View A5",
             //   ),
             // ),
-           
+
             hPad5,
             // InkWell(
             //   onTap: () {
@@ -147,7 +146,7 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
             //     text: "Save & View",
             //   ),
             // ),
-            
+
             hPad5,
             /////====
             /// save <=====
@@ -165,13 +164,13 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
                   String amount = controller.isCash
                       ? controller.addAmount2()
                       : controller.addAmount();
-      
+
                   String discount = controller.discountController.text;
-      
+
                   String total = controller.isCash
                       ? controller.totalAmount()
                       : controller.totalAmount2();
-      
+
                   if (controller.demoPurchaseReturnModelList.isEmpty ||
                       controller.billNoController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -189,15 +188,13 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
                         discount: discount,
                         billNo: controller.billNoController.text,
                         total: total);
-      
-                    if (isSuccess.isNotEmpty) {
 
+                    if (isSuccess.isNotEmpty) {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const HomeView()));
 
-                              
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           backgroundColor: Colors.green,
@@ -205,13 +202,11 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
                           content: Text(isSuccess),
                         ),
                       );
-      
-                      
-      
+
                       controller.itemsCashReuturn.clear();
                       controller.itemsCreditReturn.clear();
                       controller.purchaseItemReturn.clear();
-      
+
                       controller.reductionQtyList.clear();
                       controller.itemsCashReuturn.clear();
                     } else {
@@ -232,7 +227,7 @@ class BottomPortionPurchaseReturn extends StatelessWidget {
                 text: "Save",
               ),
             ),
-      
+
             const SizedBox(
               height: 20,
             ),

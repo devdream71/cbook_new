@@ -328,7 +328,7 @@ class _PartyState extends State<Party> {
                             ),
                             title: Container(
                               //color: Colors.yellow,
-                              height: 60.0, // Set your desired item height
+                              height: 72.0, // Set your desired item height
                               padding: const EdgeInsets.only(left: 0),
                               alignment: Alignment.centerLeft,
                               child: Row(
@@ -363,36 +363,34 @@ class _PartyState extends State<Party> {
                                         ),
                                       ),
 
-                                      // Text(
-                                      //   (customers.proprietorName != null &&
-                                      //           customers.proprietorName!
-                                      //               .trim()
-                                      //               .isNotEmpty)
-                                      //       ? customers.phone ?? 'No Phone'
-                                      //       : customers.address ?? 'No Address',
-                                      //   overflow: TextOverflow.ellipsis,
-                                      //   style: GoogleFonts.notoSansPhagsPa(
-                                      //     fontSize: 10,
-                                      //     color: Colors.grey[800],
-                                      //   ),
-                                      // ),
-
-                                      Text(
-                                        (customers.proprietorName != null &&
-                                                customers.proprietorName!
-                                                    .trim()
-                                                    .isNotEmpty)
-                                            ? customers.phone ?? 'No Phone'
-                                            : (customers.address ??
-                                                    'No Address')
-                                                .replaceAll('\n', '')
-                                                .replaceAll('\r',
-                                                    ''), // Remove newlines
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.notoSansPhagsPa(
-                                          fontSize: 10,
-                                          color: Colors.grey[800],
-                                        ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width:
+                                                190, // 🔧 adjust width as needed
+                                            child: Text(
+                                              (customers.proprietorName !=
+                                                          null &&
+                                                      customers.proprietorName!
+                                                          .trim()
+                                                          .isNotEmpty)
+                                                  ? customers.phone ??
+                                                      'No Phone'
+                                                  : (customers.address ??
+                                                          'No Address')
+                                                      .replaceAll('\n', ' ')
+                                                      .replaceAll('\r', ''),
+                                              style:
+                                                  GoogleFonts.notoSansPhagsPa(
+                                                fontSize: 10,
+                                                color: Colors.grey[800],
+                                              ),
+                                              softWrap: true,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

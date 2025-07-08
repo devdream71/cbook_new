@@ -16,16 +16,19 @@ class SalesReturnResponse {
 
   factory SalesReturnResponse.fromMap(Map<String, dynamic> json) =>
       SalesReturnResponse(
-        success: json["success"],
-        message: json["message"],
-        data: List<SalesReturnData>.from(
-            json["data"].map((x) => SalesReturnData.fromMap(x))),
+        success: json["success"] ?? false,
+        message: json["message"] ?? '',
+        data: json["data"] == null
+            ? []
+            : List<SalesReturnData>.from(
+                json["data"].map((x) => SalesReturnData.fromMap(x))),
       );
 }
 
 class SalesReturnData {
+  final id;
   final int userId;
-  final int supplierId;
+  final dynamic supplierId;
   final String supplierName;
   final String? transactionMethod;
   final String billNumber;
@@ -37,6 +40,7 @@ class SalesReturnData {
   final List<PurchaseDetails> purchaseDetails;
 
   SalesReturnData({
+    required this.id,
     required this.userId,
     required this.supplierId,
     required this.supplierName,
@@ -51,37 +55,45 @@ class SalesReturnData {
   });
 
   factory SalesReturnData.fromMap(Map<String, dynamic> json) => SalesReturnData(
-        userId: json["user_id"],
+        id: json['id'] ?? 0,
+        userId: json["user_id"] ?? 0,
         supplierId: json["supplier_id"],
-        supplierName: json["supplier_name"],
+        supplierName: json["supplier_name"] ?? '',
         transactionMethod: json["transection_method"],
-        billNumber: json["bill_number"],
-        purchaseDate: json["pruchase_date"],
+        billNumber: json["bill_number"]?.toString() ?? '',
+    
+
+        purchaseDate: json["purchase_date"] != null
+            ? json["purchase_date"].toString()
+            : null,
+
         discount: json["discount"],
         grossTotal: json["gross_total"],
         detailsNotes: json["details_notes"],
-        disabled: json["disabled"],
-        purchaseDetails: List<PurchaseDetails>.from(
-            json["purchase_details"].map((x) => PurchaseDetails.fromMap(x))),
+        disabled: json["disabled"] ?? '',
+        purchaseDetails: json["purchase_details"] == null
+            ? []
+            : List<PurchaseDetails>.from(json["purchase_details"]
+                .map((x) => PurchaseDetails.fromMap(x))),
       );
 }
 
 class PurchaseDetails {
   final int id;
-  final int purchaseId;
-  final String purchaseDetailsId;
+  final dynamic purchaseId;
+  final dynamic purchaseDetailsId;
   final String type;
-  final String? purchaseDate;
-  final int itemId;
+  final String purchaseDate;
+  final dynamic itemId;
   final dynamic defaultQty;
   final dynamic qty;
   final dynamic rawQty;
-  final int? unitId;
+  final dynamic unitId;
   final dynamic price;
   final dynamic subTotal;
   final dynamic salesQty;
   final dynamic returnQty;
-  final String? deletedAt;
+  final dynamic deletedAt;
   final String createdAt;
   final String updatedAt;
 
@@ -106,12 +118,12 @@ class PurchaseDetails {
   });
 
   factory PurchaseDetails.fromMap(Map<String, dynamic> json) => PurchaseDetails(
-        id: json["id"],
+        id: json["id"] ?? 0,
         purchaseId: json["purchase_id"],
         purchaseDetailsId: json["purchase_details_id"],
-        type: json["type"],
-        purchaseDate: json["pruchase_date"] ?? "",
-        itemId: json["item_id"] ?? "",
+        type: json["type"] ?? '',
+        purchaseDate: json["purchase_date"]?.toString() ?? '',
+        itemId: json["item_id"],
         defaultQty: json["default_qty"],
         qty: json["qty"],
         rawQty: json["raw_qty"],
@@ -121,7 +133,7 @@ class PurchaseDetails {
         salesQty: json["sales_qty"],
         returnQty: json["return_qty"],
         deletedAt: json["deleted_at"],
-        createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
+        createdAt: json["created_at"] ?? '',
+        updatedAt: json["updated_at"] ?? '',
       );
 }

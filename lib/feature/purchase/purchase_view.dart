@@ -1507,18 +1507,8 @@ class LayoutState extends State<Layout> {
                                                     controller
                                                         .updateDiscount(value);
                                                   },
-                                                  // style: const TextStyle(
-                                                  //     fontSize: 12,
-                                                  //     color: Colors.black),
-                                                  decoration: InputDecoration(
-                                                    hintText: "৳",
-                                                    hintStyle: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors
-                                                            .grey.shade400),
-                                                    // filled: true,
-                                                    fillColor: Colors.white,
-                                                  ),
+                                                
+                                                
                                                 ),
                                               ),
                                               hPad2,
@@ -1529,9 +1519,7 @@ class LayoutState extends State<Layout> {
                                                   labelText: "%",
                                                   controller: controller
                                                       .discountAmountController,
-                                                  // style: const TextStyle(
-                                                  //     fontSize: 12,
-                                                  //     color: Colors.black),
+                                                  
                                                   decoration: InputDecoration(
                                                     hintText: "%",
                                                     hintStyle: TextStyle(
@@ -1574,49 +1562,8 @@ class LayoutState extends State<Layout> {
                                                       TextEditingController(
                                                           text: controller
                                                               .totalAmount),
-                                                  // style: const TextStyle(
-                                                  //     fontSize: 12,
-                                                  //     color: Colors.black),
-                                                  decoration: InputDecoration(
-                                                    // filled: true,
-                                                    fillColor: Colors.white,
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 2,
-                                                    ),
-                                                  ),
+                                                 
+                                                   
                                                 ),
                                               ),
                                             ],
@@ -1688,56 +1635,8 @@ class LayoutState extends State<Layout> {
                                                           TextEditingController(
                                                               text: controller
                                                                   .totalAmount),
-                                                      // style: const TextStyle(
-                                                      //     fontSize: 12,
-                                                      //     color: Colors.black),
-                                                      decoration:
-                                                          InputDecoration(
-                                                        // filled: true,
-                                                        fillColor: Colors.white,
-                                                        enabledBorder:
-                                                            UnderlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(0),
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade400,
-                                                                  width: 1),
-                                                        ),
-                                                        focusedBorder:
-                                                            UnderlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(0),
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade400,
-                                                                  width: 1),
-                                                        ),
-                                                        border:
-                                                            UnderlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(0),
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade400,
-                                                                  width: 1),
-                                                        ),
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          vertical: 12,
-                                                          horizontal: 2,
-                                                        ),
-                                                      ),
+                                                      
+                                                       
                                                     ),
                                                   ),
                                                 ),
@@ -1772,49 +1671,8 @@ class LayoutState extends State<Layout> {
                                                       TextEditingController(
                                                           text: controller
                                                               .addAmount()),
-                                                  // style: const TextStyle(
-                                                  //     fontSize: 12,
-                                                  //     color: Colors.black),
-                                                  decoration: InputDecoration(
-                                                    // filled: true,
-                                                    fillColor: Colors.white,
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 2,
-                                                    ),
-                                                  ),
+                                                   
+                                                   
                                                 ),
                                               ),
                                             ],
@@ -1854,54 +1712,8 @@ class LayoutState extends State<Layout> {
                                                     controller
                                                         .updateDiscount(value);
                                                   },
-                                                  // style: const TextStyle(
-                                                  //     fontSize: 12,
-                                                  //     color: Colors.black),
-                                                  decoration: InputDecoration(
-                                                    hintText: "৳",
-                                                    hintStyle: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors
-                                                            .grey.shade400),
-                                                    // filled: true,
-                                                    fillColor: Colors.white,
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 2,
-                                                    ),
-                                                  ),
+                                                 
+                                                   
                                                 ),
                                               ),
                                               hPad2,
@@ -1911,57 +1723,8 @@ class LayoutState extends State<Layout> {
                                                 child: AddSalesFormfield(
                                                   controller: controller
                                                       .discountAmountController,
-                                                  // TextEditingController(
-                                                  // text: controller.addAmount()),
-                                                  // style: const TextStyle(
-                                                  //     fontSize: 12,
-                                                  //     color: Colors.black),
-                                                  decoration: InputDecoration(
-                                                    labelText: "%",
-                                                    hintText: "%",
-                                                    hintStyle: TextStyle(
-                                                        color: Colors
-                                                            .grey.shade400,
-                                                        fontSize: 12),
-                                                    // filled: true,
-                                                    fillColor: Colors.white,
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 2,
-                                                    ),
-                                                  ),
+                                                  
+                                                  
                                                 ),
                                               ),
                                             ],
@@ -1997,49 +1760,6 @@ class LayoutState extends State<Layout> {
                                                       TextEditingController(
                                                           text: controller
                                                               .totalAmount2),
-                                                  // style: const TextStyle(
-                                                  //     fontSize: 12,
-                                                  //     color: Colors.black),
-                                                  decoration: InputDecoration(
-                                                    // filled: true,
-                                                    fillColor: Colors.white,
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              0),
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 2,
-                                                    ),
-                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -2086,34 +1806,10 @@ class LayoutState extends State<Layout> {
                                                   child: AddSalesFormfield(
                                                     controller: controller
                                                         .receivedAmountController,
-                                                    // style: const TextStyle(
-                                                    //     fontSize: 12,
-                                                    //     color: Colors.black),
+
                                                     readOnly: controller
                                                         .isOnlineMoneyChecked, // ✅ Read-only when checked
-                                                    decoration: InputDecoration(
-                                                      fillColor: Colors.white,
-                                                      enabledBorder:
-                                                          UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color: Colors
-                                                                .grey.shade400,
-                                                            width: 1),
-                                                      ),
-                                                      focusedBorder:
-                                                          UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color: Colors
-                                                                .grey.shade400,
-                                                            width: 1),
-                                                      ),
-                                                      contentPadding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 2,
-                                                      ),
-                                                    ),
+
                                                     keyboardType:
                                                         TextInputType.number,
                                                     onChanged: (value) {
@@ -2205,71 +1901,71 @@ class LayoutState extends State<Layout> {
                         ),
 
                         hPad5,
-                        InkWell(
-                          onTap: () {
-                            //===>View A5 navigation.
+                        // InkWell(
+                        //   onTap: () {
+                        //     //===>View A5 navigation.
 
-                            if (controller.purchaseItem.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  backgroundColor: Colors.red,
-                                  duration: Duration(seconds: 1),
-                                  content: Text("No Item added"),
-                                ),
-                              );
-                            } else {
-                              List<InvoiceItem> invoiceItems =
-                                  (controller.isCash
-                                          ? controller.itemsCash
-                                          : controller.itemsCredit)
-                                      .map((item) {
-                                return InvoiceItem(
-                                  itemName: item.itemName ?? "",
-                                  unit: item.unit ?? "PC",
-                                  quantity:
-                                      int.tryParse(item.quantity ?? "0") ?? 0,
-                                  amount: (int.tryParse(item.quantity ?? "0") ??
-                                          0) *
-                                      (double.tryParse(item.mrp ?? "0") ?? 0.0),
-                                  discount: double.tryParse(
-                                          controller.discountController.text) ??
-                                      0.0,
-                                );
-                              }).toList();
+                        //     if (controller.purchaseItem.isEmpty) {
+                        //       ScaffoldMessenger.of(context).showSnackBar(
+                        //         const SnackBar(
+                        //           backgroundColor: Colors.red,
+                        //           duration: Duration(seconds: 1),
+                        //           content: Text("No Item added"),
+                        //         ),
+                        //       );
+                        //     } else {
+                        //       List<InvoiceItem> invoiceItems =
+                        //           (controller.isCash
+                        //                   ? controller.itemsCash
+                        //                   : controller.itemsCredit)
+                        //               .map((item) {
+                        //         return InvoiceItem(
+                        //           itemName: item.itemName ?? "",
+                        //           unit: item.unit ?? "PC",
+                        //           quantity:
+                        //               int.tryParse(item.quantity ?? "0") ?? 0,
+                        //           amount: (int.tryParse(item.quantity ?? "0") ??
+                        //                   0) *
+                        //               (double.tryParse(item.mrp ?? "0") ?? 0.0),
+                        //           discount: double.tryParse(
+                        //                   controller.discountController.text) ??
+                        //               0.0,
+                        //         );
+                        //       }).toList();
 
-                              debugPrint("item name   ");
+                        //       debugPrint("item name   ");
 
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          InvoiceA5(items: invoiceItems)));
-                            }
-                          },
-                          child: const CustomBox(
-                            color: Colors.white,
-                            textColor: Colors.black,
-                            text: "View A5",
-                          ),
-                        ),
+                        //       Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //               builder: (context) =>
+                        //                   InvoiceA5(items: invoiceItems)));
+                        //     }
+                        //   },
+                        //   child: const CustomBox(
+                        //     color: Colors.white,
+                        //     textColor: Colors.black,
+                        //     text: "View A5",
+                        //   ),
+                        // ),
                         hPad5,
-                        InkWell(
-                          onTap: () {
-                            //Navigator.push(context, MaterialPageRoute(builder: (context)=>const InvoiceScreen()));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                backgroundColor: Colors.red,
-                                duration: Duration(seconds: 1),
-                                content: Text("N0 fuction called"),
-                              ),
-                            );
-                          },
-                          child: const CustomBox(
-                            color: Colors.white,
-                            textColor: Colors.black,
-                            text: "Save & View",
-                          ),
-                        ),
+                        // InkWell(
+                        //   onTap: () {
+                        //     //Navigator.push(context, MaterialPageRoute(builder: (context)=>const InvoiceScreen()));
+                        //     ScaffoldMessenger.of(context).showSnackBar(
+                        //       const SnackBar(
+                        //         backgroundColor: Colors.red,
+                        //         duration: Duration(seconds: 1),
+                        //         content: Text("N0 fuction called"),
+                        //       ),
+                        //     );
+                        //   },
+                        //   child: const CustomBox(
+                        //     color: Colors.white,
+                        //     textColor: Colors.black,
+                        //     text: "Save & View",
+                        //   ),
+                        // ),
                         hPad5,
                         InkWell(
                           onTap: () async {

@@ -1,4 +1,3 @@
-
 class SalesReturnStoreModel {
   String purchaseDetailsId;
   String itemId;
@@ -20,7 +19,8 @@ class SalesReturnStoreModel {
   // From JSON (Map) to Dart object
   factory SalesReturnStoreModel.fromJson(Map<String, dynamic> json) {
     return SalesReturnStoreModel(
-      purchaseDetailsId: json['sales_details_id'] ?? '',
+      // purchaseDetailsId: json['sales_details_id'] ?? '',
+      purchaseDetailsId: json['purchase_details_id'] ?? '',
       itemId: json['item_id'] ?? '',
       qty: json['qty'] ?? '',
       unitId: json['unit_id'] ?? '',
@@ -32,7 +32,8 @@ class SalesReturnStoreModel {
   // To JSON (Dart object) to Map
   Map<String, dynamic> toJson() {
     return {
-      'sales_details_id': purchaseDetailsId,
+      // 'sales_details_id': purchaseDetailsId,
+      'purchase_details_id': purchaseDetailsId,
       'item_id': itemId,
       'qty': qty,
       'unit_id': unitId,

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:cbook_dt/feature/item/model/items_show.dart';
+import 'package:cbook_dt/feature/item/model/unit_model.dart';
+import 'package:cbook_dt/feature/item/provider/unit_provider.dart';
 import 'package:cbook_dt/feature/purchase/model/purchase_item_model.dart';
 import 'package:cbook_dt/feature/sales/model/return_purchase_create_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/date_time_helper.dart';
 import 'package:http/http.dart' as http;
@@ -58,9 +61,18 @@ class PurchaseReturnController extends ChangeNotifier {
 
   bool isCash = true;
 
+
   String? seletedItemName;
 
-  DateTime _selectedDate = DateTime.now();
+  late DateTime _selectedDate;
+  late String formattedDate;
+
+  PurchaseReturnController() {
+    _selectedDate = DateTime.now();
+    formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+  }
+
+ // Output: return_date=2025-07-06
 
   String customerName = "";
   String phone = "";
@@ -96,6 +108,30 @@ class PurchaseReturnController extends ChangeNotifier {
 
   List<ItemModel> itemsCash = [];
   List<ItemModel> itemsCredit = [];
+
+  void clearAll() {
+  // Clear all reduction quantity controllers
+  for (var controller in reductionQtyList) {
+    controller.clear();
+  }
+
+  // Clear selected units
+  selectedUnitsMap.clear();
+
+  // Clear selected unit ID if used globally
+  selectedUnitIdWithName = '';
+
+  // Clear saved return items
+  purchaseReturnItemModel.clear();
+  demoPurchaseReturnModelList.clear();
+
+  billNoController.clear();
+  discountAmountController.clear();
+  totalAmountController.clear();
+  
+
+  notifyListeners();
+}
 
   void clearReductionQty() {
     for (var controller in reductionQtyList) {
@@ -254,8 +290,7 @@ class PurchaseReturnController extends ChangeNotifier {
     notifyListeners();
   }
 
-  String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
-
+ 
   Future<void> pickDate(BuildContext context) async {
     final pickedDate = await DateTimeHelper.pickDate(context, _selectedDate);
     if (pickedDate != null && pickedDate != _selectedDate) {
@@ -291,44 +326,44 @@ class PurchaseReturnController extends ChangeNotifier {
   ////===>cash
 
   // Solution 3: Alternative - modify the addCashItem method
-  addCashItem() {
-    debugPrint(
-        "cash Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
+  // addCashItem() {
+  //   debugPrint(
+  //       "cash Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
 
-    // Extract unit name from selectedUnitIdWithName
-    String unitName = extractUnitName(selectedUnitIdWithName);
+  //   // Extract unit name from selectedUnitIdWithName
+  //   String unitName = extractUnitName(selectedUnitIdWithName);
 
-    itemsCashReuturn.add(ItemModel(
-      category: selectedCategory ?? "Category1",
-      subCategory: selectedSubCategory ?? "Sub Category1",
-      itemName: seletedItemName ?? "Item1",
-      unit: unitName, // ✅ Use extracted unit name
-      itemCode: codeController.text,
-      mrp: mrpController.text,
-      quantity: qtyController.text,
-      total: amountController.text,
-    ));
+  //   itemsCashReuturn.add(ItemModel(
+  //     category: selectedCategory ?? "Category1",
+  //     subCategory: selectedSubCategory ?? "Sub Category1",
+  //     itemName: seletedItemName ?? "Item1",
+  //     unit: unitName, // ✅ Use extracted unit name
+  //     itemCode: codeController.text,
+  //     mrp: mrpController.text,
+  //     quantity: qtyController.text,
+  //     total: amountController.text,
+  //   ));
 
-    purchaseItemReturn.add(PurchaseReturnCreateItemModel(
-        itemId: selcetedItemId,
-        price: mrpController.value.text,
-        qty: qtyController.value.text,
-        subTotal: (double.parse(mrpController.value.text) *
-                double.parse(qtyController.value.text))
-            .toString(),
-        unitId: selectedUnitIdWithName));
+  //   purchaseItemReturn.add(PurchaseReturnCreateItemModel(
+  //       itemId: selcetedItemId,
+  //       price: mrpController.value.text,
+  //       qty: qtyController.value.text,
+  //       subTotal: (double.parse(mrpController.value.text) *
+  //               double.parse(qtyController.value.text))
+  //           .toString(),
+  //       unitId: selectedUnitIdWithName));
 
-    notifyListeners();
+  //   notifyListeners();
 
-    codeController.clear();
-    mrpController.clear();
-    qtyController.clear();
-    amountController.clear();
-    unitController.clear();
-    priceController.clear();
+  //   codeController.clear();
+  //   mrpController.clear();
+  //   qtyController.clear();
+  //   amountController.clear();
+  //   unitController.clear();
+  //   priceController.clear();
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
 
   //////===> credit ===>
   ///add item credit.
@@ -436,39 +471,77 @@ class PurchaseReturnController extends ChangeNotifier {
 
   ///====>purchase return save.
 
-  //Solution 2: In your PurchaseReturnController, modify the savePrucahseReturn method
+
+
   void savePrucahseReturn({
-    required String itemId,
-    required String qty,
-    required int index,
-    required String price,
-    required String purchaseDetailsId,
-    required String itemName,
-    required String unitName, // Use this parameter directly
-  }) {
-    purchaseReturnItemModel.add(PurchaseStoreModel(
-      itemId: itemId,
-      qty: reductionQtyList[index].value.text,
-      unitId: selectedUnitIdWithName,
-      price: price,
-      subTotal: (double.parse(price) * double.parse(qty)).toString(),
-      purchaseDetailsId: purchaseDetailsId,
-    ));
+  required String itemId,
+  required String qty,
+  required int index,
+  required String price,
+  required String purchaseDetailsId,
+  required String itemName,
+  required PurchaseHistoryModel history,
+  required UnitProvider unitProvider,
+}) {
+  final selectedUnitName = getSelectedUnit(index); // from controller map
 
-    demoPurchaseReturnModelList.add(ItemModel(
-      category: "",
-      subCategory: "",
-      itemCode: "",
-      itemName: itemName,
-      mrp: price,
-      quantity: reductionQtyList[index].value.text,
-      total: (double.parse(price) * double.parse(qty)).toString(),
-      unit:
-          selectedUnitIdWithName, // ✅ Use the unitName parameter instead of selectedUnitIdWithName
-    ));
+  String unitIdWithName;
 
-    notifyListeners();
+  // 🔍 Try to get selected unit from user
+  if (selectedUnitName != null && selectedUnitName.trim().isNotEmpty) {
+    final selectedUnitObj = unitProvider.units.firstWhere(
+      (unit) => unit.name == selectedUnitName,
+      orElse: () => Unit(id: 0, name: "Unknown", symbol: "", status: 0),
+    );
+
+    if (selectedUnitObj.id != 0) {
+      // Match to determine quantity
+      final selectedUnitId = selectedUnitObj.id.toString();
+      if (selectedUnitId == history.secondaryUnitID?.toString()) {
+        unitIdWithName = "${selectedUnitId}_${selectedUnitName}"; //_${history.unitQty}
+      } else {
+        unitIdWithName = "${selectedUnitId}_${selectedUnitName}"; //_1
+      }
+    } else {
+      unitIdWithName = "0_Unknown_1"; // Fallback if no match
+    }
+  } else {
+    // ✅ Fallback: use unit from history
+    final fallbackUnitId = history.secondaryUnitID ?? history.unitID;
+    final fallbackQty = history.secondaryUnitID != null ? history.unitQty : 1;
+
+    final fallbackUnit = unitProvider.units.firstWhere(
+      (unit) => unit.id == fallbackUnitId,
+      orElse: () => Unit(id: fallbackUnitId, name: "Unknown", symbol: "", status: 0),
+    );
+
+    unitIdWithName = "${fallbackUnitId}_${fallbackUnit.name}"; //_$fallbackQty
   }
+
+  // 🔒 Save to model
+  purchaseReturnItemModel.add(PurchaseStoreModel(
+    itemId: itemId,
+    qty: reductionQtyList[index].value.text,
+    unitId: unitIdWithName,
+    price: price,
+    subTotal: (double.parse(price) * double.parse(qty)).toString(),
+    purchaseDetailsId: purchaseDetailsId,
+  ));
+
+  demoPurchaseReturnModelList.add(ItemModel(
+    category: "",
+    subCategory: "",
+    itemCode: "",
+    itemName: itemName,
+    mrp: price,
+    quantity: reductionQtyList[index].value.text,
+    total: (double.parse(price) * double.parse(qty)).toString(),
+    unit: unitIdWithName,
+  ));
+
+  notifyListeners();
+}
+
 
   savePurchaseReturnData() async {
     itemsCashReuturn = demoPurchaseReturnModelList;
@@ -529,8 +602,11 @@ class PurchaseReturnController extends ChangeNotifier {
 
       final discount = discountController.text;
 
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String userId = prefs.getInt('user_id')?.toString() ?? '0';
+
       final url =
-          "https://commercebook.site/api/v1/purchase/return/store?user_id=${prefs.getString("id")}&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=${billNoController.value.text}&return_date=$_selectedDate&details_notes=notes&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount() : totalAmount2()}";
+          "https://commercebook.site/api/v1/purchase/return/store?user_id=$userId&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=${billNoController.value.text}&return_date=$formattedDate&details_notes=notes&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount() : totalAmount2()}";
 
       debugPrint(url);
       final requestBody = jsonEncode({
@@ -564,6 +640,6 @@ class PurchaseReturnController extends ChangeNotifier {
       return "";
     } catch (e) {
       return e.toString();
-    }
+    } 
   }
 }

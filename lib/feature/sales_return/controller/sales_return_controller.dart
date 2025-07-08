@@ -3,45 +3,16 @@ import 'package:cbook_dt/feature/item/model/items_show.dart';
 import 'package:cbook_dt/feature/purchase/model/purchase_item_model.dart';
 import 'package:cbook_dt/feature/sales_return/model/sales_return_history_model.dart';
 import 'package:cbook_dt/feature/sales_return/model/sales_return_store_model.dart';
+import 'package:cbook_dt/feature/unit/model/unit_response_model.dart';
+import 'package:cbook_dt/feature/unit/provider/unit_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../utils/date_time_helper.dart';
- 
 
 class SalesReturnController extends ChangeNotifier {
-  TextEditingController billNoController = TextEditingController();
-
-  String? seletedItemName;
-  String text = "Cash";
-
-  List<String> category = ["Category1", "Category2", "Category3"];
-
-  List<String> warehouse = ["Warehouse1", "Warehouse2", "Warehouse3"];
-
-  List<String> subCategory = [
-    "Sub Category1",
-    "Sub Category2",
-    "Sub Category3"
-  ];
-
-  String customerName = "";
-  String phone = "";
-  String email = "";
-  String address = "";
-
-  void updateCash() {
-    isCash = !isCash;
-    //isReceived = isCash; // Automatically check when cash is selected, uncheck when credit is selected
-    discountController.clear();
-    itemsCash.clear();
-    itemsCredit.clear();
-    notifyListeners();
-  }
-
   String? selectedUnit;
-
-  List<String> itemName = ["Item1", "Item2", "Item3"];
   String? selectedCategory;
   String? selectedSubCategory;
   String? selectedWarehouse;
@@ -64,12 +35,17 @@ class SalesReturnController extends ChangeNotifier {
   bool isOnlineMoneyChecked = false;
   String? selectedReceiptType;
 
+  String? seletedItemName;
+  String text = "Cash";
+
+  String customerName = "";
+  String phone = "";
+  String email = "";
+  String address = "";
+
   TextEditingController controller = TextEditingController(text: "Cash");
   TextEditingController returnAmountController = TextEditingController();
-
   TextEditingController saleReturnNoteController = TextEditingController();
-
-
   TextEditingController amountController = TextEditingController();
   TextEditingController roundController = TextEditingController();
   TextEditingController totalReturnController = TextEditingController();
@@ -78,7 +54,6 @@ class SalesReturnController extends ChangeNotifier {
   TextEditingController amountController2 = TextEditingController();
   TextEditingController additionalCostController = TextEditingController();
   TextEditingController mergeAmountController = TextEditingController();
-
   TextEditingController creditAmountController = TextEditingController();
   TextEditingController creditAdditionalCostController =
       TextEditingController();
@@ -86,23 +61,55 @@ class SalesReturnController extends ChangeNotifier {
   TextEditingController paymentTypeController = TextEditingController();
   TextEditingController paymentAmountController = TextEditingController();
   TextEditingController dueController = TextEditingController();
-
   TextEditingController codeController = TextEditingController();
   TextEditingController mrpController = TextEditingController();
   TextEditingController qtyController = TextEditingController();
   TextEditingController unitController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController totalAmountController = TextEditingController();
-
   TextEditingController discountController = TextEditingController();
+  TextEditingController billNoController = TextEditingController();
 
   bool isCash = true;
 
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
 
+  String get formattedReturnDate =>
+      DateFormat('yyyy-MM-dd').format(_selectedDate);
+
   String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
   String get formattedTime => DateTimeHelper.formatTimeOfDay(_selectedTime);
+
+  List<ItemModel> demoSalesReturnModelList = [];
+
+  bool isReturnAmount = true;
+  bool isAdditionalCost = true;
+  bool isTotalReturnAmount = true;
+  bool isSalesAmount = true;
+  bool isDiscount = true;
+  bool isAdditionalCost2 = true;
+  bool isMergeAmount = true;
+  bool isDisocunt = true;
+  bool isDiscountCredit = true;
+  bool isSubTotalCredit = true;
+  bool isAmount = true;
+  bool isAdditionalCostCredit = true;
+  bool isTotalAmount = true;
+  bool isPaymentType = true;
+  bool isPaymentAmount = true;
+  bool isDue = true;
+
+  bool isAmountCredit = true;
+
+  void updateCash() {
+    isCash = !isCash;
+    //isReceived = isCash; // Automatically check when cash is selected, uncheck when credit is selected
+    discountController.clear();
+    itemsCash.clear();
+    itemsCredit.clear();
+    notifyListeners();
+  }
 
   Future<void> pickDate(BuildContext context) async {
     final pickedDate = await DateTimeHelper.pickDate(context, _selectedDate);
@@ -112,6 +119,7 @@ class SalesReturnController extends ChangeNotifier {
     }
   }
 
+  //save return .... cash & credit.
   void saveSaleReturn({
     required String itemId,
     required String qty,
@@ -124,7 +132,7 @@ class SalesReturnController extends ChangeNotifier {
     saleReturnItemModel.add(SalesReturnStoreModel(
       itemId: itemId,
       qty: reductionQtyList[index].value.text,
-      unitId: selectedUnitIdWithName,
+      unitId: '1_Pieces',
       price: price,
       subTotal: (double.parse(price) * double.parse(qty)).toString(),
       purchaseDetailsId: purchaseDetailsId,
@@ -141,6 +149,7 @@ class SalesReturnController extends ChangeNotifier {
     notifyListeners();
   }
 
+
   saveSaleReturnData() async {
     itemsCashReuturn = demoPurchaseReturnModelList;
     notifyListeners();
@@ -153,6 +162,7 @@ class SalesReturnController extends ChangeNotifier {
     return true;
   }
 
+  ///store sales store.
   Future<String> storeSalesReturen({
     required String amount,
     required String customerId,
@@ -167,7 +177,7 @@ class SalesReturnController extends ChangeNotifier {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? userId = prefs.getInt('user_id')?.toString();
 
-      DateTime _selectedDate = DateTime.now();
+      //DateTime _selectedDate = DateTime.now();
 
       final billNumber = billNoController.value.text;
       final discountValue = discount.isNotEmpty ? discount : "0";
@@ -176,9 +186,9 @@ class SalesReturnController extends ChangeNotifier {
 
       final url =
           "https://commercebook.site/api/v1/sales/return/store?user_id=$userId"
-          "&customer_id=17"
+          "&customer_id=$customerId"
           "&bill_number=$billNumber"
-          "&sale_date=$_selectedDate"
+          "&return_date=$formattedReturnDate"
           "&details_notes=notes"
           "&gross_total=$total"
           "&discount=$discountValue"
@@ -219,9 +229,7 @@ class SalesReturnController extends ChangeNotifier {
           return responseData["message"];
         }
 
-        //Controller Sale Return clear.
-
-        // saleReturnItemModel.clear();
+        
       } else {
         return "Error: ${response.statusCode} - ${response.reasonPhrase}";
       }
@@ -231,8 +239,6 @@ class SalesReturnController extends ChangeNotifier {
     }
   }
 
-   
-
   void addReductionQtyController(
       {required List<SalesReturnHistoryModel> data}) {
     data.forEach((e) {
@@ -241,45 +247,27 @@ class SalesReturnController extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<ItemModel> demoSalesReturnModelList = [];
-
   getAllQty() {
     int value = 0;
-    reductionQtyList.forEach((e) {
-      if (e.value.text != "" && e.value.text.isNotEmpty) {
-        value = value + int.parse(e.value.text);
-      }
-    });
-    return value;
-  }
-
-  getTotalPrice(List<SalesReturnHistoryModel> data) {
-    double value = 0;
-    for (int i = 0; i < reductionQtyList.length; i++) {
-      if (reductionQtyList[i].value.text != "" &&
-          reductionQtyList[i].value.text.isNotEmpty) {
-        value = value + double.parse(data[i].unitPrice.toString());
+    for (var e in reductionQtyList) {
+      if (e.text.trim().isNotEmpty) {
+        value += int.tryParse(e.text.trim()) ?? 0;
       }
     }
     return value;
   }
 
-  //start of form setting
+  getTotalPrice(List<SalesReturnHistoryModel> data) {
+    double total = 0;
+    for (int i = 0; i < reductionQtyList.length; i++) {
+      final qtyText = reductionQtyList[i].text.trim();
+      final qty = double.tryParse(qtyText) ?? 0.0;
+      final unitPrice = double.tryParse(data[i].unitPrice.toString()) ?? 0.0;
 
-  //cash portion
-  bool isReturnAmount = true;
-  bool isAdditionalCost = true;
-  bool isTotalReturnAmount = true;
-  bool isSalesAmount = true;
-  bool isDiscount = true;
-  bool isAdditionalCost2 = true;
-  bool isMergeAmount = true;
-
-  bool isDisocunt = true;
-
-  bool isDiscountCredit = true;
-
-  bool isSubTotalCredit = true;
+      total += qty * unitPrice;
+    }
+    return total.toStringAsFixed(2);
+  }
 
   void updateIsSubTotalCredit() {
     isSubTotalCredit = !isSubTotalCredit;
@@ -341,14 +329,6 @@ class SalesReturnController extends ChangeNotifier {
   }
 
   //credit portion
-  bool isAmount = true;
-  bool isAdditionalCostCredit = true;
-  bool isTotalAmount = true;
-  bool isPaymentType = true;
-  bool isPaymentAmount = true;
-  bool isDue = true;
-
-  bool isAmountCredit = true;
 
   void updateIsAmountCredit() {
     debugPrint("asdfsd amount");
@@ -515,42 +495,42 @@ class SalesReturnController extends ChangeNotifier {
   }
 
   ////===>Add cash Item
-  addCashItem() {
-    debugPrint(" item cash return ==== ${itemsCashReuturn.length}");
-    debugPrint(" item cash return ==== ${itemsCreditReturn.length}");
+  // addCashItem() {
+  //   debugPrint(" item cash return ==== ${itemsCashReuturn.length}");
+  //   debugPrint(" item cash return ==== ${itemsCreditReturn.length}");
 
-    debugPrint(
-        "Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
+  //   debugPrint(
+  //       "Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
 
-    itemsCashReuturn.add(ItemModel(
-      category: selectedCategory ?? "Category1",
-      subCategory: selectedSubCategory ?? "Sub Category1",
-      itemName: seletedItemName ?? "Item1",
-      itemCode: codeController.text,
-      mrp: mrpController.text,
-      quantity: qtyController.text,
-      total: amountController.text,
-    ));
+  //   itemsCashReuturn.add(ItemModel(
+  //     category: selectedCategory ?? "Category1",
+  //     subCategory: selectedSubCategory ?? "Sub Category1",
+  //     itemName: seletedItemName ?? "Item1",
+  //     itemCode: codeController.text,
+  //     mrp: mrpController.text,
+  //     quantity: qtyController.text,
+  //     total: amountController.text,
+  //   ));
 
-    saleItemReturn.add(SalesReturnStoreModel(
-        itemId: selcetedItemId,
-        price: mrpController.value.text,
-        qty: qtyController.value.text,
-        subTotal: (double.parse(mrpController.value.text) *
-                double.parse(qtyController.value.text))
-            .toString(),
-        unitId: selectedUnitIdWithName,
-        purchaseDetailsId: ''));
+  //   saleItemReturn.add(SalesReturnStoreModel(
+  //       itemId: selcetedItemId,
+  //       price: mrpController.value.text,
+  //       qty: qtyController.value.text,
+  //       subTotal: (double.parse(mrpController.value.text) *
+  //               double.parse(qtyController.value.text))
+  //           .toString(),
+  //       unitId: selectedUnitIdWithName,
+  //       purchaseDetailsId: ''));
 
-    codeController.clear();
-    mrpController.clear();
-    qtyController.clear();
-    amountController.clear();
-    unitController.clear();
-    priceController.clear();
+  //   codeController.clear();
+  //   mrpController.clear();
+  //   qtyController.clear();
+  //   amountController.clear();
+  //   unitController.clear();
+  //   priceController.clear();
 
-    notifyListeners();
-  }
+  //   notifyListeners();
+  // }
 
   ///===>Add Credit Item
   addCreditItem() {
@@ -614,11 +594,6 @@ class SalesReturnController extends ChangeNotifier {
 
   void removeCreditItem(int index) {
     itemsCreditReturn.removeAt(index);
-    notifyListeners();
-  }
-
-  void updatedOnlineMoney() {
-    isOnlineMoneyChecked = !isOnlineMoneyChecked;
     notifyListeners();
   }
 

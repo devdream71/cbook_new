@@ -1,9 +1,10 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
-import 'package:cbook_dt/feature/item/model/unit_model.dart';
 import 'package:cbook_dt/feature/item/provider/items_show_provider.dart';
-import 'package:cbook_dt/feature/item/provider/unit_provider.dart';
+import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:cbook_dt/feature/sales_return/controller/sales_return_controller.dart';
 import 'package:cbook_dt/feature/sales_return/model/sales_return_history_model.dart';
+import 'package:cbook_dt/feature/unit/model/unit_response_model.dart';
+import 'package:cbook_dt/feature/unit/provider/unit_provider.dart'; // ✅ Make sure this is UnitDTProvider
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,29 +22,25 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
   double totalReductionQty = 0;
   double totalPrice = 0;
 
-  List<String> unitIdsList = [];
-
   @override
   void initState() {
     super.initState();
 
-    // Fetch units when the page initializes
+    // ✅ Correct Provider used
     Future.delayed(Duration.zero, () {
-      Provider.of<UnitProvider>(context, listen: false).fetchUnits();
+      Provider.of<UnitDTProvider>(context, listen: false).fetchUnits();
     });
 
     Provider.of<SalesReturnController>(context, listen: false)
         .addReductionQtyController(data: widget.salesHistory);
+
     for (var history in widget.salesHistory) {
       _reductionControllers.putIfAbsent(
-          history.salesDetailsID, () => TextEditingController());
+        history.salesDetailsID,
+        () => TextEditingController(),
+      );
     }
-
-    final purchaseHistory = widget.salesHistory;
-    final haseDetailsHistoryID = purchaseHistory.first.salesDetailsID;
   }
-
-  TextEditingController priceController = TextEditingController();
 
   // Function to calculate total reduction quantity
   void calculateTotalReductionQty() {
@@ -57,209 +54,178 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
       totalReductionQty = total;
     });
 
-    calculateTotalPrice(); // Ensure total price updates correctly
+    //calculateTotalPrice(); // 🔁 Triggers price update
   }
 
-  // Function to calculate total price
-  void calculateTotalPrice() {
-    double total = 0;
+  ///calculate total price.
+  // void calculateTotalPrice() {
+  //   var controller =
+  //       Provider.of<PurchaseReturnController>(context, listen: false);
+  //   double total = 0;
 
-    for (var history in widget.salesHistory) {
-      double reductionQty = double.tryParse(
-              _reductionControllers[history.salesDetailsID]?.text.trim() ??
-                  '0') ??
-          0;
+  //   for (int i = 0; i < widget.purchaseHistory.length; i++) {
+  //     final history = widget.purchaseHistory[i];
+  //     final reductionText = controller.reductionQtyList[i].text.trim();
+  //     double reductionQty = double.tryParse(reductionText) ?? 0;
 
-       
+  //     if (reductionQty > history.currentQty) {
+  //       reductionQty = history.currentQty;
+  //     }
 
-      double unitQty = history.unitPrice.toDouble(); // Ensure unitQty is double
+  //     total += reductionQty * history.unitPrice;
+  //   }
 
-      total += reductionQty * unitQty;
-    }
-
-    setState(() {
-      totalPrice = total;
-    });
-  }
-
- 
+  //   setState(() {
+  //     totalPrice = total;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     final controller =
         Provider.of<SalesReturnController>(context, listen: false);
+    final colorScheme = Theme.of(context).colorScheme;
 
-    debugPrint(widget.salesHistory.length.toString());
-    debugPrint(widget.salesHistory.first.billNumber);
-
-    return Consumer<UnitProvider>(
+    return Consumer<UnitDTProvider>(
       builder: (context, unitProvider, child) {
         if (unitProvider.units.isEmpty) {
-          return Scaffold(
-            appBar: AppBar(title: const Text("Sales Return Details")),
-            body: const Center(child: CircularProgressIndicator()),
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
         return Scaffold(
-          appBar: AppBar(title: const Text("Sales Return Details")),
+          appBar: AppBar(
+            backgroundColor: colorScheme.primary,
+            leading: const BackButton(color: Colors.white),
+            title: const Text(
+              "Sales Return Details",
+              style: TextStyle(color: Colors.yellow, fontSize: 16),
+            ),
+          ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                // Scrollable history list
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: widget.salesHistory.length,
                     itemBuilder: (context, index) {
                       final history = widget.salesHistory[index];
-
-                      TextEditingController unitPriceController =
-                          TextEditingController(
-                        text: history.unitPrice.toString(),
+                      final unit = unitProvider.units.firstWhere(
+                        (u) => u.id == history.salesUnitId,
+                        orElse: () => UnitResponseModel(
+                          id: 0,
+                          name: 'Unknown',
+                          symbol: '',
+                          status: 0,
+                        ),
                       );
-
-                      
-                      List<String> allowedUnits = [];
-
-                      final primaryUnit = unitProvider.units.firstWhere(
-                        (unit) => unit.id == history.itemID,
-                        orElse: () =>
-                            Unit(id: 0, name: 'Unknown', symbol: '', status: 0),
-                      );
-                      if (primaryUnit.id != 0) {
-                        allowedUnits.add(primaryUnit.name);
-                      }
-
-                      // Optional: if your model has secondaryUnitID
-                      if (history.itemID != null) {
-                        final secondaryUnit = unitProvider.units.firstWhere(
-                          (unit) => unit.id == history.itemID,
-                          orElse: () => Unit(
-                              id: 0, name: 'Unknown', symbol: '', status: 0),
-                        );
-                        if (secondaryUnit.id != 0 &&
-                            secondaryUnit.name != primaryUnit.name) {
-                          allowedUnits.add(secondaryUnit.name);
-                        }
-                      }
 
                       return Card(
                         color: Colors.white70,
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Bill: ${history.billNumber},",
-                                  style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black)),
-
-                              Text("Date: ${history.purchaseDate}",
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 13,
-                                  )),
-                              Text("Bill Qty: ${history.billQty}",
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 13,
-                                  )),
-                              Text("Rate: ${history.rate}",
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 13,
-                                  )),
-
-                              Text("Unit Qty: ${history.unitQty}",
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 13,
-                                  )),
-
-                              Text(
-                                "Unit Price: ${history.unitPrice}",
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 13,
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Bill: ${history.billNumber}",
+                                      style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black)),
+                                  Text("Date: ${history.purchaseDate}",
+                                      style: const TextStyle(
+                                          fontSize: 13, color: Colors.black)),
+                                  Text("Bill Qty: ${history.billQty}",
+                                      style: const TextStyle(
+                                          fontSize: 13, color: Colors.black)),
+                                  Text("Rate: ${history.rate}",
+                                      style: const TextStyle(
+                                          fontSize: 13, color: Colors.black)),
+                                  Text("Unit Qty: ${history.unitQty}",
+                                      style: const TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("Unit Price: ${history.unitPrice}",
+                                      style: const TextStyle(
+                                          fontSize: 13, color: Colors.black)),
+                                  const Text("Reduction Qty",
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.black)),
+                                  const SizedBox(height: 3),
+                                ],
                               ),
-
-                              SizedBox(
-                                width: 200,
-                                height: 30,
-                                child: TextField(
-                                  controller: unitPriceController,
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    labelText: "Unit Price",
-                                    labelStyle: TextStyle(fontSize: 12),
-                                    border: OutlineInputBorder(),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 8),
+                              Column(
+                                children: [
+                                  // Unit Price
+                                  SizedBox(
+                                    width: 100,
+                                    child: AddSalesFormfield(
+                                      height: 30,
+                                      labelText: "Price",
+                                      controller: TextEditingController(
+                                        text: history.unitPrice,
+                                      ),
+                                      readOnly: true,
+                                    ),
                                   ),
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.black),
-                                  onChanged: (value) {
-                                    debugPrint("top most $value");
-                                  }
-                                ),
-                              ),
+                                  const SizedBox(height: 6),
 
-                              const SizedBox(height: 10),
-                              const Text("Reduction Qty",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 12)),
-                              const SizedBox(height: 3),
-
-                              ///reduction
-                              SizedBox(
-                                width: 200,
-                                height: 30,
-                                child: TextField(
-                                   
-                                  controller:
-                                      controller.reductionQtyList[index],
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    labelText: "Reduction Qty",
-                                    labelStyle: TextStyle(fontSize: 12),
-                                    border: OutlineInputBorder(),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 8),
+                                  // ✅ Unit Name
+                                  SizedBox(
+                                    width: 100,
+                                    child: AddSalesFormfield(
+                                      height: 30,
+                                      labelText: "Unit",
+                                      controller: TextEditingController(
+                                        text: unit.name,
+                                      ),
+                                      readOnly: true,
+                                    ),
                                   ),
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.black),
-                                  onChanged: (value) {
-                                    debugPrint("top most $value");
+                                  const SizedBox(height: 6),
 
-                                    controller.saveSaleReturn(
-                                        itemId: history.itemID.toString(),
-                                        qty: controller
-                                            .reductionQtyList[index].value.text,
-                                        index: index,
-                                        price: history.unitPrice.toString(),
-                                        purchaseDetailsId:
-                                            history.salesDetailsID.toString(),
-                                        itemName: Provider.of<AddItemProvider>(
-                                                context,
-                                                listen: false)
-                                            .getItemName(history.itemID),
-                                        unitName:
-                                            controller.selectedUnit.toString());
+                                  // Reduction Qty
+                                  SizedBox(
+                                    width: 100,
+                                    height: 30,
+                                    child: AddSalesFormfield(
+                                      labelText: "Reduction Qty",
+                                      controller:
+                                          controller.reductionQtyList[index],
+                                      keyboardType: TextInputType.number,
+                                      onChanged: (value) {
+                                        calculateTotalReductionQty();
+                                        ();
 
-
+                                        controller.saveSaleReturn(
+                                          itemId: history.itemID.toString(),
+                                          qty: value,
+                                          index: index,
+                                          price: history.unitPrice.toString(),
+                                          purchaseDetailsId:
+                                              history.salesDetailsID.toString(),
+                                          itemName:
+                                              Provider.of<AddItemProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .getItemName(history.itemID),
+                                          unitName: unit.name,
+                                        );
 
                                      
-                                  },
-                                ),
-                              ),
-
-                               
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ),
@@ -267,72 +233,52 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                     },
                   ),
                 ),
-                // Fixed Total Qty and Price row
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Text("All QTY: ${controller.getAllQty()}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black)),
+                      Text("PC: ${controller.getAllQty()}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black)),
                       Text(
-                        "All QTY: ${controller.getAllQty()}",
+                        "Total Price: ৳${controller.getTotalPrice(widget.salesHistory)}",
                         style: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                      Text(
-                        "PTK: $totalReductionQty",
-                        style: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Total Price: ${controller.getTotalPrice(widget.salesHistory)}",
-                        style: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      )
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
-
+                const SizedBox(height: 15),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                      onPressed: () async {
-                        final bool isSucces = controller.isCash
-                            ? await controller.saveSaleReturnData()
-                            : await controller.saveSaleReturnCreaditData();
+                    onPressed: () async {
+                      final bool isSuccess = controller.isCash
+                          ? await controller.saveSaleReturnData()
+                          : await controller.saveSaleReturnCreaditData();
 
-                        debugPrint(
-                            "Sale item return  ${controller.itemsCashReuturn.length}");
-                        debugPrint(
-                            "Sale item return  ${controller.itemsCash.length}");
-                        debugPrint(
-                            "Sale item return  ${controller.saleItemReturn.length}");
-                        debugPrint(
-                            "Sale item return  ${controller.itemsCashSales.length}");
-                        debugPrint(
-                            "Sale item return  ${controller.saleReturnItemModel}");
-                        debugPrint(
-                            "Sale item return  ${controller.demoPurchaseReturnModelList}");
-
-                        if (isSucces) {
-                          Navigator.pop(context);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10))),
-                      child: const Text(
-                        "Save",
-                        style: TextStyle(color: Colors.white),
-                      ),),
+                      if (isSuccess) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: const Text("Save",
+                        style: TextStyle(color: Colors.white)),
+                  ),
                 ),
-
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
