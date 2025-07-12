@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,6 +56,7 @@ class _ItemSettingsPageState extends State<ItemSettingsPage> {
     }
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
@@ -95,7 +97,8 @@ class _ItemSettingsPageState extends State<ItemSettingsPage> {
                 child: Switch(
                   inactiveThumbColor: const Color(0xff278d46),
                   activeTrackColor: const Color(0xff278d46),
-                  trackOutlineColor: WidgetStateProperty.all(const Color(0xff278d46)),
+                  trackOutlineColor:
+                      WidgetStateProperty.all(const Color(0xff278d46)),
                   value: _isSwitchedCategory,
                   onChanged: (bool value) {
                     setState(() {
@@ -121,7 +124,8 @@ class _ItemSettingsPageState extends State<ItemSettingsPage> {
                 child: Switch(
                   inactiveThumbColor: const Color(0xff278d46),
                   activeTrackColor: const Color(0xff278d46),
-                  trackOutlineColor: WidgetStateProperty.all(const Color(0xff278d46)),
+                  trackOutlineColor:
+                      WidgetStateProperty.all(const Color(0xff278d46)),
                   value: _isSwitchedPrice,
                   onChanged: (bool value) {
                     setState(() {
@@ -147,7 +151,8 @@ class _ItemSettingsPageState extends State<ItemSettingsPage> {
                 child: Switch(
                   inactiveThumbColor: const Color(0xff278d46),
                   activeTrackColor: const Color(0xff278d46),
-                  trackOutlineColor: WidgetStateProperty.all(const Color(0xff278d46)),
+                  trackOutlineColor:
+                      WidgetStateProperty.all(const Color(0xff278d46)),
                   value: _isSwitchedCategoryPrice,
                   onChanged: (bool value) {
                     setState(() {
@@ -173,7 +178,8 @@ class _ItemSettingsPageState extends State<ItemSettingsPage> {
                 child: Switch(
                   inactiveThumbColor: const Color(0xff278d46),
                   activeTrackColor: const Color(0xff278d46),
-                  trackOutlineColor: WidgetStateProperty.all(const Color(0xff278d46)),
+                  trackOutlineColor:
+                      WidgetStateProperty.all(const Color(0xff278d46)),
                   value: _isStataus,
                   onChanged: (bool value) {
                     setState(() {
@@ -199,7 +205,8 @@ class _ItemSettingsPageState extends State<ItemSettingsPage> {
                 child: Switch(
                   inactiveThumbColor: const Color(0xff278d46),
                   activeTrackColor: const Color(0xff278d46),
-                  trackOutlineColor: WidgetStateProperty.all(const Color(0xff278d46)),
+                  trackOutlineColor:
+                      WidgetStateProperty.all(const Color(0xff278d46)),
                   value: _isSwitchedQtyPrice,
                   onChanged: (bool value) {
                     setState(() {

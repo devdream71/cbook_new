@@ -88,7 +88,7 @@ class _ItemListPageState extends State<ItemListPage> {
     final controller = context.watch<SalesController>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

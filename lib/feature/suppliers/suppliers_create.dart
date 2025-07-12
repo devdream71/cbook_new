@@ -144,6 +144,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
@@ -163,9 +164,9 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               AddSalesFormfield(
-                labelText: "Enter Supplier Name",
+                labelText: "Supplier Name",
                 height: 40,
-                label: "",
+               
                 controller: _nameController,
                 //validator: _validateRequired,
               ),
@@ -173,29 +174,20 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                 height: 12,
               ),
               AddSalesFormfield(
-                labelText: "Enter Proprietor Name",
+                labelText: "Proprietor Name",
                 height: 40,
-                label: "",
+              
                 controller: _proprietorController,
                 //validator: _validateRequired,
               ),
+
               const SizedBox(
                 height: 12,
               ),
               AddSalesFormfield(
-                labelText: "Enter Email",
+                labelText: "Phone",
                 height: 40,
-                label: "",
-                controller: _emailController,
-                //validator: _validateRequired,
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              AddSalesFormfield(
-                labelText: "Enter Phone",
-                height: 40,
-                label: "",
+               
                 controller: _phoneController,
                 keyboardType: TextInputType.number,
                 //validator: _validateRequired,
@@ -204,9 +196,20 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                 height: 12,
               ),
               AddSalesFormfield(
-                labelText: "Enter Address",
+                labelText: "Email",
                 height: 40,
-                label: "",
+               
+                controller: _emailController,
+                //validator: _validateRequired,
+              ),
+              
+              const SizedBox(
+                height: 12,
+              ),
+              AddSalesFormfield(
+                labelText: "Address",
+                height: 40,
+                
                 controller: _addressController,
                 //validator: _validateRequired,
               ),
@@ -218,9 +221,9 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                   Expanded(
                     child: AddSalesFormfield(
                       keyboardType: TextInputType.number,
-                      labelText: "Enter Opening Balance",
+                      labelText: "Opening Balance",
                       height: 40,
-                      label: "",
+                    
                       controller: _opiningBanglaceController,
                       //validator: _validateRequired,
                     ),
@@ -233,10 +236,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Date",
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
+                       
                         Container(
                           height: 40,
                           width: double.maxFinite,
@@ -413,7 +413,9 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                 ],
               ),
               const SizedBox(height: 8),
-              const SizedBox(height: 20),
+
+              const Spacer(),
+              
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -430,6 +432,8 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                       style: TextStyle(color: Colors.white)),
                 ),
               ),
+
+               const SizedBox(height: 50,)
             ],
           ),
         ),

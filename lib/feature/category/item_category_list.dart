@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/category/category_update.dart';
 import 'package:cbook_dt/feature/category/create_category.dart';
 import 'package:cbook_dt/feature/category/provider/category_provider.dart';
@@ -16,50 +17,11 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
     Future.microtask(() => context.read<CategoryProvider>().fetchCategories());
   }
 
-  void _confirmDelete(BuildContext context, int categoryId) async {
-    final confirm = await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Confirm Delete"),
-          content: const Text(
-            "Are you sure you want to delete this category?",
-            style: TextStyle(color: Colors.black),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: const Text("Delete", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirm == true) {
-      await context.read<CategoryProvider>().deleteCategory(categoryId);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Category Delete successfully!"),
-          backgroundColor: Colors.green,
-        ),
-      );
-    }
-     
-     
-
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         //centerTitle: true,
@@ -102,33 +64,9 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(0.0),
         child: Column(
           children: [
-            // SizedBox(
-            //   width: double.infinity,
-            //   child: ElevatedButton(
-            //     onPressed: () {
-            //       Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //             builder: (context) => const CreateCategory()),
-            //       );
-            //     },
-            //     style: ElevatedButton.styleFrom(
-            //       backgroundColor: AppColors.primaryColor,
-            //       padding:
-            //           const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            //       shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(10),
-            //       ),
-            //     ),
-            //     child: const Text(
-            //       "Add Category",
-            //       style: TextStyle(color: Colors.white),
-            //     ),
-            //   ),
-            // ),
             Expanded(
               child: Consumer<CategoryProvider>(
                 builder: (context, provider, child) {
@@ -145,50 +83,32 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
                     itemCount: provider.categories.length,
                     itemBuilder: (context, index) {
                       final category = provider.categories[index];
-                      return Card(
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.only(left: 16),
-                          leading: CircleAvatar(
-                            radius: 15,
-                            child: Text('${index + 1}'),
-                          ),
-                          title: Text(category.name,
-                              style: const TextStyle(fontSize: 12)),
-                          trailing: PopupMenuButton<String>(
-                            position: PopupMenuPosition.under,
-                            onSelected: (value) async {
-                              if (value == 'Edit') {
-                                // Implement Edit Functionality
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        UpdateCategory(categoryId: category.id),
-                                  ),
-                                );
-                                debugPrint("Edit Category ID: ${category.id}");
-                              } else if (value == 'delete') {
-                                _confirmDelete(context, category.id);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(
-                                value: 'Edit',
-                                child: ListTile(
-                                  leading: Icon(Icons.edit, color: Colors.blue),
-                                  title: Text('Edit'),
-                                ),
+
+                      final categoryId = provider.categories[index].id;
+
+                      return InkWell(
+                        onLongPress: () {
+                          editDeleteDialog(context, categoryId.toString());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                              side: BorderSide(color: Colors.grey.shade300),
+                            ),
+                            elevation: 0,
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.only(left: 16),
+                              leading: CircleAvatar(
+                                radius: 15,
+                                child: Text('${index + 1}'),
                               ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: ListTile(
-                                  leading:
-                                      Icon(Icons.delete, color: Colors.red),
-                                  title: Text('Delete'),
-                                ),
-                              ),
-                            ],
-                            icon: const Icon(Icons.more_vert),
+                              title: Text(category.name,
+                                  style: const TextStyle(fontSize: 12)),
+                          
+                              
+                            ),
                           ),
                         ),
                       );
@@ -202,4 +122,154 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
       ),
     );
   }
+
+  Future<dynamic> editDeleteDialog(
+    BuildContext context,
+    String categoryId,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              UpdateCategory(categoryId: int.parse(categoryId)),
+                        ),
+                      );
+                    });
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, categoryId);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context, String categoryId) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Category',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this Category?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final provider =
+                  Provider.of<CategoryProvider>(context, listen: false);
+              // bool isDeleted = await provider.deleteUnit(int.parse(unitId));
+
+              bool isDeleted =
+                  await provider.deleteCategory(int.parse(categoryId));
+
+              Navigator.of(context).pop(); // Close confirm dialog
+
+              if (isDeleted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Category deleted successfully!',
+                      style: TextStyle(color: colorScheme.primary),
+                    ),
+                    //backgroundColor: ,
+                    backgroundColor: Colors.green,
+                  ),
+                  
+                );
+                await provider.fetchCategories(); // Refresh list
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Failed to delete Category',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

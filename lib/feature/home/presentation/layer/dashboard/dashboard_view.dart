@@ -58,7 +58,7 @@ class _Layout extends StatelessWidget {
         child: SafeArea(
           child: Scaffold(
              //backgroundColor: colorScheme.surface,
-            backgroundColor :Colors.white,
+            backgroundColor: AppColors.sfWhite,
             floatingActionButton: Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),

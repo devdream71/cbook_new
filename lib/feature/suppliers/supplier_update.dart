@@ -69,6 +69,7 @@ class _SupplierUpdateState extends State<SupplierUpdate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(title: const Text("Update Supplier")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -184,6 +185,8 @@ class _SupplierUpdateState extends State<SupplierUpdate> {
                 ),
               ),
             ),
+
+             const SizedBox(height: 50,)
           ],
         ),
       ),

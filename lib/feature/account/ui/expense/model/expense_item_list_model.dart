@@ -23,6 +23,7 @@ class ExpenseData {
   String receivedTo;
   int totalAmount;
   String notes;
+  int accountID;
 
   ExpenseData({
     required this.id,
@@ -33,6 +34,7 @@ class ExpenseData {
     required this.receivedTo,
     required this.totalAmount,
     required this.notes,
+    required this.accountID,
   });
 
   factory ExpenseData.fromJson(Map<String, dynamic> json) {
@@ -45,6 +47,7 @@ class ExpenseData {
       receivedTo: json['received_to'] ?? '',
       totalAmount: json['total_amount'] ?? 0,
       notes: json['notes'] ?? '',
+      accountID: json['account_id'],
     );
   }
 }

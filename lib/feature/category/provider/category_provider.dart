@@ -17,7 +17,7 @@ class CategoryProvider extends ChangeNotifier {
 
   List<ItemSubCategory> subcategories = [];
 
-  ////====> category fetch
+  ///====> category fetch
   Future<void> fetchCategories() async {
     isLoading = true;
     notifyListeners();
@@ -48,7 +48,7 @@ class CategoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  ////  Create Category   ========>>>
+  ///Create Category   ========>>>
   Future<void> createCategory(String name, String status) async {
     isAdding = true;
     notifyListeners();
@@ -85,28 +85,58 @@ class CategoryProvider extends ChangeNotifier {
   }
 
   ////=====> delete category .
-  Future<void> deleteCategory(int categoryId) async {
-    try {
-      final response = await http.post(
-        Uri.parse(
-            'https://commercebook.site/api/v1/item-categories/remove/$categoryId'),
-        headers: {'Accept': 'application/json'},
-      );
+  ///
+   
+   Future<bool> deleteCategory(int categoryId) async {
+  try {
+    final response = await http.post(
+      Uri.parse(
+          'https://commercebook.site/api/v1/item-categories/remove/$categoryId'),
+      headers: {'Accept': 'application/json'},
+    );
 
-      final Map<String, dynamic> responseData = json.decode(response.body);
+    final Map<String, dynamic> responseData = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseData['success'] == true) {
-        categories.removeWhere((category) => category.id == categoryId);
-        notifyListeners();
+    if (response.statusCode == 200 && responseData['success'] == true) {
+      categories.removeWhere((category) => category.id == categoryId);
+      notifyListeners();
 
-        debugPrint("Category deleted successfully");
-      } else {
-        debugPrint("Failed to delete category: ${responseData['message']}");
-      }
-    } catch (error) {
-      debugPrint("Error deleting category: $error");
+      debugPrint("Category deleted successfully");
+      return true; // ✅ Success
+    } else {
+      debugPrint("Failed to delete category: ${responseData['message']}");
+      return false; // ❌ Failure
     }
+  } catch (error) {
+    debugPrint("Error deleting category: $error");
+    return false; // ❌ Exception failure
   }
+}
+
+
+
+  // Future<void> deleteCategory(int categoryId) async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(
+  //           'https://commercebook.site/api/v1/item-categories/remove/$categoryId'),
+  //       headers: {'Accept': 'application/json'},
+  //     );
+
+  //     final Map<String, dynamic> responseData = json.decode(response.body);
+
+  //     if (response.statusCode == 200 && responseData['success'] == true) {
+  //       categories.removeWhere((category) => category.id == categoryId);
+  //       notifyListeners();
+
+  //       debugPrint("Category deleted successfully");
+  //     } else {
+  //       debugPrint("Failed to delete category: ${responseData['message']}");
+  //     }
+  //   } catch (error) {
+  //     debugPrint("Error deleting category: $error");
+  //   }
+  // }
 
   ////get update catagory
   Future<EditCategoryModel?> fetchCategoryById(int id) async {
@@ -187,29 +217,55 @@ class CategoryProvider extends ChangeNotifier {
 
 ////delete sub category
   ////=====> delete category .
-  Future<void> deleteSubCategory(int subcategoryId) async {
-    try {
-      final response = await http.post(
-        Uri.parse(
-            'https://commercebook.site/api/v1/item-subcategories/remove/$subcategoryId'),
-        headers: {'Accept': 'application/json'},
-      );
+  // Future<void> deleteSubCategory(int subcategoryId) async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(
+  //           'https://commercebook.site/api/v1/item-subcategories/remove/$subcategoryId'),
+  //       headers: {'Accept': 'application/json'},
+  //     );
 
-      final Map<String, dynamic> responseData = json.decode(response.body);
+  //     final Map<String, dynamic> responseData = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseData['success'] == true) {
-        subcategories
-            .removeWhere((subcategory) => subcategory.id == subcategoryId);
-        notifyListeners();
+  //     if (response.statusCode == 200 && responseData['success'] == true) {
+  //       subcategories
+  //           .removeWhere((subcategory) => subcategory.id == subcategoryId);
+  //       notifyListeners();
 
-        debugPrint("Sub Category deleted successfully");
-      } else {
-        debugPrint("Failed to delete Sub category: ${responseData['message']}");
-      }
-    } catch (error) {
-      debugPrint("Error deleting category: $error");
+  //       debugPrint("Sub Category deleted successfully");
+  //     } else {
+  //       debugPrint("Failed to delete Sub category: ${responseData['message']}");
+  //     }
+  //   } catch (error) {
+  //     debugPrint("Error deleting category: $error");
+  //   }
+  // }
+
+  Future<bool> deleteSubCategory(int subcategoryId) async {
+  try {
+    final response = await http.post(
+      Uri.parse(
+          'https://commercebook.site/api/v1/item-subcategories/remove/$subcategoryId'),
+      headers: {'Accept': 'application/json'},
+    );
+
+    final Map<String, dynamic> responseData = json.decode(response.body);
+
+    if (response.statusCode == 200 && responseData['success'] == true) {
+      subcategories.removeWhere((subcategory) => subcategory.id == subcategoryId);
+      notifyListeners();
+
+      debugPrint("Sub Category deleted successfully");
+      return true; // ✅ Return success
+    } else {
+      debugPrint("Failed to delete Sub category: ${responseData['message']}");
+      return false; // ❌ Return failure
     }
+  } catch (error) {
+    debugPrint("Error deleting Sub category: $error");
+    return false; // ❌ Return failure on exception
   }
+}
 
 //create sub category
 

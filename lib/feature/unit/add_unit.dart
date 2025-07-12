@@ -55,6 +55,7 @@ class _AddUnitState extends State<AddUnit> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -67,73 +68,82 @@ class _AddUnitState extends State<AddUnit> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                vPad10,
-                AddSalesFormfield(
-                  labelText: "Name",
-                  height: 40,
-                  label: "",
-                  controller: nameController,
-                ),
-                AddSalesFormfield(
-                  labelText: 'Symbol',
-                  height: 40,
-                  label: "",
-                  controller: symbolController,
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  "Status",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomDropdownTwo(
-                    items: const ["Active", "Inactive"], // Display labels
-                    hint: '', //Select status
-                    width: double.infinity,
-                    height: 40,
-                    value: selectedStatus == "1"
-                        ? "Active"
-                        : "Inactive", // ✅ reflect selection
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = (value == "Active")
-                            ? "1"
-                            : "0"; // ✅ Convert label to 1 or 0
-                      });
-                      debugPrint(selectedStatus);
-                    },
-                  ),
-                ),
-                const SizedBox(height: 25),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _saveUnit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+          child: Column(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    vPad10,
+                    AddSalesFormfield(
+                      labelText: "Name",
+                      height: 40,
+                      controller: nameController,
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    AddSalesFormfield(
+                      labelText: 'Symbol',
+                      height: 40,
+                      controller: symbolController,
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    const Text(
+                      "Status",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomDropdownTwo(
+                        items: const ["Active", "Inactive"], // Display labels
+                        hint: '', //Select status
+                        width: double.infinity,
+                        height: 40,
+                        value: selectedStatus == "1"
+                            ? "Active"
+                            : "Inactive", // ✅ reflect selection
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = (value == "Active")
+                                ? "1"
+                                : "0"; // ✅ Convert label to 1 or 0
+                          });
+                          debugPrint(selectedStatus);
+                        },
                       ),
                     ),
-                    child: const Text(
-                      "Save Unit",
-                      style: TextStyle(color: Colors.white),
+                    const SizedBox(height: 25),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _saveUnit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
+                  child: const Text(
+                    "Save Unit",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-              ],
-            ),
+              ),
+
+               const SizedBox(height: 50,)
+            ],
           ),
         ),
       ),

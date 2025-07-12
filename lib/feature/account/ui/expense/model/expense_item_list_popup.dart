@@ -1,16 +1,16 @@
 class ExpenseItemPopUp {
-  final String accountId;
+  final String itemAccountId;
   final String narration;
   final String amount;
 
   ExpenseItemPopUp({
-    required this.accountId,
+    required this.itemAccountId,
     required this.narration,
     required this.amount,
   });
 
   Map<String, dynamic> toJson() => {
-        'account_id': accountId,
+        'account_id': itemAccountId,
         'narration': narration,
         'amount': amount,
         

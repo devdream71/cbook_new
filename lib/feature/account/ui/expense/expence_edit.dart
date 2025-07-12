@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
@@ -23,33 +24,27 @@ class ExpenseEdit extends StatefulWidget {
 
 class _ExpenseEditState extends State<ExpenseEdit> {
   String? selectedReceivedTo;
-
   String? selectedAccount;
-
   int? selectedAccountId;
-
-
   String? selectedBillPerson;
   int? selectedBillPersonId;
   BillPersonModel? selectedBillPersonData;
-
-
-
-
   TextEditingController billNoController = TextEditingController();
   late TextEditingController voucherNumberController;
   String billNo = '';
   String billDate = '';
 
-
   @override
   void initState() {
     super.initState();
-    voucherNumberController = TextEditingController();
 
+    voucherNumberController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ///expense provider
       final providerExpense =
           Provider.of<ExpenseProvider>(context, listen: false);
+
+      ///income provider
       final provider =
           Provider.of<IncomeProvider>(context, listen: false); // 👈 Add this
 
@@ -59,10 +54,32 @@ class _ExpenseEditState extends State<ExpenseEdit> {
       /// ✅ Then fetch Edit Expense
       await providerExpense.fetchEditExpense(widget.expenseId);
 
-    
+      ///fetch bill person
+      Future.microtask(() =>
+          Provider.of<PaymentVoucherProvider>(context, listen: false)
+              .fetchBillPersons());
+
+      final billPersonList =
+          Provider.of<PaymentVoucherProvider>(context, listen: false)
+              .billPersons;
+
+      int billPersonIdFromApi =
+          providerExpense.editExpenseData?.billPersonId ?? 0; //billPersonId
+
+      final matchingBillPerson = billPersonList.firstWhere(
+        (person) => person.id == billPersonIdFromApi,
+        orElse: () => billPersonList.first,
+      );
+
+      selectedBillPerson = matchingBillPerson.name;
+      selectedBillPersonData = matchingBillPerson;
+      selectedBillPersonId = matchingBillPerson.id;
+
+      debugPrint('✅ Bill Person Preselected: $selectedBillPerson');
 
       voucherNumberController.text =
           providerExpense.editExpenseData?.voucherNumber ?? '';
+
       billDate = providerExpense.editExpenseData?.voucherDate ?? '';
 
       /// Paid to mapping
@@ -74,7 +91,6 @@ class _ExpenseEditState extends State<ExpenseEdit> {
         selectedReceivedTo = 'Bank';
         await provider.fetchAccounts('bank'); // Fetch related accounts
       }
-
 
       /// ✅ Preselect Account Name based on accountId
       int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
@@ -91,8 +107,34 @@ class _ExpenseEditState extends State<ExpenseEdit> {
 
         debugPrint('Selected Account from API: $selectedAccount');
       }
-
       setState(() {});
+    });
+  }
+
+  void resetForm() {
+    setState(() {
+      // Dropdowns and selections
+      selectedReceivedTo = null;
+      selectedAccount = null;
+      selectedAccountId = null;
+
+      selectedBillPerson = null;
+      selectedBillPersonId = null;
+      selectedBillPersonData = null;
+
+      // Text input
+      billNoController.clear();
+      billNo = '';
+
+      // Date
+      final now = DateTime.now();
+      final formattedDate =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      Provider.of<SalesController>(context, listen: false).formattedDate2 =
+          formattedDate;
+
+      // Clear added items
+      Provider.of<ExpenseProvider>(context, listen: false).clearReceiptItems();
     });
   }
 
@@ -119,6 +161,7 @@ class _ExpenseEditState extends State<ExpenseEdit> {
     // ✅ Show loading indicator while data is fetching
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
@@ -252,50 +295,52 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           //bill person
-                           
-                           Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Consumer<PaymentVoucherProvider>(
-                        builder: (context, provider, child) {
-                          return SizedBox(
-                            height: 30,
-                            width: 130,
-                            child: provider.isLoading
-                                ? const Center(
-                                    child: CircularProgressIndicator())
-                                : CustomDropdownTwo(
-                                    hint: '',
-                                    items: provider.billPersonNames,
-                                    width: double.infinity,
-                                    height: 30,
-                                    labelText: 'Bill Person',
-                                    selectedItem: selectedBillPerson,
-                                    onChanged: (value) {
-                                      debugPrint(
-                                          '=== Bill Person Selected: $value ===');
-                                      setState(() {
-                                        selectedBillPerson = value;
-                                        selectedBillPersonData =
-                                            provider.billPersons.firstWhere(
-                                          (person) => person.name == value,
-                                        ); // ✅ Save the whole object globally
-                                        selectedBillPersonId =
-                                            selectedBillPersonData!.id;
-                                      });
 
-                                      debugPrint(
-                                          'Selected Bill Person Details:');
-                                      debugPrint(
-                                          '- ID: ${selectedBillPersonData!.id}');
-                                      debugPrint(
-                                          '- Name: ${selectedBillPersonData!.name}');
-                                      debugPrint(
-                                          '- Phone: ${selectedBillPersonData!.phone}');
-                                    }),
-                          );
-                        },
-                      ),
-                    ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Consumer<PaymentVoucherProvider>(
+                              builder: (context, provider, child) {
+                                return SizedBox(
+                                  height: 30,
+                                  width: 130,
+                                  child: provider.isLoading
+                                      ? const Center(
+                                          child: CircularProgressIndicator())
+                                      : CustomDropdownTwo(
+                                          hint: '',
+                                          items: provider.billPersonNames,
+                                          width: double.infinity,
+                                          height: 30,
+                                          labelText: 'Bill Person',
+                                          selectedItem: selectedBillPerson,
+                                          onChanged: (value) {
+                                            debugPrint(
+                                                '=== Bill Person Selected: $value ===');
+                                            setState(() {
+                                              selectedBillPerson = value;
+                                              selectedBillPersonData = provider
+                                                  .billPersons
+                                                  .firstWhere(
+                                                (person) =>
+                                                    person.name == value,
+                                              ); // ✅ Save the whole object globally
+                                              selectedBillPersonId =
+                                                  selectedBillPersonData!.id;
+                                            });
+
+                                            debugPrint(
+                                                'Selected Bill Person Details:');
+                                            debugPrint(
+                                                '- ID: ${selectedBillPersonData!.id}');
+                                            debugPrint(
+                                                '- Name: ${selectedBillPersonData!.name}');
+                                            debugPrint(
+                                                '- Phone: ${selectedBillPersonData!.phone}');
+                                          }),
+                                );
+                              },
+                            ),
+                          ),
                           // Bill No Field
 
                           const SizedBox(
@@ -305,7 +350,7 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                           ///bill no, bill person
                           SizedBox(
                             height: 30,
-                            width: 90,
+                            width: 130,
                             child: TextField(
                               style: const TextStyle(
                                 color: Colors.black,
@@ -345,7 +390,7 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                           ///bill date
                           SizedBox(
                             height: 30,
-                            width: 90,
+                            width: 130,
                             child: InkWell(
                               // onTap: () => controller.pickDate(
                               //     context), // Trigger the date picker
@@ -466,9 +511,18 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
+                                // Text(
+                                //   item.purchaseId.toString(),
+                                //   style: const TextStyle(
+                                //     fontWeight: FontWeight.bold,
+                                //     fontSize: 14,
+                                //     color: Colors.black,
+                                //   ),
+                                //   textAlign: TextAlign.center,
+                                // ),
                                 const SizedBox(height: 1),
                                 Text(
-                                  item.note,
+                                  (item.note ?? ''),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.black54,
@@ -496,8 +550,19 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                                   child: Icon(Icons.close, size: 20),
                                 ),
                                 onPressed: () {
-                                  providerExpense.receiptItems.remove(item);
-                                  providerExpense.notifyListeners();
+                                  showDeleteConfirmationDialog(
+                                    context: context,
+                                    onConfirm: () {
+                                      setState(() {
+                                        providerExpense.receiptItems
+                                            .remove(item);
+                                        providerExpense.notifyListeners();
+                                      });
+                                    },
+                                  );
+
+                                  // providerExpense.receiptItems.remove(item);
+                                  // providerExpense.notifyListeners();
                                 },
                               ),
                             ],
@@ -627,7 +692,8 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                       return;
                     }
 
-                    const date = "2025-06-10";
+                    final date = billDate;
+
                     final paidTo =
                         (selectedReceivedTo ?? '').toLowerCase().trim() ==
                                 'cash in hand'
@@ -654,10 +720,15 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                     final List<ExpenseItemPopUp> expenseItems =
                         providerExpense.receiptItems.map((item) {
                       return ExpenseItemPopUp(
-                        accountId: providerExpense.selectedAccountForUpdate?.id
-                                .toString() ??
-                            '',
-                        narration: item.note,
+                        // accountId: providerExpense.selectedAccountForUpdate?.id
+                        //         .toString() ??
+                        //     '',
+
+                        // narration: item.note,
+
+                        //accountId: item.purchaseId.toString(),
+                        itemAccountId: item.purchaseId.toString(),
+                        narration: item.note ?? '',
                         amount: item.amount.toString(),
                       );
                     }).toList();
@@ -665,7 +736,7 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                     debugPrint('Sending Data:');
                     debugPrint('User ID: $userId');
                     debugPrint('Expense No: $invoiceNo');
-                    debugPrint('Date: $date');
+                    print("Selected date: $billDate");
                     debugPrint('Paid To: $paidTo');
                     debugPrint('Account: $account');
                     debugPrint('Total Amount: $totalAmount');
@@ -675,23 +746,25 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                         'Expense Items: ${expenseItems.map((e) => e.toJson()).toList()}');
 
                     bool success = await providerExpense.updateExpense(
-                      expenseId: expenseId,
-                      userId: userId,
-                      invoiceNo: invoiceNo,
-                      date: date,
-                      paidTo: paidTo,
-                      account: account,
-                      totalAmount: totalAmount,
-                      notes: notes,
-                      status: status,
-                      expenseItems: expenseItems,
-                    );
+                        expenseId: expenseId,
+                        userId: userId,
+                        invoiceNo: invoiceNo,
+                        date: date,
+                        paidTo: paidTo,
+                        account: account,
+                        totalAmount: totalAmount,
+                        notes: notes,
+                        status: status,
+                        expenseItems: expenseItems,
+                        billPersonId: selectedBillPersonData!.id);
 
                     if (success) {
                       providerExpense.receiptItems.clear();
                       providerExpense.notifyListeners();
 
                       await providerExpense.fetchExpenseList();
+
+                      resetForm();
 
                       Navigator.pushAndRemoveUntil(
                         context,
@@ -1001,8 +1074,9 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                               // Optional: Show a success message
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
+                                    backgroundColor: Colors.green,
                                     content: Text(
-                                        'Expense item updated successfully')),
+                                        'Successfully, Expense item updated ')),
                               );
                             }
                           },
@@ -1017,6 +1091,39 @@ class _ExpenseEditState extends State<ExpenseEdit> {
           },
         );
       },
+    );
+  }
+
+  //remove item
+  void showDeleteConfirmationDialog({
+    required BuildContext context,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Remove?"),
+        content: const Text(
+          "Are you sure you want to remove the item?",
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Cancel
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              onConfirm(); // Run the actual delete
+            },
+            child: const Text(
+              "Remove",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

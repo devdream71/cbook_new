@@ -1,5 +1,4 @@
-///working but for unit auto showing its changing
-///
+
 import 'package:flutter/material.dart';
 
 class CustomDropdownTwo extends StatefulWidget {
@@ -40,34 +39,6 @@ class _CustomDropdownTwoState extends State<CustomDropdownTwo> {
     super.initState();
     selectedItem = widget.selectedItem ?? widget.value;
   }
-
-  // @override
-  // void didUpdateWidget(covariant CustomDropdownTwo oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-
-  //   // Update selectedItem when widget.selectedItem changes
-  //   if (widget.selectedItem != oldWidget.selectedItem) {
-  //     setState(() {
-  //       selectedItem = widget.selectedItem;
-  //     });
-  //   }
-
-  //   // Also handle widget.value changes
-  //   if (widget.value != oldWidget.value && widget.value != null) {
-  //     setState(() {
-  //       selectedItem = widget.value;
-  //     });
-  //   }
-
-  //   // If items list changed and current selection is not in the new list, clear selection
-  //   if (widget.items != oldWidget.items) {
-  //     if (selectedItem != null && !widget.items.contains(selectedItem)) {
-  //       setState(() {
-  //         selectedItem = null;
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   void didUpdateWidget(covariant CustomDropdownTwo oldWidget) {

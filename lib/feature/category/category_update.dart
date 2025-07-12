@@ -83,6 +83,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -96,38 +97,48 @@ class _UpdateCategoryState extends State<UpdateCategory> {
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AddSalesFormfield(
-                    labelText: 'Enter Category Name',
-                    height: 40,
-                    label: "",
-                    controller: _nameController,
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    "Status",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomDropdownTwo(
-                      items: const ["Active", "Inactive"],
-                      hint: '', //Select status
-                      width: double.infinity,
-                      height: 40,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedStatus = value == "Active" ? "1" : "0";
-                        });
-                      },
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AddSalesFormfield(
+                            labelText: 'Enter Category Name',
+                            height: 40,
+                            controller: _nameController,
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            "Status",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: CustomDropdownTwo(
+                              items: const ["Active", "Inactive"],
+                              hint: '', //Select status
+                              width: double.infinity,
+                              height: 40,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedStatus = value == "Active" ? "1" : "0";
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+
+                  ///save button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -143,6 +154,8 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                           style: TextStyle(color: Colors.white)),
                     ),
                   ),
+
+                   const SizedBox(height: 50,)
                 ],
               ),
             ),

@@ -60,7 +60,7 @@ class _ItemViewState extends State<ItemView> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorTheme.primary,
         centerTitle: true,
@@ -345,7 +345,7 @@ class _ItemViewState extends State<ItemView> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        ItemDetailsView(itemId: item.id),
+                                        ItemDetailsView(itemId: item.id, item: item),
                                   ),
                                 );
                               },

@@ -10,6 +10,8 @@ class FieldPortion extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        ///====================== cash ==============================///
+
         //sell return amount //cash
         controller.isCash && controller.isAmount
             ? Row(
@@ -23,10 +25,12 @@ class FieldPortion extends StatelessWidget {
                     width: 150,
                     child: AddSalesFormfield(
                       labelText: 'Amount',
+                      readOnly: true,
                       controller:
                           TextEditingController(text: controller.addAmount2()),
                       onChanged: (value) {
                         Provider.of(context)<SalesReturnController>();
+
                         controller.amountController.text =
                             controller.addAmount2();
                       },
@@ -57,6 +61,20 @@ class FieldPortion extends StatelessWidget {
                       onChanged: (value) {
                         TextEditingController(text: controller.totalAmount());
                         controller.discountController.text = value;
+
+                        // Parse amount and discount safely
+                        double amount =
+                            double.tryParse(controller.addAmount2()) ?? 0.0;
+                        double discount = double.tryParse(value) ?? 0.0;
+                        double finalPayment = amount - discount;
+
+                        controller.amountController.text =
+                            finalPayment.toStringAsFixed(2);
+                        controller.discountController.text = value;
+
+                        controller.updatePaymentFromDiscount();
+
+                        controller.notifyListeners(); // if needed to rebuild UI
                       },
                     ),
                   ),
@@ -117,8 +135,7 @@ class FieldPortion extends StatelessWidget {
                             labelText: 'Payment',
                             //readOnly: true,
                             onChanged: (value) {},
-                            controller: TextEditingController(
-                                text: controller.totalAmount()),
+                            controller: controller.amountController,
                           ),
                         ),
                       ],
@@ -131,6 +148,8 @@ class FieldPortion extends StatelessWidget {
         const SizedBox(
           height: 4,
         ),
+
+        ///====================== creadit =================================///
 
         ////===> sell return credit ////amount
         controller.isCash == false && controller.isAmountCredit

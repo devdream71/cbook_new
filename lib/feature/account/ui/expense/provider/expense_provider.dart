@@ -87,7 +87,7 @@ class ExpenseProvider with ChangeNotifier {
           return ExpenseItem(
             purchaseId: detail.purchaseId,
             receiptFrom: editExpenseData!.paidTo,
-            note: detail.narration,
+            note: detail.narration ?? '',
             amount: detail.amount,
           );
         }).toList();
@@ -155,12 +155,17 @@ class ExpenseProvider with ChangeNotifier {
     required double totalAmount,
     required String notes,
     required int status,
+    required String billPersonId,
     required List<ExpenseItemPopUp> expenseItems,
   }) async {
     final url = Uri.parse('https://commercebook.site/api/v1/expense/store?'
-        'user_id=$userId&invoice_no=$invoiceNo&date=$date&paid_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status');
+        'user_id=$userId&invoice_no=$invoiceNo&date=$date&paid_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status&bill_person_id=$billPersonId');
 
     final body = ExpenseStoreRequest(expenseItems: expenseItems).toJson();
+
+    debugPrint('url ${url.toString()}');
+
+    debugPrint("body ${body.toString()}");
 
     try {
       final response = await http.post(
@@ -171,7 +176,7 @@ class ExpenseProvider with ChangeNotifier {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200) {
         // You can parse the response if needed
         return true;
       } else {
@@ -194,13 +199,14 @@ class ExpenseProvider with ChangeNotifier {
     required double totalAmount,
     required String notes,
     required int status,
+    required int billPersonId,
     required List<ExpenseItemPopUp> expenseItems,
   }) async {
     isLoading = true;
     notifyListeners();
 
     final url = Uri.parse(
-        'https://commercebook.site/api/v1/expense/update?id=$expenseId&user_id=$userId&expence_no=$invoiceNo&date=$date&paid_to=$paidTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status');
+        'https://commercebook.site/api/v1/expense/update?id=$expenseId&user_id=$userId&expence_no=$invoiceNo&date=$date&paid_to=$paidTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status&bill_person_id=$billPersonId');
 
     debugPrint("url ====> ${url}");
 

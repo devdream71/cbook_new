@@ -13,7 +13,8 @@ class PaidFormModel {
     return PaidFormModel(
       success: json['success'],
       message: json['message'],
-      data: List<PaidFormData>.from(json['data'].map((x) => PaidFormData.fromJson(x))),
+      data: List<PaidFormData>.from(
+          json['data'].map((x) => PaidFormData.fromJson(x))),
     );
   }
 }

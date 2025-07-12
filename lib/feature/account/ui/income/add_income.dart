@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
@@ -8,6 +9,7 @@ import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,8 +26,6 @@ class _IncomeCreateState extends State<IncomeCreate> {
 
   int? selectedAccountId;
 
- 
- 
   // Default to current date
   String? selectedDropdownValue;
 
@@ -33,15 +33,50 @@ class _IncomeCreateState extends State<IncomeCreate> {
   int? selectedBillPersonId;
   BillPersonModel? selectedBillPersonData;
 
-
   TextEditingController billNoController = TextEditingController();
   String billNo = '';
+
+  String formattedDate = '';
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   Future.microtask(() =>
+  //       Provider.of<PaymentVoucherProvider>(context, listen: false)
+  //           .fetchBillPersons());
+
+  //   //final controller = context.watch<SalesController>();
+
+  //   // If the date is empty, set it to today
+  //   if (controller.formattedDate2.isEmpty) {
+  //     final now = DateTime.now();
+  //     controller.formattedDate2 =
+  //         "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<PaymentVoucherProvider>(context, listen: false).fetchBillPersons());
+
+    // Fetch bill persons asynchronously
+    Future.microtask(() {
+      Provider.of<PaymentVoucherProvider>(context, listen: false)
+          .fetchBillPersons();
+    });
+
+    // Set today's date after widget is mounted
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = Provider.of<SalesController>(context, listen: false);
+
+      if (controller.formattedDate2.isEmpty) {
+        final now = DateTime.now();
+        controller.formattedDate2 =
+            "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+        setState(() {}); // 👈 make sure UI updates
+      }
+    });
   }
 
   @override
@@ -70,6 +105,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
         }
       },
       child: Scaffold(
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -105,6 +141,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    ///received to
                     SizedBox(
                       height: 30,
                       width: 150,
@@ -188,7 +225,6 @@ class _IncomeCreateState extends State<IncomeCreate> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     //bill person
-
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Consumer<PaymentVoucherProvider>(
@@ -239,30 +275,45 @@ class _IncomeCreateState extends State<IncomeCreate> {
                       height: 8,
                     ),
 
-                    ///bill no, 
+                    ///bill no,
                     SizedBox(
                       height: 30,
                       width: 130,
                       child: AddSalesFormfield(
-                         labelText: "Bill No",
+                        labelText: "Bill No",
                         controller: billNoController,
-                         
+
                         onChanged: (value) {
                           billNo = value;
                         }, // Match cursor height to text size
-                         
                       ),
                     ),
 
-                    //person
-
-                    ///bill date
+                    ///bill date.
                     SizedBox(
                       height: 30,
                       width: 130,
                       child: InkWell(
-                        // onTap: () => controller.pickDate(
-                        //     context), // Trigger the date picker
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+
+                          if (picked != null) {
+                            final formatted =
+                                "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+
+                            setState(() {
+                              controller.formattedDate2 =
+                                  formatted; // ✅ update UI
+                            });
+
+                            debugPrint("📅 Selected Bill Date: $formatted");
+                          }
+                        },
                         child: InputDecorator(
                           decoration: InputDecoration(
                             isDense: true,
@@ -274,7 +325,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
                             suffixIconConstraints: const BoxConstraints(
                               minWidth: 16,
                               minHeight: 16,
-                            ), // Adjust constraints to align icon closely
+                            ),
                             hintText: "Bill Date",
                             hintStyle: TextStyle(
                               color: Colors.grey.shade400,
@@ -289,9 +340,9 @@ class _IncomeCreateState extends State<IncomeCreate> {
                             ),
                           ),
                           child: Text(
-                            controller.formattedDate.isNotEmpty
-                                ? controller.formattedDate
-                                : "Select Date", // Default text when no date is selected
+                            controller.formattedDate2.isNotEmpty
+                                ? controller.formattedDate2
+                                : "Select Date",
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 12,
@@ -309,6 +360,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
               height: 6,
             ),
 
+            ///item index, item name, note here.
             if (provider.receiptItems.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,10 +437,19 @@ class _IncomeCreateState extends State<IncomeCreate> {
                                     radius: 13,
                                     child: Icon(Icons.close, size: 20)),
                                 onPressed: () {
-                                  setState(() {
-                                    provider.receiptItems.remove(item);
-                                    provider.notifyListeners();
-                                  });
+                                  showDeleteConfirmationDialog(
+                                    context: context,
+                                    onConfirm: () {
+                                      setState(() {
+                                        provider.receiptItems.remove(item);
+                                        provider.notifyListeners();
+                                      });
+                                    },
+                                  );
+                                  // setState(() {
+                                  //   provider.receiptItems.remove(item);
+                                  //   provider.notifyListeners();
+                                  // });
                                 },
                               ),
                             ],
@@ -485,6 +546,8 @@ class _IncomeCreateState extends State<IncomeCreate> {
                     ],
                   ),
                 ),
+
+                ///save income.
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton(
@@ -507,10 +570,13 @@ class _IncomeCreateState extends State<IncomeCreate> {
                       final invoiceNo = billNoController.text.trim();
                       const date =
                           "2025-06-10"; // your date string like '2025-06-10'
+
                       final receivedTo =
                           (selectedReceivedTo ?? '').toLowerCase();
                       final account = selectedAccountId.toString();
                       const notes = 'text'; // Or from your input field
+                      final billPersonID = selectedBillPersonData!.id;
+
                       const status = 1;
 
                       final totalAmount = provider.receiptItems.fold<double>(
@@ -535,25 +601,29 @@ class _IncomeCreateState extends State<IncomeCreate> {
                       debugPrint('Sending Data:');
                       debugPrint('User ID: $userId');
                       debugPrint('Expense No: $invoiceNo');
-                      debugPrint('Date: $date');
+                      //debugPrint('Date: $date');
                       debugPrint('Paid To: $receivedTo');
                       debugPrint('Account: $account');
                       debugPrint('Total Amount: $totalAmount');
                       debugPrint('Notes: $notes');
                       debugPrint('Status: $status');
+                      debugPrint(" bill  person ${billPersonID}");
+                      debugPrint(
+                          "📅 Selected Bill Date: ${controller.formattedDate2}");
                       debugPrint(
                           'income Items: ${incomeItems.map((e) => e.toJson()).toList()}');
 
                       bool success = await provider.storeIncome(
                         userId: userId,
                         invoiceNo: invoiceNo,
-                        date: date,
+                        date: controller.formattedDate2,
                         receivedTo: receivedTo,
                         account: account,
                         totalAmount: totalAmount,
                         notes: notes,
                         status: status,
                         incomeItems: incomeItems,
+                        billPersonID: billPersonID.toString(),
                       );
 
                       if (success) {
@@ -567,6 +637,12 @@ class _IncomeCreateState extends State<IncomeCreate> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const Income()));
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              backgroundColor: Colors.green,
+                              content: Text('Successfully. Save  The income.')),
+                        );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -574,8 +650,6 @@ class _IncomeCreateState extends State<IncomeCreate> {
                         );
                       }
                     },
-
-
                     child: const Text("Save"),
                   ),
                 ),
@@ -697,24 +771,25 @@ class _IncomeCreateState extends State<IncomeCreate> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        TextButton(
-                          onPressed: () {
-                            if (selectedReceiptFrom != null &&
-                                amountController.text.isNotEmpty) {
-                              provider.addReceiptItem(ReceiptItem(
-                                receiptFrom: selectedReceiptFrom!,
-                                amount: amountController.text,
-                                note: noteController.text,
-                              ));
-                              amountController.clear();
-                              noteController.clear();
-                              setState(() {
-                                selectedReceiptFrom = null;
-                              });
-                            }
-                          },
-                          child: const Text('Add & New'),
-                        ),
+                        // TextButton(
+                        //   onPressed: () {
+                        //     if (selectedReceiptFrom != null &&
+                        //         amountController.text.isNotEmpty) {
+                        //       provider.addReceiptItem(ReceiptItem(
+                        //         receiptFrom: selectedReceiptFrom!,
+                        //         amount: amountController.text,
+                        //         note: noteController.text,
+                        //       ));
+                        //       amountController.clear();
+                        //       noteController.clear();
+                        //       setState(() {
+                        //         selectedReceiptFrom = null;
+                        //       });
+                        //     }
+                        //   },
+                        //   child: const Text('Add & New'),
+                        // ),
+
                         TextButton(
                           onPressed: () {
                             if (selectedReceiptFrom != null &&
@@ -741,6 +816,36 @@ class _IncomeCreateState extends State<IncomeCreate> {
     );
   }
 
-
-
+  //remove item
+  void showDeleteConfirmationDialog({
+    required BuildContext context,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Remove?"),
+        content: const Text(
+          "Are you sure you want to remove the item?",
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Cancel
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              onConfirm(); // Run the actual delete
+            },
+            child: const Text(
+              "Remove",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

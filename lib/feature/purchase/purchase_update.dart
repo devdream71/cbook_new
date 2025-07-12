@@ -94,10 +94,6 @@ class PurchaseUpdateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- 
-
-   
-
   selectedDropdownUnitId(String value) {
     unitResponseModel.forEach((e) {
       if (e.name == value) {
@@ -454,6 +450,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
       create: (_) =>
           PurchaseUpdateProvider()..fetchPurchaseData(widget.purchaseId),
       child: Scaffold(
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
             backgroundColor: colorScheme.primary,
             centerTitle: true,

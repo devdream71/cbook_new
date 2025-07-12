@@ -87,6 +87,12 @@ class PurchaseController extends ChangeNotifier {
   bool isRecivedMoney = true;
   bool isReturn = true;
 
+  double purchasePrice = 0.0;
+  int unitQty = 1;
+
+  String primaryUnitName = '';
+  String secondaryUnitName = '';
+
 //
 
   bool isAmountCredit = true;
@@ -461,8 +467,6 @@ class PurchaseController extends ChangeNotifier {
       debugPrint("bill $billNo");
 
       final encodedNote = Uri.encodeComponent(note ?? "");
-
-      
 
       //"https://commercebook.site/api/v1/purchase/store?user_id=${prefs.getString("id")}&customer_id=${purchaseCreditOrCash ? "cash" : selectedCustomerId}&bill_number=${newBillNumber}&pruchase_date=${billDate}&details_notes=notes&gross_total=${calculateSubTotal()}&discount=0&payment_out=${purchaseCreditOrCash ? 1 : 0}&payment_amount=${purchaseCreditOrCash ? calculateSubTotal() : paymentController.value.text}";
 

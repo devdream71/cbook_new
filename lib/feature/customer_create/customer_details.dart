@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/customer_create/customer_update.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_create.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
@@ -10,13 +11,13 @@ import 'package:url_launcher/url_launcher.dart';
 class CustomerDetailsScreen extends StatefulWidget {
   final int customerId;
   final List<Purchase> purchases;
-   final Customer customer; 
+  final Customer customer;
 
   const CustomerDetailsScreen({
     super.key,
     required this.customerId,
     required this.purchases,
-     required this.customer,
+    required this.customer,
   });
 
   @override
@@ -130,7 +131,7 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         title: const Text(
           "Party Details",
@@ -194,17 +195,18 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                                 ),
 
                                 //address
-                                Text(
-                                  customerDetails?["address"] ?? "address",
-                                  style: const TextStyle(
-                                      fontSize: 13, color: Colors.black),
-                                ),
-
-                                //level
-                                Text(
-                                  customerDetails?["level"] ?? "level: N/A",
-                                  style: const TextStyle(
-                                      fontSize: 13, color: Colors.black),
+                                SizedBox(
+                                  width: 250,
+                                  child: Text(
+                                    customerDetails?["address"] ?? "address",
+                                    maxLines: 1, // Limit to one line
+                                    overflow: TextOverflow
+                                        .ellipsis, // Show ... if overflow
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -213,7 +215,6 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-
                                 //edit data
                                 SizedBox(
                                   width: 20,
@@ -227,30 +228,32 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                                     visualDensity: VisualDensity
                                         .compact, // further tighten around the icon :contentReference[oaicite:3]{index=3}
                                     onPressed: () {
-                                       final c = widget.customer;
-    final customerData = CustomerData(
-      id: c.id,
-      userId: c.userId,
-      name: c.name,
-      proprietorName: c.proprietorName,
-      email: "", // or pass real email if available
-      phone: c.phone ?? "",
-      address: c.address ?? "",
-      openingBalance: c.due,
-      status: 1,
-      createdAt: "",
-      updatedAt: "",
-      type: c.type,
-      level: null,
-      levelType: null,
-    );
+                                      final c = widget.customer;
+                                      final customerData = CustomerData(
+                                        id: c.id,
+                                        userId: c.userId,
+                                        name: c.name,
+                                        proprietorName: c.proprietorName,
+                                        email:
+                                            "", // or pass real email if available
+                                        phone: c.phone ?? "",
+                                        address: c.address ?? "",
+                                        openingBalance: c.due,
+                                        status: 1,
+                                        createdAt: "",
+                                        updatedAt: "",
+                                        type: c.type,
+                                        level: null,
+                                        levelType: null,
+                                      );
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CustomerUpdate(customer: customerData),
-      ),
-    );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CustomerUpdate(
+                                              customer: customerData),
+                                        ),
+                                      );
                                     },
                                     icon: const Icon(Icons.edit_document,
                                         size: 20),
@@ -272,7 +275,6 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                                     color: Colors.black,
                                   ),
                                 ),
-                                
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -337,8 +339,6 @@ class _SupplierDetailsScreenState extends State<CustomerDetailsScreen> {
                           thickness: 1,
                           color: Color(0xff278d46),
                         ),
-
-
                       ],
                     ),
                   ),

@@ -1,13 +1,13 @@
 class ExpenseItem {
     String receiptFrom;
-    String note;
+    dynamic note;
     double amount;
-    dynamic ? purchaseId;
+    dynamic purchaseId;
 
   ExpenseItem({
     required this.receiptFrom,
-    required this.note,
+    this.note,
     required this.amount,
-      this.purchaseId
+    this.purchaseId
   });
 }

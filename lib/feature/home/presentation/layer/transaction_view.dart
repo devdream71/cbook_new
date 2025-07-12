@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/purchase/provider/purchase_provider.dart';
 import 'package:cbook_dt/feature/transaction/ui/transection_new.dart';
 // import 'package:cbook_dt/feature/transaction/provider/purchase_tr_list_provider.dart';
@@ -88,7 +89,7 @@ class TransactionViewState extends State<TransactionView> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: false,

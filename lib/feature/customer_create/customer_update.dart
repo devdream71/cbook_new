@@ -84,6 +84,7 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -104,17 +105,25 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
             AddSalesFormfield(
               height: 40,
               labelText: "Party Name",
-              label: "",
+
               controller: nameController,
               //validator: _validateRequired,
+            ),
+
+            const SizedBox(
+              height: 12,
             ),
 
             AddSalesFormfield(
               height: 40,
               labelText: 'Proprietor Name',
-              label: "",
+
               controller: proprietorController,
               //validator: _validateRequired,
+            ),
+
+            const SizedBox(
+              height: 12,
             ),
 
             // Conditionally render the PriceOptionSelectorCustomer widget
@@ -140,13 +149,16 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
             AddSalesFormfield(
               height: 40,
               labelText: "Email",
-              label: "",
+
               controller: emailController,
               //validator: _validateRequired,
             ),
 
+            const SizedBox(
+              height: 12,
+            ),
+
             AddSalesFormfield(
-              label: "",
               height: 40,
               labelText: "Phone",
               controller: phoneController,
@@ -154,43 +166,22 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
               //validator: _validateRequired,
             ),
 
+            const SizedBox(
+              height: 12,
+            ),
+
             AddSalesFormfield(
               height: 40,
               labelText: 'Address',
-              label: "",
+
               controller: addressController,
               //validator: _validateRequired,
             ),
 
             const SizedBox(height: 20),
 
-            // const Text(
-            //   "Status",
-            //   style: TextStyle(
-            //       color: Colors.black,
-            //       fontWeight: FontWeight.w600,
-            //       fontSize: 12),
-            // ),
+            const Spacer(),
 
-            // SizedBox(
-            //   width: double.infinity,
-            //   child: CustomDropdownTwo(
-            //     items: const ["Active", "Inactive"], // Display labels
-            //     hint: '', //Select status
-            //     width: double.infinity,
-            //     height: 30,
-            //     onChanged: (value) {
-            //       setState(() {
-            //         selectedStatus = (value == "Active")
-            //             ? "1"
-            //             : "0"; // ✅ Convert label to 1 or 0
-            //       });
-            //       debugPrint(selectedStatus);
-            //     },
-            //   ),
-            // ),
-
-            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -255,6 +246,10 @@ class _CustomerUpdateState extends State<CustomerUpdate> {
                 ),
               ),
             ),
+
+            const SizedBox(
+              height: 50,
+            )
           ],
         ),
       ),

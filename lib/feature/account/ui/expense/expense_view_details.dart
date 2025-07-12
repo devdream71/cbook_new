@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +45,7 @@ class _ExpanseDetailsState extends State<ExpanseDetails> {
     // List of forms with metadata
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,

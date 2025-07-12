@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/purchase/provider/purchase_provider.dart';
 import 'package:cbook_dt/feature/purchase/purchase_details_page.dart';
 import 'package:cbook_dt/feature/purchase/purchase_update.dart';
@@ -76,7 +77,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
 
     return Scaffold(
       ///search, in app bar,
-      backgroundColor: (Colors.white),
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         title: isSearching
             ? Column(

@@ -38,7 +38,7 @@ class _PartyState extends State<Party> {
     // List of forms with metadata
 
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -386,7 +386,7 @@ class _PartyState extends State<Party> {
                                                 color: Colors.grey[800],
                                               ),
                                               softWrap: true,
-                                              maxLines: 2,
+                                              maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
@@ -649,4 +649,6 @@ class _PartyState extends State<Party> {
       ),
     );
   }
+
+
 }

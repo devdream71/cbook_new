@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/customer_create/customer_create.dart';
 import 'package:cbook_dt/feature/suppliers/suppliers_create.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class AddNewPartyIntro extends StatelessWidget {
         color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold);
 
     return Scaffold(
-        backgroundColor: Colors.white,
+       backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

@@ -14,6 +14,8 @@ class PurchaseHistoryModel {
   final dynamic unitQty;
   final dynamic unitPrice;
   final int purchaseUnitId;
+  final dynamic pruchaseQty;
+  final dynamic purchaseRawQty;
 
   PurchaseHistoryModel({
     required this.purchaseDetailsId,
@@ -25,12 +27,14 @@ class PurchaseHistoryModel {
     required this.billQty,
     required this.outQty,
     required this.currentQty,
-      this.supplierName,
+    this.supplierName,
     required this.unitID,
     required this.secondaryUnitID,
     required this.unitQty,
     required this.unitPrice,
     required this.purchaseUnitId,
+    this.pruchaseQty,
+    this.purchaseRawQty,
   });
 
   factory PurchaseHistoryModel.fromJson(Map<String, dynamic> json) {
@@ -51,6 +55,9 @@ class PurchaseHistoryModel {
       unitQty: json["unit_qty"],
       unitPrice: json["unit_price"],
       purchaseUnitId: json["purchase_unit_id"],
+      pruchaseQty: json["pruchase_qty"],
+      purchaseRawQty: json['pruchase_raw_qty'],
+
     );
   }
 }

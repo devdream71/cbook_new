@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/settings/ui/bill/bill_create.dart';
 import 'package:cbook_dt/feature/settings/ui/bill/provider/bill_provider.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +23,12 @@ class _BillPersonListState extends State<BillPersonList> {
   TextStyle ts =
       const TextStyle(color: Colors.black, fontWeight: FontWeight.bold);
 
-  TextStyle ts2  = const TextStyle(color: Colors.black, fontSize: 12);    
+  TextStyle ts2 = const TextStyle(color: Colors.black, fontSize: 12);
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         //centerTitle: true,
@@ -79,120 +80,63 @@ class _BillPersonListState extends State<BillPersonList> {
         automaticallyImplyLeading: true,
       ),
       body: Column(children: [
-
         Consumer<BillPersonProvider>(
-  builder: (context, provider, child) {
-    if (provider.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+          builder: (context, provider, child) {
+            if (provider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-    if (provider.errorMessage.isNotEmpty) {
-      return Center(child: Text(provider.errorMessage));
-    }
+            if (provider.errorMessage.isNotEmpty) {
+              return Center(child: Text(provider.errorMessage));
+            }
 
-    if (provider.billPersons.isEmpty) {
-      return Center(
-          child: Text(
-        'No Bill Persons Found',
-        style: ts,
-      ));
-    }
+            if (provider.billPersons.isEmpty) {
+              return Center(
+                  child: Text(
+                'No Bill Persons Found',
+                style: ts,
+              ));
+            }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      padding: EdgeInsets.zero, // 🔥 Zero padding
-      itemCount: provider.billPersons.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 1), // 🔥 Zero space between items
-      itemBuilder: (context, index) {
-        final person = provider.billPersons[index];
+            return ListView.separated(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero, // 🔥 Zero padding
+              itemCount: provider.billPersons.length,
+              separatorBuilder: (context, index) =>
+                  const SizedBox(height: 1), // 🔥 Zero space between items
+              itemBuilder: (context, index) {
+                final person = provider.billPersons[index];
 
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade300, // Optional: background color
-          ),
-          child: ListTile(
-            dense: true, // 🔥 Makes the tile more compact
-            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0), // 🔥 Minimal padding inside ListTile
-            leading: person.avatar != null
-                ? Image.network(
-                    'https://commercebook.site/${person.avatar}',
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover)
-                : const Icon(Icons.person),
-            title: Text(person.name, style: ts2),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(person.phone, style: ts2),
-                Text(person.email ?? '', style: ts2),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  },
-),
-
-
-
-        // Consumer<BillPersonProvider>(
-        //   builder: (context, provider, child) {
-        //     if (provider.isLoading) {
-        //       return const Center(child: CircularProgressIndicator());
-        //     }
-
-        //     if (provider.errorMessage.isNotEmpty) {
-        //       return Center(child: Text(provider.errorMessage));
-        //     }
-
-        //     if (provider.billPersons.isEmpty) {
-        //       return Center(
-        //           child: Text(
-        //         'No Bill Persons Found',
-        //         style: ts,
-        //       ));
-        //     }
-
-        //     return ListView.builder(
-        //       shrinkWrap: true,
-        //       itemCount: provider.billPersons.length,
-        //       itemBuilder: (context, index) {
-        //         final person = provider.billPersons[index];
-
-
-        //         return Card(
-        //           elevation: 0,
-        //           shape: RoundedRectangleBorder(
-        //               borderRadius: BorderRadius.circular(2)),
-        //           child: ListTile(
-        //             leading: person.avatar != null
-        //                 ? Image.network(
-        //                     'https://commercebook.site/${person.avatar}',
-        //                     width: 40,
-        //                     height: 40,
-        //                     fit: BoxFit.cover)
-        //                 : SizedBox(
-        //                   width: 40,
-        //                   height: 40,
-        //                   child: const Icon(Icons.person)),
-        //             title: Text(person.name, style: ts2,),
-        //             subtitle: Column(
-        //               crossAxisAlignment: CrossAxisAlignment.start,
-        //               children: [
-        //                 Text(person.phone, style: ts2,),
-        //                 Text(person.email!, style: ts2,),
-        //               ],  
-        //             ),
-        //           ),
-        //         );
-        //       },
-        //     );
-        //   },
-        // ),
-      
-      
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300, // Optional: background color
+                  ),
+                  child: ListTile(
+                    dense: true, // 🔥 Makes the tile more compact
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 0), // 🔥 Minimal padding inside ListTile
+                    leading: person.avatar != null
+                        ? Image.network(
+                            'https://commercebook.site/${person.avatar}',
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover)
+                        : const Icon(Icons.person),
+                    title: Text(person.name, style: ts2),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(person.phone, style: ts2),
+                        Text(person.email ?? 'N/A', style: ts2),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ]),
     );
   }

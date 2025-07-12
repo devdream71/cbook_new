@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/tax/UI/add_new_tax.dart';
 import 'package:cbook_dt/feature/tax/model/tax_model.dart';
 import 'package:cbook_dt/feature/tax/provider/tax_provider.dart';
@@ -18,40 +19,35 @@ class TaxListView extends StatelessWidget {
     });
 
     return Scaffold(
-       
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
-          backgroundColor: colorScheme.primary,
-          centerTitle: true,
-          title: const Text(
-            'Tax List',
-            style: TextStyle(
-                color: Colors.yellow,
-                fontSize: 16,
-                fontWeight: FontWeight.bold),
-          ),
-          iconTheme: const IconThemeData(color: Colors.white),
-          automaticallyImplyLeading: true,
+        backgroundColor: colorScheme.primary,
+        centerTitle: true,
+        title: const Text(
+          'Tax List',
+          style: TextStyle(
+              color: Colors.yellow, fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: true,
         actions: [
           // Always visible: Add icon
-              IconButton(
-                icon: const CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Colors.white,
-                    child:   Icon(Icons.add, color: Colors.green)),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const AddNewTax(), //AddSupplierCustomer
-                    ),
-                  );
-                },
-              ),
+          IconButton(
+            icon: const CircleAvatar(
+                radius: 12,
+                backgroundColor: Colors.white,
+                child: Icon(Icons.add, color: Colors.green)),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddNewTax(), //AddSupplierCustomer
+                ),
+              );
+            },
+          ),
         ],
-        
-        ),
-        
+      ),
       body: Consumer<TaxProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
@@ -85,40 +81,6 @@ class TaxListView extends StatelessWidget {
                       ),
                       // Text(
                       //     "Status: ${tax.status == 1 ? 'Active' : 'Inactive'}"),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: const Text('Confirm Delete'),
-                              content: Text('Delete tax "${tax.name}"?'),
-                              actions: [
-                                TextButton(
-                                  child: const Text('Cancel'),
-                                  onPressed: () => Navigator.pop(ctx),
-                                ),
-                                ElevatedButton(
-                                  child: const Text('Delete'),
-                                  onPressed: () {
-                                    Navigator.pop(ctx);
-                                    provider.deleteTax(tax.id);
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
                     ],
                   ),
                 ),

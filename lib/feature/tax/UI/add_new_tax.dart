@@ -1,3 +1,5 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
+import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:cbook_dt/feature/tax/UI/tax_list_view.dart';
 import 'package:cbook_dt/feature/tax/provider/tax_provider.dart';
@@ -29,6 +31,7 @@ class _AddNewTaxState extends State<AddNewTax> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -48,7 +51,7 @@ class _AddNewTaxState extends State<AddNewTax> {
             children: [
               ///name
               AddSalesFormfield(
-                labelText: "Enter Tax Name",
+                labelText: "Tax Name",
                 height: 40,
                 label: "",
                 controller: _nameController,
@@ -57,7 +60,7 @@ class _AddNewTaxState extends State<AddNewTax> {
 
               ///percentance
               AddSalesFormfield(
-                labelText: "Enter Tax Percentance",
+                labelText: "Tax Percentance",
                 height: 40,
                 label: "",
                 controller: _percentanceController,
@@ -101,7 +104,7 @@ class _AddNewTaxState extends State<AddNewTax> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const TaxListView()));
+                              builder: (context) => const HomeView()));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Please fill all fields")),

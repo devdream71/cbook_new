@@ -93,8 +93,8 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
             body: Center(child: CircularProgressIndicator()),
           );
         }
-
         return Scaffold(
+          backgroundColor: AppColors.sfWhite,
           appBar: AppBar(
             backgroundColor: colorScheme.primary,
             leading: const BackButton(color: Colors.white),
@@ -124,10 +124,11 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                       );
 
                       return Card(
-                        color: Colors.white70,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        //color: Colors.white70,
+                        color: const Color(0xfff4f6ff),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
                         child: Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.all(3.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -188,6 +189,7 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                                         text: unit.name,
                                       ),
                                       readOnly: true,
+                                      onChanged: (value) {},
                                     ),
                                   ),
                                   const SizedBox(height: 6),
@@ -217,10 +219,12 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                                                       context,
                                                       listen: false)
                                                   .getItemName(history.itemID),
+                                          // unitName: unit.name,
+                                          unitId: unit.id
+                                              .toString(), // 👈 from `UnitResponseModel`
                                           unitName: unit.name,
+                                          unitQty: history.unitQty.toString(),
                                         );
-
-                                     
                                       },
                                     ),
                                   ),

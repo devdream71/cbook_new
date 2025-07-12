@@ -119,6 +119,13 @@ class SalesReturnController extends ChangeNotifier {
     }
   }
 
+  void updatePaymentFromDiscount() {
+  double amount = double.tryParse(addAmount2()) ?? 0.0;
+  double discount = double.tryParse(discountController.text) ?? 0.0;
+  amountController.text = (amount - discount).toStringAsFixed(2);
+  notifyListeners();
+}
+
   //save return .... cash & credit.
   void saveSaleReturn({
     required String itemId,
@@ -128,11 +135,15 @@ class SalesReturnController extends ChangeNotifier {
     required String purchaseDetailsId,
     required String itemName,
     required String unitName,
+    required String unitId,
+//required String unitName,
+required String unitQty,
   }) {
     saleReturnItemModel.add(SalesReturnStoreModel(
       itemId: itemId,
       qty: reductionQtyList[index].value.text,
-      unitId: '1_Pieces',
+      // unitId: '1_Pieces',
+      unitId: '${unitId}_$unitName',
       price: price,
       subTotal: (double.parse(price) * double.parse(qty)).toString(),
       purchaseDetailsId: purchaseDetailsId,

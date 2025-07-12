@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/suppliers/model/suppliers_list.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -90,6 +91,7 @@ class _SupplierDetailsScreenState extends State<SupplierDetailsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           centerTitle: true,
           backgroundColor: colorScheme.primary,

@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:cbook_dt/feature/sales_return/presentation/sales_return_view.dart';
 import 'package:cbook_dt/feature/sales_return/provider/sale_return_provider.dart';
@@ -29,6 +30,7 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         title: const Text(
           "Sales Return list",

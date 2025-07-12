@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/Received/create_recevied_item.dart';
 import 'package:cbook_dt/feature/Received/provider/received_provider.dart';
 import 'package:cbook_dt/feature/Received/recevied_details.dart';
@@ -33,7 +34,7 @@ class _ReceivedListState extends State<ReceivedList> {
     // List of forms with metadata
 
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

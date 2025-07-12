@@ -8,6 +8,7 @@ class ExpenseEditModel {
   final int accountId;
   final double totalAmount;
   final String? notes;
+  final int billPersonId;
   final List<VoucherDetail> voucherDetails;
 
   ExpenseEditModel({
@@ -20,6 +21,7 @@ class ExpenseEditModel {
     required this.accountId,
     required this.totalAmount,
     required this.notes,
+    required this.billPersonId,
     required this.voucherDetails,
   });
 
@@ -34,6 +36,7 @@ class ExpenseEditModel {
       accountId: json['account_id'],
       totalAmount: json['total_amount'].toDouble(),
       notes: json['notes'],
+      billPersonId: json['bill_person_id'],
       voucherDetails: (json['voucher_details'] as List)
           .map((e) => VoucherDetail.fromJson(e))
           .toList(),
@@ -46,7 +49,7 @@ class VoucherDetail {
   final String type;
   final int voucherId;
   final int purchaseId;
-  final String narration;
+  final dynamic narration;
   final double amount;
 
   VoucherDetail({
@@ -54,7 +57,7 @@ class VoucherDetail {
     required this.type,
     required this.voucherId,
     required this.purchaseId,
-    required this.narration,
+    this.narration,
     required this.amount,
   });
 

@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/purchase_return/presentation/purchase_return_view.dart';
 import 'package:cbook_dt/feature/purchase_return/provider/purchase_return_provider.dart';
 import 'package:cbook_dt/feature/purchase_return/purchase_return_details.dart';
@@ -39,6 +40,7 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         title: const Text(
           "Purchase Return List",
@@ -139,9 +141,7 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: 
-                          
-                          Container(
+                          child: Container(
                             padding: const EdgeInsets.all(12),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -358,10 +358,10 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
           ),
           TextButton(
             onPressed: () async {
-             // Close confirmation dialog
+              // Close confirmation dialog
               await provider.deletePurchaseReturn(returnPurchaseID, context);
 
-               Navigator.of(context).pop(); 
+              Navigator.of(context).pop();
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),

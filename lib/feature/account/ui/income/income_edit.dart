@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_paid_form_list.dart';
@@ -43,8 +44,10 @@ class _IncomeEditState extends State<IncomeEdit> {
     voucherNumberController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+
       final providerExpense =
           Provider.of<ExpenseProvider>(context, listen: false);
+          
       final provider =
           Provider.of<IncomeProvider>(context, listen: false); // 👈 Add this
 
@@ -116,6 +119,7 @@ class _IncomeEditState extends State<IncomeEdit> {
     // ✅ Show loading indicator while data is fetching
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,

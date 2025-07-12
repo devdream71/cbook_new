@@ -810,7 +810,7 @@ class _LayoutState extends State<_Layout> {
                                                                       //${item.unit}
 
                                                                       Text(
-                                                                        "৳ ${item.mrp!} x ${item.quantity!} pc = ${(int.tryParse(item.quantity!) ?? 0) * (double.tryParse(item.mrp!) ?? 0)}",
+                                                                        "৳ ${item.mrp!} x ${item.quantity!} ${item.unit} = ${(int.tryParse(item.quantity!) ?? 0) * (double.tryParse(item.mrp!) ?? 0)}",
                                                                         style: const TextStyle(
                                                                             color:
                                                                                 Colors.black,

@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/purchase_return/model/purchase_return_list_model.dart';
 import 'package:cbook_dt/feature/purchase_return/provider/purchase_return_provider.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class PurchaseReturnDetails extends StatelessWidget {
     final provider = Provider.of<PurchaseReturnProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           iconTheme: const IconThemeData(color: Colors.white),

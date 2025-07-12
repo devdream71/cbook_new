@@ -5,6 +5,7 @@ class SalesReturnStoreModel {
   String unitId;
   String price;
   String subTotal;
+  
 
   // Constructor
   SalesReturnStoreModel({

@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/close_button_icon.dart';
 import 'package:cbook_dt/common/item_details_pop_up.dart';
 import 'package:cbook_dt/common/item_details_pop_up_two.dart';
+import 'package:cbook_dt/feature/item/model/items_show.dart';
 import 'package:cbook_dt/feature/item/update_item.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,8 +11,9 @@ import 'package:http/http.dart' as http;
 
 class ItemDetailsView extends StatefulWidget {
   final int itemId;
+  final ItemsModel item;
 
-  const ItemDetailsView({super.key, required this.itemId});
+  const ItemDetailsView({super.key, required this.itemId, required this.item});
 
   @override
   State<ItemDetailsView> createState() => _ItemDetailsViewState();
@@ -19,7 +22,7 @@ class ItemDetailsView extends StatefulWidget {
 class _ItemDetailsViewState extends State<ItemDetailsView> {
   bool isLoading = true;
   Map<String, dynamic>? itemDetails;
-  List<dynamic> purchaseDetails = [];
+  //List<dynamic> purchaseDetails = [];
   final String baseUrl = "https://commercebook.site/";
 
   DateTime selectedStartDate = DateTime.now();
@@ -44,46 +47,40 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
   @override
   void initState() {
     super.initState();
-
-    // Future.microtask(() {
-    //   Provider.of<ItemProvider>(context, listen: false)
-    //       .fetchItemById(widget.itemId);
-    // });
-
-    fetchItemDetails();
+    //fetchItemDetails();
   }
 
-  Future<void> fetchItemDetails() async {
-    final String apiUrl =
-        "https://commercebook.site/api/v1/item/show/${widget.itemId}";
+  // Future<void> fetchItemDetails() async {
+  //   final String apiUrl =
+  //       "https://commercebook.site/api/v1/item/show/${widget.itemId}";
 
-    try {
-      final response = await http.get(Uri.parse(apiUrl));
+  //   try {
+  //     final response = await http.get(Uri.parse(apiUrl));
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          itemDetails = data['data']['item_name'];
-          purchaseDetails = itemDetails?['pruchase_details'] ?? [];
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to load item details")),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       setState(() {
+  //         itemDetails = data['data']['item_name'];
+  //         purchaseDetails = itemDetails?['pruchase_details'] ?? [];
+  //         isLoading = false;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text("Failed to load item details")),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Error: $e")),
+  //     );
+  //   }
+  // }
 
   TextStyle ts = const TextStyle(color: Colors.black, fontSize: 13);
   TextStyle ts2 = const TextStyle(
@@ -92,14 +89,22 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final itemName = itemDetails?['name'] as String? ?? '';
 
-    final purchasePrice = itemDetails?['purchase_price']?.toString() ?? 'N/A';
-    final salesPrice = itemDetails?['sales_price']?.toString() ?? 'N/A';
-    final mrpspricesPrice = itemDetails?['mrps_price']?.toString() ?? 'N/A';
+    // final itemName = itemDetails?['name'] as String? ?? '';
+    // final purchasePrice = itemDetails?['purchase_price']?.toString() ?? 'N/A';
+    // final salesPrice = itemDetails?['sales_price']?.toString() ?? 'N/A';
+    // final mrpspricesPrice = itemDetails?['mrps_price']?.toString() ?? 'N/A';
+
+    final item = widget.item;
+    final itemName = item.name;
+    final purchasePrice = item.purchasePrice?.toString() ?? '0';
+    final salesPrice = item.salesPrice?.toString() ?? '0';
+    final mrpspricesPrice = item.mrp?.toString() ?? '0';
+    final image = item.image;
+    final purchaseDetails = item.purchaseDetails ?? [];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         //centerTitle: true,
@@ -128,343 +133,288 @@ class _ItemDetailsViewState extends State<ItemDetailsView> {
               icon: const Icon(Icons.edit_document))
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : itemDetails == null
-              ? const Center(child: Text("No data available"))
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 8.0, right: 8, top: 8),
-                        child: SizedBox(
-                          //color: Colors.grey.shade300,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              ///===>>>Image , text, and 5 icon
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8, top: 8),
+              child: SizedBox(
+                //color: Colors.grey.shade300,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ///===>>>Image , text, and 5 icon
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black26,
+                                borderRadius: BorderRadius.circular(4)),
+                            height: 90,
+                            width: 120,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                "$baseUrl${image ?? ''}",
+                                height: 110,
+                                width: 150,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                      "assets/image/no_pictures.png",
+                                      fit: BoxFit.fill);
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(
+                      width: 6,
+                    ),
+
+                    ///item name, vat/tex, exclusive, inclusive
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 2.0, vertical: 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(6)),
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 2.0),
+                              child: Column(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 5.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.black26,
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                      height: 90,
-                                      width: 120,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          "$baseUrl${itemDetails!['image'] ?? ''}",
-                                          height: 110,
-                                          width: 150,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                                "assets/image/no_pictures.png",
-                                                fit: BoxFit.fill);
-                                          },
-                                        ),
-                                      ),
-                                    ),
+                                  const ItemDetailsPopUpTwo(
+                                    leftTest: "Vat/Tax 15%",
+                                    rightText: 'Exclusive',
+                                    last: "Inclusive",
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  ItemDetailsPopUpTwo(
+                                    leftTest: "Pur Price",
+                                    rightText: purchasePrice,
+                                    last: purchasePrice,
+                                  ),
+                                  ItemDetailsPopUpTwo(
+                                    leftTest: "Sales. Price",
+                                    rightText: salesPrice,
+                                    last: salesPrice,
+                                  ),
+                                  const ItemDetailsPopUpTwo(
+                                    leftTest: "Discount",
+                                    rightText: '5%',
+                                    last: " ",
+                                  ),
+                                  ItemDetailsPopUpTwo(
+                                    leftTest: "MRP",
+                                    rightText: mrpspricesPrice,
+                                    last: mrpspricesPrice,
                                   ),
                                 ],
                               ),
-
-                              const SizedBox(
-                                width: 6,
-                              ),
-
-                              ///item name, vat/tex, exclusive, inclusive
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 2.0, vertical: 0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(6)),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 2.0),
-                                        child: Column(
-                                          children: [
-                                            const ItemDetailsPopUpTwo(
-                                              leftTest: "Vat/Tax 15%",
-                                              rightText: 'Exclusive',
-                                              last: "Inclusive",
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            ItemDetailsPopUpTwo(
-                                              leftTest: "Pur Price",
-                                              rightText: purchasePrice,
-                                              last: purchasePrice,
-                                            ),
-                                            ItemDetailsPopUpTwo(
-                                              leftTest: "Sales. Price",
-                                              rightText: salesPrice,
-                                              last: salesPrice,
-                                            ),
-                                            const ItemDetailsPopUpTwo(
-                                              leftTest: "Discount",
-                                              rightText: '5%',
-                                              last: " ",
-                                            ),
-                                            ItemDetailsPopUpTwo(
-                                              leftTest: "MRP",
-                                              rightText: mrpspricesPrice,
-                                              last: mrpspricesPrice,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      //const SizedBox(height: 10),
-
-                      //// info and dropdown filter.,
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(0),
-                          //color: Colors.white
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Row(
-                            children: [
-                              ///info button
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: IconButton(
-                                  iconSize: 20, // match icon size
-                                  padding: EdgeInsets
-                                      .zero, // remove inner padding :contentReference[oaicite:1]{index=1}
-                                  constraints:
-                                      const BoxConstraints(), // override default 48×48 minimum :contentReference[oaicite:2]{index=2}
-                                  visualDensity: VisualDensity
-                                      .compact, // further tighten around the icon :contentReference[oaicite:3]{index=3}
-                                  onPressed: () {
-                                    showItemDetailsDialog(context);
-                                  },
-                                  icon: Icon(
-                                    Icons.info,
-                                    size: 20,
-                                    color: colorScheme.primary,
-                                  ),
-                                ),
-                              ),
-
-                              const Spacer(),
-
-                              // Dropdown
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.25,
-                                child: SizedBox(
-                                  height: 30,
-                                  child: DropdownButtonFormField<String>(
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 0),
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.transparent),
-                                      ),
-                                      focusedBorder: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.transparent)),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                        borderSide: const BorderSide(
-                                            color: Colors.transparent),
-                                      ),
-                                    ),
-                                    value: selectedDropdownValue,
-                                    hint: const Text("All"),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        selectedDropdownValue = newValue;
-                                      });
-                                    },
-                                    items: [
-                                      "All",
-                                      "Purchase",
-                                      "Sale",
-                                      "P. Return",
-                                      "S. Return"
-                                    ].map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          child: Text(value,
-                                              style:
-                                                  GoogleFonts.notoSansPhagsPa(
-                                                      fontSize: 12,
-                                                      color: Colors.black)),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      purchaseDetails.isEmpty
-                          ? const Center(
-                              child: Text("No details available.",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 14)),
-                            )
-                          : Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(0)),
-                              elevation: 1,
-                              margin: const EdgeInsets.only(bottom: 1),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6.0, vertical: 0.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Left Side
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              // Right Side
-                                              SizedBox(
-                                                width: 80,
-                                                child: Row(
-                                                  children: [
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text('2025-06-25',
-                                                            style: ts), // Date
-                                                        Text('Sales',
-                                                            style:
-                                                                ts2), // Voucher Number
-
-                                                        Text('sal/1452',
-                                                            style:
-                                                                ts), // Amount
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-
-                                              const SizedBox(width: 5),
-
-                                              //Divider (vertical)
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 8.0),
-                                                child: Container(
-                                                  height: 40,
-                                                  width: 2,
-                                                  color: Colors.green.shade200,
-                                                  margin: const EdgeInsets
-                                                      .symmetric(horizontal: 6),
-                                                ),
-                                              ),
-
-                                              const SizedBox(width: 5),
-
-                                              // Received To
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text('MD. Tamim',
-                                                        style: ts),
-                                                    Text('Md. Shakib',
-                                                        style:
-                                                            ts), // Static Text
-                                                    Text('01759546853',
-                                                        style:
-                                                            ts), // Static Text
-                                                  ],
-                                                ),
-                                              ),
-
-                                              // Received From
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text('Bill Qty: 20',
-                                                        style: ts),
-                                                    Text('Price: 170',
-                                                        style:
-                                                            ts), // Customer Name
-
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        style:
-                                                            ts, // base TextStyle for entire text
-                                                        children: [
-                                                          const TextSpan(
-                                                              text: 'Amount: '),
-                                                          TextSpan(
-                                                            text: '1236',
-                                                            style: ts.copyWith(
-                                                                color: Colors
-                                                                    .purple), // '1236' in purple
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ),
-                    ],
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            //const SizedBox(height: 10),
+
+            //// info and dropdown filter.,
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(0),
+                //color: Colors.white
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Row(
+                  children: [
+                    ///info button
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: IconButton(
+                        iconSize: 20, // match icon size
+                        padding: EdgeInsets
+                            .zero, // remove inner padding :contentReference[oaicite:1]{index=1}
+                        constraints:
+                            const BoxConstraints(), // override default 48×48 minimum :contentReference[oaicite:2]{index=2}
+                        visualDensity: VisualDensity
+                            .compact, // further tighten around the icon :contentReference[oaicite:3]{index=3}
+                        onPressed: () {
+                          showItemDetailsDialog(context);
+                        },
+                        icon: Icon(
+                          Icons.info,
+                          size: 20,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    // Dropdown
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      child: SizedBox(
+                        height: 30,
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 0),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.transparent)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(4),
+                              borderSide:
+                                  const BorderSide(color: Colors.transparent),
+                            ),
+                          ),
+                          value: selectedDropdownValue,
+                          hint: const Text("All"),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedDropdownValue = newValue;
+                            });
+                          },
+                          items: [
+                            "All",
+                            "Purchase",
+                            "Sale",
+                            "P. Return",
+                            "S. Return"
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Text(value,
+                                    style: GoogleFonts.notoSansPhagsPa(
+                                        fontSize: 12, color: Colors.black)),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(2.0),
+                  child: Text(
+                    "Purchase History",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
+                purchaseDetails.isEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Center(
+                          child: Text(
+                            "No Bill Transection found.",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      )
+                    : Column(
+                        children: purchaseDetails.asMap().entries.map((entry) {
+                          int index = entry.key;
+                          var purchase = entry.value;
+                          Color bgColor = index % 2 == 0
+                              ? Colors.blueGrey.withOpacity(0.1)
+                              : Colors.grey.withOpacity(0.1);
+
+                          return Container(
+                            color: bgColor,
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      purchase.purchaseDate,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      purchase.type,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                //divider
+                                Container(
+                                  height: 30,
+                                  width: 2,
+                                  color: Colors.green.shade200,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                ),
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Qty: ${purchase.qty}",
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 14),
+                                    ),
+                                    Text(
+                                      "Price: ${purchase.price}",
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 

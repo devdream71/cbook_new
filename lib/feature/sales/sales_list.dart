@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/purchase/provider/purchase_provider.dart';
 import 'package:cbook_dt/feature/sales/provider/sales_provider.dart';
 import 'package:cbook_dt/feature/sales/sales_details.dart';
@@ -75,7 +76,7 @@ class _SalesScreenState extends State<SalesScreen> {
         ..fetchSales()
         ..fetchItems(),
       builder: (context, child) => Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           title: isSearching
               ? Column(

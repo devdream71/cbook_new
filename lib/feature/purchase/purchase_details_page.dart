@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/purchase/provider/purchase_provider.dart';
 import 'package:cbook_dt/feature/transaction/model/purchase_tr_list_model.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class _PurchaseDetailsPageState extends State<PurchaseDetailsPage> {
     final purchaseProvider = Provider.of<PurchaseProvider>(context);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,

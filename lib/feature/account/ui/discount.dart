@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class Discount extends StatefulWidget {
@@ -34,6 +35,7 @@ class _DiscountState extends State<Discount> {
     // List of forms with metadata
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

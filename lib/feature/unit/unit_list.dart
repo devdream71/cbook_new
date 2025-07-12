@@ -17,9 +17,6 @@ class UnitListViewState extends State<UnitListView> {
   @override
   void initState() {
     super.initState();
-    // Provider.of<UnitDTProvider>(context, listen: false).fetchUnits();
-
-    // Defer fetchUnits until after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UnitDTProvider>(context, listen: false).fetchUnits();
     });
@@ -29,9 +26,9 @@ class UnitListViewState extends State<UnitListView> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
-        //centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           'Units List',
@@ -40,8 +37,8 @@ class UnitListViewState extends State<UnitListView> {
         actions: [
           InkWell(
             onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => const AddUnit()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const AddUnit()));
             },
             child: const Padding(
               padding: EdgeInsets.only(right: 8.0),
@@ -71,33 +68,6 @@ class UnitListViewState extends State<UnitListView> {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: SizedBox(
-          //     //height: 100,
-          //     width: double.maxFinite,
-          //     child: ElevatedButton(
-          //       onPressed: () {
-          //         Navigator.push(
-          //           context,
-          //           MaterialPageRoute(builder: (context) => const AddUnit()),
-          //         );
-          //       },
-          //       style: ElevatedButton.styleFrom(
-          //         backgroundColor: AppColors.primaryColor,
-          //         padding:
-          //             const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(10),
-          //         ),
-          //       ),
-          //       child: const Text(
-          //         "Add Unit",
-          //         style: TextStyle(color: Colors.white),
-          //       ),
-          //     ),
-          //   ),
-          // ),
           Expanded(
             child: Consumer<UnitDTProvider>(
               builder: (context, provider, child) {
@@ -111,9 +81,19 @@ class UnitListViewState extends State<UnitListView> {
                   itemBuilder: (context, index) {
                     final unit = provider.units[index];
 
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
+                    final unitId = provider.units[index].id;
+                    return InkWell(
+                      onLongPress: () {
+                        _openUnitEditDeleteDialog(unit);
+                      },
                       child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(0), // 🔁 No rounded corners
+                          side: BorderSide(
+                              color: Colors.grey.shade300), // ✅ Border
+                        ),
+                        elevation: 0,
                         child: ListTile(
                           contentPadding: const EdgeInsets.only(left: 16),
                           leading: CircleAvatar(
@@ -135,33 +115,7 @@ class UnitListViewState extends State<UnitListView> {
                             "Symbol: ${unit.symbol}",
                             style: const TextStyle(fontSize: 12),
                           ),
-                          trailing: PopupMenuButton<String>(
-                            position: PopupMenuPosition.under,
-                            onSelected: (value) {
-                              if (value == 'edit') {
-                                _editUnit(unit);
-                              } else if (value == 'delete') {
-                                _deleteUnit(unit);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(
-                                value: 'edit',
-                                child: ListTile(
-                                  leading: Icon(Icons.edit, color: Colors.blue),
-                                  title: Text("Edit"),
-                                ),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: ListTile(
-                                  leading:
-                                      Icon(Icons.delete, color: Colors.red),
-                                  title: Text("Delete"),
-                                ),
-                              ),
-                            ],
-                          ),
+                         
                         ),
                       ),
                     );
@@ -175,42 +129,150 @@ class UnitListViewState extends State<UnitListView> {
     );
   }
 
-  void _editUnit(UnitResponseModel unit) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => UpdateUnitPage(unit: unit),
-      ),
+  void _openUnitEditDeleteDialog(UnitResponseModel unit) {
+    editDeleteDialog(context, unit.id.toString(), unit);
+  }
+
+  Future<dynamic> editDeleteDialog(
+      BuildContext context, String unitId, UnitResponseModel unit) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UpdateUnitPage(unit: unit),
+                        ),
+                      );
+                    });
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, unitId);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  void _deleteUnit(UnitResponseModel unit) {
+  void _showDeleteDialog(BuildContext context, String unitId) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Confirm Deletion"),
-          content: Text(
-            "Are you sure you want to delete ${unit.name}?",
-            style: const TextStyle(color: Colors.black),
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Unit',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this Unit?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context), // ❌ Cancel
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                await Provider.of<UnitDTProvider>(context, listen: false)
-                    .deleteUnit(unit.id, context);
-                setState(() {}); // ✅ Ensure UI rebuilds after deletion
-                Navigator.pop(context); // ✅ Close dialog
-              },
-              child: const Text("Delete", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
+          TextButton(
+            onPressed: () async {
+              final provider =
+                  Provider.of<UnitDTProvider>(context, listen: false);
+              // bool isDeleted = await provider.deleteUnit(int.parse(unitId));
+
+              bool isDeleted =
+                  await provider.deleteUnit(int.parse(unitId), context);
+
+              Navigator.of(context).pop(); // Close confirm dialog
+
+              if (isDeleted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Unit deleted successfully!',
+                      style: TextStyle(color: colorScheme.primary),
+                    ),
+                  ),
+                );
+                await provider.fetchUnits(); // Refresh list
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Failed to delete Unit',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                );
+              }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
     );
   }
 }

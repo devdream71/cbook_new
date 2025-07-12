@@ -23,6 +23,11 @@ class AppColors {
 
   static const Color _cardGrey = Color(0xfff4f6ff);
 
+  static const Color _sfWhite = Color(0xffFFFFFF);
+
+
+
+
 
   // Getters to access the colors
   static Color get secondaryColor => _secondaryColor;
@@ -32,5 +37,7 @@ class AppColors {
   static Color get tableHeaderColor => _tableHeaderColor;
   static Color get backgroundColor => _backgroundColor;
   static Color get cardGrey => _cardGrey;
+  static Color get sfWhite => _sfWhite;
+
 
 }

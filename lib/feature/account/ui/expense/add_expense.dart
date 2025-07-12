@@ -1,7 +1,9 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_popup.dart';
+import 'package:cbook_dt/feature/account/ui/expense/model/expense_paid_form_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
@@ -37,6 +39,46 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
     Future.microtask(() =>
         Provider.of<PaymentVoucherProvider>(context, listen: false)
             .fetchBillPersons());
+
+    // Set today's date after widget is mounted
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = Provider.of<SalesController>(context, listen: false);
+
+      if (controller.formattedDate2.isEmpty) {
+        final now = DateTime.now();
+        controller.formattedDate2 =
+            "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+        setState(() {}); // 👈 make sure UI updates
+      }
+    });
+  }
+
+  void resetForm() {
+    setState(() {
+      // Dropdowns and selections
+      selectedReceivedTo = null;
+      selectedAccount = null;
+      selectedAccountId = null;
+
+      selectedBillPerson = null;
+      selectedBillPersonId = null;
+      selectedBillPersonData = null;
+
+      // Text input
+      billNoController.clear();
+      billNo = '';
+
+      // Date
+      final now = DateTime.now();
+      final formattedDate =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      Provider.of<SalesController>(context, listen: false).formattedDate2 =
+          formattedDate;
+
+      // Clear added items
+      Provider.of<ExpenseProvider>(context, listen: false).clearReceiptItems();
+    });
   }
 
   @override
@@ -74,6 +116,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
         }
       },
       child: Scaffold(
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -109,6 +152,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    ///cash in hand or bank
                     SizedBox(
                       height: 30,
                       width: 150,
@@ -257,12 +301,31 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                     //person
 
                     ///bill date
+                    ///bill date.
                     SizedBox(
                       height: 30,
                       width: 130,
                       child: InkWell(
-                        // onTap: () => controller.pickDate(
-                        //     context), // Trigger the date picker
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+
+                          if (picked != null) {
+                            final formatted =
+                                "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+
+                            setState(() {
+                              controller.formattedDate2 =
+                                  formatted; // ✅ update UI
+                            });
+
+                            debugPrint("📅 Selected Bill Date: $formatted");
+                          }
+                        },
                         child: InputDecorator(
                           decoration: InputDecoration(
                             isDense: true,
@@ -274,7 +337,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                             suffixIconConstraints: const BoxConstraints(
                               minWidth: 16,
                               minHeight: 16,
-                            ), // Adjust constraints to align icon closely
+                            ),
                             hintText: "Bill Date",
                             hintStyle: TextStyle(
                               color: Colors.grey.shade400,
@@ -289,9 +352,9 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                             ),
                           ),
                           child: Text(
-                            controller.formattedDate.isNotEmpty
-                                ? controller.formattedDate
-                                : "Select Date", // Default text when no date is selected
+                            controller.formattedDate2.isNotEmpty
+                                ? controller.formattedDate2
+                                : "Select Date",
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 12,
@@ -381,8 +444,19 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                                   child: Icon(Icons.close, size: 20),
                                 ),
                                 onPressed: () {
-                                  providerExpense.receiptItems.remove(item);
-                                  providerExpense.notifyListeners();
+                                  // providerExpense.receiptItems.remove(item);
+                                  // providerExpense.notifyListeners();
+
+                                  showDeleteConfirmationDialog(
+                                    context: context,
+                                    onConfirm: () {
+                                      setState(() {
+                                        providerExpense.receiptItems
+                                            .remove(item);
+                                        providerExpense.notifyListeners();
+                                      });
+                                    },
+                                  );
                                 },
                               ),
                             ],
@@ -501,13 +575,15 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                       }
 
                       final invoiceNo = billNoController.text.trim();
-                      const date =
-                          "2025-06-10"; // your date string like '2025-06-10'
+                      final date = controller
+                          .formattedDate2; // your date string like '2025-06-10'
                       final receivedTo =
                           (selectedReceivedTo ?? '').toLowerCase();
-                      final account = selectedAccountId.toString();
+                      final accountID = selectedAccountId.toString();
                       const notes = 'text'; // Or from your input field
                       const status = 1;
+
+                      final billPersonId = selectedBillPersonData!.id;
 
                       final totalAmount =
                           providerExpense.receiptItems.fold<double>(
@@ -521,9 +597,9 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                       final List<ExpenseItemPopUp> expenseItems =
                           providerExpense.receiptItems.map((item) {
                         return ExpenseItemPopUp(
-                          accountId:
-                              account, // or item-specific account id if different
+                          //itemAccountId: selectedPaidTo!, // or item-specific account id if different
                           //accountId: providerExpense.selectedAccountForUpdate?.id.toString() ?? '',
+                          itemAccountId: item.purchaseId.toString(),
                           narration: item.note,
                           amount: item.amount.toString(),
                         );
@@ -533,12 +609,13 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                       debugPrint('Sending Data:');
                       debugPrint('User ID: $userId');
                       debugPrint('Expense No: $invoiceNo');
-                      debugPrint('Date: $date');
+                      debugPrint('Date: ${controller.formattedDate2}');
                       debugPrint('Paid To: $receivedTo');
-                      debugPrint('Account: $account');
+                      debugPrint('AccountID: $accountID');
                       debugPrint('Total Amount: $totalAmount');
                       debugPrint('Notes: $notes');
                       debugPrint('Status: $status');
+                      debugPrint('bill person: $billPersonId');
                       debugPrint(
                           'Expense Items: ${expenseItems.map((e) => e.toJson()).toList()}');
 
@@ -547,11 +624,12 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         invoiceNo: invoiceNo,
                         date: date,
                         receivedTo: receivedTo,
-                        account: account,
+                        account: accountID,
                         totalAmount: totalAmount,
                         notes: notes,
                         status: status,
                         expenseItems: expenseItems,
+                        billPersonId: billPersonId.toString(),
                       );
 
                       if (success) {
@@ -560,11 +638,21 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
 
                         providerExpense.fetchExpenseList();
 
+                        // ✅ Clear everything
+                        resetForm();
+
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const Expanse()),
                           (Route<dynamic> route) => false,
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              backgroundColor: Colors.green,
+                              content:
+                                  Text('Successfully. Save  The Expense.')),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -572,7 +660,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                               content: Text('Failed to save expense.')),
                         );
                       }
-                    },
+                    }, 
                     child: const Text("Save"),
                   ),
                 ),
@@ -601,6 +689,8 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
           TextEditingController amountController = TextEditingController();
           TextEditingController noteController = TextEditingController();
           String? selectedPaidTo;
+           
+       int? selectedPaidToId; 
 
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
@@ -650,6 +740,52 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                           ),
                         ),
                         const SizedBox(height: 20),
+
+                        ///paid to from pop up
+                        // SizedBox(
+                        //   height: 30,
+                        //   child: provider.isLoading
+                        //       ? const Center(child: CircularProgressIndicator())
+                        //       : CustomDropdownTwo(
+                        //           hint: '',
+                        //           items: provider.paidFormList
+                        //               .map((e) => e.accountName)
+                        //               .toList(),
+                        //           width: double.infinity,
+                        //           height: 30,
+                        //           labelText: 'Paid To',
+                        //           selectedItem: selectedPaidTo,
+                        //           onChanged: (selectedItem) {
+                        //             debugPrint(
+                        //                 'Selected Paid To: $selectedItem');
+
+                        //             final selected =
+                        //                 provider.paidFormList.firstWhere(
+                        //               (e) => e.accountName == selectedItem,
+                        //               orElse: () => PaidFormData(
+                        //                   id: 0, accountName: 'Unknown'),
+                        //             );
+
+                        //             debugPrint(
+                        //                 '✅ Selected Paid Form ID: ${selected.id}');
+
+                        //             setState(() {
+                        //               selectedPaidTo = selectedItem;
+
+                        //               // Optionally, if you want to store the object too:
+                        //               // selectedPaidFormData = selected;
+                        //             });
+                        //             // debugPrint(
+                        //             //     'Selected Paid To: $selectedItem');
+                        //             // debugPrint(
+                        //             //     'Selected Paid To: $selectedItem.');
+                        //             // setState(() {
+                        //             //   selectedPaidTo = selectedItem;
+                        //             // });
+                        //           },
+                        //         ),
+                        // ),
+
                         SizedBox(
                           height: 30,
                           child: provider.isLoading
@@ -664,14 +800,22 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                                   labelText: 'Paid To',
                                   selectedItem: selectedPaidTo,
                                   onChanged: (selectedItem) {
-                                    debugPrint(
-                                        'Selected Paid To: $selectedItem');
-                                    setState(() {
-                                      selectedPaidTo = selectedItem;
-                                    });
+                                     final selected = provider.paidFormList.firstWhere(
+    (e) => e.accountName == selectedItem,
+    orElse: () => PaidFormData(id: 0, accountName: 'Unknown'),
+  );
+
+  debugPrint('✅ Selected Paid Form ID: ${selected.id}');
+
+  setState(() {
+    selectedPaidTo = selectedItem;
+    selectedPaidToId = selected.id; // ✅ STORE ID HERE
+  });
                                   },
                                 ),
                         ),
+
+                        ///amount
                         AddSalesFormfield(
                           label: "",
                           labelText: "Amount",
@@ -679,6 +823,8 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                           keyboardType: TextInputType.number,
                           onChanged: (value) {},
                         ),
+
+                        ///note
                         AddSalesFormfield(
                           label: "",
                           labelText: "Note",
@@ -689,11 +835,6 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            // TextButton(
-                            //   onPressed: () {},
-                            //   child: const Text('Add & New'),
-                            // ),
-
                             ///add
                             TextButton(
                               onPressed: () {
@@ -701,6 +842,7 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
                                     amountController.text.isNotEmpty) {
                                   provider.addReceiptItem(
                                     ExpenseItem(
+                                      purchaseId: selectedPaidToId, 
                                       receiptFrom: selectedPaidTo!,
                                       note: noteController.text,
                                       amount: double.tryParse(
@@ -728,5 +870,38 @@ class _ExpenseCreateState extends State<ExpenseCreate> {
             },
           );
         });
+  }
+
+  //remove item
+  void showDeleteConfirmationDialog({
+    required BuildContext context,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Remove?"),
+        content: const Text(
+          "Are you sure you want to remove the item?",
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Cancel
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              onConfirm(); // Run the actual delete
+            },
+            child: const Text(
+              "Remove",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

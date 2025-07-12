@@ -22,6 +22,7 @@ class CustomerListScreenState extends State<CustomerListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         title: const Text('Customers',
             style: TextStyle(fontWeight: FontWeight.bold)),

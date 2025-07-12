@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/purchase/purchase_update.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
@@ -66,8 +67,6 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
         : 'No Units Available';
   }
 
-   
-
   void updateItem() {
     debugPrint("Updating item:");
     debugPrint("Selected Item: $selectedItemName");
@@ -133,6 +132,7 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -147,8 +147,6 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             
-
             SizedBox(
               width: double.infinity,
               child: CustomDropdownTwo(
@@ -167,7 +165,6 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
                 },
               ),
             ),
-
             const SizedBox(height: 5),
             SizedBox(
               child: CustomDropdownTwo(

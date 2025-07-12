@@ -689,6 +689,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
     return ChangeNotifierProvider(
       create: (_) => SaleUpdateProvider()..fetchSaleData(widget.salesId),
       child: Scaffold(
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
             backgroundColor: colorScheme.primary,
             iconTheme: const IconThemeData(color: Colors.white),

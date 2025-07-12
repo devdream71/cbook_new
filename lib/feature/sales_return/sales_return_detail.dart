@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/sales_return/model/sale_return_model.dart';
 import 'package:cbook_dt/feature/sales_return/provider/sale_return_provider.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class SalesReturnDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           leading: const BackButton(color: Colors.white),

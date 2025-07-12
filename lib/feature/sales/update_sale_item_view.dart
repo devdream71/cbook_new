@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/item/provider/items_show_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
@@ -51,9 +52,6 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
   @override
   void initState() {
     super.initState();
-
-    // final fetchStockQuantity =
-    //     Provider.of<AddItemProvider>(context, listen: false);
 
     // Get the item and unit name using the maps
     selectedItemName =
@@ -123,6 +121,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
     widget.provider.priceController.addListener(calculateSubtotal);
     widget.provider.qtyController.addListener(calculateSubtotal);
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           centerTitle: true,
           backgroundColor: colorScheme.primary,

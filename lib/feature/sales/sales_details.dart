@@ -1,4 +1,4 @@
-
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/sales/model/sales_list_model.dart';
 import 'package:cbook_dt/feature/sales/provider/sales_provider.dart';
 import 'package:flutter/material.dart';
@@ -14,16 +14,15 @@ class SalesDetails extends StatefulWidget {
 }
 
 class _SalesDetailsState extends State<SalesDetails> {
-  
   @override
   void initState() {
     // TODO: implement initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    // Provider.of<SalesProvider>(context, listen: false).fetchItems();
-    final saleProvider = Provider.of<SalesProvider>(context, listen: false);
+      // Provider.of<SalesProvider>(context, listen: false).fetchItems();
+      final saleProvider = Provider.of<SalesProvider>(context, listen: false);
       saleProvider.fetchItems();
       saleProvider.fetchUnits();
-  });
+    });
     super.initState();
   }
 
@@ -40,9 +39,18 @@ class _SalesDetailsState extends State<SalesDetails> {
   @override
   Widget build(BuildContext context) {
     final saleProvider = Provider.of<SalesProvider>(context);
+
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
-        title: Text("Sales Details - ${widget.sale.billNumber}"),
+        backgroundColor: colorScheme.primary,
+        leading: const BackButton(color: Colors.white),
+        title: Text(
+          "Sales Details - ${widget.sale.billNumber}",
+          style: const TextStyle(color: Colors.yellow, fontSize: 16),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -50,7 +58,12 @@ class _SalesDetailsState extends State<SalesDetails> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // customRowSales("Customer Name:", widget.sale.customerName, isBlod: true),
-            customRowSales("Customer Name:", widget.sale.customerName != "N/A" ? widget.sale.customerName : "Cash", ),
+            customRowSales(
+              "Customer Name:",
+              widget.sale.customerName != "N/A"
+                  ? widget.sale.customerName
+                  : "Cash",
+            ),
             customRowSales(
               "Transaction Method:",
               widget.sale.transectionMethod,
@@ -61,7 +74,7 @@ class _SalesDetailsState extends State<SalesDetails> {
               //widget.sale.purchaseDate.toString(),
               formatDate(widget.sale.purchaseDate.toString()),
             ),
-            
+
             customRowSales(
               "Discount:",
               "৳ ${widget.sale.discount.toString()}",
@@ -81,15 +94,16 @@ class _SalesDetailsState extends State<SalesDetails> {
                 itemCount: widget.sale.purchaseDetails.length,
                 itemBuilder: (context, index) {
                   final detail = widget.sale.purchaseDetails[index];
-                   // Get item name from the provider
+                  // Get item name from the provider
                   String itemName = saleProvider.getItemName(detail.itemId!);
-                   // Get item name and unit symbol
+                  // Get item name and unit symbol
                   //String itemName = saleProvider.getItemName(detail.itemId!);
-                  String unitSymbol = saleProvider.getUnitSymbol(detail.unitId!);
+                  String unitSymbol =
+                      saleProvider.getUnitSymbol(detail.unitId!);
                   return Card(
                     child: ListTile(
-                      
-                      title: Text('Item : $itemName - $unitSymbol' ,
+                      title: Text(
+                        'Item : $itemName - $unitSymbol',
                         style:
                             const TextStyle(color: Colors.black, fontSize: 12),
                       ),
@@ -99,19 +113,18 @@ class _SalesDetailsState extends State<SalesDetails> {
                         children: [
                           Text(
                             'Quantity: ${detail.qty}, Price: ৳ ${detail.price.toString()}',
-                            style:
-                                const TextStyle(color: Colors.black, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 12),
                           ),
-
                           Text(
                             'Discount: ${detail.discountAmount} ৳,  ${detail.discountPercenmtace} %',
-                            style:
-                                const TextStyle(color: Colors.black, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 12),
                           ),
                           Text(
                             'Tax: ${detail.taxAmount} ৳,   ${detail.taxPercentace} %',
-                            style:
-                                const TextStyle(color: Colors.black, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 12),
                           ),
                         ],
                       ),
@@ -152,6 +165,3 @@ class _SalesDetailsState extends State<SalesDetails> {
     );
   }
 }
-
-
-

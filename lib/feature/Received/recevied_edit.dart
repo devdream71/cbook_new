@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/Received/model/create_recived_voucher.dart';
 import 'package:cbook_dt/feature/Received/provider/received_provider.dart';
@@ -292,6 +293,7 @@ class _ReceviedEditState extends State<ReceviedEdit> {
     TextStyle ts = const TextStyle(color: Colors.black, fontSize: 12);
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,

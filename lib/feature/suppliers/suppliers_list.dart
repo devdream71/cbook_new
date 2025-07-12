@@ -24,6 +24,7 @@ class SupplierListScreenState extends State<SupplierListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         title: const Text('Suppliers',
             style: TextStyle(fontWeight: FontWeight.bold)),

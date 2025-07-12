@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/account/ui/income/add_income.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_details.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_edit.dart';
@@ -24,7 +25,7 @@ class _IncomeState extends State<Income> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -157,16 +158,9 @@ class _IncomeState extends State<Income> {
                                         Text(
                                           income.accountId == 1
                                               ? 'Cash'
-                                              : income.accountId == 11
-                                                  ? 'PTCash'
-                                                  : income.accountId == 10
-                                                      ? 'PTCash'
-                                                      : income.accountId == 13
-                                                          ? 'Cash 1'
-                                                          : income.accountId ==
-                                                                  15
-                                                              ? 'Cash 2'
-                                                              : '${income.accountId}',
+                                              : income.accountId == 12
+                                                  ? 'Cash A'
+                                                  : '${income.accountId}',
                                           style: const TextStyle(
                                             color: Colors.black,
                                             fontSize: 12,
@@ -339,7 +333,15 @@ class _IncomeState extends State<Income> {
               await provider.deleteIncome(incomeId.toString());
               await provider
                   .fetchReceiptFromList(); // ✅ Re-fetch the latest list
-              Navigator.of(context).pop(); // Close dialog
+               
+              Navigator.of(context).pop(); 
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text('Successfully. Delete The income.')),
+              );
+              // Close dialog
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),

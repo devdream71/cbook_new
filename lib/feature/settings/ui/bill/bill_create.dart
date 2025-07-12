@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class BillCreate extends StatelessWidget {
@@ -8,7 +9,9 @@ class BillCreate extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
+          
           backgroundColor: colorScheme.primary,
           iconTheme: const IconThemeData(color: Colors.white),
           centerTitle: true,

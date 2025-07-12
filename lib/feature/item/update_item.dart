@@ -176,10 +176,10 @@ class _UpdateItemState extends State<UpdateItem> {
     debugPrint(
         "unit 2nd id Price: ${itemProvider.unitIdSecondController.text}");
     debugPrint("unit qty Price: ${itemProvider.unitQtyController.text}");
-
     final colorScheme = Theme.of(context).colorScheme;
-
+    
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           //centerTitle: true,
@@ -192,899 +192,653 @@ class _UpdateItemState extends State<UpdateItem> {
           )),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              ////image showing here.
-              Center(
-                child: Stack(
-                  alignment: Alignment.bottomRight,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 65,
-                      backgroundColor: Colors.green[100],
-                      child: CircleAvatar(
-                        radius: 60,
-                        backgroundImage: _imageFile != null
-                            ? FileImage(File(_imageFile!.path))
-                            : (_existingImage != null &&
-                                        _existingImage!.isNotEmpty
-                                    ? NetworkImage(
-                                        "https://commercebook.site/$_existingImage")
-                                    : const AssetImage(
-                                        'assets/image/image_color.png'))
-                                as ImageProvider,
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: GestureDetector(
-                        onTap: () => _showImageSourceActionSheet(context),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          padding: const EdgeInsets.all(6),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            size: 20,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              ///name
-              AddSalesFormfield(
-                height: 40,
-                labelText: 'Name',
-                label: "",
-                controller: itemProvider.nameController,
-              ),
-
-              const SizedBox(height: 10),
-
-              ////api unit show and if unit selcted then replace api unit.
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Consumer2<AddItemProvider, SalesController>(
-                    builder: (context, unitProvider, controller, _) {
-                      final unitId = itemProvider.unitIdController.text;
-                      final secondaryUnitId =
-                          itemProvider.unitIdSecondController.text;
-                      final unitQty = itemProvider.unitQtyController.text;
-
-                      final mainUnitName = unitProvider.getUnitSymbol(unitId);
-                      final secondaryUnitName =
-                          unitProvider.getUnitSymbol(secondaryUnitId);
-
-                      // If user selected custom units, show only selected
-                      if (controller.selectedUnit != null &&
-                          controller.selectedUnit!.isNotEmpty) {
-                        return Text(
-                          controller.selectedUnit2 != null &&
-                                  controller.selectedUnit2!.isNotEmpty &&
-                                  controller.selectedUnit !=
-                                      controller.selectedUnit2
-                              ? '1 ${controller.selectedUnit} = ${controller.conversionRate} ${controller.selectedUnit2}'
-                              : '${controller.selectedUnit}',
-                          style: GoogleFonts.notoSansPhagsPa(
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
-                        );
-                      }
-
-                      // Otherwise show API data
-                      return Text(
-                        secondaryUnitId.isNotEmpty
-                            ? '$unitQty $mainUnitName $secondaryUnitName'
-                            : '$unitQty $mainUnitName',
-                        style: GoogleFonts.notoSansPhagsPa(
-                          fontSize: 12,
-                          color: Colors.black,
-                        ),
-                      );
-                    },
-                  ),
-
-                  /// Additional secondary unit conversion details
-                  Column(
-                    children: [
-                      // If user selected both base and secondary unit
-                      if (controller.selectedUnit2 != null &&
-                          controller.selectedUnit2!.isNotEmpty &&
-                          controller.selectedUnit2 !=
-                              controller.selectedUnit) ...[
-                        const SizedBox(height: 5),
-                        // Row(
-                        //   children: [
-                        //     Text(
-                        //       "1 ${controller.selectedUnit} = ",
-                        //       style: const TextStyle(
-                        //           fontSize: 12, color: Colors.black),
-                        //     ),
-                        //     Padding(
-                        //       padding: const EdgeInsets.only(top: 3.0),
-                        //       child: Text(
-                        //         controller.conversionRate,
-                        //         style: const TextStyle(
-                        //             fontSize: 14, color: Colors.black),
-                        //       ),
-                        //     ),
-                        //     Text(
-                        //       " ${controller.selectedUnit2}",
-                        //       style: const TextStyle(
-                        //           fontSize: 12, color: Colors.black),
-                        //     ),
-                        //   ],
-                        // ),
-                      ]
-                      // If only base unit is selected
-                      else if (controller.selectedUnit != null &&
-                          controller.selectedUnit!.isNotEmpty) ...[
-                        const SizedBox(height: 5),
-                        // Text(
-                        //   controller.selectedUnit!,
-                        //   style: const TextStyle(
-                        //       fontSize: 12, color: Colors.black),
-                        // ),
-                      ]
-                    ],
-                  ),
-
-                  /// Button to open unit selector
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          backgroundColor: Colors.transparent,
-                          builder: (BuildContext context) {
-                            return DraggableScrollableSheet(
-                              expand: false,
-                              initialChildSize: 0.45,
-                              minChildSize: 0.35,
-                              maxChildSize: 0.85,
-                              builder: (context, scrollController) {
-                                return Container(
-                                  padding: EdgeInsets.only(
-                                    left: 16,
-                                    right: 16,
-                                    top: 16,
-                                    bottom: MediaQuery.of(context)
-                                        .viewInsets
-                                        .bottom,
-                                  ),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(16)),
-                                  ),
-                                  child: SingleChildScrollView(
-                                    controller: scrollController,
-                                    child: SelectUnitBottomSheet(
-                                      selectedUnit: controller.selectedUnit,
-                                      selectedUnit2: controller.selectedUnit2,
-                                      conversionRateController:
-                                          controller.conversionRateController,
-                                      onUnit1Changed: (value) {
-                                        controller.updateUnit1(value);
-                                      },
-                                      onUnit2Changed: (value) {
-                                        controller.updateUnit2(value);
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                      child: const Text("Selected Unit"),
-                    ),
-                  ),
-                ],
-              ),
-
-              ///api unit. and selcted unit from unit picker new from item create. working old
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-
-              //     Consumer<AddItemProvider>(
-              //       builder: (context, unitProvider, _) {
-              //         final unitId = itemProvider.unitIdController.text;
-              //         final secondaryUnitId =
-              //             itemProvider.unitIdSecondController.text;
-              //         final unitQty = itemProvider.unitQtyController.text;
-
-              //         final mainUnitName = unitProvider.getUnitSymbol(unitId);
-              //         final secondaryUnitName =
-              //             unitProvider.getUnitSymbol(secondaryUnitId);
-
-              //         return Text(
-              //           secondaryUnitId.isNotEmpty
-              //               ? '$unitQty $mainUnitName $secondaryUnitName'
-              //               : '$unitQty $mainUnitName',
-              //           style: GoogleFonts.notoSansPhagsPa(
-              //             fontSize: 12,
-              //             color: Colors.black,
-              //           ),
-              //         );
-              //       },
-              //     ),
-
-              //     Column(
-              //       children: [
-              //         // Check if secondary unit is selected and different from base unit
-              //         if (controller.selectedUnit2 != null &&
-              //             controller.selectedUnit2!.isNotEmpty &&
-              //             controller.selectedUnit2 !=
-              //                 controller.selectedUnit) ...[
-              //           vPad5,
-              //           Row(
-              //             children: [
-              //               Text(
-              //                 "1 ${controller.selectedUnit} = ",
-              //                 style: const TextStyle(
-              //                     fontSize: 12, color: Colors.black),
-              //               ),
-              //               Padding(
-              //                 padding: const EdgeInsets.only(top: 3.0),
-              //                 child: Text(
-              //                   controller.conversionRate,
-              //                   style: const TextStyle(
-              //                     fontSize: 14,
-              //                     color: Colors.black,
-              //                     //fontWeight: FontWeight.normal
-              //                   ),
-              //                 ),
-              //               ),
-              //               Text(
-              //                 " ${controller.selectedUnit2}",
-              //                 style: const TextStyle(
-              //                   fontSize: 12,
-              //                   color: Colors.black,
-              //                   //fontWeight: FontWeight.normal
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ]
-              //         // If no secondary unit is selected, show the base unit only
-              //         else if (controller.selectedUnit != null &&
-              //             controller.selectedUnit!.isNotEmpty) ...[
-              //           vPad5,
-              //           Row(
-              //             children: [
-              //               Text(
-              //                 "${controller.selectedUnit}",
-              //                 style: const TextStyle(
-              //                     fontSize: 12, color: Colors.black),
-              //               ),
-              //             ],
-              //           ),
-              //         ]
-              //         // If no unit is selected at all, show "Not Selected"
-              //         else ...[
-              //           vPad5,
-              //           const Text(
-              //             // "Base Unit: Not Selected",
-              //             "",
-
-              //             style: TextStyle(fontSize: 12, color: Colors.black),
-              //           ),
-              //         ],
-              //       ],
-              //     ),
-              //     Align(
-              //       alignment: Alignment.centerRight,
-              //       child: ElevatedButton(
-              //         onPressed: () {
-              //           showModalBottomSheet(
-              //             isScrollControlled: true,
-              //             context: context,
-              //             backgroundColor: Colors.transparent,
-              //             builder: (BuildContext context) {
-              //               return DraggableScrollableSheet(
-              //                 expand: false,
-              //                 initialChildSize: 0.45,
-              //                 minChildSize: 0.35,
-              //                 maxChildSize: 0.85,
-              //                 builder: (context, scrollController) {
-              //                   return Container(
-              //                     padding: EdgeInsets.only(
-              //                       left: 16,
-              //                       right: 16,
-              //                       top: 16,
-              //                       bottom: MediaQuery.of(context)
-              //                           .viewInsets
-              //                           .bottom,
-              //                     ),
-              //                     decoration: const BoxDecoration(
-              //                       color: Colors.white,
-              //                       borderRadius: BorderRadius.vertical(
-              //                           top: Radius.circular(16)),
-              //                     ),
-              //                     child: SingleChildScrollView(
-              //                       controller:
-              //                           scrollController, // <-- Attach the scrollController
-              //                       child: SelectUnitBottomSheet(
-              //                         selectedUnit: controller.selectedUnit,
-              //                         selectedUnit2: controller.selectedUnit2,
-              //                         conversionRateController:
-              //                             controller.conversionRateController,
-              //                         onUnit1Changed: (value) {
-              //                           controller.updateUnit1(value);
-              //                         },
-              //                         onUnit2Changed: (value) {
-              //                           controller.updateUnit2(value);
-              //                         },
-              //                       ),
-              //                     ),
-              //                   );
-              //                 },
-              //               );
-              //             },
-              //           );
-              //         },
-              //         child: const Text("Selected Unit"),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-
-              ////previous unit
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Column(
-              //       children: [
-              //         // Check if secondary unit is selected and different from base unit
-              //         if (controller.selectedUnit2 != null &&
-              //             controller.selectedUnit2!.isNotEmpty &&
-              //             controller.selectedUnit2 !=
-              //                 controller.selectedUnit) ...[
-              //           vPad5,
-              //           Row(
-              //             children: [
-              //               Text(
-              //                 "1 ${controller.selectedUnit} = ",
-              //                 style: const TextStyle(
-              //                     fontSize: 12, color: Colors.black),
-              //               ),
-              //               Padding(
-              //                 padding: const EdgeInsets.only(top: 3.0),
-              //                 child: Text(
-              //                   controller.conversionRate,
-              //                   style: const TextStyle(
-              //                     fontSize: 12,
-              //                     color: Colors.black,
-              //                   ),
-              //                 ),
-              //               ),
-              //               Text(
-              //                 " ${controller.selectedUnit2}",
-              //                 style: const TextStyle(
-              //                   fontSize: 12,
-              //                   color: Colors.black,
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ]
-              //         // If no secondary unit is selected, show the base unit only
-              //         else if (controller.selectedUnit != null &&
-              //             controller.selectedUnit!.isNotEmpty) ...[
-              //           vPad5,
-              //           Row(
-              //             children: [
-              //               Text(
-              //                 "Base Unit: ${controller.selectedUnit}",
-              //                 style: const TextStyle(
-              //                     fontSize: 12, color: Colors.black),
-              //               ),
-              //             ],
-              //           ),
-              //         ]
-              //         // If no unit is selected at all, show "Not Selected"
-              //         else ...[
-              //           vPad5,
-              //           const Text(
-              //             // "Base Unit: Not Selected",
-              //             "",
-
-              //             style: TextStyle(fontSize: 12, color: Colors.black),
-              //           ),
-              //         ],
-              //       ],
-              //     ),
-              //     Align(
-              //       alignment: Alignment.centerRight,
-              //       child: ElevatedButton(
-              //         onPressed: () {
-              //           showModalBottomSheet(
-              //             context: context,
-              //             builder: (BuildContext context) {
-              //               return SingleChildScrollView(
-              //                 child: SelectUnitBottomSheet(
-              //                   selectedUnit: controller.selectedUnit,
-              //                   selectedUnit2: controller.selectedUnit2,
-              //                   conversionRateController:
-              //                       controller.conversionRateController,
-              //                   onUnit1Changed: (value) {
-              //                     controller.updateUnit1(value);
-              //                   },
-              //                   onUnit2Changed: (value) {
-              //                     controller.updateUnit2(value);
-              //                   },
-              //                 ),
-              //               );
-              //             },
-              //           );
-              //         },
-              //         child: const Text("Selected Unit"),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-
-              vPad5,
-
-              ///category.
-              Row(
-                children: [
-                  // Category Dropdown
-                  Expanded(
-                    child: categoryProvider.isLoading
-                        ? const Center(
-                            child: SizedBox(
-                              width:
-                                  24, // Set a fixed size for the progress indicator
-                              height: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                    ////image showing here.
+                    Center(
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          CircleAvatar(
+                            radius: 65,
+                            backgroundColor: Colors.green[100],
+                            child: CircleAvatar(
+                              radius: 60,
+                              backgroundImage: _imageFile != null
+                                  ? FileImage(File(_imageFile!.path))
+                                  : (_existingImage != null &&
+                                              _existingImage!.isNotEmpty
+                                          ? NetworkImage(
+                                              "https://commercebook.site/$_existingImage")
+                                          : const AssetImage(
+                                              'assets/image/image_color.png'))
+                                      as ImageProvider,
                             ),
-                          )
-                        : CustomDropdownTwo(
-                            items: categoryProvider.categories
-                                .map((category) => category.name)
-                                .toList(),
-                            hint: 'Select Category',
-                            width: double.infinity,
-                            height: 40, // Adjust height if needed
-                            onChanged: (value) {
-                              final selectedCategory = categoryProvider
-                                  .categories
-                                  .firstWhere((cat) => cat.name == value);
-
-                              setState(() {
-                                selectedCategoryId = selectedCategory.id;
-                                selectedSubCategoryId =
-                                    null; // Reset subcategory
-                              });
-
-                              // Fetch subcategories for selected category
-                              categoryProvider
-                                  .fetchSubCategories(selectedCategory.id);
-                            },
                           ),
-                  ),
-
-                  const SizedBox(width: 10), // Spacing between dropdowns
-
-                  // Subcategory Dropdown
-                  Expanded(
-                    child: categoryProvider.isSubCategoryLoading
-                        ? const Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          )
-                        : categoryProvider.subCategories.isNotEmpty
-                            ? CustomDropdownTwo(
-                                items: categoryProvider.subCategories
-                                    .map((subCategory) => subCategory.name)
-                                    .toList(),
-                                hint: 'Select Sub Category',
-                                width: double.infinity,
-                                height: 40, // Adjust height if needed
-                                onChanged: (value) {
-                                  final selectedSubCategory =
-                                      categoryProvider.subCategories.firstWhere(
-                                          (subCat) => subCat.name == value);
-
-                                  setState(() {
-                                    selectedSubCategoryId =
-                                        selectedSubCategory.id;
-                                  });
-
-                                  debugPrint(
-                                      "Selected Sub Category ID: ${selectedSubCategory.id}");
-                                },
-                              )
-                            : const Align(
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  "No subcategories available",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 12),
+                          Positioned(
+                            bottom: 4,
+                            right: 4,
+                            child: GestureDetector(
+                              onTap: () => _showImageSourceActionSheet(context),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                ),
+                                padding: const EdgeInsets.all(6),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  size: 20,
+                                  color: Colors.black,
                                 ),
                               ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(
-                height: 15,
-              ),
-
-              ///price , and value
-
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: AddSalesFormfield(
-                      height: 40,
-                      labelText: 'Price',
-                      //label: "",
-                      controller: itemProvider.priceController,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: AddSalesFormfield(
+                    const SizedBox(height: 10),
+
+                    ///name
+                    AddSalesFormfield(
                       height: 40,
-                      labelText: 'Value',
-                      //label: "",
-                      controller: itemProvider.valueController,
+                      labelText: 'Name',
+                      controller: itemProvider.nameController,
                     ),
-                  ),
-                ],
-              ),
 
-              const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-              ///stock and purchase price.
-              Row(
-                children: [
-                  Expanded(
-                    child: AddSalesFormfield(
-                      height: 40,
-                      labelText: 'Stock',
-                      label: "",
-                      controller: itemProvider.stockController,
+                    ////api unit show and if unit selcted then replace api unit.
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Consumer2<AddItemProvider, SalesController>(
+                          builder: (context, unitProvider, controller, _) {
+                            final unitId = itemProvider.unitIdController.text;
+                            final secondaryUnitId =
+                                itemProvider.unitIdSecondController.text;
+                            final unitQty = itemProvider.unitQtyController.text;
+
+                            final mainUnitName =
+                                unitProvider.getUnitSymbol(unitId);
+                            final secondaryUnitName =
+                                unitProvider.getUnitSymbol(secondaryUnitId);
+
+                            // If user selected custom units, show only selected
+                            if (controller.selectedUnit != null &&
+                                controller.selectedUnit!.isNotEmpty) {
+                              return Text(
+                                controller.selectedUnit2 != null &&
+                                        controller.selectedUnit2!.isNotEmpty &&
+                                        controller.selectedUnit !=
+                                            controller.selectedUnit2
+                                    ? '1 ${controller.selectedUnit} = ${controller.conversionRate} ${controller.selectedUnit2}'
+                                    : '${controller.selectedUnit}',
+                                style: GoogleFonts.notoSansPhagsPa(
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              );
+                            }
+
+                            // Otherwise show API data
+                            return Text(
+                              secondaryUnitId.isNotEmpty
+                                  ? '$unitQty $mainUnitName $secondaryUnitName'
+                                  : '$unitQty $mainUnitName',
+                              style: GoogleFonts.notoSansPhagsPa(
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
+                            );
+                          },
+                        ),
+
+                        /// Additional secondary unit conversion details
+                        Column(
+                          children: [
+                            // If user selected both base and secondary unit
+                            if (controller.selectedUnit2 != null &&
+                                controller.selectedUnit2!.isNotEmpty &&
+                                controller.selectedUnit2 !=
+                                    controller.selectedUnit) ...[
+                              const SizedBox(height: 5),
+                            ]
+                            // If only base unit is selected
+                            else if (controller.selectedUnit != null &&
+                                controller.selectedUnit!.isNotEmpty) ...[
+                              const SizedBox(height: 5),
+                              // Text(
+                              //   controller.selectedUnit!,
+                              //   style: const TextStyle(
+                              //       fontSize: 12, color: Colors.black),
+                              // ),
+                            ]
+                          ],
+                        ),
+
+                        /// Button to open unit selector
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                builder: (BuildContext context) {
+                                  return DraggableScrollableSheet(
+                                    expand: false,
+                                    initialChildSize: 0.45,
+                                    minChildSize: 0.35,
+                                    maxChildSize: 0.85,
+                                    builder: (context, scrollController) {
+                                      return Container(
+                                        padding: EdgeInsets.only(
+                                          left: 16,
+                                          right: 16,
+                                          top: 16,
+                                          bottom: MediaQuery.of(context)
+                                              .viewInsets
+                                              .bottom,
+                                        ),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(16)),
+                                        ),
+                                        child: SingleChildScrollView(
+                                          controller: scrollController,
+                                          child: SelectUnitBottomSheet(
+                                            selectedUnit:
+                                                controller.selectedUnit,
+                                            selectedUnit2:
+                                                controller.selectedUnit2,
+                                            conversionRateController: controller
+                                                .conversionRateController,
+                                            onUnit1Changed: (value) {
+                                              controller.updateUnit1(value);
+                                            },
+                                            onUnit2Changed: (value) {
+                                              controller.updateUnit2(value);
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                            child: const Text("Selected Unit"),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: AddSalesFormfield(
-                      height: 40,
-                      labelText: 'Purchase Price',
-                      label: "",
-                      controller: itemProvider.purchasePriceController,
+
+                    vPad5,
+
+                    ///category.
+                    Row(
+                      children: [
+                        // Category Dropdown
+                        Expanded(
+                          child: categoryProvider.isLoading
+                              ? const Center(
+                                  child: SizedBox(
+                                    width:
+                                        24, // Set a fixed size for the progress indicator
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  ),
+                                )
+                              : CustomDropdownTwo(
+                                  items: categoryProvider.categories
+                                      .map((category) => category.name)
+                                      .toList(),
+                                  hint: 'Select Category',
+                                  width: double.infinity,
+                                  height: 40, // Adjust height if needed
+                                  onChanged: (value) {
+                                    final selectedCategory = categoryProvider
+                                        .categories
+                                        .firstWhere((cat) => cat.name == value);
+
+                                    setState(() {
+                                      selectedCategoryId = selectedCategory.id;
+                                      selectedSubCategoryId =
+                                          null; // Reset subcategory
+                                    });
+
+                                    // Fetch subcategories for selected category
+                                    categoryProvider.fetchSubCategories(
+                                        selectedCategory.id);
+                                  },
+                                ),
+                        ),
+
+                        const SizedBox(width: 10), // Spacing between dropdowns
+
+                        // Subcategory Dropdown
+                        Expanded(
+                          child: categoryProvider.isSubCategoryLoading
+                              ? const Center(
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  ),
+                                )
+                              : categoryProvider.subCategories.isNotEmpty
+                                  ? CustomDropdownTwo(
+                                      items: categoryProvider.subCategories
+                                          .map(
+                                              (subCategory) => subCategory.name)
+                                          .toList(),
+                                      hint: 'Select Sub Category',
+                                      width: double.infinity,
+                                      height: 40, // Adjust height if needed
+                                      onChanged: (value) {
+                                        final selectedSubCategory =
+                                            categoryProvider
+                                                .subCategories
+                                                .firstWhere((subCat) =>
+                                                    subCat.name == value);
+
+                                        setState(() {
+                                          selectedSubCategoryId =
+                                              selectedSubCategory.id;
+                                        });
+
+                                        debugPrint(
+                                            "Selected Sub Category ID: ${selectedSubCategory.id}");
+                                      },
+                                    )
+                                  : const Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        "No subcategories available",
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 12),
+                                      ),
+                                    ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
 
-              const SizedBox(height: 10),
-
-              ///sales price and mrp price.
-              Row(
-                children: [
-                  Expanded(
-                    child: AddSalesFormfield(
-                      height: 40,
-                        labelText: 'Sale Price',
-                        label: "",
-                        controller: itemProvider.salePriceController),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: AddSalesFormfield(
-                      height: 40,
-                        labelText: 'MRP Price',
-                        label: "",
-                        controller: itemProvider.mrpPriceController),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 10),
-
-              //////===========>Price level , if its enable from settings then show it.
-              const SizedBox(
-                height: 10,
-              ),
-
-              ///====> price level
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Price Level",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(
+                      height: 15,
                     ),
-                  ),
-                  if (_isPriceLevelEnabled) // If Price Level is Enabled from Settings
+
+                    ///price , and value
+
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: AddSalesFormfield(
+                            height: 40,
+                            labelText: 'Price',
+                            controller: itemProvider.priceController,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: AddSalesFormfield(
+                            height: 40,
+                            labelText: 'Value',
+                            controller: itemProvider.valueController,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    ///stock and purchase price.
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AddSalesFormfield(
+                            height: 40,
+                            labelText: 'Stock',
+                            controller: itemProvider.stockController,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: AddSalesFormfield(
+                            height: 40,
+                            labelText: 'Purchase Price',
+                            controller: itemProvider.purchasePriceController,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    ///sales price and mrp price.
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AddSalesFormfield(
+                              height: 40,
+                              labelText: 'Sale Price',
+                              controller: itemProvider.salePriceController),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: AddSalesFormfield(
+                              height: 40,
+                              labelText: 'MRP Price',
+                              controller: itemProvider.mrpPriceController),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    //////===========>Price level , if its enable from settings then show it.
+                    const SizedBox(
+                      height: 10,
+                    ),
+
+                    ///====> price level
+
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: _isDefaultPriceChecked,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  _isDefaultPriceChecked = value ?? false;
-                                });
-                              },
-                            ),
-                            const Text(
-                              "Default Price",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                        if (_isDefaultPriceChecked)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 50.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 5),
-                                SupplierCustomerPriceTwoPage(), // your price fields
-                              ],
-                            ),
-                          )
-                      ],
-                    )
-                  else
-                    const SizedBox.shrink(),
-                ],
-              ),
-
-              ///===> price category
-              if (_isSwitchedCategoryPrice) // Check if enabled from Settings
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _isPriceCategory,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isPriceCategory = value!;
-                            });
-                          },
-                        ),
                         const Text(
-                          "Price Category",
-                          style: TextStyle(color: Colors.black),
+                          "Price Level",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ],
-                    ),
-                    if (_isPriceCategory) // Show price fields only if checkbox ticked
-                      Padding(
-                        padding: const EdgeInsets.only(left: 50.0),
-                        child: SupplierCustomerPricePage(),
-                      ),
-                  ],
-                )
-              else
-                const SizedBox.shrink(), // If switch is disabled, show nothing
-
-              /////qty price
-              ///
-              if (_isPriceQTYPriceEnable) ...[
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _isQTYPriceChecked,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isQTYPriceChecked = value ?? false;
-                        });
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      "QTY price",
-                      style: TextStyle(color: Colors.black, fontSize: 14),
-                    ),
-                  ],
-                ),
-                if (_isQTYPriceChecked)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 50.0, top: 4),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Auto Qty & Price (Only Default Price allow)",
-                          style: TextStyle(color: Colors.black, fontSize: 13),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white),
-                          onPressed: _addRow,
-                          child: const Text("Add"),
-                        ),
-                        ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _textControllers.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              children: [
-                                // Quantity TextField
-
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20.0, right: 5),
-                                  child: Text(
-                                    "${index + 1}.",
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      "Qty",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 14),
-                                    ),
-                                    SizedBox(
-                                      width: 100,
-                                      child: AddSalesFormfield(
-                                        controller: _textControllers[index][
-                                            'qty']!, // _textControllers[index]['price']
-
-                                        keyboardType: TextInputType.number,
-
-                                        onChanged: (qtyValue) {
-                                          final provider =
-                                              Provider.of<ItemProvider>(context,
-                                                  listen: false);
-                                          final priceValue =
-                                              _textControllers[index]['price']
-                                                      ?.text ??
-                                                  '';
-                                          provider.updateQtyPrice(
-                                            index,
-                                            qty: qtyValue,
-                                            price: priceValue,
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 18.0, left: 8),
-                                  child: Text(
-                                    ">=",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-
-                                const SizedBox(width: 10),
-                                // Price TextField
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("Price",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 14)),
-                                    SizedBox(
-                                      width: 100,
-                                      child: AddSalesFormfield(
-                                        controller: _textControllers[index]
-                                            ['price']!,
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (priceValue) {
-                                          final provider =
-                                              Provider.of<ItemProvider>(context,
-                                                  listen: false);
-                                          final qtyValue =
-                                              _textControllers[index]['qty']
-                                                      ?.text ??
-                                                  '';
-                                          provider.updateQtyPrice(
-                                            index,
-                                            qty: qtyValue,
-                                            price: priceValue,
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 16.0),
-                                  child: IconButton(
-                                    onPressed: () {
+                        if (_isPriceLevelEnabled) // If Price Level is Enabled from Settings
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: _isDefaultPriceChecked,
+                                    onChanged: (bool? value) {
                                       setState(() {
-                                        _textControllers.removeAt(index);
+                                        _isDefaultPriceChecked = value ?? false;
                                       });
                                     },
-                                    icon: const Icon(Icons.delete),
-                                    color: Colors.red,
+                                  ),
+                                  const Text(
+                                    "Default Price",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                              if (_isDefaultPriceChecked)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 50.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 5),
+                                      SupplierCustomerPriceTwoPage(), // your price fields
+                                    ],
                                   ),
                                 )
-                              ],
-                            );
-                          },
-                        ),
+                            ],
+                          )
+                        else
+                          const SizedBox.shrink(),
                       ],
                     ),
-                  ),
-              ],
 
-              const SizedBox(
-                height: 10,
-              ),
+                    ///===> price category
+                    if (_isSwitchedCategoryPrice) // Check if enabled from Settings
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: _isPriceCategory,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _isPriceCategory = value!;
+                                  });
+                                },
+                              ),
+                              const Text(
+                                "Price Category",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                          if (_isPriceCategory) // Show price fields only if checkbox ticked
+                            Padding(
+                              padding: const EdgeInsets.only(left: 50.0),
+                              child: SupplierCustomerPricePage(),
+                            ),
+                        ],
+                      )
+                    else
+                      const SizedBox
+                          .shrink(), // If switch is disabled, show nothing
 
-              const SizedBox(
-                height: 8,
-              ),
+                    /////qty price
+                    ///
+                    if (_isPriceQTYPriceEnable) ...[
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _isQTYPriceChecked,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _isQTYPriceChecked = value ?? false;
+                              });
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            "QTY price",
+                            style: TextStyle(color: Colors.black, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                      if (_isQTYPriceChecked)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 50.0, top: 4),
+                          child: Column(
+                            children: [
+                              const Text(
+                                "Auto Qty & Price (Only Default Price allow)",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 13),
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white),
+                                onPressed: _addRow,
+                                child: const Text("Add"),
+                              ),
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: _textControllers.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Row(
+                                    children: [
+                                      // Quantity TextField
 
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.maxFinite,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final itemProvider =
-                        Provider.of<ItemUpdateProvider>(context, listen: false);
-                    itemProvider.updateItem(widget.itemId, context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 20.0, right: 5),
+                                        child: Text(
+                                          "${index + 1}.",
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            "Qty",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 14),
+                                          ),
+                                          SizedBox(
+                                            width: 100,
+                                            child: AddSalesFormfield(
+                                              controller: _textControllers[
+                                                      index][
+                                                  'qty']!, // _textControllers[index]['price']
+
+                                              keyboardType:
+                                                  TextInputType.number,
+
+                                              onChanged: (qtyValue) {
+                                                final provider =
+                                                    Provider.of<ItemProvider>(
+                                                        context,
+                                                        listen: false);
+                                                final priceValue =
+                                                    _textControllers[index]
+                                                                ['price']
+                                                            ?.text ??
+                                                        '';
+                                                provider.updateQtyPrice(
+                                                  index,
+                                                  qty: qtyValue,
+                                                  price: priceValue,
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      const Padding(
+                                        padding:
+                                            EdgeInsets.only(top: 18.0, left: 8),
+                                        child: Text(
+                                          ">=",
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+
+                                      const SizedBox(width: 10),
+                                      // Price TextField
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text("Price",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14)),
+                                          SizedBox(
+                                            width: 100,
+                                            child: AddSalesFormfield(
+                                              controller:
+                                                  _textControllers[index]
+                                                      ['price']!,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              onChanged: (priceValue) {
+                                                final provider =
+                                                    Provider.of<ItemProvider>(
+                                                        context,
+                                                        listen: false);
+                                                final qtyValue =
+                                                    _textControllers[index]
+                                                                ['qty']
+                                                            ?.text ??
+                                                        '';
+                                                provider.updateQtyPrice(
+                                                  index,
+                                                  qty: qtyValue,
+                                                  price: priceValue,
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 16.0),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _textControllers.removeAt(index);
+                                            });
+                                          },
+                                          icon: const Icon(Icons.delete),
+                                          color: Colors.red,
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  child: const Text(
-                    "Update Item",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              )
-            ],
-          ),
+            ),
+            SizedBox(
+              width: double.maxFinite,
+              child: ElevatedButton(
+                onPressed: () {
+                  final itemProvider =
+                      Provider.of<ItemUpdateProvider>(context, listen: false);
+                  itemProvider.updateItem(widget.itemId, context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  "Update Item",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 50,)
+          ],
         ),
       ),
     );

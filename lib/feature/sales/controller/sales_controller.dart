@@ -13,6 +13,9 @@ import '../sales_view.dart';
 import 'package:http/http.dart' as http;
 
 class SalesController extends ChangeNotifier {
+
+  String formattedDate2 = '';
+
   bool hasCustomPrice = false;
   double _taxPercent = 0.0;
   double _taxAmount = 0.0;
@@ -134,6 +137,12 @@ class SalesController extends ChangeNotifier {
   bool isPreviousRecipt = true;
   bool isAdvance = true;
   bool isBillTotal = true;
+
+  String primaryUnitName = "";
+  String secondaryUnitName = "";
+  double salePrice = 0.0;
+  dynamic unitQty = 1.0;
+//bool hasCustomPrice = false;
 
   salesControllerItemamount() {
     salesControllerItem();

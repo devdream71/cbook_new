@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/profile_view.dart';
 import 'package:cbook_dt/feature/settings/ui/bill_invoice_create_form.dart';
 import 'package:cbook_dt/feature/settings/ui/bill_invoice_print.dart';
@@ -25,80 +26,45 @@ class SettingsView extends StatelessWidget {
         iconPath: 'assets/image/setting_one.svg',
         destination: CompanySettings(), //SalesFormSetting
       ),
-
       const FormSettingMeta(
         name: 'My Profile',
         iconPath: 'assets/image/profile.svg',
         destination: ProfileView(), //SalesFormSetting
       ),
-
       const FormSettingMeta(
         name: 'General Setting',
         iconPath: 'assets/image/setting_four.svg',
         destination: GeneralSettings(), //SalesFormSetting
       ),
-
       const FormSettingMeta(
         name: 'Module Setting',
         iconPath: 'assets/image/settings.svg',
         destination: ModuleSettings(), //SalesFormSetting
       ),
-
       const FormSettingMeta(
         name: 'Bill/Invoice Create Form',
         iconPath: 'assets/image/form.svg',
         destination: BillInvoiceCreateForm(), //SalesFormSetting
       ),
-
       const FormSettingMeta(
         name: 'Bill/Invoice Print',
         iconPath: 'assets/image/print_print.svg',
         destination: BillInvoicePrint(), //SalesFormSetting
       ),
-
       const FormSettingMeta(
         name: 'User',
         iconPath: 'assets/image/profile.svg',
         destination: UserCeate(), //SalesFormSetting
       ),
-
       const FormSettingMeta(
         name: 'Bill Persion',
         iconPath: 'assets/image/profile.svg',
         destination: BillPersonList(), //SalesFormSetting
       ),
-
-
-      // const FormSettingMeta(
-      //   name: 'Sales Form Setting',
-      //   iconPath: 'assets/icon/sales.svg',
-      //   destination: SaleFormSettingsPage(), //SalesFormSetting
-      // ),
-      // const FormSettingMeta(
-      //   name: 'Sales Return Form Setting',
-      //   iconPath: 'assets/icon/purchase_return.svg',
-      //   destination: SaleReturnFormSettingsPage(), //SalesReturnFormSetting
-      // ),
-      // const FormSettingMeta(
-      //   name: 'Purchase Form Setting',
-      //   iconPath: 'assets/icon/purchase.svg',
-      //   destination: PurchaseFormSettingsPage(), //PurchaseFormSetting
-      // ),
-      // const FormSettingMeta(
-      //   name: 'Purchase Return Form Setting',
-      //   iconPath: 'assets/icon/return_purchase.svg',
-      //   destination:
-      //       PurchseReturnFormSettingsPage(), //PurchaseReturnFormSetting
-      // ),
-      // const FormSettingMeta(
-      //   name: 'Tax',
-      //   iconPath: 'assets/icon/return_purchase.svg',
-      //   destination: TaxListView(), //PurchaseReturnFormSetting
-      // ),
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

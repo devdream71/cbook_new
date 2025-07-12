@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/settings/provider/setting_user_provider.dart';
 
 import 'package:cbook_dt/feature/settings/ui/user/user_add.dart';
@@ -16,6 +17,7 @@ class UserCeate extends StatelessWidget {
     final userSettingProvider = Provider.of<SettingUserProvider>(context);
 
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         //centerTitle: true,

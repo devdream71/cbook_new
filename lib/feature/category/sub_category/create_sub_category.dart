@@ -31,6 +31,7 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -48,68 +49,76 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
             }
 
             return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AddSalesFormfield(
-                  labelText: 'Enter Subcategory Name',
-                  height: 40,
-                  label: "",
-                  controller: _nameController,
-                ),
-                const SizedBox(height: 12),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8 + 8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AddSalesFormfield(
+                          labelText: 'Subcategory Name',
+                          height: 40,
+                          controller: _nameController,
+                        ),
+                        const SizedBox(height: 12),
 
-                const Text(
-                  "Category",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12),
-                ),
+                        const Text(
+                          "Category",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
 
-                // Category Dropdown
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomDropdownTwo(
-                    items: categoryProvider.categories
-                        .map((category) => category.name)
-                        .toList(),
-                    hint: '', //Select Category
-                    width: double.infinity,
-                    height: 40,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCategory = value;
-                      });
-                    },
+                        // Category Dropdown
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomDropdownTwo(
+                            items: categoryProvider.categories
+                                .map((category) => category.name)
+                                .toList(),
+                            width: double.infinity,
+                            height: 40,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCategory = value;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        const Text(
+                          "Status",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12),
+                        ),
+
+                        // Status Dropdown
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomDropdownTwo(
+                            items: const ["Active", "Inactive"],
+                            hint: '', //Select status
+                            width: double.infinity,
+                            height: 40,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedStatus =
+                                    (value == "Active") ? "1" : "0";
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
-
-                const Text(
-                  "Status",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12),
-                ),
-
-                // Status Dropdown
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomDropdownTwo(
-                    items: const ["Active", "Inactive"],
-                    hint: '', //Select status
-                    width: double.infinity,
-                    height: 40,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = (value == "Active") ? "1" : "0";
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(height: 20),
 
                 // Save Button
                 SizedBox(
@@ -150,6 +159,10 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
                         style: TextStyle(color: Colors.white)),
                   ),
                 ),
+
+                const SizedBox(
+                  height: 50,
+                )
               ],
             );
           },

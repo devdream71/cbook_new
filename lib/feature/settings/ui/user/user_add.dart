@@ -41,6 +41,7 @@ class _UserAddState extends State<UserAdd> {
     final colorScheme = Theme.of(context).colorScheme;
     final controller = Provider.of<SettingUserProvider>(context);
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

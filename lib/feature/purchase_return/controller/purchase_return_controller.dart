@@ -15,14 +15,10 @@ import '../model/purchase_store_model.dart';
 class PurchaseReturnController extends ChangeNotifier {
   Map<int, String> selectedUnitsMap = {}; // key = index or purchaseDetailsId
 
-  void setSelectedUnit(int index, String unit) {
-    selectedUnitsMap[index] = unit;
-    notifyListeners();
-  }
+  void updateUnitDropdown(String selectedUnit) {}
+  String selcetedUnitId = "";
 
-  String? getSelectedUnit(int index) {
-    return selectedUnitsMap[index];
-  }
+  TextEditingController billNoController = TextEditingController();
 
   bool isOnlineMoneyChecked = false;
   String? selectedReceiptType;
@@ -61,18 +57,12 @@ class PurchaseReturnController extends ChangeNotifier {
 
   bool isCash = true;
 
-
   String? seletedItemName;
 
   late DateTime _selectedDate;
   late String formattedDate;
 
-  PurchaseReturnController() {
-    _selectedDate = DateTime.now();
-    formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-  }
-
- // Output: return_date=2025-07-06
+  // Output: return_date=2025-07-06
 
   String customerName = "";
   String phone = "";
@@ -110,28 +100,41 @@ class PurchaseReturnController extends ChangeNotifier {
   List<ItemModel> itemsCredit = [];
 
   void clearAll() {
-  // Clear all reduction quantity controllers
-  for (var controller in reductionQtyList) {
-    controller.clear();
+    // Clear all reduction quantity controllers
+    for (var controller in reductionQtyList) {
+      controller.clear();
+    }
+
+    // Clear selected units
+    selectedUnitsMap.clear();
+
+    // Clear selected unit ID if used globally
+    selectedUnitIdWithName = '';
+
+    // Clear saved return items
+    purchaseReturnItemModel.clear();
+    demoPurchaseReturnModelList.clear();
+
+    billNoController.clear();
+    discountAmountController.clear();
+    totalAmountController.clear();
+
+    notifyListeners();
   }
 
-  // Clear selected units
-  selectedUnitsMap.clear();
+  PurchaseReturnController() {
+    _selectedDate = DateTime.now();
+    formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+  }
 
-  // Clear selected unit ID if used globally
-  selectedUnitIdWithName = '';
+  void setSelectedUnit(int index, String unit) {
+    selectedUnitsMap[index] = unit;
+    notifyListeners();
+  }
 
-  // Clear saved return items
-  purchaseReturnItemModel.clear();
-  demoPurchaseReturnModelList.clear();
-
-  billNoController.clear();
-  discountAmountController.clear();
-  totalAmountController.clear();
-  
-
-  notifyListeners();
-}
+  String? getSelectedUnit(int index) {
+    return selectedUnitsMap[index];
+  }
 
   void clearReductionQty() {
     for (var controller in reductionQtyList) {
@@ -290,7 +293,6 @@ class PurchaseReturnController extends ChangeNotifier {
     notifyListeners();
   }
 
- 
   Future<void> pickDate(BuildContext context) async {
     final pickedDate = await DateTimeHelper.pickDate(context, _selectedDate);
     if (pickedDate != null && pickedDate != _selectedDate) {
@@ -418,11 +420,6 @@ class PurchaseReturnController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateWarehouse(String? newValue) {
-    selectedWarehouse = newValue!;
-    notifyListeners();
-  }
-
   void updateSubCategory(String? newValue) {
     selectedSubCategory = newValue!;
     notifyListeners();
@@ -452,10 +449,6 @@ class PurchaseReturnController extends ChangeNotifier {
   }
 
   //////====>
-  void updateUnitDropdown(String selectedUnit) {}
-  String selcetedUnitId = "";
-
-  TextEditingController billNoController = TextEditingController();
 
   // Solution 1: Extract unit name from selectedUnitIdWithName
   String extractUnitName(String selectedUnitIdWithName) {
@@ -471,77 +464,76 @@ class PurchaseReturnController extends ChangeNotifier {
 
   ///====>purchase return save.
 
-
-
   void savePrucahseReturn({
-  required String itemId,
-  required String qty,
-  required int index,
-  required String price,
-  required String purchaseDetailsId,
-  required String itemName,
-  required PurchaseHistoryModel history,
-  required UnitProvider unitProvider,
-}) {
-  final selectedUnitName = getSelectedUnit(index); // from controller map
+    required String itemId,
+    required String qty,
+    required int index,
+    required String price,
+    required String purchaseDetailsId,
+    required String itemName,
+    required PurchaseHistoryModel history,
+    required UnitProvider unitProvider,
+  }) {
+    final selectedUnitName = getSelectedUnit(index); // from controller map
 
-  String unitIdWithName;
+    String unitIdWithName;
 
-  // 🔍 Try to get selected unit from user
-  if (selectedUnitName != null && selectedUnitName.trim().isNotEmpty) {
-    final selectedUnitObj = unitProvider.units.firstWhere(
-      (unit) => unit.name == selectedUnitName,
-      orElse: () => Unit(id: 0, name: "Unknown", symbol: "", status: 0),
-    );
+    // 🔍 Try to get selected unit from user
+    if (selectedUnitName != null && selectedUnitName.trim().isNotEmpty) {
+      final selectedUnitObj = unitProvider.units.firstWhere(
+        (unit) => unit.name == selectedUnitName,
+        orElse: () => Unit(id: 0, name: "Unknown", symbol: "", status: 0),
+      );
 
-    if (selectedUnitObj.id != 0) {
-      // Match to determine quantity
-      final selectedUnitId = selectedUnitObj.id.toString();
-      if (selectedUnitId == history.secondaryUnitID?.toString()) {
-        unitIdWithName = "${selectedUnitId}_${selectedUnitName}"; //_${history.unitQty}
+      if (selectedUnitObj.id != 0) {
+        // Match to determine quantity
+        final selectedUnitId = selectedUnitObj.id.toString();
+        if (selectedUnitId == history.secondaryUnitID?.toString()) {
+          unitIdWithName =
+              "${selectedUnitId}_${selectedUnitName}"; //_${history.unitQty}
+        } else {
+          unitIdWithName = "${selectedUnitId}_${selectedUnitName}"; //_1
+        }
       } else {
-        unitIdWithName = "${selectedUnitId}_${selectedUnitName}"; //_1
+        unitIdWithName = "0_Unknown_1"; // Fallback if no match
       }
     } else {
-      unitIdWithName = "0_Unknown_1"; // Fallback if no match
+      // ✅ Fallback: use unit from history
+      final fallbackUnitId = history.secondaryUnitID ?? history.unitID;
+      final fallbackQty = history.secondaryUnitID != null ? history.unitQty : 1;
+
+      final fallbackUnit = unitProvider.units.firstWhere(
+        (unit) => unit.id == fallbackUnitId,
+        orElse: () =>
+            Unit(id: fallbackUnitId, name: "Unknown", symbol: "", status: 0),
+      );
+
+      unitIdWithName = "${fallbackUnitId}_${fallbackUnit.name}"; //_$fallbackQty
     }
-  } else {
-    // ✅ Fallback: use unit from history
-    final fallbackUnitId = history.secondaryUnitID ?? history.unitID;
-    final fallbackQty = history.secondaryUnitID != null ? history.unitQty : 1;
 
-    final fallbackUnit = unitProvider.units.firstWhere(
-      (unit) => unit.id == fallbackUnitId,
-      orElse: () => Unit(id: fallbackUnitId, name: "Unknown", symbol: "", status: 0),
-    );
+    // 🔒 Save to model
+    purchaseReturnItemModel.add(PurchaseStoreModel(
+      itemId: itemId,
+      qty: reductionQtyList[index].value.text,
+      unitId: unitIdWithName,
+      price: price,
+      subTotal: (double.parse(price) * double.parse(qty)).toString(),
+      purchaseDetailsId: purchaseDetailsId,
+    ));
 
-    unitIdWithName = "${fallbackUnitId}_${fallbackUnit.name}"; //_$fallbackQty
+    demoPurchaseReturnModelList.add(ItemModel(
+      category: "",
+      subCategory: "",
+      itemCode: "",
+      itemName: itemName,
+      mrp: price,
+      quantity: reductionQtyList[index].value.text,
+      total: (double.parse(price) * double.parse(qty)).toString(),
+      unit: unitIdWithName,
+    ));
+
+    notifyListeners();
   }
-
-  // 🔒 Save to model
-  purchaseReturnItemModel.add(PurchaseStoreModel(
-    itemId: itemId,
-    qty: reductionQtyList[index].value.text,
-    unitId: unitIdWithName,
-    price: price,
-    subTotal: (double.parse(price) * double.parse(qty)).toString(),
-    purchaseDetailsId: purchaseDetailsId,
-  ));
-
-  demoPurchaseReturnModelList.add(ItemModel(
-    category: "",
-    subCategory: "",
-    itemCode: "",
-    itemName: itemName,
-    mrp: price,
-    quantity: reductionQtyList[index].value.text,
-    total: (double.parse(price) * double.parse(qty)).toString(),
-    unit: unitIdWithName,
-  ));
-
-  notifyListeners();
-}
-
 
   savePurchaseReturnData() async {
     itemsCashReuturn = demoPurchaseReturnModelList;
@@ -609,6 +601,7 @@ class PurchaseReturnController extends ChangeNotifier {
           "https://commercebook.site/api/v1/purchase/return/store?user_id=$userId&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=${billNoController.value.text}&return_date=$formattedDate&details_notes=notes&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount() : totalAmount2()}";
 
       debugPrint(url);
+      
       final requestBody = jsonEncode({
         "purchase_items": List<Map<String, dynamic>>.from(
 
@@ -631,7 +624,6 @@ class PurchaseReturnController extends ChangeNotifier {
         if (data["success"] == true) {
           return data["message"];
         }
-
         demoPurchaseReturnModelList.clear();
         purchaseReturnItemModel.clear();
       } else {
@@ -640,6 +632,6 @@ class PurchaseReturnController extends ChangeNotifier {
       return "";
     } catch (e) {
       return e.toString();
-    } 
+    }
   }
 }

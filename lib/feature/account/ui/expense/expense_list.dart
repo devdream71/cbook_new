@@ -1,7 +1,9 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/account/ui/expense/add_expense.dart';
 import 'package:cbook_dt/feature/account/ui/expense/expence_edit.dart';
 import 'package:cbook_dt/feature/account/ui/expense/expense_view_details.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
+import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +21,12 @@ class _ExpanseState extends State<Expanse> {
   void initState() {
     super.initState();
 
+    ///bill person
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false)
+            .fetchBillPersons());
+
+    ///fetch expense list.
     Provider.of<ExpenseProvider>(context, listen: false).fetchExpenseList();
   }
 
@@ -27,7 +35,7 @@ class _ExpanseState extends State<Expanse> {
     final colorScheme = Theme.of(context).colorScheme;
     // List of forms with metadata
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
@@ -99,14 +107,14 @@ class _ExpanseState extends State<Expanse> {
                         onLongPress: () {
                           editDeleteDiolog(context, expenseId);
                         },
-                        onTap: () {
-                          ///navigation to expense deatils page
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ExpanseDetails()));
-                        },
+                        // onTap: () {
+                        //   ///navigation to expense deatils page
+                        //   Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (context) =>
+                        //               const ExpanseDetails()));
+                        // },
                         child: Card(
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius
@@ -119,11 +127,11 @@ class _ExpanseState extends State<Expanse> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Column(
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     /// Voucher Number
-                                    Text(
+                                    const Text(
                                       "Paid Form",
                                       style: TextStyle(
                                         fontSize: 12,
@@ -131,27 +139,48 @@ class _ExpanseState extends State<Expanse> {
                                         color: Colors.black,
                                       ),
                                     ),
-                                    SizedBox(height: 2),
+                                    const SizedBox(height: 2),
 
                                     /// Date and Time
                                     Text(
-                                      'Cash in Hand',
-                                      style: TextStyle(
+                                      expense.receivedTo,
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.black87,
                                       ),
                                     ),
-                                    SizedBox(height: 2),
+                                    const SizedBox(height: 2),
 
                                     /// Paid To
+                                    // Text(
+                                    //   expense.accountID == 1
+                                    //       ? 'Cash'
+                                    //       : expense.accountID == 11
+                                    //           ? 'Cash A'
+                                    //           : '${expense.accountID ?? 'Unknown'}', // fallback text
+                                    //   style: const TextStyle(
+                                    //     color: Colors.black,
+                                    //     fontSize: 12,
+                                    //   ),
+                                    // ),
+
                                     Text(
-                                      'Cash',
-                                      style: TextStyle(
+                                      expense.accountID == 1
+                                          ? 'Cash'
+                                          : expense.accountID == 11
+                                              ? 'Cash A'
+                                              : expense.accountID == 2
+                                                  ? 'Bank'
+                                                  : expense.accountID == 13
+                                                      ? 'Bank A'
+                                                      : '${expense.accountID ?? 'Unknown'}',
+                                      style: const TextStyle(
+                                        color: Colors.black,
                                         fontSize: 12,
-                                        color: Colors.black87,
                                       ),
                                     ),
-                                    SizedBox(height: 2),
+
+                                    const SizedBox(height: 2),
                                   ],
                                 ),
                                 Row(
@@ -313,16 +342,20 @@ class _ExpanseState extends State<Expanse> {
           ),
           TextButton(
             onPressed: () async {
-              // await Provider.of<ExpenseProvider>(context, listen: false)
-              //     .deleteExpense(expenseId.toString());
-
-              // Navigator.of(context).pop(); // Close dialog
-
               final provider =
                   Provider.of<ExpenseProvider>(context, listen: false);
               await provider.deleteExpense(expenseId.toString());
               await provider.fetchExpenseList(); // ✅ Re-fetch the latest list
-              Navigator.of(context).pop(); // Close dialog
+
+              Navigator.of(context).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text('Successfully. Delete The Expense.')),
+              );
+
+              // Close dialog
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),

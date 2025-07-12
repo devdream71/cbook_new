@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/paymentout/create_payment_out_item.dart';
 import 'package:cbook_dt/feature/paymentout/payment_details.dart';
 import 'package:cbook_dt/feature/paymentout/payment_out_edit.dart';
@@ -34,7 +35,7 @@ class _PaymentOutListState extends State<PaymentOutList> {
     String? selectedDropdownValue;
 
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -75,14 +76,10 @@ class _PaymentOutListState extends State<PaymentOutList> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ///top date start , end and dropdown
-
-              Column(
+        body: Column(
+          children: [
+            SingleChildScrollView(
+              child: Column(
                 children: [
                   const SizedBox(
                     height: 5,
@@ -92,7 +89,7 @@ class _PaymentOutListState extends State<PaymentOutList> {
                     if (provider.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
-
+                            
                     if (provider.vouchers.isEmpty) {
                       return Center(
                           child: Text(
@@ -100,16 +97,16 @@ class _PaymentOutListState extends State<PaymentOutList> {
                         style: ts2,
                       ));
                     }
-
+                            
                     return ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: provider.vouchers.length,
                         itemBuilder: (context, index) {
                           final voucher = provider.vouchers[index];
-
+                            
                           final voucherId = voucher.id.toString();
-
+                            
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 2, vertical: 0),
@@ -159,7 +156,7 @@ class _PaymentOutListState extends State<PaymentOutList> {
                                                               voucher
                                                                   .voucherDate,
                                                               style: ts),
-
+                            
                                                           ///voucher number
                                                           Text(
                                                             voucher.voucherNumber
@@ -170,10 +167,10 @@ class _PaymentOutListState extends State<PaymentOutList> {
                                                                     .voucherNumber,
                                                             style: ts,
                                                           ),
-
+                            
                                                           const SizedBox(
                                                               height: 5),
-
+                            
                                                           ///voucher amount.
                                                           Text(
                                                               voucher
@@ -239,10 +236,8 @@ class _PaymentOutListState extends State<PaymentOutList> {
                   }),
                 ],
               ),
-
-              ///Bottom
-            ],
-          ),
+            ),
+          ],
         ));
   }
 

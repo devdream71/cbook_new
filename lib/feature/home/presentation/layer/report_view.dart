@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ReportView extends StatelessWidget {
@@ -7,7 +8,7 @@ class ReportView extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorTheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: colorTheme.primary,

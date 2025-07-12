@@ -90,8 +90,6 @@ void clearBillPersons() {
   notifyListeners();
 }
 
-
-
   ///delete payment voucher
   Future<bool> deletePaymentVoucher(String id) async {
     final url = Uri.parse(

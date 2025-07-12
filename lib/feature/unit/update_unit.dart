@@ -58,61 +58,68 @@ class UpdateUnitPageState extends State<UpdateUnitPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
-        backgroundColor: colorScheme.primary,
+          backgroundColor: colorScheme.primary,
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text("Update Unit", style: TextStyle(color: Colors.yellow),)),
+          title: const Text(
+            "Update Unit",
+            style: TextStyle(color: Colors.yellow),
+          )),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AddSalesFormfield(
-                height: 40,
-                labelText: "Name",
-                label: "",
-                controller: _nameController,
-              ),
-              AddSalesFormfield(
-                height: 40,
-                labelText: 'Symbol',
-                label: "",
-                controller: _symbolController,
-              ),
-              const SizedBox(height: 10),
-              
-
-              const Text(
-                "Status",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12),
-              ),
-
-              SizedBox(
-                width: double.infinity,
-                child: CustomDropdownTwo(
-                  items: const ["Active", "Inactive"], // Display labels
-                  hint: '', //Select status
-                  width: double.infinity,
-                  height: 40,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedStatus = (value == "Active")
-                          ? "1"
-                          : "0"; // ✅ Convert label to 1 or 0
-                    });
-                    debugPrint(selectedStatus);
-                  },
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AddSalesFormfield(
+                      height: 40,
+                      labelText: "Name",
+                      controller: _nameController,
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    AddSalesFormfield(
+                      height: 40,
+                      labelText: 'Symbol',
+                      controller: _symbolController,
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Status",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomDropdownTwo(
+                        items: const ["Active", "Inactive"], // Display labels
+                        hint: '', //Select status
+                        width: double.infinity,
+                        height: 40,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = (value == "Active")
+                                ? "1"
+                                : "0"; // ✅ Convert label to 1 or 0
+                          });
+                          debugPrint(selectedStatus);
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -131,6 +138,8 @@ class UpdateUnitPageState extends State<UpdateUnitPage> {
                   ),
                 ),
               ),
+
+               const SizedBox(height: 50,)
             ],
           ),
         ),

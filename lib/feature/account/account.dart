@@ -1,3 +1,4 @@
+import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/account/ui/bank_ui.dart';
 import 'package:cbook_dt/feature/account/ui/cash_in_hand.dart';
 import 'package:cbook_dt/feature/account/ui/discount.dart';
@@ -49,7 +50,7 @@ class Account extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,

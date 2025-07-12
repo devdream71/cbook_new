@@ -210,9 +210,10 @@ class IncomeProvider with ChangeNotifier {
     required String notes,
     required int status,
     required List<IncomeItem> incomeItems,
+    required String billPersonID,
   }) async {
     final url = Uri.parse('https://commercebook.site/api/v1/income/store?'
-        'user_id=$userId&invoice_no=$invoiceNo&date=$date&received_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status');
+        'user_id=$userId&invoice_no=$invoiceNo&date=$date&received_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status&bill_person_id=$billPersonID');
 
     final body = IncomeStoreRequest(incomeItems: incomeItems).toJson();
 
@@ -225,7 +226,7 @@ class IncomeProvider with ChangeNotifier {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200 ) {
         // You can parse the response if needed
         return true;
       } else {
