@@ -574,7 +574,9 @@ class _LayoutState extends State<_Layout> {
                                     //bill person
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
-                                      child: Consumer<PaymentVoucherProvider>(
+                                      child: 
+                                      
+                                      Consumer<PaymentVoucherProvider>(
                                         builder: (context, provider, child) {
                                           return SizedBox(
                                             height: 30,

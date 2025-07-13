@@ -562,7 +562,9 @@ class _CustomerCreateState extends State<CustomerCreate> {
                 fontSize: 16,
                 fontWeight: FontWeight.bold)),
       ),
-      body: Padding(
+      body: 
+      
+      Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -854,6 +856,8 @@ class _CustomerCreateState extends State<CustomerCreate> {
                     ),
                   ],
                 ),
+              
+              
               ],
             ),
 
@@ -882,6 +886,8 @@ class _CustomerCreateState extends State<CustomerCreate> {
           ],
         ),
       ),
+    
+    
     );
   }
 

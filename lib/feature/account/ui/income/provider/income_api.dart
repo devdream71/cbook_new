@@ -217,6 +217,10 @@ class IncomeProvider with ChangeNotifier {
 
     final body = IncomeStoreRequest(incomeItems: incomeItems).toJson();
 
+    debugPrint(url.toString());
+    debugPrint(body.toString());
+
+
     try {
       final response = await http.post(
         url,

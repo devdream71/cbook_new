@@ -31,7 +31,7 @@ class _AddNewTaxState extends State<AddNewTax> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: AppColors.sfWhite,
+        backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
@@ -49,74 +49,101 @@ class _AddNewTaxState extends State<AddNewTax> {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
             children: [
-              ///name
-              AddSalesFormfield(
-                labelText: "Tax Name",
-                height: 40,
-                label: "",
-                controller: _nameController,
-                //validator: _validateRequired,
+              Expanded(
+                child: Column(
+                  children: [
+                    ///name
+                    AddSalesFormfield(
+                      labelText: "Tax Name",
+                      height: 40,
+                      label: "",
+                      controller: _nameController,
+                      //validator: _validateRequired,
+                    ),
+
+                    ///percentance
+                    AddSalesFormfield(
+                      labelText: "Tax Percentance",
+                      height: 40,
+                      label: "",
+                      controller: _percentanceController,
+                      //validator: _validateRequired,
+                    ),
+                  ],
+                ),
               ),
-
-              ///percentance
-              AddSalesFormfield(
-                labelText: "Tax Percentance",
+              SizedBox(
                 height: 40,
-                label: "",
-                controller: _percentanceController,
-                //validator: _validateRequired,
+                width: double.infinity,
+                child: ElevatedButton(
+                    onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      String? userId = prefs.getInt('user_id')?.toString();
+
+                      if (userId == null) {
+                        debugPrint("User ID is null");
+                        return;
+                      }
+
+                      final name = _nameController.text.trim();
+                      final percent = _percentanceController.text.trim();
+
+                      if (name.isNotEmpty && percent.isNotEmpty) {
+                        final taxProvider =
+                            Provider.of<TaxProvider>(context, listen: false);
+
+                        Provider.of<TaxProvider>(context, listen: false)
+                            .createTax(
+                          userId: int.parse(userId),
+                          name: name,
+                          percent: percent,
+                          status: 1,
+                        );
+                        //Navigator.pop(context); // Optionally pop after saving
+
+                        taxProvider.fetchTaxes();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              backgroundColor: Colors.green,
+                              content: Text("Successfully, Tax Create.")),
+                        );
+
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomeView()));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Please fill all fields")),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryColor,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      "Save tax",
+                      style: TextStyle(color: Colors.white),
+                    )),
               ),
-
-              ElevatedButton(
-                  onPressed: () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    String? userId = prefs.getInt('user_id')?.toString();
-
-                    if (userId == null) {
-                      debugPrint("User ID is null");
-                      return;
-                    }
-
-                    final name = _nameController.text.trim();
-                    final percent = _percentanceController.text.trim();
-
-                    if (name.isNotEmpty && percent.isNotEmpty) {
-                      final taxProvider =
-                          Provider.of<TaxProvider>(context, listen: false);
-
-                      Provider.of<TaxProvider>(context, listen: false)
-                          .createTax(
-                        userId: int.parse(userId),
-                        name: name,
-                        percent: percent,
-                        status: 1,
-                      );
-                      //Navigator.pop(context); // Optionally pop after saving
-
-                      taxProvider.fetchTaxes();
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Successfully, Tax saved")),
-                      );
-
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeView()));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Please fill all fields")),
-                      );
-                    }
-                  },
-                  child: const Text(
-                    "Save tax",
-                    style: TextStyle(color: Colors.black),
-                  ))
+              const SizedBox(
+                height: 50,
+              )
             ],
           ),
         ));
   }
+  
+
+  
+
+
 }

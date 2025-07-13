@@ -7,11 +7,12 @@ class TaxProvider with ChangeNotifier {
   List<TaxModel> _taxList = [];
   bool _isLoading = false;
 
+  String errorMessage = '';
+
   List<TaxModel> get taxList => _taxList;
   bool get isLoading => _isLoading;
 
-  
-  ///tax show list ====> 
+  ///tax show list ====>
   Future<void> fetchTaxes() async {
     _isLoading = true;
     notifyListeners();
@@ -36,9 +37,8 @@ class TaxProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  
   ///tax create ===>
-    Future<void> createTax({
+  Future<void> createTax({
     required int userId,
     required String name,
     required String percent,
@@ -58,7 +58,7 @@ class TaxProvider with ChangeNotifier {
         _taxList.add(newTax);
         fetchTaxes();
         notifyListeners();
-        
+
         debugPrint("Tax created successfully: ${data['message']}");
       } else {
         debugPrint("Failed to create tax: ${response.body}");
@@ -72,32 +72,34 @@ class TaxProvider with ChangeNotifier {
   }
 
   ///tax delete ====>
-  Future<void> deleteTax(int id) async {
+  Future<bool> deleteTax(int? id) async {
     _isLoading = true;
     notifyListeners();
 
-    final url =
-        Uri.parse('https://commercebook.site/api/v1/tax/remove/?id=$id');
+    final url = Uri.parse('https://commercebook.site/api/v1/tax/remove/$id');
 
     try {
-      final response =
-          await http.get(url); // Assuming the delete is a GET request
+      final response = await http.post(url); // or POST if your API requires it
       if (response.statusCode == 200) {
         _taxList.removeWhere((tax) => tax.id == id);
         notifyListeners();
-        debugPrint("Tax deleted successfully!");
+        debugPrint("✅ Tax deleted successfully!");
+        _isLoading = false;
+        return true;
       } else {
-        debugPrint("Failed to delete tax: ${response.body}");
+        debugPrint("❌ Failed to delete tax: ${response.body}");
+        _isLoading = false;
+        return false;
       }
     } catch (e) {
-      debugPrint("Error deleting tax: $e");
+      debugPrint("❌ Error deleting tax: $e");
+      _isLoading = false;
+      return false;
+    } finally {
+      notifyListeners();
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
 
-  
   ///get tex by id
   Future<TaxModel?> getTaxById(int id) async {
     final url = Uri.parse('https://commercebook.site/api/v1/tax/edit/$id');
@@ -120,34 +122,54 @@ class TaxProvider with ChangeNotifier {
     return null;
   }
 
-  
   ///tax update===>
-  Future<void> updateTax({
-    required int id,
+  Future<bool> updateTax({
+    required int taxId,
     required String name,
     required String percent,
-    required int status,
+    required String status,
   }) async {
     _isLoading = true;
+    errorMessage = '';
     notifyListeners();
 
-    final url = Uri.parse(
-      'https://commercebook.site/api/v1/tax/store?id=$id&name=$name&percent=$percent&status=$status',
+    // ✅ Construct query parameters
+    final query = {
+      'id': taxId.toString(),
+      'name': name,
+      'percent': percent,
+      'status': status,
+    };
+
+    final uri = Uri.https(
+      'commercebook.site',
+      '/api/v1/tax/update',
+      query,
     );
 
     try {
-      final response = await http.post(url);
-      if (response.statusCode == 200) {
-        await fetchTaxes(); // Refresh list after update
-        debugPrint("Tax updated successfully.");
+      final response = await http.post(uri);
+
+      debugPrint("📤 Request URL: $uri");
+      debugPrint("📥 Status Code: ${response.statusCode}");
+      debugPrint("📥 Response Body: ${response.body}");
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        await fetchTaxes(); // refresh list
+        return true;
       } else {
-        debugPrint("Update failed: ${response.body}");
+        errorMessage = data['message'] ?? 'Failed to update tax.';
+        return false;
       }
     } catch (e) {
-      debugPrint("Error updating tax: $e");
+      errorMessage = '❌ Exception: $e';
+      debugPrint(errorMessage);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
 }

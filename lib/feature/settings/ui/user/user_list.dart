@@ -1,9 +1,7 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
-import 'package:cbook_dt/feature/settings/provider/setting_user_provider.dart';
-
 import 'package:cbook_dt/feature/settings/ui/user/user_add.dart';
 import 'package:cbook_dt/feature/settings/ui/user/user_details.dart';
-
+import 'package:cbook_dt/feature/settings/ui/user/user_provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -85,7 +83,13 @@ class UserCeate extends StatelessWidget {
                       itemCount: userSettingProvider.users.length,
                       itemBuilder: (ctx, index) {
                         final user = userSettingProvider.users[index];
+
+                        final userId = userSettingProvider.users[index].id;
+
                         return InkWell(
+                          onLongPress: () {
+                            editDeleteDiolog(context, userId);
+                          },
                           onTap: () {
                             Navigator.push(
                               context,
@@ -129,58 +133,162 @@ class UserCeate extends StatelessWidget {
                                       style: const TextStyle(fontSize: 12)),
                                 ],
                               ),
-                              trailing: PopupMenuButton<String>(
-                                icon: const Icon(Icons.more_vert),
-                                onSelected: (value) {
-                                  if (value == 'edit') {
-                                    // Handle Edit
-                                  } else if (value == 'delete') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        title: const Text("Confirm Delete"),
-                                        content: Text(
-                                          "Are you sure you want to delete ${user.name}?",
-                                          style: const TextStyle(
-                                              color: Colors.black),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(ctx),
-                                            child: const Text("Cancel"),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              // Implement delete logic
-                                              // Navigator.pop(ctx);
-                                            },
-                                            child: const Text("Delete",
-                                                style: TextStyle(
-                                                    color: Colors.red)),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                },
-                                itemBuilder: (context) => [
-                                  const PopupMenuItem<String>(
-                                    value: 'edit',
-                                    child: Text('Edit'),
-                                  ),
-                                  const PopupMenuItem<String>(
-                                    value: 'delete',
-                                    child: Text('Delete'),
-                                  ),
-                                ],
-                              ),
+                              
                             ),
                           ),
                         );
                       },
                     ),
-
-      
     );
   }
+
+  ///edit and delete pop up.
+  Future<dynamic> editDeleteDiolog(BuildContext context, int userId) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    //Navigate to Edit Page
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) =>
+                    //         TaxEdit(taxId: taxId),
+                    //   ),
+                    // );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, userId);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  ///delete bill person.
+  void _showDeleteDialog(BuildContext context, int userId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete User',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this user?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Close dialog
+
+              final provider = Provider.of<SettingUserProvider>(
+                context,
+                listen: false,
+              );
+
+              final success = await provider.deleteUser(userId);
+
+              provider.fetchUsers();
+
+              if (success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("User deleted successfully"),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(provider.errorMessage),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 }
