@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class PurchaseListApi extends StatefulWidget {
   const PurchaseListApi({super.key});
@@ -369,9 +368,19 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                       final purchaseId =
                           purchase.purchaseDetails!.first.purchaseId.toString();
 
+                      //final transactionMethod = purchase.transectionMethod;
+
+                      final transactionMethod =
+                          purchase.transactionMethod ?? '';
+
+                      debugPrint('transactionMethod ==>${transactionMethod}');
+
+                      final paymentStatus = purchase.paymentStatus ?? 0;
+
                       return InkWell(
                         onLongPress: () {
-                          editDeleteDiolog(context, purchaseId);
+                          editDeleteDiolog(
+                              context, purchaseId, transactionMethod, paymentStatus);
                         },
                         onTap: () {
                           Navigator.push(
@@ -480,7 +489,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                               CrossAxisAlignment.end,
                                           children: [
                                             // Text(
-                                            //   purchase.transectionMethod!
+                                            //   purchase.paymentStatus!
                                             //               .toLowerCase() ==
                                             //           'cash'
                                             //       ? 'Paid'
@@ -489,25 +498,45 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                             //       fontWeight: FontWeight.bold,
                                             //       fontSize: 14,
                                             //       color: purchase
-                                            //                   .transectionMethod!
+                                            //                   .transactionMethod!
                                             //                   .toLowerCase() ==
                                             //               'cash'
                                             //           ? Colors.green
                                             //           : Colors.amber),
                                             // ),
-                                            // purchase.transectionMethod!
-                                            //             .toLowerCase() ==
-                                            //         'cash'
-                                            //     ? Text(
-                                            //         "Due: ${purchase.grossTotal} TK", // Show due amount here
-                                            //         style: const TextStyle(
-                                            //           fontSize: 12,
-                                            //           // fontWeight:
-                                            //           //     FontWeight.w500,
-                                            //           color: Colors.black,
-                                            //         ),
-                                            //       )
-                                            //     : const SizedBox.shrink(),
+
+                                            Text(
+                                              purchase.paymentStatus == 2
+                                                  ? 'Paid'
+                                                  : purchase.paymentStatus == 1
+                                                      ? 'Partial'
+                                                      : 'Unpaid',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                                color: purchase.paymentStatus ==
+                                                        2
+                                                    ? Colors.green
+                                                    : purchase.paymentStatus ==
+                                                            1
+                                                        ? Colors.orange
+                                                        : Colors.red,
+                                              ),
+                                            ),
+
+                                            purchase.transactionMethod!
+                                                        .toLowerCase() ==
+                                                    'customer'
+                                                ? Text(
+                                                    "Due: ${purchase.due} TK", // Show due amount here
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      // fontWeight:
+                                                      //     FontWeight.w500,
+                                                      color: Colors.black,
+                                                    ),
+                                                  )
+                                                : const SizedBox.shrink(),
                                           ],
                                         ),
                                         const SizedBox(width: 8),
@@ -585,95 +614,212 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
   // }
 
   ///show edit and delete list from alart diolog
-  Future<dynamic> editDeleteDiolog(BuildContext context, String purchaseId) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-          child: Container(
-            width: double.infinity, // Full width
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // Height as per content
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Select Action',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black)),
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.white, // Background color
-                          border: Border.all(
-                              color: Colors.grey,
-                              width: 1), // Border color and width
-                          borderRadius: BorderRadius.circular(
-                              50), // Corner radius, adjust as needed
+  // Future<dynamic> editDeleteDiolog(BuildContext context, String purchaseId, String transactionMethod) {
+  //   final colorScheme = Theme.of(context).colorScheme;
+  //   return showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         insetPadding:
+  //             const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+  //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+  //         child: Container(
+  //           width: double.infinity, // Full width
+  //           padding: const EdgeInsets.all(16),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min, // Height as per content
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   const Text('Select Action',
+  //                       style: TextStyle(
+  //                           fontSize: 18,
+  //                           fontWeight: FontWeight.bold,
+  //                           color: Colors.black)),
+  //                   InkWell(
+  //                     onTap: () {
+  //                       Navigator.pop(context);
+  //                     },
+  //                     child: Container(
+  //                       width: 30,
+  //                       height: 30,
+  //                       decoration: BoxDecoration(
+  //                         color: Colors.white, // Background color
+  //                         border: Border.all(
+  //                             color: Colors.grey,
+  //                             width: 1), // Border color and width
+  //                         borderRadius: BorderRadius.circular(
+  //                             50), // Corner radius, adjust as needed
+  //                       ),
+  //                       child: Center(
+  //                         child: Icon(
+  //                           Icons.close,
+  //                           size: 20,
+  //                           color: colorScheme.primary, // Use your color
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   )
+  //                 ],
+  //               ),
+  //               const SizedBox(height: 16),
+  //               InkWell(
+  //                 onTap: () {
+  //                   Navigator.of(context).pop();
+  //                   //Navigate to Edit Page
+  //                   //Navigate to Edit Page
+  //                   Navigator.push(
+  //                     context,
+  //                     MaterialPageRoute(
+  //                       builder: (context) => PurchaseUpdateScreen(
+  //                           purchaseId: int.parse(purchaseId)),
+  //                     ),
+  //                   );
+  //                 },
+  //                 child: const Padding(
+  //                   padding: EdgeInsets.symmetric(vertical: 12),
+  //                   child: Text('Edit',
+  //                       style: TextStyle(fontSize: 16, color: Colors.blue)),
+  //                 ),
+  //               ),
+  //               // const Divider(),
+  //               InkWell(
+  //                 onTap: () {
+  //                   Navigator.of(context).pop();
+  //                   _showDeleteDialog(context, purchaseId);
+  //                 },
+  //                 child: const Padding(
+  //                   padding: EdgeInsets.symmetric(vertical: 12),
+  //                   child: Text('Delete',
+  //                       style: TextStyle(fontSize: 16, color: Colors.red)),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+
+ Future<dynamic> editDeleteDiolog(
+  BuildContext context,
+  String purchaseId,
+  String transactionMethod,
+  int paymentStatus,
+) {
+  final colorScheme = Theme.of(context).colorScheme;
+
+  // ✅ Only disable if paymentStatus is 1 (partial)
+  final disableActions = paymentStatus == 1;
+
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Select Action',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey, width: 1),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.close,
+                          size: 20,
+                          color: colorScheme.primary,
                         ),
-                        child: Center(
-                          child: Icon(
-                            Icons.close,
-                            size: 20,
-                            color: colorScheme.primary, // Use your color
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // ✅ Edit Button
+              InkWell(
+                onTap: disableActions
+                    ? null
+                    : () {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PurchaseUpdateScreen(
+                              purchaseId: int.parse(purchaseId),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 16),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    //Navigate to Edit Page
-                    //Navigate to Edit Page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PurchaseUpdateScreen(
-                            purchaseId: int.parse(purchaseId)),
-                      ),
-                    );
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Text('Edit',
-                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                        );
+                      },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    'Edit',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: disableActions ? Colors.grey : Colors.blue,
+                    ),
                   ),
                 ),
-                // const Divider(),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _showDeleteDialog(context, purchaseId);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Text('Delete',
-                        style: TextStyle(fontSize: 16, color: Colors.red)),
+              ),
+
+              // ✅ Delete Button
+              InkWell(
+                onTap: disableActions
+                    ? null
+                    : () {
+                        Navigator.of(context).pop();
+                        _showDeleteDialog(context, purchaseId);
+                      },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: disableActions ? Colors.grey : Colors.red,
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+ 
+ 
 
   ////delete recived item from list
   void _showDeleteDialog(BuildContext context, String purchaseId) {

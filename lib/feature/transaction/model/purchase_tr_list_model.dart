@@ -1,8 +1,3 @@
- 
-
-
-
-
 class PurchaseViewModel {
   bool? success;
   String? message;
@@ -22,7 +17,7 @@ class PurchaseViewModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['success'] = success;
     data['message'] = message;
     if (this.data != null) {
@@ -41,8 +36,10 @@ class Data {
   dynamic grossTotal;
   String? disabled;
   dynamic detailsNotes;
-  //dynamic ? supplierName;
-  dynamic  transectionMethod;
+  String? transactionMethod;
+  dynamic payment;
+  dynamic due;
+  dynamic paymentStatus;
   List<PurchaseDetails>? purchaseDetails;
 
   Data(
@@ -54,8 +51,10 @@ class Data {
       this.grossTotal,
       this.disabled,
       this.detailsNotes,
-      //this.supplierName,
-      this.transectionMethod,
+      this.transactionMethod,
+      this.payment,
+      this.due,
+      this.paymentStatus,
       this.purchaseDetails});
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -67,8 +66,11 @@ class Data {
     grossTotal = json['gross_total'];
     disabled = json['disabled'];
     detailsNotes = json['details_notes'];
-    transectionMethod = json['transection_method']; //transaction_method
-   // supplierName = json['supplier_name'];
+    transactionMethod = json['transaction_method'];
+    payment = json['payment'];
+    due = json['due'];
+    paymentStatus = json['payment_status'];
+    
     if (json['purchase_details'] != null) {
       purchaseDetails = <PurchaseDetails>[];
       json['purchase_details'].forEach((v) {
@@ -82,10 +84,14 @@ class Data {
     data['user_id'] = userId;
     data['supplier_name'] = supplier;
     data['bill_number'] = billNumber;
-    data['transection_method'] = transectionMethod;
+    // data['transaction_method'] = transactionMethod;
+    data['transaction_method'] = transactionMethod;
     data['purchase_date'] = pruchaseDate;
     data['discount'] = discount;
     data['gross_total'] = grossTotal;
+    data['due'] = due;
+    data['payment_status'] = paymentStatus;
+    data['payment'] = payment;
     data['disabled'] = disabled;
     data['details_notes'] = detailsNotes;
     if (purchaseDetails != null) {
@@ -100,7 +106,7 @@ class PurchaseDetails {
   int? id;
   dynamic? purchaseId;
   //Null? purchaseDetailsId;
-  String? type;  
+  String? type;
   String? pruchaseDate;
   int? itemId;
   int? defaultQty;
@@ -132,7 +138,8 @@ class PurchaseDetails {
       this.returnQty,
       this.deletedAt,
       this.createdAt,
-      this.updatedAt, required Data purchase});
+      this.updatedAt,
+      required Data purchase});
 
   PurchaseDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -155,7 +162,7 @@ class PurchaseDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data =  Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['id'] = id;
     data['purchase_id'] = purchaseId;
     //data['purchase_details_id'] = this.purchaseDetailsId;
@@ -176,7 +183,3 @@ class PurchaseDetails {
     return data;
   }
 }
-
-
-
- 

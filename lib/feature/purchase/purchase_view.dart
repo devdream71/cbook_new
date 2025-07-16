@@ -1566,7 +1566,7 @@ class LayoutState extends State<Layout> {
                                         )
                                       : const SizedBox.shrink(),
 
-                                  //cash Received
+                                  //cash payment
                                   controller.isReciptType && controller.isCash
                                       ? Row(
                                           mainAxisAlignment:
@@ -1754,7 +1754,7 @@ class LayoutState extends State<Layout> {
                                         )
                                       : const SizedBox.shrink(),
 
-                                  /////====>credit recived
+                                  /////====>credit payment
                                   controller.isCash == false &&
                                           controller.isReturn == true
                                       ? Row(
@@ -1970,7 +1970,13 @@ class LayoutState extends State<Layout> {
                                 ? controller.totalAmount
                                 : controller.totalAmount2;
 
+                           String ? payment = controller.receivedAmountController.text;     
+
                             debugPrint("amount =========>>>>====> $amount");
+
+                            debugPrint("selectedBillPersonData!.id =========>>>>====> $selectedBillPersonData!.id");
+
+
 
                             debugPrint(
                                 "note  =========>>>>====> ${controller.noteController.text}");
@@ -2002,7 +2008,10 @@ class LayoutState extends State<Layout> {
                                   discount: discount,
                                   note: controller.noteController.text,
                                   billNo: billController.text,
-                                  total: total);
+                                  total: total,
+                                  paymnetAmount : payment,
+                                  billPersonId : selectedBillPersonData!.id,
+                                  );
 
                               if (isSuccess) {
                                 // Clear all controllers and purchase items

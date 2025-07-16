@@ -1,5 +1,6 @@
 import 'package:cbook_dt/feature/Received/provider/received_provider.dart';
 import 'package:cbook_dt/feature/account/ui/account_type/provider/account_type_provider.dart';
+import 'package:cbook_dt/feature/account/ui/cash_in_hand/provider/cash_in_hand.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:cbook_dt/feature/authentication/provider/login_provider.dart';
@@ -120,6 +121,7 @@ void main() async {
           ChangeNotifierProvider(create: (_) => ReceiveVoucherProvider()),
           ChangeNotifierProvider(create: (_) => BillPersonProvider()),
           ChangeNotifierProvider(create: (_) => AccountTypeProvider()),
+           ChangeNotifierProvider(create: (_) => CashInHandProvider()),
         ],
         child: const MyApp(),
       ),

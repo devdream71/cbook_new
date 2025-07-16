@@ -1,11 +1,8 @@
 import 'dart:convert';
-
-import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/purchase/model/purchase_create_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../utils/date_time_helper.dart';
 import '../../item/model/items_show.dart';
 import '../../sales/sales_view.dart';
@@ -16,7 +13,6 @@ class PurchaseController extends ChangeNotifier {
   TextEditingController mrpController = TextEditingController();
   TextEditingController qtyController = TextEditingController();
   TextEditingController noteController = TextEditingController();
-
   TextEditingController amountController = TextEditingController();
   TextEditingController amountController2 = TextEditingController();
   TextEditingController discountPercentageController = TextEditingController();
@@ -51,34 +47,26 @@ class PurchaseController extends ChangeNotifier {
   TextEditingController discountController =
       TextEditingController();     
 
-       List<ItemModel> itemsCash = [];
+  List<ItemModel> itemsCash = [];
   List<ItemModel> itemsCredit = [];
   List<PurchaseItemModel> purchaseItem = [];
   List<String> unitIdsList = [];
-
   bool isOnlineMoneyChecked = false;
   bool isCash = true;
   bool isReceived = true;
-
   String text = "Cash";
-
   String? selectedCategory;
   String? selectedSubCategory;
   String? selectedUnit;
   String? selectedWarehouse;
   String? selectedReceiptType;
-
   String? seletedItemName;
-
-  
   String selcetedItemId = "";
   bool isCreditSale = true;
-
   String customerName = "";
   String phone = "";
   String email = "";
   String address = "";
-
   bool isAmount = true;
   bool isDisocunt = true;
   bool isAdditionalCost = true;
@@ -86,14 +74,10 @@ class PurchaseController extends ChangeNotifier {
   bool isReciptType = true;
   bool isRecivedMoney = true;
   bool isReturn = true;
-
   double purchasePrice = 0.0;
   int unitQty = 1;
-
   String primaryUnitName = '';
   String secondaryUnitName = '';
-
-//
 
   bool isAmountCredit = true;
   bool isDiscountCredit = true;
@@ -132,8 +116,6 @@ class PurchaseController extends ChangeNotifier {
     _subtotalItemDialog = 0.0;
     _isListenerAttached = false;
   }
-
-
 
   void updateUnitIds(List<String> units) {
     unitIdsList = units;
@@ -416,7 +398,10 @@ class PurchaseController extends ChangeNotifier {
     required saleType,
     required String customerId,
     required String billNo,
-    String? note,
+    String ? note,
+    String ? paymnetAmount,
+    int ? billPersonId,
+
   }) async {
     // Notify UI about loading state
 
@@ -471,7 +456,7 @@ class PurchaseController extends ChangeNotifier {
       //"https://commercebook.site/api/v1/purchase/store?user_id=${prefs.getString("id")}&customer_id=${purchaseCreditOrCash ? "cash" : selectedCustomerId}&bill_number=${newBillNumber}&pruchase_date=${billDate}&details_notes=notes&gross_total=${calculateSubTotal()}&discount=0&payment_out=${purchaseCreditOrCash ? 1 : 0}&payment_amount=${purchaseCreditOrCash ? calculateSubTotal() : paymentController.value.text}";
 
       final url =
-          "https://commercebook.site/api/v1/purchase/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=$billNo&purchase_date=$encodedDate&details_notes=$note&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount : totalAmount2}";
+          "https://commercebook.site/api/v1/purchase/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=$billNo&purchase_date=$encodedDate&details_notes=$note&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount : paymnetAmount}&bill_person_id=$billPersonId";
 
       debugPrint("API URL: $url");
 

@@ -41,6 +41,8 @@ class PurchaseUpdateProvider extends ChangeNotifier {
   TextEditingController grossTotalController = TextEditingController();
   TextEditingController discountTotalController = TextEditingController();
 
+  int? customerId;
+
   String getSubTotal() {
     double subTotal = 0.00;
     for (var e in purchaseUpdateList) {
@@ -68,7 +70,6 @@ class PurchaseUpdateProvider extends ChangeNotifier {
   bool isLoading = false;
   int? purchaseId;
   int? itemId;
-  int? customerId;
 
   String? selectedItem;
 
@@ -193,6 +194,10 @@ class PurchaseUpdateProvider extends ChangeNotifier {
         grossTotalController.text = purchaseData.grossTotal?.toString() ?? "";
         customerController.text = purchaseData.customerId?.toString() ?? "";
         discountTotalController.text = purchaseData.discount?.toString() ?? "0";
+
+        /// ✅ Add this:
+        customerId = purchaseData.customerId;
+        //customerController.text = purchaseData.customerId?.toString() ?? "";
       }
     }
 
@@ -300,7 +305,7 @@ class PurchaseUpdateProvider extends ChangeNotifier {
   }
 
   ///update purchase.
-  Future<void> updatePurchase(context) async {
+  Future<void> updatePurchase(context, int billPersonID) async {
     // if (purchaseId == null) return;
 
     debugPrint(jsonEncode(purchaseUpdateList));
@@ -310,7 +315,7 @@ class PurchaseUpdateProvider extends ChangeNotifier {
     debugPrint('_selectedDate $_selectedDate');
 
     final url =
-        "https://commercebook.site/api/v1/purchase/update?id=${purchaseEditResponse.data!.purchaseDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${purchaseEditResponse.data!.customerId}&bill_number=${billNumberController.text}&purchase_date=2025-07-02&details_notes=notes&gross_total=${getSubTotal()}&discount=0&payment_out=true&payment_amount=${getGrossTotal()}";
+        "https://commercebook.site/api/v1/purchase/update?id=${purchaseEditResponse.data!.purchaseDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${purchaseEditResponse.data!.customerId}&bill_number=${billNumberController.text}&purchase_date=2025-07-02&details_notes=notes&gross_total=${getSubTotal()}&discount=0&payment_out=true&payment_amount=${getGrossTotal()}&bill_person_id=$billPersonID";
     debugPrint(url);
     // Prepare request body
     final requestBody = {"purchase_items": purchaseUpdateList};
@@ -430,10 +435,8 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
         Provider.of<PaymentVoucherProvider>(context, listen: false)
             .fetchBillPersons());
 
-     Future.microtask(() =>
-        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());       
-
-
+    Future.microtask(() =>
+        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
   }
 
   @override
@@ -491,12 +494,15 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        //context.watch<PurchaseController>().isCash ? "Cash" : "Credit",
-                                        controller.isCash ? "Cash" : "Credit",
+                                        (provider.customerId != null &&
+                                                provider.customerId != 0)
+                                            ? "Credit"
+                                            : "Cash",
                                         style: GoogleFonts.lato(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14),
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                       const SizedBox(width: 1),
                                       const Icon(
@@ -521,13 +527,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    // Expanded(
-                                    //   child: Text(
-                                    //     'Bill To',
-                                    //     style: TextStyle(color: Colors.black),
-                                    //   ),
-                                    // ),
-
                                     Expanded(
                                       child: Column(
                                         mainAxisAlignment:
@@ -544,179 +543,308 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                                 fontSize: 12),
                                           ),
                                           vPad5,
-                                          const Text(
-                                            "Supplier",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12),
-                                          ),
+                                          // const Text(
+                                          //   "Supplier",
+                                          //   style: TextStyle(
+                                          //       color: Colors.black,
+                                          //       fontSize: 12),
+                                          // ),
 
-                                          ///=> supplier cash and supplier or customer list in api ,
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                height: 58,
-                                                width: 180,
-                                                // Adjusted height for cursor visibility
-                                                child: controller.isCash
-                                                    ? InkWell(
-                                                        onTap: () {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (context) =>
-                                                                    Dialog(
-                                                              child:
-                                                                  ReusableForm(
-                                                                nameController:
-                                                                    nameController,
-                                                                phoneController:
-                                                                    phoneController,
-                                                                emailController:
-                                                                    emailController,
-                                                                addressController:
-                                                                    addressController,
-                                                                primaryColor: Theme.of(
-                                                                        context)
-                                                                    .primaryColor,
-                                                                onCancel:
-                                                                    _onCancel,
-                                                                onSubmit: () {
-                                                                  setState(() {
-                                                                    controller
-                                                                        .updatedCustomerInfomation(
-                                                                      nameFrom:
-                                                                          nameController
-                                                                              .text,
-                                                                      phoneFrom:
-                                                                          phoneController
-                                                                              .text,
-                                                                      emailFrom:
-                                                                          emailController
-                                                                              .text,
-                                                                      addressFrom:
-                                                                          addressController
-                                                                              .text,
-                                                                    );
-                                                                  });
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: const Text(
-                                                          "Cash",
+                                          // ///=> supplier cash and supplier or customer list in api ,
+                                          // Row(
+                                          //   children: [
+                                          //     SizedBox(
+                                          //       height: 58,
+                                          //       width: 180,
+                                          //       // Adjusted height for cursor visibility
+                                          //       child: controller.isCash
+                                          //           ? InkWell(
+                                          //               onTap: () {
+                                          //                 showDialog(
+                                          //                   context: context,
+                                          //                   builder:
+                                          //                       (context) =>
+                                          //                           Dialog(
+                                          //                     child:
+                                          //                         ReusableForm(
+                                          //                       nameController:
+                                          //                           nameController,
+                                          //                       phoneController:
+                                          //                           phoneController,
+                                          //                       emailController:
+                                          //                           emailController,
+                                          //                       addressController:
+                                          //                           addressController,
+                                          //                       primaryColor: Theme.of(
+                                          //                               context)
+                                          //                           .primaryColor,
+                                          //                       onCancel:
+                                          //                           _onCancel,
+                                          //                       onSubmit: () {
+                                          //                         setState(() {
+                                          //                           controller
+                                          //                               .updatedCustomerInfomation(
+                                          //                             nameFrom:
+                                          //                                 nameController
+                                          //                                     .text,
+                                          //                             phoneFrom:
+                                          //                                 phoneController
+                                          //                                     .text,
+                                          //                             emailFrom:
+                                          //                                 emailController
+                                          //                                     .text,
+                                          //                             addressFrom:
+                                          //                                 addressController
+                                          //                                     .text,
+                                          //                           );
+                                          //                         });
+                                          //                         Navigator.pop(
+                                          //                             context);
+                                          //                       },
+                                          //                     ),
+                                          //                   ),
+                                          //                 );
+                                          //               },
+                                          //               child: const Text(
+                                          //                 "Cash",
+                                          //                 style: TextStyle(
+                                          //                   fontSize: 12,
+                                          //                   color: Colors.blue,
+                                          //                   fontWeight:
+                                          //                       FontWeight.w600,
+                                          //                 ),
+                                          //               ),
+                                          //             )
+                                          //           : Column(
+                                          //               children: [
+                                          //                 AddSalesFormfieldTwo(
+                                          //                     controller: controller
+                                          //                         .codeController,
+                                          //                     //label: "Customer",
+                                          //                     customerorSaleslist:
+                                          //                         "Showing supplieer list",
+                                          //                     customerOrSupplierButtonLavel:
+                                          //                         "Add new supplier",
+                                          //                     onTap: () {
+                                          //                       Navigator.push(
+                                          //                           context,
+                                          //                           MaterialPageRoute(
+                                          //                               builder:
+                                          //                                   (context) =>
+                                          //                                       const SuppliersCreate()));
+                                          //                     }),
+                                          //                 Consumer<
+                                          //                     CustomerProvider>(
+                                          //                   builder: (context,
+                                          //                       customerProvider,
+                                          //                       child) {
+                                          //                     final customerList =
+                                          //                         customerProvider
+                                          //                                 .customerResponse
+                                          //                                 ?.data ??
+                                          //                             [];
+
+                                          //                     return Column(
+                                          //                       crossAxisAlignment:
+                                          //                           CrossAxisAlignment
+                                          //                               .start,
+                                          //                       children: [
+                                          //                         // If the customer list is empty, show a SizedBox
+                                          //                         if (customerList
+                                          //                             .isEmpty)
+                                          //                           const SizedBox(
+                                          //                               height:
+                                          //                                   2), // Adjust height as needed
+
+                                          //                         // Otherwise, show the dropdown with customers
+                                          //                         if (customerList
+                                          //                             .isNotEmpty)
+
+                                          //                           // Check if the selected customer is valid
+                                          //                           if (customerProvider.selectedCustomer !=
+                                          //                                   null &&
+                                          //                               customerProvider.selectedCustomer!.id !=
+                                          //                                   -1)
+                                          //                             Row(
+                                          //                               children: [
+                                          //                                 Text(
+                                          //                                   "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
+                                          //                                   style:
+                                          //                                       TextStyle(
+                                          //                                     fontSize: 10,
+                                          //                                     fontWeight: FontWeight.bold,
+                                          //                                     color: customerProvider.selectedCustomer!.type == 'customer' ? Colors.green : Colors.red,
+                                          //                                   ),
+                                          //                                 ),
+                                          //                                 Padding(
+                                          //                                   padding:
+                                          //                                       const EdgeInsets.only(top: 2.0),
+                                          //                                   child:
+                                          //                                       Text(
+                                          //                                     "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
+                                          //                                     style: const TextStyle(
+                                          //                                       fontSize: 10,
+                                          //                                       fontWeight: FontWeight.bold,
+                                          //                                       color: Colors.black,
+                                          //                                     ),
+                                          //                                   ),
+                                          //                                 ),
+                                          //                               ],
+                                          //                             ),
+                                          //                       ],
+                                          //                     );
+                                          //                   },
+                                          //                 ),
+                                          //               ],
+                                          //             ),
+                                          //     ),
+
+                                          //     hPad3, // Space between TextField and Icon
+                                          //   ],
+                                          // ),
+
+                                          Consumer<PurchaseUpdateProvider>(
+                                            builder:
+                                                (context, provider, child) {
+                                              return (provider.customerId ==
+                                                          null ||
+                                                      provider.customerId == 0)
+                                                  ? Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
+                                                          "Supplier",
                                                           style: TextStyle(
-                                                            fontSize: 12,
-                                                            color: Colors.blue,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12),
                                                         ),
-                                                      )
-
-                                                    //: SizedBox.shrink(),
-
-                                                    //     Expanded(
-                                                    //   child: AddSalesFormfield(
-                                                    //       label: "Customer ID",
-                                                    //       controller: provider
-                                                    //           .customerController),
-                                                    // ),
-
-                                                    : Column(
-                                                        children: [
-                                                          AddSalesFormfieldTwo(
-                                                              controller: controller
-                                                                  .codeController,
-                                                              //label: "Customer",
-                                                              customerorSaleslist:
-                                                                  "Showing supplieer list",
-                                                              customerOrSupplierButtonLavel:
-                                                                  "Add new supplier",
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                const SuppliersCreate()));
-                                                              }),
-                                                          Consumer<
-                                                              CustomerProvider>(
-                                                            builder: (context,
-                                                                customerProvider,
-                                                                child) {
-                                                              final customerList =
-                                                                  customerProvider
-                                                                          .customerResponse
-                                                                          ?.data ??
-                                                                      [];
-
-                                                              return Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  // If the customer list is empty, show a SizedBox
-                                                                  if (customerList
-                                                                      .isEmpty)
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2), // Adjust height as needed
-
-                                                                  // Otherwise, show the dropdown with customers
-                                                                  if (customerList
-                                                                      .isNotEmpty)
-
-                                                                    // Check if the selected customer is valid
-                                                                    if (customerProvider.selectedCustomer !=
-                                                                            null &&
-                                                                        customerProvider.selectedCustomer!.id !=
-                                                                            -1)
-                                                                      Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 10,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: customerProvider.selectedCustomer!.type == 'customer' ? Colors.green : Colors.red,
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.only(top: 2.0),
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              height: 58,
+                                                              width: 180,
+                                                              child: controller
+                                                                      .isCash
+                                                                  ? InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder: (context) =>
+                                                                              Dialog(
                                                                             child:
-                                                                                Text(
-                                                                              "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 10,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                color: Colors.black,
-                                                                              ),
+                                                                                ReusableForm(
+                                                                              nameController: nameController,
+                                                                              phoneController: phoneController,
+                                                                              emailController: emailController,
+                                                                              addressController: addressController,
+                                                                              primaryColor: Theme.of(context).primaryColor,
+                                                                              onCancel: _onCancel,
+                                                                              onSubmit: () {
+                                                                                setState(() {
+                                                                                  controller.updatedCustomerInfomation(
+                                                                                    nameFrom: nameController.text,
+                                                                                    phoneFrom: phoneController.text,
+                                                                                    emailFrom: emailController.text,
+                                                                                    addressFrom: addressController.text,
+                                                                                  );
+                                                                                });
+                                                                                Navigator.pop(context);
+                                                                              },
                                                                             ),
                                                                           ),
-                                                                        ],
+                                                                        );
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        "Cash",
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              Colors.blue,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
                                                                       ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                              ),
+                                                                    )
+                                                                  : Column(
+                                                                      children: [
+                                                                        AddSalesFormfieldTwo(
+                                                                          controller:
+                                                                              controller.codeController,
+                                                                          customerorSaleslist:
+                                                                              "Showing supplieer list",
+                                                                          customerOrSupplierButtonLavel:
+                                                                              "Add new supplier",
+                                                                          onTap:
+                                                                              () {
+                                                                            Navigator.push(
+                                                                              context,
+                                                                              MaterialPageRoute(
+                                                                                builder: (context) => const SuppliersCreate(),
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                        Consumer<
+                                                                            CustomerProvider>(
+                                                                          builder: (context,
+                                                                              customerProvider,
+                                                                              child) {
+                                                                            final customerList =
+                                                                                customerProvider.customerResponse?.data ?? [];
 
-                                              hPad3, // Space between TextField and Icon
-                                            ],
+                                                                            return Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                if (customerList.isEmpty) const SizedBox(height: 2),
+                                                                                if (customerList.isNotEmpty && customerProvider.selectedCustomer != null && customerProvider.selectedCustomer!.id != -1)
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
+                                                                                        style: TextStyle(
+                                                                                          fontSize: 10,
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          color: customerProvider.selectedCustomer!.type == 'customer' ? Colors.green : Colors.red,
+                                                                                        ),
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: const EdgeInsets.only(top: 2),
+                                                                                        child: Text(
+                                                                                          "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
+                                                                                          style: const TextStyle(
+                                                                                            fontSize: 10,
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            color: Colors.black,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                              ],
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const SizedBox(); // ✅ Empty when customerId is present
+                                            },
                                           ),
                                         ],
                                       ),
                                     ),
-
                                     const SizedBox(
                                       width: 5,
                                     ),
@@ -733,8 +861,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                               controller:
                                                   provider.billNumberController,
                                               onChanged: (value) {
-                                                // billController = provider
-                                                //     .billNumberController;
+                                                provider.customerId;
                                               },
                                             ),
                                           ),
@@ -795,7 +922,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                             ),
                                           ),
 
-                                      
                                           ///bill person
                                           Padding(
                                             padding:
@@ -1230,7 +1356,9 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                   ),
                                 ),
 
-                                SizedBox(height: 8,),
+                                SizedBox(
+                                  height: 8,
+                                ),
 
                                 // //===>Discount
                                 Align(
@@ -1260,7 +1388,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                               provider
                                                   .updateGrossTotal(); // Trigger the update for Gross Total
                                             },
-                                             
                                           ),
                                         ),
                                       ],
@@ -1268,8 +1395,9 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                   ),
                                 ),
 
-                               const      SizedBox(height: 8,),
-
+                                const SizedBox(
+                                  height: 8,
+                                ),
 
                                 // ////===>gross total
                                 Align(
@@ -1300,7 +1428,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                                             .getGrossTotal()),
 
                                                 readOnly: true,
-                                                
                                               );
                                             },
                                           ),
@@ -1407,7 +1534,9 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                               width: double.maxFinite,
                               child: ElevatedButton(
                                 onPressed: () async {
-                                  await provider.updatePurchase(context);
+                                  int billPersonID = selectedBillPersonData!.id;
+                                  await provider.updatePurchase(
+                                      context, billPersonID);
 
                                   debugPrint(
                                       'bill number ${billController.text}');
