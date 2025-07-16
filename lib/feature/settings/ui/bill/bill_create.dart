@@ -21,7 +21,6 @@ class BillCreate extends StatefulWidget {
 }
 
 class _BillCreateState extends State<BillCreate> {
-  
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _nickNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -245,32 +244,32 @@ class _BillCreateState extends State<BillCreate> {
                       ),
                     ),
 
-                    const SizedBox(
-                      height: 12,
-                    ),
+                    // const SizedBox(
+                    //   height: 12,
+                    // ),
 
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomDropdownTwo(
-                        items: const ["Active", "Inactive"], // Display labels
-                        //hint: '', //Select status
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: CustomDropdownTwo(
+                    //     items: const ["Active", "Inactive"], // Display labels
+                    //     //hint: '', //Select status
 
-                        labelText: 'Status',
-                        width: double.infinity,
-                        height: 40,
-                        value: selectedStatus == "1"
-                            ? "Active"
-                            : "Inactive", // ✅ reflect selection
-                        onChanged: (value) {
-                          setState(() {
-                            selectedStatus = (value == "Active")
-                                ? "1"
-                                : "0"; // ✅ Convert label to 1 or 0
-                          });
-                          debugPrint(selectedStatus);
-                        },
-                      ),
-                    ),
+                    //     labelText: 'Status',
+                    //     width: double.infinity,
+                    //     height: 40,
+                    //     value: selectedStatus == "1"
+                    //         ? "Active"
+                    //         : "Inactive", // ✅ reflect selection
+                    //     onChanged: (value) {
+                    //       setState(() {
+                    //         selectedStatus = (value == "Active")
+                    //             ? "1"
+                    //             : "0"; // ✅ Convert label to 1 or 0
+                    //       });
+                    //       debugPrint(selectedStatus);
+                    //     },
+                    //   ),
+                    // ),
 
                     const SizedBox(
                       height: 12,

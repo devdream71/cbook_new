@@ -75,7 +75,12 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
                   }
 
                   if (provider.categories.isEmpty) {
-                    return const Center(child: Text("No categories found"));
+                    return const Center(
+                        child: Text(
+                      "No categories found",
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ));
                   }
 
                   return ListView.builder(
@@ -106,8 +111,6 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
                               ),
                               title: Text(category.name,
                                   style: const TextStyle(fontSize: 12)),
-                          
-                              
                             ),
                           ),
                         ),
@@ -251,7 +254,6 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
                     //backgroundColor: ,
                     backgroundColor: Colors.green,
                   ),
-                  
                 );
                 await provider.fetchCategories(); // Refresh list
               } else {
@@ -271,5 +273,4 @@ class _ItemCategoryViewState extends State<ItemCategoryView> {
       ),
     );
   }
-
 }

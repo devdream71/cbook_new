@@ -64,14 +64,6 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
                         ),
                         const SizedBox(height: 12),
 
-                        const Text(
-                          "Category",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12),
-                        ),
-
                         // Category Dropdown
                         SizedBox(
                           width: double.infinity,
@@ -80,6 +72,7 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
                                 .map((category) => category.name)
                                 .toList(),
                             width: double.infinity,
+                            labelText: 'Category',
                             height: 40,
                             onChanged: (value) {
                               setState(() {
@@ -90,30 +83,30 @@ class _CreateSubCategoryState extends State<CreateSubCategory> {
                         ),
                         const SizedBox(height: 12),
 
-                        const Text(
-                          "Status",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12),
-                        ),
+                        // const Text(
+                        //   "Status",
+                        //   style: TextStyle(
+                        //       color: Colors.black,
+                        //       fontWeight: FontWeight.w600,
+                        //       fontSize: 12),
+                        // ),
 
-                        // Status Dropdown
-                        SizedBox(
-                          width: double.infinity,
-                          child: CustomDropdownTwo(
-                            items: const ["Active", "Inactive"],
-                            hint: '', //Select status
-                            width: double.infinity,
-                            height: 40,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedStatus =
-                                    (value == "Active") ? "1" : "0";
-                              });
-                            },
-                          ),
-                        ),
+                        // // Status Dropdown
+                        // SizedBox(
+                        //   width: double.infinity,
+                        //   child: CustomDropdownTwo(
+                        //     items: const ["Active", "Inactive"],
+                        //     hint: '', //Select status
+                        //     width: double.infinity,
+                        //     height: 40,
+                        //     onChanged: (value) {
+                        //       setState(() {
+                        //         selectedStatus =
+                        //             (value == "Active") ? "1" : "0";
+                        //       });
+                        //     },
+                        //   ),
+                        // ),
                         const SizedBox(height: 20),
                       ],
                     ),

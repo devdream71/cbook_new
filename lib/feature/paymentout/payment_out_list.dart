@@ -89,7 +89,7 @@ class _PaymentOutListState extends State<PaymentOutList> {
                     if (provider.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                            
+
                     if (provider.vouchers.isEmpty) {
                       return Center(
                           child: Text(
@@ -97,16 +97,16 @@ class _PaymentOutListState extends State<PaymentOutList> {
                         style: ts2,
                       ));
                     }
-                            
+
                     return ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: provider.vouchers.length,
                         itemBuilder: (context, index) {
                           final voucher = provider.vouchers[index];
-                            
+
                           final voucherId = voucher.id.toString();
-                            
+
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 2, vertical: 0),
@@ -115,11 +115,11 @@ class _PaymentOutListState extends State<PaymentOutList> {
                                 editDeleteDiolog(context, voucherId);
                               },
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const PaymentDetails()));
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) =>
+                                //             const PaymentDetails()));
                               },
                               child: Card(
                                 shape: RoundedRectangleBorder(
@@ -156,7 +156,7 @@ class _PaymentOutListState extends State<PaymentOutList> {
                                                               voucher
                                                                   .voucherDate,
                                                               style: ts),
-                            
+
                                                           ///voucher number
                                                           Text(
                                                             voucher.voucherNumber
@@ -167,10 +167,10 @@ class _PaymentOutListState extends State<PaymentOutList> {
                                                                     .voucherNumber,
                                                             style: ts,
                                                           ),
-                            
+
                                                           const SizedBox(
                                                               height: 5),
-                            
+
                                                           ///voucher amount.
                                                           Text(
                                                               voucher
@@ -337,10 +337,11 @@ class _PaymentOutListState extends State<PaymentOutList> {
               if (isDeleted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
+                      backgroundColor: Colors.green,
                       content: Text(
-                    'Payment voucher deleted successfully!',
-                    style: TextStyle(color: colorScheme.primary),
-                  )),
+                        'Successfully! Payment voucher deleted.',
+                        style: TextStyle(color: colorScheme.primary),
+                      )),
                 );
                 Navigator.of(context).pop(); // Close confirmation dialog
                 await provider.fetchPaymentVouchers();

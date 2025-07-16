@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
+import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
 import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
@@ -35,6 +36,11 @@ class _UserAddState extends State<UserAdd> {
   String? selectedBillPerson;
   int? selectedBillPersonId;
   BillPersonModel? selectedBillPersonData;
+
+  // For Default Bill Person
+  String? selectedDefaultBillPerson;
+  int? selectedDefaultBillPersonId;
+  BillPersonModel? selectedDefaultBillPersonData;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -225,14 +231,19 @@ class _UserAddState extends State<UserAdd> {
                             onChanged: (value) {
                               setState(() {
                                 selectedRoleName = value;
+
                                 final selected = provider.roles.firstWhere(
                                   (r) => r.name == value,
                                   orElse: () =>
                                       RoleModel(id: 0, name: '', status: 1),
                                 );
-                                selectedRoleId =
-                                    selected.id; // Store roleId for API use
-                                debugPrint('Selected Role ID: $selectedRoleId');
+
+                                selectedRoleId = selected.id;
+
+                                // 🔥 Print user_name_user_id format
+                                final rolePrint =
+                                    "${selected.name.toLowerCase()}_${selected.id}";
+                                debugPrint("👤 Selected User Type: $rolePrint");
                               });
                             },
                           ),
@@ -247,9 +258,10 @@ class _UserAddState extends State<UserAdd> {
                 height: 10,
               ),
 
-              ///bill person, Default Bill Person
+              /// Bill Person & Default Bill Person Dropdowns
               Row(
                 children: [
+                  // 🔵 Bill Person Dropdown
                   Expanded(
                     child: Consumer<PaymentVoucherProvider>(
                       builder: (context, provider, child) {
@@ -267,32 +279,34 @@ class _UserAddState extends State<UserAdd> {
                                   selectedItem: selectedBillPerson,
                                   onChanged: (value) {
                                     debugPrint(
-                                        '=== Bill Person Selected: $value ===');
+                                        '🔵 Bill Person Selected: $value');
                                     setState(() {
                                       selectedBillPerson = value;
                                       selectedBillPersonData =
                                           provider.billPersons.firstWhere(
                                         (person) => person.name == value,
-                                      ); // ✅ Save the whole object globally
+                                      );
                                       selectedBillPersonId =
                                           selectedBillPersonData!.id;
                                     });
 
-                                    debugPrint('Selected Bill Person Details:');
+                                    debugPrint('🔵 Bill Person Details:');
                                     debugPrint(
                                         '- ID: ${selectedBillPersonData!.id}');
                                     debugPrint(
                                         '- Name: ${selectedBillPersonData!.name}');
                                     debugPrint(
                                         '- Phone: ${selectedBillPersonData!.phone}');
-                                  }),
+                                  },
+                                ),
                         );
                       },
                     ),
                   ),
-                  const SizedBox(
-                    width: 5,
-                  ),
+
+                  const SizedBox(width: 5),
+
+                  // 🟣 Default Bill Person Dropdown
                   Expanded(
                     child: Consumer<PaymentVoucherProvider>(
                       builder: (context, provider, child) {
@@ -307,28 +321,30 @@ class _UserAddState extends State<UserAdd> {
                                   width: double.infinity,
                                   height: 30,
                                   labelText: 'Default Bill Person',
-                                  selectedItem: selectedBillPerson,
+                                  selectedItem: selectedDefaultBillPerson,
                                   onChanged: (value) {
                                     debugPrint(
-                                        '=== Bill Person Selected: $value ===');
+                                        '🟣 Default Bill Person Selected: $value');
                                     setState(() {
-                                      selectedBillPerson = value;
-                                      selectedBillPersonData =
+                                      selectedDefaultBillPerson = value;
+                                      selectedDefaultBillPersonData =
                                           provider.billPersons.firstWhere(
                                         (person) => person.name == value,
-                                      ); // ✅ Save the whole object globally
-                                      selectedBillPersonId =
-                                          selectedBillPersonData!.id;
+                                      );
+                                      selectedDefaultBillPersonId =
+                                          selectedDefaultBillPersonData!.id;
                                     });
 
-                                    debugPrint('Selected Bill Person Details:');
                                     debugPrint(
-                                        '- ID: ${selectedBillPersonData!.id}');
+                                        '🟣 Default Bill Person Details:');
                                     debugPrint(
-                                        '- Name: ${selectedBillPersonData!.name}');
+                                        '- ID: ${selectedDefaultBillPersonData!.id}');
                                     debugPrint(
-                                        '- Phone: ${selectedBillPersonData!.phone}');
-                                  }),
+                                        '- Name: ${selectedDefaultBillPersonData!.name}');
+                                    debugPrint(
+                                        '- Phone: ${selectedDefaultBillPersonData!.phone}');
+                                  },
+                                ),
                         );
                       },
                     ),
@@ -463,7 +479,7 @@ class _UserAddState extends State<UserAdd> {
                   Expanded(
                     child: AddSalesFormfield(
                       height: 40,
-                      labelText: "Password",
+                      labelText: "Confirm Password",
                       controller: controller.confromController,
                     ),
                   ),
@@ -499,7 +515,7 @@ class _UserAddState extends State<UserAdd> {
                                   image: _imageFile != null
                                       ? FileImage(File(_imageFile!.path))
                                       : const AssetImage(
-                                          "assets/image/cbook_logo.png"),
+                                          "assets/image/image_upload_blue.png"),
                                   fit: BoxFit.fitWidth,
                                 ),
                               ),
@@ -611,11 +627,111 @@ class _UserAddState extends State<UserAdd> {
                 height: 20,
               ),
 
-              // Save Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () async {},
+                  onPressed: () async {
+                    final name = controller.nameController.text.trim();
+                    final nickName = controller.nickController.text.trim();
+                    final phone = controller.phoneController.text.trim();
+                    final email = controller.emailController.text.trim();
+                    final address = controller.addressController.text.trim();
+                    final password = controller.passwordController.text.trim();
+                    final confirmPassword =
+                        controller.confromController.text.trim();
+
+                    // Check for empty required fields
+                    if (name.isEmpty ||
+                        nickName.isEmpty ||
+                        phone.isEmpty ||
+                        email.isEmpty ||
+                        address.isEmpty ||
+                        password.isEmpty ||
+                        confirmPassword.isEmpty ||
+                        selectedDesignationId == null ||
+                        selectedRoleId == 0 ||
+                        selectedBillPersonId == null ||
+                        selectedDefaultBillPersonId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please fill all required fields!'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    // Password match check
+                    if (password != confirmPassword) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Password and Confirm Password do not match!'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    final provider = Provider.of<SettingUserProvider>(context,
+                        listen: false);
+                    final result = await provider.createUser(
+                      userType:
+                          "${selectedRoleName.toLowerCase()}_${selectedRoleId}",
+                      name: controller.nameController.text.trim(),
+                      nickName: controller.nickController.text.trim(),
+                      email: controller.emailController.text.trim(),
+                      phone: controller.phoneController.text.trim(),
+                      password: controller.passwordController.text.trim(),
+                      designation: selectedDesignationId.toString(),
+                      billPersonId: selectedBillPersonId.toString(),
+                      defaultBillPersonId:
+                          selectedDefaultBillPersonId.toString(),
+                      address: controller.addressController.text.trim(),
+                      createdDate: controller.formattedDate,
+                      status: selectedStatus,
+                      avatarPath: _imageFile!.path,
+                      signaturePath: _imageFile2!.path,
+                    );
+
+                    if (result != null && result.success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(result.message),
+                            backgroundColor: Colors.green),
+                      );
+
+                      provider.fetchUsers();
+
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomeView()));
+
+                      // if (mounted) {
+                      //   Navigator.pop(context);
+                      // }
+
+                      // Future.delayed(const Duration(milliseconds: 300), () {
+                      //   if (mounted) {
+                      //     Navigator.pop(context);
+                      //   }
+                      // });
+
+                      // Navigator.pop(context); // or refresh list
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Failed to create user"),
+                            backgroundColor: Colors.red),
+                      );
+                    }
+
+                    // ✅ All checks passed
+                    debugPrint("✅ All fields validated. Ready to save.");
+
+                    // Call your user save API or function here
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
                     padding: const EdgeInsets.symmetric(

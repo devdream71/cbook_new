@@ -377,7 +377,9 @@ class _SalesScreenState extends State<SalesScreen> {
                   if (provider.sales.isEmpty) {
                     return const Center(
                       child: Text("No sales data available",
-                          style: TextStyle(color: Colors.black)),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
                     );
                   }
 
@@ -585,45 +587,6 @@ class _SalesScreenState extends State<SalesScreen> {
     );
   }
 
-  ////old delete button.
-  // Future<void> conformDelete(context, int saleId) async {
-  //   return showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text("Confirm Deletion"),
-  //         content: const Text(
-  //           "Are you sure you want to delete this sale?",
-  //           style: TextStyle(color: Colors.black),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.pop(context); // Close the dialog
-  //             },
-  //             child: const Text("Cancel"),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-  //               // Call your delete function here
-  //               Provider.of<SalesProvider>(context, listen: false).deleteSale(
-  //                 saleId,
-  //               );
-  //               Navigator.pop(context);
-
-  //               debugPrint("Sale deleted"); // Replace with actual delete logic
-  //             },
-  //             child: const Text(
-  //               "Delete",
-  //               style: TextStyle(color: Colors.red),
-  //             ),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
   ///show edit and delete list from alart diolog
   Future<dynamic> editDeleteDiolog(BuildContext context, String salesID) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -746,28 +709,17 @@ class _SalesScreenState extends State<SalesScreen> {
 
               await provider.deleteSale(int.parse(salesID)); // ⬅️ AWAIT this
 
-              // No need to call fetchItems() again if it's already inside deleteSale()
-              // await provider.fetchItems();
+              provider.fetchSales();
 
-              Navigator.pop(context); // ⬅️ Close after update
+              Navigator.pop(context);
 
-              //Navigator.of(context).pop(); // Close dialog first
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text("successfully!, Received voucher Deleted.")),
+              );
 
-              // ✅ Call delete from Provider
-              // await Provider.of<PurchaseProvider>(context, listen: false)
-              //     .deletePurchase(context, int.parse(purchaseId));
-
-              // Provider.of<SalesProvider>(context, listen: false).deleteSale(
-              //   int.parse(salesID),
-              // );
-
-              // setState(() {
-
-              //    Provider.of<SalesProvider>(context, listen: false).fetchItems();
-
-              // });
-
-              // Navigator.pop(context);
+              // ⬅️ Close after update
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),

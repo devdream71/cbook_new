@@ -947,6 +947,7 @@ class _PaymenyOutEditState extends State<PaymenyOutEdit> {
                           .clearSelectedCustomer();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
+                          backgroundColor: Colors.green,
                             content: Text(
                                 "Payment voucher updated successfully!",
                                 style: TextStyle(color: Colors.green))),

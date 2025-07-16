@@ -111,27 +111,27 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                             controller: _nameController,
                           ),
                           const SizedBox(height: 12),
-                          const Text(
-                            "Status",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12),
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: CustomDropdownTwo(
-                              items: const ["Active", "Inactive"],
-                              hint: '', //Select status
-                              width: double.infinity,
-                              height: 40,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedStatus = value == "Active" ? "1" : "0";
-                                });
-                              },
-                            ),
-                          ),
+                          // const Text(
+                          //   "Status",
+                          //   style: TextStyle(
+                          //       color: Colors.black,
+                          //       fontWeight: FontWeight.w600,
+                          //       fontSize: 12),
+                          // ),
+                          // SizedBox(
+                          //   width: double.infinity,
+                          //   child: CustomDropdownTwo(
+                          //     items: const ["Active", "Inactive"],
+                          //     hint: '', //Select status
+                          //     width: double.infinity,
+                          //     height: 40,
+                          //     onChanged: (value) {
+                          //       setState(() {
+                          //         selectedStatus = value == "Active" ? "1" : "0";
+                          //       });
+                          //     },
+                          //   ),
+                          // ),
                           const SizedBox(height: 20),
                         ],
                       ),

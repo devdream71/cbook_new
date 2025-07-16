@@ -1,4 +1,5 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
+import 'package:cbook_dt/feature/account/ui/account_type/account_type_list.dart';
 import 'package:cbook_dt/feature/account/ui/bank_ui.dart';
 import 'package:cbook_dt/feature/account/ui/cash_in_hand.dart';
 import 'package:cbook_dt/feature/account/ui/discount.dart';
@@ -46,6 +47,11 @@ class Account extends StatelessWidget {
         name: 'Vat/Tax',
         iconPath: 'assets/image/vat_tax.svg',
         destination: TaxListView(), //SalesFormSetting
+      ),
+      const FormSettingMeta(
+        name: 'Account Type',
+        iconPath: 'assets/image/vat_tax.svg',
+        destination: AccountListPage(), //SalesFormSetting
       ),
     ];
 

@@ -251,6 +251,7 @@ class UnitListViewState extends State<UnitListView> {
               if (isDeleted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
+                    backgroundColor: Colors.green,
                     content: Text(
                       'Unit deleted successfully!',
                       style: TextStyle(color: colorScheme.primary),

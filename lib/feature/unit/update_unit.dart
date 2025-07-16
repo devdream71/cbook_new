@@ -92,30 +92,30 @@ class UpdateUnitPageState extends State<UpdateUnitPage> {
                       controller: _symbolController,
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      "Status",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12),
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomDropdownTwo(
-                        items: const ["Active", "Inactive"], // Display labels
-                        hint: '', //Select status
-                        width: double.infinity,
-                        height: 40,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedStatus = (value == "Active")
-                                ? "1"
-                                : "0"; // ✅ Convert label to 1 or 0
-                          });
-                          debugPrint(selectedStatus);
-                        },
-                      ),
-                    ),
+                    // const Text(
+                    //   "Status",
+                    //   style: TextStyle(
+                    //       color: Colors.black,
+                    //       fontWeight: FontWeight.w600,
+                    //       fontSize: 12),
+                    // ),
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: CustomDropdownTwo(
+                    //     items: const ["Active", "Inactive"], // Display labels
+                    //     hint: '', //Select status
+                    //     width: double.infinity,
+                    //     height: 40,
+                    //     onChanged: (value) {
+                    //       setState(() {
+                    //         selectedStatus = (value == "Active")
+                    //             ? "1"
+                    //             : "0"; // ✅ Convert label to 1 or 0
+                    //       });
+                    //       debugPrint(selectedStatus);
+                    //     },
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                   ],
                 ),

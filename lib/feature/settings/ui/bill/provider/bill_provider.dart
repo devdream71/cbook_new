@@ -90,7 +90,7 @@ class BillPersonProvider with ChangeNotifier {
     required String designation,
     required String address,
     required String date,
-    required String status,
+      String ? status,
     File? avatarFile, // use File, not base64
   }) async {
     errorMessage = '';
@@ -111,8 +111,8 @@ class BillPersonProvider with ChangeNotifier {
         'phone': phone,
         'designation': designation,
         'address': address,
-        'date': '2025-07-25', //date //2025-07-25
-        'status': status,
+        'date': '2025-07-16', //date //2025-07-25
+        'status': '1', //status!
       });
 
       // ✅ Add avatar image file if provided
@@ -171,7 +171,7 @@ class BillPersonProvider with ChangeNotifier {
     required String designation,
     required String address,
     required String date,
-    required String status,
+      String ? status,
     File? avatarFile,
   }) async {
     errorMessage = '';
@@ -192,7 +192,7 @@ class BillPersonProvider with ChangeNotifier {
         'designation': designation,
         'address': address,
         'date': date,
-        'status': status,
+        'status': '1' //status!,
       };
 
       request.fields.addAll(fields);
@@ -203,7 +203,7 @@ class BillPersonProvider with ChangeNotifier {
           'avatar',
           avatarFile.path,
           filename: fileName,
-        ));
+        )); 
       }
 
       // ✅ Debug logs

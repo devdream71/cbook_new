@@ -301,17 +301,17 @@ class _EditBillPersonState extends State<EditBillPerson> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        CustomDropdownTwo(
-                          items: const ["Active", "Inactive"],
-                          labelText: 'Status',
-                          width: double.infinity,
-                          height: 40,
-                          value: selectedStatus == "1" ? "Active" : "Inactive",
-                          onChanged: (value) {
-                            setState(() =>
-                                selectedStatus = value == "Active" ? "1" : "0");
-                          },
-                        ),
+                        // CustomDropdownTwo(
+                        //   items: const ["Active", "Inactive"],
+                        //   labelText: 'Status',
+                        //   width: double.infinity,
+                        //   height: 40,
+                        //   value: selectedStatus == "1" ? "Active" : "Inactive",
+                        //   onChanged: (value) {
+                        //     setState(() =>
+                        //         selectedStatus = value == "Active" ? "1" : "0");
+                        //   },
+                        // ),
                         const SizedBox(height: 12),
                         ///image fetch
                         Center(

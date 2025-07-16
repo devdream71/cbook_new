@@ -45,7 +45,7 @@ class UnitDTProvider extends ChangeNotifier {
 
 
   ///unit create.
-  Future<void> addUnit(String name, String symbol, String status) async {
+  Future<void> addUnit(String name, String symbol, String ? status) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userId = prefs.getInt('user_id')?.toString() ?? '';
@@ -164,7 +164,7 @@ class UnitDTProvider extends ChangeNotifier {
   
 
   ///unit update.
-  Future<void> updateUnit(int unitId, String name, String symbol,
+  Future<void> updateUnit(int unitId, String name, String ? symbol,
       dynamic status, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userId = prefs.getInt('user_id')?.toString() ?? '';

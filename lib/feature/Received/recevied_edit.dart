@@ -1029,10 +1029,11 @@ class _ReceviedEditState extends State<ReceviedEdit> {
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
+                            backgroundColor: Colors.green,
                             content: Text(
-                          "Received voucher updated successfully!",
-                          style: TextStyle(color: Colors.green),
-                        )),
+                              "successfully!, Received voucher updated.",
+                              style: TextStyle(color: Colors.green),
+                            )),
                       );
 
                       Navigator.pushReplacement(

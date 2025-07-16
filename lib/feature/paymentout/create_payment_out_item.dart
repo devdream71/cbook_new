@@ -332,7 +332,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                     height: 30,
                     width: 130,
                     child: AddSalesFormfield(
-                      labelText: "Bill NO",
+                      labelText: "Voucher NO",
                       controller: billNoController,
 
                       onChanged: (value) {
@@ -563,7 +563,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
                                                 children: [
-                                                  const Text('Receipt',
+                                                  const Text('Payment',
                                                       style: TextStyle(
                                                           fontSize: 14,
                                                           color: Colors.black)),

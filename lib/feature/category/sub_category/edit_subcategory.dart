@@ -89,9 +89,7 @@ class _UpdateSubCategoryState extends State<UpdateSubCategory> {
                                 controller: _nameController,
                               ),
                               const SizedBox(height: 12),
-                              const Text("Category",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 12)),
+
                               const SizedBox(height: 5),
                               SizedBox(
                                 width: double.infinity,
@@ -99,7 +97,7 @@ class _UpdateSubCategoryState extends State<UpdateSubCategory> {
                                   items: provider.categories
                                       .map((cat) => cat.name)
                                       .toList(),
-                                  hint: "Select Category",
+                                  labelText: "Select Category",
                                   width: double.infinity,
                                   height: 40,
                                   selectedItem: selectedCategoryName,
@@ -115,28 +113,28 @@ class _UpdateSubCategoryState extends State<UpdateSubCategory> {
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              const Text("Status",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 12)),
-                              const SizedBox(height: 5),
-                              SizedBox(
-                                width: double.infinity,
-                                child: CustomDropdownTwo(
-                                  items: const ["Active", "Inactive"],
-                                  hint: "Select Status",
-                                  width: double.infinity,
-                                  height: 40,
-                                  selectedItem: selectedStatus == "1"
-                                      ? "Active"
-                                      : "Inactive",
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedStatus =
-                                          (value == "Active") ? "1" : "0";
-                                    });
-                                  },
-                                ),
-                              ),
+                              // const Text("Status",
+                              //     style: TextStyle(
+                              //         color: Colors.black, fontSize: 12)),
+                              // const SizedBox(height: 5),
+                              // SizedBox(
+                              //   width: double.infinity,
+                              //   child: CustomDropdownTwo(
+                              //     items: const ["Active", "Inactive"],
+                              //     hint: "Select Status",
+                              //     width: double.infinity,
+                              //     height: 40,
+                              //     selectedItem: selectedStatus == "1"
+                              //         ? "Active"
+                              //         : "Inactive",
+                              //     onChanged: (value) {
+                              //       setState(() {
+                              //         selectedStatus =
+                              //             (value == "Active") ? "1" : "0";
+                              //       });
+                              //     },
+                              //   ),
+                              // ),
                               const SizedBox(height: 20),
                             ],
                           ),
@@ -174,8 +172,9 @@ class _UpdateSubCategoryState extends State<UpdateSubCategory> {
                               style: TextStyle(color: Colors.white)),
                         ),
                       ),
-
-                       const SizedBox(height: 50,)
+                      const SizedBox(
+                        height: 50,
+                      )
                     ],
                   ),
                 ),

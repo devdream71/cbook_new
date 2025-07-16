@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:cbook_dt/feature/settings/model/model_user_setting.dart';
 import 'package:cbook_dt/feature/settings/ui/user/model/role_model.dart';
+import 'package:cbook_dt/feature/settings/ui/user/model/user_create_model.dart';
+import 'package:cbook_dt/feature/settings/ui/user/model/user_edit_model.dart';
 import 'package:cbook_dt/utils/date_time_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class SettingUserProvider with ChangeNotifier {
-
   final TextEditingController nameController = TextEditingController();
   final TextEditingController nickController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -14,11 +17,6 @@ class SettingUserProvider with ChangeNotifier {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confromController = TextEditingController();
-
-
-
-
-  
 
   DateTime _selectedDate = DateTime.now();
 
@@ -40,7 +38,6 @@ class SettingUserProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get hasError => _hasError; // 👈 Add this line
 
-  
   ///fetch user
   Future<void> fetchUsers() async {
     _isLoading = true;
@@ -108,8 +105,345 @@ class SettingUserProvider with ChangeNotifier {
     }
   }
 
+  ///create user.
+  Future<UserCreateResponseModel?> createUser({
+    required String userType,
+    required String name,
+    required String nickName,
+    required String email,
+    required String phone,
+    required String password,
+    required String designation,
+    required String billPersonId,
+    required String defaultBillPersonId,
+    required String address,
+    required String createdDate,
+    required String status,
+    String? avatarPath,
+    String? signaturePath,
+  }) async {
+    final url = Uri.parse('https://commercebook.site/api/v1/users/store');
 
-  
+    try {
+      final request = http.MultipartRequest('POST', url);
+      request.fields.addAll({
+        'user_type': userType,
+        'name': name,
+        'nick_name': nickName,
+        'email': email,
+        'phone': phone,
+        'password': password,
+        'designation': designation,
+        'bill_person': billPersonId,
+        'default_bill_person': defaultBillPersonId,
+        'address': address,
+        'created_date': createdDate,
+        'status': status,
+      });
+
+      // request.files
+      //     .add(await http.MultipartFile.fromPath('avatar', avatarPath));
+      // request.files
+      //     .add(await http.MultipartFile.fromPath('singture', signaturePath));
+
+      // ✅ Only add avatar if available
+      if (avatarPath != null && avatarPath.isNotEmpty) {
+        request.files
+            .add(await http.MultipartFile.fromPath('avatar', avatarPath));
+      }
+
+      // ✅ Only add signature if available
+      if (signaturePath != null && signaturePath.isNotEmpty) {
+        request.files
+            .add(await http.MultipartFile.fromPath('singture', signaturePath));
+      }
+
+      final response = await request.send();
+
+      debugPrint("Sending user create request with:");
+      request.fields.forEach((key, value) {
+        debugPrint("🟩 $key: $value");
+      });
+      debugPrint("Avatar path: $avatarPath");
+      debugPrint("Signature path: $signaturePath");
+
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        final decoded = json.decode(responseBody);
+        return UserCreateResponseModel.fromJson(decoded);
+      } else {
+        debugPrint("❌ Failed: ${response.statusCode} ${response.reasonPhrase}");
+        return null;
+      }
+    } catch (e) {
+      debugPrint("❌ Exception during user creation: $e");
+      return null;
+    }
+  }
+
+  ///edit user data
+  UserEditModel? _editUser;
+  bool _isEditLoading = false;
+  String? _editError;
+
+  UserEditModel? get editUser => _editUser;
+  bool get isEditLoading => _isEditLoading;
+  String? get editError => _editError;
+
+  Future<void> fetchUserById(int userId) async {
+    _isEditLoading = true;
+    _editError = null;
+    notifyListeners();
+
+    final url =
+        Uri.parse('https://commercebook.site/api/v1/users/edit/$userId');
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body)['data'];
+        _editUser = UserEditModel.fromJson(data);
+      } else {
+        _editError = "Failed to fetch user: ${response.statusCode}";
+      }
+    } catch (e) {
+      _editError = "Exception occurred: $e";
+    }
+
+    _isEditLoading = false;
+    notifyListeners();
+  }
+
+  ///update user
+  /// ✅ UPDATE USER FUNCTION
+  // Future<String?> updateUser({
+  //   required int id,
+  //   required String userType,
+  //   required int roleId,
+  //   required int designation,
+  //   required String password,
+  //   required String billPersonIds,
+  //   required int defaultBillPerson,
+  //   required String status,
+  //   required String createdDate,
+  //   XFile? avatar,
+  //   XFile? signature,
+  // }) async {
+  //   try {
+  //     final uri = Uri.parse(
+  //         'https://commercebook.site/api/v1/users/update?id=$id&user_type=$userType');
+
+  //     final request = http.MultipartRequest('POST', uri);
+
+  //     request.fields.addAll({
+  //       'id': id.toString(),
+  //       'user_type': userType,
+  //       'role_id': roleId.toString(),
+  //       'name': nameController.text.trim(),
+  //       'nick_name': nickController.text.trim(),
+  //       'email': emailController.text.trim(),
+  //       'phone': phoneController.text.trim(),
+  //       'password': passwordController.text.trim(),
+  //       'designation': designation.toString(),
+  //       'bill_person': billPersonIds,
+  //       'default_bill_person': defaultBillPerson.toString(),
+  //       'address': addressController.text.trim(),
+  //       'created_date': createdDate,
+  //       'status': status,
+  //     });
+
+  //     if (avatar != null) {
+  //       request.files.add(await http.MultipartFile.fromPath(
+  //           'avatar', File(avatar.path).path));
+  //     }
+
+  //     if (signature != null) {
+  //       request.files.add(await http.MultipartFile.fromPath(
+  //           'singture', File(signature.path).path));
+  //     }
+
+  //     final response = await request.send();
+
+  //     if (response.statusCode == 200) {
+  //       final res = await response.stream.bytesToString();
+  //       final jsonData = json.decode(res);
+  //       return jsonData['message'];
+  //     } else {
+  //       return 'Failed to update user: ${response.statusCode}';
+  //     }
+  //   } catch (e) {
+  //     return 'Error: $e';
+  //   }
+  // }
+
+  // Future<Map<String, dynamic>> updateUser({
+  //   required int id,
+  //   required String userType,
+  //   required int roleId,
+  //   required int designation,
+  //   required String password,
+  //   required String billPersonIds,
+  //   required int defaultBillPerson,
+  //   required String status,
+  //   required String createdDate,
+  //   XFile? avatar,
+  //   XFile? signature,
+  // }) async {
+  //   try {
+  //     final uri = Uri.parse(
+  //         'https://commercebook.site/api/v1/users/update?id=$id&user_type=$userType');
+
+  //     final request = http.MultipartRequest('POST', uri);
+
+  //     request.fields.addAll({
+  //       'id': id.toString(),
+  //       'user_type': userType,
+  //       'role_id': roleId.toString(),
+  //       'name': nameController.text.trim(),
+  //       'nick_name': nickController.text.trim(),
+  //       'email': emailController.text.trim(),
+  //       'phone': phoneController.text.trim(),
+  //       'password': password,
+  //       'designation': designation.toString(),
+  //       'bill_person': billPersonIds,
+  //       'default_bill_person': defaultBillPerson.toString(),
+  //       'address': addressController.text.trim(),
+  //       'created_date': createdDate,
+  //       'status': status,
+  //     });
+
+  //     if (avatar != null) {
+  //       request.files.add(await http.MultipartFile.fromPath(
+  //           'avatar', File(avatar.path).path));
+  //     }
+
+  //     if (signature != null) {
+  //       request.files.add(await http.MultipartFile.fromPath(
+  //           'singture', File(signature.path).path));
+  //     }
+
+  //     final response = await request.send();
+
+  //     if (response.statusCode == 200) {
+  //       final res = await response.stream.bytesToString();
+  //       final jsonData = json.decode(res);
+
+  //       return {
+  //         'success': jsonData['success'],
+  //         'message': jsonData['message'],
+  //       };
+  //     } else {
+  //       return {
+  //         'success': false,
+  //         'message': 'Failed with status ${response.statusCode}',
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {
+  //       'success': false,
+  //       'message': 'Exception: $e',
+  //     };
+  //   }
+  // }
+
+  Future<Map<String, dynamic>> updateUser({
+    required int id,
+    required String userType,
+    //required int roleId,
+    required int designation,
+    required String password,
+    required String billPersonIds,
+    required int defaultBillPerson,
+    required String status,
+    required String createdDate,
+    XFile? avatar,
+    XFile? signature,
+  }) async {
+    try {
+      final uri = Uri.parse(
+        'https://commercebook.site/api/v1/users/update?id=$id&user_type=$userType',
+      );
+
+      final request = http.MultipartRequest('POST', uri);
+
+      // Define fields
+      final fields = {
+        'id': id.toString(),
+        'user_type': userType,
+        //'role_id': roleId.toString(),
+        'name': nameController.text.trim(),
+        'nick_name': nickController.text.trim(),
+        'email': emailController.text.trim(),
+        'phone': phoneController.text.trim(),
+        'password': password,
+        'designation': designation.toString(),
+        'bill_person': billPersonIds,
+        'default_bill_person': defaultBillPerson.toString(),
+        'address': addressController.text.trim(),
+        'created_date': createdDate,
+        'status': status,
+      };
+
+      request.fields.addAll(fields);
+
+      // Add files if available
+      if (avatar != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'avatar',
+          File(avatar.path).path,
+        ));
+      }
+
+      if (signature != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'singture',
+          File(signature.path).path,
+        ));
+      }
+
+      // ✅ PRINT FULL INFO BEFORE SENDING
+      debugPrint('📤 Sending request to: ${request.url}');
+      debugPrint('📦 Form Fields:');
+      fields.forEach((key, value) {
+        debugPrint('  $key = $value');
+      });
+
+      if (avatar != null) {
+        debugPrint('🖼️ Avatar path: ${avatar.path}');
+      }
+      if (signature != null) {
+        debugPrint('✍️ Signature path: ${signature.path}');
+      }
+
+      // Send request
+      final response = await request.send();
+      final resBody = await response.stream.bytesToString();
+
+      // ✅ Print Response
+      debugPrint('📩 Status Code: ${response.statusCode}');
+      debugPrint('📩 Response Body: $resBody');
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(resBody);
+        return {
+          'success': jsonData['success'],
+          'message': jsonData['message'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Failed with status ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      debugPrint('❌ Exception: $e');
+      return {
+        'success': false,
+        'message': 'Error: $e',
+      };
+    }
+  }
+
   ///role mnodel.
   List<RoleModel> _roles = [];
   List<RoleModel> get roles => _roles;
