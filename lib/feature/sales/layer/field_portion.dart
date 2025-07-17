@@ -228,42 +228,7 @@ class _FieldPortionState extends State<FieldPortion> {
                                                     "Selected Tax ID: $selectedTaxId");
                                                 debugPrint(
                                                     "Selected Tax Percent: ${controller.selectedTaxPercent}");
-                                    // debugPrint(
-                                    //     "Selected raw value from dropdown: $newValue");
-                                    // setState(() {
-                                    //   selectedTaxName = newValue;
-    
-                                    //   // Find tax by percent
-                                    //   final selected =
-                                    //       taxProvider.taxList.firstWhere(
-                                    //     (tax) => tax.percent == newValue,
-                                    //     orElse: () =>
-                                    //         taxProvider.taxList.first,
-                                    //   );
-    
-                                    //   // Store ID and Percent
-                                    //   controller.selectedTotalTaxId =
-                                    //       selected.id.toString();
-                                    //   controller.selectedTotalTaxPercent =
-                                    //       double.tryParse(selected.percent)!;
-    
-                                    //   // Calculate tax/total
-                                    //   controller.taxPercent =
-                                    //       controller.selectedTotalTaxPercent;
-                                    //   controller.calculateTax();
-                                    //   controller.calculateTotal();
-    
-                                    //   // Print required format: tax_percent: "3_12.0"
-    
-                                    //   controller.updateTotalTaxId(
-                                    //       '${controller.selectedTotalTaxId}_${controller.selectedTotalTaxPercent}');
-                                    //   debugPrint(
-                                    //       'tax_percent: "${controller.taxPercentValue}"'); // ✅ This is what you want
-    
-                                    //   controller.selectTotalCreditTaxDropdown(
-                                    //       double.parse(
-                                    //           controller.addAmount2()),
-                                    //       newValue);
+                                    
                                     });
                                   },
                                 ),
@@ -300,10 +265,7 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-    
-        // const SizedBox(
-        //   height: 5,
-        // ),
+          
     
         // ///cash /// adjust total
         controller.isDisocunt && controller.isCash
@@ -342,10 +304,7 @@ class _FieldPortionState extends State<FieldPortion> {
               )
             : const SizedBox.shrink(),
     
-        // const SizedBox(
-        //   height: 5,
-        // ),
-    
+         
         // //==cash ///recived
         controller.isReciptType && controller.isCash
             ? Padding(
@@ -408,7 +367,7 @@ class _FieldPortionState extends State<FieldPortion> {
             : const SizedBox.shrink(),
     
         // hPad10,
-    
+           ////===================///////////
         ////====> credit amount <<<============
         controller.isCash == false && controller.isPreviousRecipt == true
             ? Padding(
@@ -444,6 +403,8 @@ class _FieldPortionState extends State<FieldPortion> {
         // controller.isCash == false ? vPad5 : const SizedBox.shrink(),
     
         // /////credit discount <==============
+
+        
         controller.isCash == false && controller.isDisocunt == true
             ? Padding(
                 padding: const EdgeInsets.only(bottom: 2.0),

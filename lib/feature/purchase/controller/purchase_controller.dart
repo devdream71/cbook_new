@@ -89,6 +89,8 @@ class PurchaseController extends ChangeNotifier {
   bool isBillTotal = true;
   bool isDue = true;
 
+  int onlinePaymentValue = 0;
+
 
 
   double _subtotalItemDialog = 0.0;
@@ -130,17 +132,32 @@ class PurchaseController extends ChangeNotifier {
   }
 
 
+  ///working but need to store, check value , true or false.
+  // void updateOnlineMoney() {
+  //   isOnlineMoneyChecked = !isOnlineMoneyChecked;
+  //   if (isOnlineMoneyChecked) {
+  //     receivedAmountController.text =
+  //         totalAmount2; // ✅ Set total amount when checked
+  //   } else {
+  //     receivedAmountController.clear(); // ✅ Clear value when unchecked
+  //   }
+  //   notifyListeners();
+  // }
 
   void updateOnlineMoney() {
-    isOnlineMoneyChecked = !isOnlineMoneyChecked;
-    if (isOnlineMoneyChecked) {
-      receivedAmountController.text =
-          totalAmount2; // ✅ Set total amount when checked
-    } else {
-      receivedAmountController.clear(); // ✅ Clear value when unchecked
-    }
-    notifyListeners();
+  isOnlineMoneyChecked = !isOnlineMoneyChecked;
+
+  // Set value: 0=unpaid;1=partial;2=paid
+  onlinePaymentValue = isOnlineMoneyChecked ? 2 : 1;
+
+  if (isOnlineMoneyChecked) {
+    receivedAmountController.text = totalAmount2;
+  } else {
+    receivedAmountController.clear();
   }
+
+  notifyListeners();
+}
 
   void updateCash() {
     isCash = !isCash;
@@ -355,7 +372,9 @@ class PurchaseController extends ChangeNotifier {
 
     return total.toStringAsFixed(2);
   }
+  
 
+  ///===>credit total
   String get totalAmount2 {
     double subtotal = double.tryParse(addAmount()) ?? 0.0; // Get subtotal
     debugPrint(subtotal.toString());
@@ -423,6 +442,8 @@ class PurchaseController extends ChangeNotifier {
 
       debugPrint('$noteController');
 
+      onlinePaymentValue; 
+
       final String note = noteController.text;
 
       // Calculate total amount
@@ -456,7 +477,7 @@ class PurchaseController extends ChangeNotifier {
       //"https://commercebook.site/api/v1/purchase/store?user_id=${prefs.getString("id")}&customer_id=${purchaseCreditOrCash ? "cash" : selectedCustomerId}&bill_number=${newBillNumber}&pruchase_date=${billDate}&details_notes=notes&gross_total=${calculateSubTotal()}&discount=0&payment_out=${purchaseCreditOrCash ? 1 : 0}&payment_amount=${purchaseCreditOrCash ? calculateSubTotal() : paymentController.value.text}";
 
       final url =
-          "https://commercebook.site/api/v1/purchase/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=$billNo&purchase_date=$encodedDate&details_notes=$note&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : 0}&payment_amount=${isCash ? totalAmount : paymnetAmount}&bill_person_id=$billPersonId";
+          "https://commercebook.site/api/v1/purchase/store?user_id=${prefs.getInt("user_id").toString()}&customer_id=${customerId.isNotEmpty ? customerId : 'cash'}&bill_number=$billNo&purchase_date=$encodedDate&details_notes=$note&gross_total=${isCash ? addAmount2() : addAmount()}&discount=$discount&payment_out=${isCash ? 1 : onlinePaymentValue}&payment_amount=${isCash ? totalAmount : paymnetAmount}&bill_person_id=$billPersonId";
 
       debugPrint("API URL: $url");
 
@@ -588,6 +609,8 @@ class PurchaseController extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  
 
   addCashItem() {
     debugPrint(

@@ -17,6 +17,7 @@ class PurchaseListApi extends StatefulWidget {
 }
 
 class _PurchaseListApiState extends State<PurchaseListApi> {
+
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
@@ -30,9 +31,8 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
     }
   }
 
-  DateTime selectedStartDate =
-      DateTime(DateTime.now().year, DateTime.now().month, 1);
-  //DateTime selectedStartDate = DateTime.now(); // Default to current date
+  DateTime selectedStartDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
+
   DateTime selectedEndDate = DateTime.now();
 
   String formatDate(String? rawDate) {
@@ -71,9 +71,6 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    //final purchaseProvider = Provider.of<PurchaseProvider>(context);
-
     return Scaffold(
       ///search, in app bar,
       backgroundColor: AppColors.sfWhite,
@@ -488,23 +485,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            // Text(
-                                            //   purchase.paymentStatus!
-                                            //               .toLowerCase() ==
-                                            //           'cash'
-                                            //       ? 'Paid'
-                                            //       : 'Unpaid',
-                                            //   style: TextStyle(
-                                            //       fontWeight: FontWeight.bold,
-                                            //       fontSize: 14,
-                                            //       color: purchase
-                                            //                   .transactionMethod!
-                                            //                   .toLowerCase() ==
-                                            //               'cash'
-                                            //           ? Colors.green
-                                            //           : Colors.amber),
-                                            // ),
-
+                                            
                                             Text(
                                               purchase.paymentStatus == 2
                                                   ? 'Paid'
@@ -576,134 +557,6 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
     );
   }
 
-  // Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
-  //   return await showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: const Column(
-  //               mainAxisAlignment: MainAxisAlignment.start,
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Text(
-  //                   "Purchase Delete",
-  //                   style: TextStyle(color: Colors.blue),
-  //                 ),
-  //                 //Text(" Confirm Delete"),
-  //               ],
-  //             ),
-  //             content: const Text(
-  //               "Are you sure you want to delete this Purchase Bill?",
-  //               style: TextStyle(color: Colors.black),
-  //             ),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () => Navigator.of(context).pop(false),
-  //                 child: const Text("Cancel"),
-  //               ),
-  //               TextButton(
-  //                 onPressed: () => Navigator.of(context).pop(true),
-  //                 child:
-  //                     const Text("Delete", style: TextStyle(color: Colors.red)),
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       ) ??
-  //       false;
-  // }
-
-  ///show edit and delete list from alart diolog
-  // Future<dynamic> editDeleteDiolog(BuildContext context, String purchaseId, String transactionMethod) {
-  //   final colorScheme = Theme.of(context).colorScheme;
-  //   return showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return Dialog(
-  //         insetPadding:
-  //             const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
-  //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-  //         child: Container(
-  //           width: double.infinity, // Full width
-  //           padding: const EdgeInsets.all(16),
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min, // Height as per content
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   const Text('Select Action',
-  //                       style: TextStyle(
-  //                           fontSize: 18,
-  //                           fontWeight: FontWeight.bold,
-  //                           color: Colors.black)),
-  //                   InkWell(
-  //                     onTap: () {
-  //                       Navigator.pop(context);
-  //                     },
-  //                     child: Container(
-  //                       width: 30,
-  //                       height: 30,
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.white, // Background color
-  //                         border: Border.all(
-  //                             color: Colors.grey,
-  //                             width: 1), // Border color and width
-  //                         borderRadius: BorderRadius.circular(
-  //                             50), // Corner radius, adjust as needed
-  //                       ),
-  //                       child: Center(
-  //                         child: Icon(
-  //                           Icons.close,
-  //                           size: 20,
-  //                           color: colorScheme.primary, // Use your color
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   )
-  //                 ],
-  //               ),
-  //               const SizedBox(height: 16),
-  //               InkWell(
-  //                 onTap: () {
-  //                   Navigator.of(context).pop();
-  //                   //Navigate to Edit Page
-  //                   //Navigate to Edit Page
-  //                   Navigator.push(
-  //                     context,
-  //                     MaterialPageRoute(
-  //                       builder: (context) => PurchaseUpdateScreen(
-  //                           purchaseId: int.parse(purchaseId)),
-  //                     ),
-  //                   );
-  //                 },
-  //                 child: const Padding(
-  //                   padding: EdgeInsets.symmetric(vertical: 12),
-  //                   child: Text('Edit',
-  //                       style: TextStyle(fontSize: 16, color: Colors.blue)),
-  //                 ),
-  //               ),
-  //               // const Divider(),
-  //               InkWell(
-  //                 onTap: () {
-  //                   Navigator.of(context).pop();
-  //                   _showDeleteDialog(context, purchaseId);
-  //                 },
-  //                 child: const Padding(
-  //                   padding: EdgeInsets.symmetric(vertical: 12),
-  //                   child: Text('Delete',
-  //                       style: TextStyle(fontSize: 16, color: Colors.red)),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
 
  Future<dynamic> editDeleteDiolog(
   BuildContext context,
@@ -714,7 +567,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
   final colorScheme = Theme.of(context).colorScheme;
 
   // ✅ Only disable if paymentStatus is 1 (partial)
-  final disableActions = paymentStatus == 1;
+  final disableActions = paymentStatus == 2;
 
   return showDialog(
     context: context,

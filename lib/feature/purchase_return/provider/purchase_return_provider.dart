@@ -61,7 +61,9 @@ class PurchaseReturnProvider with ChangeNotifier {
           fetchPurchaseReturns();
           // Optionally: show snackbar
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Purchase return deleted", style: TextStyle(color: Colors.green),)),
+            const SnackBar(
+              backgroundColor: Colors.green,
+              content: Text("Purchase return deleted", style: TextStyle(color: Colors.green),)),
           );
           notifyListeners();
           debugPrint("✅ Purchase Return Deleted Successfully");
@@ -90,7 +92,6 @@ class PurchaseReturnProvider with ChangeNotifier {
   
 
   ///fetch item name.
-
   Future<void> _fetchItemNames() async {
     // Example API call to fetch item names
     const itemUrl =
@@ -112,6 +113,5 @@ class PurchaseReturnProvider with ChangeNotifier {
       debugPrint("Failed to fetch items: ${response.statusCode}");
     }
   }
-
 
 }

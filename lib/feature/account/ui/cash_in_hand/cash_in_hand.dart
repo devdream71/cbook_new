@@ -45,7 +45,7 @@ class _CashInHandState extends State<CashInHand> {
             }
 
             final dataList = provider.cashInHandModel?.data ?? [];
-
+            
             if (dataList.isEmpty) {
               return const Center(child: Text("No Data Found"));
             }
@@ -141,6 +141,154 @@ class _CashInHandState extends State<CashInHand> {
           },
         ));
   }
+
+  ///edit and delete pop up.
+  Future<dynamic> editDeleteDiolog(BuildContext context, int cashID) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16), // Adjust side padding
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Height as per content
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Select Action',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white, // Background color
+                          border: Border.all(
+                              color: Colors.grey,
+                              width: 1), // Border color and width
+                          borderRadius: BorderRadius.circular(
+                              50), // Corner radius, adjust as needed
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary, // Use your color
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    //Navigate to Edit Page
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) =>
+                    //         TaxEdit(taxId: cashID),
+                    //   ),
+                    // );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 16, color: Colors.blue)),
+                  ),
+                ),
+                // const Divider(),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showDeleteDialog(context, cashID);
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Delete',
+                        style: TextStyle(fontSize: 16, color: Colors.red)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  ///delete bill person.
+  void _showDeleteDialog(BuildContext context, int cashID) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Cash in Hand',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this Cash In Hand?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              // final provider = Provider.of<TaxProvider>(context, listen: false);
+
+              // bool success = await provider.deleteTax(taxId);
+
+              // Navigator.of(context).pop(); // Close dialog
+
+              // if (success) {
+              //   await provider.fetchTaxes(); // ✅ Reload updated list
+
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(
+              //       backgroundColor: Colors.green,
+              //       content: Text('successfully, Tax Vat deleted.'),
+              //     ),
+              //   );
+              // } else {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     const SnackBar(
+              //       backgroundColor: Colors.red,
+              //       content: Text("Failed to delete tax."),
+              //     ),
+              //   );
+              // }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
 }
 
 

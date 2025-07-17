@@ -642,6 +642,10 @@ class _LayoutState extends State<_Layout> {
                                     height: 30,
                                     selectedItem: controller.seletedItemName,
                                     onChanged: (selectedItemName) async {
+
+                                      final String? selectedCustomerID = selectedCustomerId;
+
+
                                       setState(() {
                                         controller.seletedItemName =
                                             selectedItemName;
@@ -653,10 +657,10 @@ class _LayoutState extends State<_Layout> {
                                         });
                                       });
 
-                                      if (controller.selcetedItemId != null) {
+                                      if (controller.selcetedItemId != null || selectedCustomerID != null) {
                                         await itemProvider.fetchSaleHistory(
                                             int.tryParse(
-                                                controller.selcetedItemId));
+                                                controller.selcetedItemId, ), selectedCustomerID!);
                                       }
                                     },
                                   ),

@@ -29,6 +29,9 @@ class SaleItem {
   final dynamic grossTotal;
   final String? detailsNotes;
   final String disabled;
+  final dynamic receipt;
+  final dynamic due;
+  final dynamic paymentStatus;
   final List<PurchaseDetail> purchaseDetails;
 
   SaleItem({
@@ -42,6 +45,9 @@ class SaleItem {
     required this.grossTotal,
     this.detailsNotes,
     required this.disabled,
+    required this.receipt,
+    required this.due,
+    required this.paymentStatus,
     required this.purchaseDetails,
   });
 
@@ -58,6 +64,9 @@ class SaleItem {
       grossTotal: (json['gross_total'] ?? 0).toDouble(),
       detailsNotes: json['details_notes'],
       disabled: json['disabled'] ?? 'enable',
+      receipt: (json['receipt'] ?? 0).toDouble(),
+      due: (json['due'] ?? 0).toDouble(),
+      paymentStatus: (json['payment_status'] ?? 0).toDouble(),
       purchaseDetails: (json['purchase_details'] as List)
           .map((e) => PurchaseDetail.fromJson(e))
           .toList(),

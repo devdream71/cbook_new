@@ -28,19 +28,20 @@ class UpdatePurchaseItemView extends StatefulWidget {
 }
 
 class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
-  TextEditingController qtyController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController subTotalController = TextEditingController();
-
+  ///variable declear for unit name, unit id, item, item id,
+  
   String? selectedItemName;
   String? selectedUnitName;
+  int? selectedItemId;
+  int? selectedUnitId;
 
   void calculateSubtotal() {
+
     double price = double.tryParse(widget.provider.priceController.text) ?? 0.0;
     double qty = double.tryParse(widget.provider.qtyController.text) ?? 0.0;
     double subTotal = price * qty;
-    widget.provider.subTotalController.text =
-        subTotal.toStringAsFixed(2); // Format as needed
+    widget.provider.subTotalController.text = subTotal.toStringAsFixed(2); // Format as needed
+
   }
 
   @override
@@ -53,10 +54,6 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
     widget.provider.subTotalController =
         TextEditingController(text: widget.itemDetail.subTotal.toString());
 
-    // selectedItemName = widget.itemDetail != null
-    //     ? widget.itemDetail.itemId.toString()
-    //     : 'No Items Available';
-
     selectedItemName = widget.itemDetail != null
         ? widget.itemMap[int.tryParse(widget.itemDetail.itemId) ?? 0] ??
             'No Items Available'
@@ -68,56 +65,70 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
   }
 
   void updateItem() {
+    final priceText = widget.provider.priceController.text.trim();
+    final qtyText = widget.provider.qtyController.text.trim();
+    final subTotalText = widget.provider.subTotalController.text.trim();
+
     debugPrint("Updating item:");
     debugPrint("Selected Item: $selectedItemName");
     debugPrint("Selected Unit: $selectedUnitName");
-    debugPrint("Qty: ${qtyController.text}");
-    debugPrint("Price: ${priceController.text}");
-    debugPrint("Subtotal: ${subTotalController.text}");
+    debugPrint("Qty: $qtyText");
+    debugPrint("Price: $priceText");
+    debugPrint("Subtotal: $subTotalText");
 
-    // Find itemId from selectedItemName (reverse lookup)
-    int? updatedItemId = widget.itemMap.entries
-        .firstWhere((entry) => entry.value == selectedItemName,
-            orElse: () => MapEntry(0, ''))
-        .key;
+    final parsedPrice = double.tryParse(priceText);
+    final parsedQty = double.tryParse(qtyText);
+    final parsedSubTotal = double.tryParse(subTotalText);
 
-    // Find unitId from selectedUnitName (reverse lookup)
-    int? updatedUnitId = widget.unitMap.entries
-        .firstWhere((entry) => entry.value == selectedUnitName,
-            orElse: () => MapEntry(0, ''))
-        .key;
-
-    if (updatedItemId == 0 || updatedUnitId == 0) {
-      // Invalid selection, show error or return
-      debugPrint("Invalid item or unit selection");
+    if (parsedPrice == null || parsedQty == null || parsedSubTotal == null) {
+      debugPrint("Error: One or more fields contain invalid numbers.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter valid numeric values")),
+      );
       return;
     }
 
-    // Update the purchaseUpdateList item at index
+    // Reverse lookup for itemId
+    final updatedItemId = widget.itemMap.entries
+        .firstWhere((entry) => entry.value == selectedItemName,
+            orElse: () => const MapEntry(0, ''))
+        .key;
+
+    // Reverse lookup for unitId
+    final updatedUnitId = widget.unitMap.entries
+        .firstWhere((entry) => entry.value == selectedUnitName,
+            orElse: () => const MapEntry(0, ''))
+        .key;
+
+    if (updatedItemId == 0 || updatedUnitId == 0) {
+      debugPrint("Invalid item or unit selection");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid item or unit selection")),
+      );
+      return;
+    }
+
+    // Update provider list
     widget.provider.purchaseUpdateList[widget.index] = PurchaseUpdateModel(
       itemId: updatedItemId.toString(),
-      price: priceController.text,
-      qty: qtyController.text,
-      subTotal: subTotalController.text,
+      price: priceText,
+      qty: qtyText,
+      subTotal: subTotalText,
       unitId: "${updatedUnitId}_$selectedUnitName",
     );
 
-    // Also update any response models if necessary
-    if (widget.provider.purchaseEditResponse.data?.purchaseDetails != null) {
-      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
-          .itemId = updatedItemId;
-      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
-          .unitId = updatedUnitId;
-      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
-          .price = int.tryParse(priceController.text) ?? 0;
-      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
-          .qty = int.tryParse(qtyController.text) ?? 0;
-      widget.provider.purchaseEditResponse.data!.purchaseDetails![widget.index]
-          .subTotal = double.tryParse(subTotalController.text) ?? 0.0;
+    // Also update response model
+    final detail = widget
+        .provider.purchaseEditResponse.data?.purchaseDetails?[widget.index];
+    if (detail != null) {
+      detail.itemId = updatedItemId;
+      detail.unitId = updatedUnitId;
+      detail.price = parsedPrice.toInt();
+      detail.qty = parsedQty.toInt();
+      detail.subTotal = parsedSubTotal;
     }
 
     widget.provider.notifyListeners();
-
     Navigator.pop(context);
   }
 
@@ -145,102 +156,125 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: double.infinity,
-              child: CustomDropdownTwo(
-                labelText: 'Item',
-                items: widget.itemMap.isNotEmpty
-                    ? widget.itemMap.values.toList()
-                    : ['No Items Available'], // Show a default message if empty
-                hint: selectedItemName ?? 'Select Item', // ✅ Show selected item
-                selectedItem: selectedItemName,
-                width: double.infinity,
-                height: 30,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedItemName = newValue;
-                  });
-                },
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ///item dropdown.
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomDropdownTwo(
+                      labelText: 'Item',
+                      items: widget.itemMap.isNotEmpty
+                          ? widget.itemMap.values.toList()
+                          : [
+                              'No Items Available'
+                            ], // Show a default message if empty
+                      hint: selectedItemName ??
+                          'Select Item', // ✅ Show selected item
+                      selectedItem: selectedItemName,
+                      width: double.infinity,
+                      height: 30,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedItemName = newValue;
+
+                          // Reverse lookup item ID from name
+                          selectedItemId = widget.itemMap.entries
+                              .firstWhere(
+                                (entry) => entry.value == newValue,
+                                orElse: () => const MapEntry(-1, ''),
+                              )
+                              .key;
+
+                          debugPrint("Selected Item Name: $selectedItemName");
+                          debugPrint("Selected Item ID: $selectedItemId");
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  ///unit dropdown.
+                  SizedBox(
+                    child: CustomDropdownTwo(
+                      labelText: 'Unit',
+                      items: widget.unitMap.isNotEmpty
+                          ? widget.unitMap.values.toList()
+                          : [
+                              'No Units Available'
+                            ], // Show a default message if empty
+                      hint: selectedUnitName ??
+                          'Select Unit', // Show selected unit or default hint
+                      width: double.infinity,
+                      selectedItem: selectedUnitName,
+                      height: 30,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedUnitName = newValue;
+
+                          // 🔄 Reverse lookup the unit ID from name
+                          selectedUnitId = widget.unitMap.entries
+                              .firstWhere(
+                                (entry) => entry.value == newValue,
+                                orElse: () => const MapEntry(-1, ''),
+                              )
+                              .key;
+
+                          debugPrint("Selected Unit Name: $selectedUnitName");
+                          debugPrint("Selected Unit ID: $selectedUnitId");
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+
+                  ///price.
+                  AddSalesFormfield(
+                      labelText: "Price",
+                      controller: widget.provider.priceController),
+                  const SizedBox(height: 8),
+
+                  ///qty
+                  AddSalesFormfield(
+                      labelText: "Qty",
+                      controller: widget.provider.qtyController),
+                  const SizedBox(height: 8),
+
+                  ///subtotal
+                  AddSalesFormfield(
+                      labelText: "Subtotal",
+                      controller: widget.provider.subTotalController),
+                ],
               ),
             ),
-            const SizedBox(height: 5),
             SizedBox(
-              child: CustomDropdownTwo(
-                labelText: 'Unit',
-                items: widget.unitMap.isNotEmpty
-                    ? widget.unitMap.values.toList()
-                    : ['No Units Available'], // Show a default message if empty
-                hint: selectedUnitName ??
-                    'Select Unit', // Show selected unit or default hint
-                width: double.infinity,
-                selectedItem: selectedUnitName,
-                height: 30,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedUnitName = newValue;
-                  });
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  updateItem();
+
+                  widget.provider.updatePurchaseDetail(
+                    widget.index,
+                  );
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue, // Blue color for update button
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  "Update ",
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
               ),
             ),
             const SizedBox(
-              height: 8,
-            ),
-            AddSalesFormfield(
-                labelText: "Price",
-                controller: widget.provider.priceController),
-            const SizedBox(height: 8),
-            AddSalesFormfield(
-                labelText: "Qty", controller: widget.provider.qtyController),
-            const SizedBox(height: 8),
-            AddSalesFormfield(
-                labelText: "Subtotal",
-                controller: widget.provider.subTotalController),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.red, // Red color for delete button
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: () {}, // Ensure this function is implemented
-                    child: const Text(
-                      "Delete   ",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      updateItem();
-                      widget.provider.updatePurchaseDetail(
-                        widget.index,
-                      );
-
-                      Provider.of(context)<PurchaseUpdateProvider>();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.blue, // Blue color for update button
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text(
-                      "Update ",
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  ),
-                ),
-              ],
+              height: 50,
             )
           ],
         ),

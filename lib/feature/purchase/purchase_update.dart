@@ -1,4 +1,5 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
+import 'package:cbook_dt/common/custome_close_button.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/common/give_information_dialog.dart';
 import 'package:cbook_dt/common/item_dropdown_custom.dart';
@@ -20,6 +21,7 @@ import 'package:cbook_dt/utils/custom_padding.dart';
 import 'package:cbook_dt/utils/date_time_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -89,10 +91,11 @@ class PurchaseUpdateProvider extends ChangeNotifier {
 
   String selctedUnitId = "";
 
-  ///XYZ
-  updatePrice(String value) {
-    selectedItem = value;
-    notifyListeners();
+  void removeItemAt(int index) {
+    if (index >= 0 && index < purchaseUpdateList.length) {
+      purchaseUpdateList.removeAt(index);
+      notifyListeners();
+    }
   }
 
   selectedDropdownUnitId(String value) {
@@ -293,7 +296,7 @@ class PurchaseUpdateProvider extends ChangeNotifier {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
 
-  String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
+  //String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
   String get formattedTime => DateTimeHelper.formatTimeOfDay(_selectedTime);
 
   Future<void> pickDate(BuildContext context) async {
@@ -306,16 +309,24 @@ class PurchaseUpdateProvider extends ChangeNotifier {
 
   ///update purchase.
   Future<void> updatePurchase(context, int billPersonID) async {
+    ///int ? billPersonID
     // if (purchaseId == null) return;
 
     debugPrint(jsonEncode(purchaseUpdateList));
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    debugPrint('_selectedDate $_selectedDate');
+    DateTime _selectedDate = DateTime.now(); // or your selected date
+
+    String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+    debugPrint("purchase_date=$formattedDate");
+
+//String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+
+    //debugPrint('_selectedDate $_selectedDate');
 
     final url =
-        "https://commercebook.site/api/v1/purchase/update?id=${purchaseEditResponse.data!.purchaseDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${purchaseEditResponse.data!.customerId}&bill_number=${billNumberController.text}&purchase_date=2025-07-02&details_notes=notes&gross_total=${getSubTotal()}&discount=0&payment_out=true&payment_amount=${getGrossTotal()}&bill_person_id=$billPersonID";
+        "https://commercebook.site/api/v1/purchase/update?id=${purchaseEditResponse.data!.purchaseDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${purchaseEditResponse.data!.customerId}&bill_number=${billNumberController.text}&purchase_date=$formattedDate&details_notes=notes&gross_total=${getSubTotal()}&discount=${discountTotalController.text}&payment_out=true&payment_amount=${getGrossTotal()}&bill_person_id=$billPersonID";
     debugPrint(url);
     // Prepare request body
     final requestBody = {"purchase_items": purchaseUpdateList};
@@ -345,9 +356,8 @@ class PurchaseUpdateProvider extends ChangeNotifier {
             const SnackBar(
               content: Text("Purchase Update successful!"),
               backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating, // Optional: Floating style
-              duration:
-                  Duration(seconds: 2), // Optional: Duration of visibility
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 2),
             ),
           );
         } else {
@@ -466,9 +476,8 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
         body: SingleChildScrollView(
           child: Consumer<PurchaseUpdateProvider>(
             builder: (context, provider, child) {
-              debugPrint("======================");
-              debugPrint(provider.qtyController.toString());
-              debugPrint(provider.discountTotalController.toString());
+              debugPrint(provider.qtyController.text);
+              debugPrint(provider.discountTotalController.text);
 
               return provider.isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -543,166 +552,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                                 fontSize: 12),
                                           ),
                                           vPad5,
-                                          // const Text(
-                                          //   "Supplier",
-                                          //   style: TextStyle(
-                                          //       color: Colors.black,
-                                          //       fontSize: 12),
-                                          // ),
-
-                                          // ///=> supplier cash and supplier or customer list in api ,
-                                          // Row(
-                                          //   children: [
-                                          //     SizedBox(
-                                          //       height: 58,
-                                          //       width: 180,
-                                          //       // Adjusted height for cursor visibility
-                                          //       child: controller.isCash
-                                          //           ? InkWell(
-                                          //               onTap: () {
-                                          //                 showDialog(
-                                          //                   context: context,
-                                          //                   builder:
-                                          //                       (context) =>
-                                          //                           Dialog(
-                                          //                     child:
-                                          //                         ReusableForm(
-                                          //                       nameController:
-                                          //                           nameController,
-                                          //                       phoneController:
-                                          //                           phoneController,
-                                          //                       emailController:
-                                          //                           emailController,
-                                          //                       addressController:
-                                          //                           addressController,
-                                          //                       primaryColor: Theme.of(
-                                          //                               context)
-                                          //                           .primaryColor,
-                                          //                       onCancel:
-                                          //                           _onCancel,
-                                          //                       onSubmit: () {
-                                          //                         setState(() {
-                                          //                           controller
-                                          //                               .updatedCustomerInfomation(
-                                          //                             nameFrom:
-                                          //                                 nameController
-                                          //                                     .text,
-                                          //                             phoneFrom:
-                                          //                                 phoneController
-                                          //                                     .text,
-                                          //                             emailFrom:
-                                          //                                 emailController
-                                          //                                     .text,
-                                          //                             addressFrom:
-                                          //                                 addressController
-                                          //                                     .text,
-                                          //                           );
-                                          //                         });
-                                          //                         Navigator.pop(
-                                          //                             context);
-                                          //                       },
-                                          //                     ),
-                                          //                   ),
-                                          //                 );
-                                          //               },
-                                          //               child: const Text(
-                                          //                 "Cash",
-                                          //                 style: TextStyle(
-                                          //                   fontSize: 12,
-                                          //                   color: Colors.blue,
-                                          //                   fontWeight:
-                                          //                       FontWeight.w600,
-                                          //                 ),
-                                          //               ),
-                                          //             )
-                                          //           : Column(
-                                          //               children: [
-                                          //                 AddSalesFormfieldTwo(
-                                          //                     controller: controller
-                                          //                         .codeController,
-                                          //                     //label: "Customer",
-                                          //                     customerorSaleslist:
-                                          //                         "Showing supplieer list",
-                                          //                     customerOrSupplierButtonLavel:
-                                          //                         "Add new supplier",
-                                          //                     onTap: () {
-                                          //                       Navigator.push(
-                                          //                           context,
-                                          //                           MaterialPageRoute(
-                                          //                               builder:
-                                          //                                   (context) =>
-                                          //                                       const SuppliersCreate()));
-                                          //                     }),
-                                          //                 Consumer<
-                                          //                     CustomerProvider>(
-                                          //                   builder: (context,
-                                          //                       customerProvider,
-                                          //                       child) {
-                                          //                     final customerList =
-                                          //                         customerProvider
-                                          //                                 .customerResponse
-                                          //                                 ?.data ??
-                                          //                             [];
-
-                                          //                     return Column(
-                                          //                       crossAxisAlignment:
-                                          //                           CrossAxisAlignment
-                                          //                               .start,
-                                          //                       children: [
-                                          //                         // If the customer list is empty, show a SizedBox
-                                          //                         if (customerList
-                                          //                             .isEmpty)
-                                          //                           const SizedBox(
-                                          //                               height:
-                                          //                                   2), // Adjust height as needed
-
-                                          //                         // Otherwise, show the dropdown with customers
-                                          //                         if (customerList
-                                          //                             .isNotEmpty)
-
-                                          //                           // Check if the selected customer is valid
-                                          //                           if (customerProvider.selectedCustomer !=
-                                          //                                   null &&
-                                          //                               customerProvider.selectedCustomer!.id !=
-                                          //                                   -1)
-                                          //                             Row(
-                                          //                               children: [
-                                          //                                 Text(
-                                          //                                   "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
-                                          //                                   style:
-                                          //                                       TextStyle(
-                                          //                                     fontSize: 10,
-                                          //                                     fontWeight: FontWeight.bold,
-                                          //                                     color: customerProvider.selectedCustomer!.type == 'customer' ? Colors.green : Colors.red,
-                                          //                                   ),
-                                          //                                 ),
-                                          //                                 Padding(
-                                          //                                   padding:
-                                          //                                       const EdgeInsets.only(top: 2.0),
-                                          //                                   child:
-                                          //                                       Text(
-                                          //                                     "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
-                                          //                                     style: const TextStyle(
-                                          //                                       fontSize: 10,
-                                          //                                       fontWeight: FontWeight.bold,
-                                          //                                       color: Colors.black,
-                                          //                                     ),
-                                          //                                   ),
-                                          //                                 ),
-                                          //                               ],
-                                          //                             ),
-                                          //                       ],
-                                          //                     );
-                                          //                   },
-                                          //                 ),
-                                          //               ],
-                                          //             ),
-                                          //     ),
-
-                                          //     hPad3, // Space between TextField and Icon
-                                          //   ],
-                                          // ),
-
                                           Consumer<PurchaseUpdateProvider>(
                                             builder:
                                                 (context, provider, child) {
@@ -987,25 +836,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                   ],
                                 ),
 
-                                // controller.isCash
-                                //     ? const Align(
-                                //         alignment: Alignment.topLeft,
-                                //         child: Text(
-                                //           "Cash",
-                                //           style: TextStyle(color: Colors.black),
-                                //         ))
-                                //     : Row(
-                                //         children: [
-                                //           Expanded(
-                                //             child: AddSalesFormfield(
-                                //                 label: "Customer ID",
-                                //                 controller: provider
-                                //                     .customerController),
-                                //           ),
-                                //           const Expanded(child: SizedBox()),
-                                //         ],
-                                //       ),
-
                                 const SizedBox(
                                   height: 5,
                                 ),
@@ -1046,64 +876,116 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                         elevation: 3,
                                         child: Padding(
                                           padding: const EdgeInsets.all(12),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                          child: Row(
                                             children: [
                                               Text(
-                                                "Item ${index + 1}",
+                                                "${index + 1}.  ",
                                                 style: const TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black),
                                               ),
-                                              Text(
-                                                "Item: ${provider.itemMap[int.tryParse(detail.itemId) ?? 0] ?? "Unknown"}  (${provider.unitMap[int.tryParse(detail.unitId.split("_")[0]) ?? 0] ?? "Unknown"})",
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 13,
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Item: ${provider.itemMap[int.tryParse(detail.itemId) ?? 0] ?? "Unknown"}  (${provider.unitMap[int.tryParse(detail.unitId.split("_")[0]) ?? 0] ?? "Unknown"})",
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              "Qty: ${double.parse(detail.qty!).truncate()},",
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 12),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 5),
+                                                            Text(
+                                                              "Price: ৳ ${detail.price}",
+                                                              style: const TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 12),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      // Text("Qty: ${detail.qty}",
-                                                      //     style:
-                                                      //         const TextStyle(
-                                                      //             color: Colors
-                                                      //                 .black,
-                                                      //             fontSize:
-                                                      //                 12)),
-
-                                                      Text(
-                                                        "Qty: ${double.parse(detail.qty!).truncate()}",
-                                                        style: const TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 12),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      Text(
-                                                        "Price: ৳ ${detail.price}",
-                                                        style: const TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 12),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Text(
-                                                    "Subtotal: ৳ ${detail.subTotal}",
-                                                    style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ],
+                                              Text(
+                                                "Subtotal: ৳ ${detail.subTotal}",
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
+                                              const SizedBox(
+                                                width: 4,
+                                              ),
+
+                                              ///delete button
+                                              CloseButtonWidget(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                        dialogContext) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Confirm Delete'),
+                                                        content: const Text(
+                                                          'Are you sure you want to delete this item?',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black),
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.of(
+                                                                        dialogContext)
+                                                                    .pop(),
+                                                            child: const Text(
+                                                                'Cancel'),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              provider
+                                                                  .removeItemAt(
+                                                                      index);
+                                                              Navigator.of(
+                                                                      dialogContext)
+                                                                  .pop(); // Close dialog
+                                                            },
+                                                            child: const Text(
+                                                              'Delete',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              )
                                             ],
                                           ),
                                         ),
@@ -1471,53 +1353,69 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                                       fontSize: 16,
                                                       color: Colors.black)),
                                               const SizedBox(width: 5),
-                                              SizedBox(
-                                                height: 25,
-                                                width: 150,
-                                                child: TextField(
-                                                  controller: controller
-                                                      .receivedAmountController,
-                                                  style: const TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.black),
-                                                  readOnly: controller
-                                                      .isOnlineMoneyChecked, // ✅ Read-only when checked
-                                                  decoration: InputDecoration(
-                                                    fillColor: Colors.white,
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: Colors
-                                                              .grey.shade400,
-                                                          width: 1),
-                                                    ),
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 2,
-                                                    ),
-                                                  ),
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  onChanged: (value) {
-                                                    if (!controller
-                                                        .isOnlineMoneyChecked) {
-                                                      controller
-                                                              .receivedAmountController
-                                                              .text =
-                                                          value; // ✅ Allow manual input
-                                                    }
-                                                  },
-                                                ),
+
+                                              AddSalesFormfield(
+                                                controller: controller
+                                                    .receivedAmountController,
+                                                labelText: "Payment",
+                                                onChanged: (value) {
+                                                  if (!controller
+                                                      .isOnlineMoneyChecked) {
+                                                    controller
+                                                            .receivedAmountController
+                                                            .text =
+                                                        value; // ✅ Allow manual input
+                                                  }
+                                                },
                                               ),
+
+                                              // SizedBox(
+                                              //   height: 25,
+                                              //   width: 150,
+                                              //   child: TextField(
+                                              //     controller: controller
+                                              //         .receivedAmountController,
+                                              //     style: const TextStyle(
+                                              //         fontSize: 15,
+                                              //         color: Colors.black),
+                                              //     readOnly: controller
+                                              //         .isOnlineMoneyChecked, // ✅ Read-only when checked
+                                              //     decoration: InputDecoration(
+                                              //       fillColor: Colors.white,
+                                              //       enabledBorder:
+                                              //           UnderlineInputBorder(
+                                              //         borderSide: BorderSide(
+                                              //             color: Colors
+                                              //                 .grey.shade400,
+                                              //             width: 1),
+                                              //       ),
+                                              //       focusedBorder:
+                                              //           UnderlineInputBorder(
+                                              //         borderSide: BorderSide(
+                                              //             color: Colors
+                                              //                 .grey.shade400,
+                                              //             width: 1),
+                                              //       ),
+                                              //       contentPadding:
+                                              //           const EdgeInsets
+                                              //               .symmetric(
+                                              //         vertical: 12,
+                                              //         horizontal: 2,
+                                              //       ),
+                                              //     ),
+                                              //     keyboardType:
+                                              //         TextInputType.number,
+                                              //     onChanged: (value) {
+                                              //       if (!controller
+                                              //           .isOnlineMoneyChecked) {
+                                              //         controller
+                                              //                 .receivedAmountController
+                                              //                 .text =
+                                              //             value; // ✅ Allow manual input
+                                              //       }
+                                              //     },
+                                              //   ),
+                                              // ),
                                             ],
                                           )
                                         ],
@@ -1889,7 +1787,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Text("Subtotal: ",
+                            const Text("Subtotal:",
                                 style: TextStyle(
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold)),
@@ -1936,11 +1834,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                 debugPrint(
                                   'Selected Unit: ${controller.selectedUnit ?? "None"}',
                                 );
-
-                                // controller.isCash
-                                //     ? controller.addCashItem()
-                                //     : controller.addCreditItem();
-                                // controller.addAmount();
 
                                 if (controller.qtyController.text.isEmpty ||
                                     controller.mrpController.text.isEmpty) {
@@ -2043,60 +1936,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                   'Selected Unit: ${controller.selectedUnit ?? "None"}',
                                 );
 
-                                // controller.isCash
-                                //     ? controller.addCashItem()
-                                //     : controller.addCreditItem();
-                                // controller.addAmount();
-
-                                // if (controller.qtyController.text.isEmpty ||
-                                //     controller.mrpController.text.isEmpty) {
-                                //   ScaffoldMessenger.of(context)
-                                //       .showSnackBar(const SnackBar(
-                                //     content: Text(
-                                //       'Please enter the qty & price',
-                                //     ),
-                                //     backgroundColor: Colors.red,
-                                //   ));
-                                // } else {
-                                //   setState(() {
-                                //     controller.isCash
-                                //         ? controller.addCashItem()
-                                //         : controller.addCreditItem();
-
-                                //     controller.addAmount();
-
-                                //     Navigator.pop(context);
-                                //   });
-                                // }
-
-                                // setState(() {
-                                //   Provider.of<PurchaseController>(context,
-                                //           listen: false)
-                                //       .notifyListeners();
-                                // });
-
-                                // ////clear item n ame
-                                // setState(() {
-                                //   controller.seletedItemName = null;
-
-                                //   // ✅ Clear selected category & subcategory
-                                //   selectedCategoryId = null;
-                                //   selectedSubCategoryId = null;
-
-                                //   // ✅ (Optional) Clear subcategories
-                                //   Provider.of<ItemCategoryProvider>(context,
-                                //           listen: false)
-                                //       .subCategories = [];
-                                // });
-
-                                // // ✅ Clear stock info
-                                // Provider.of<AddItemProvider>(context,
-                                //         listen: false)
-                                //     .clearPurchaseStockData();
-
-                                // controller.mrpController.clear();
-                                // controller.qtyController.clear();
-
                                 if (controller.qtyController.text.isEmpty ||
                                     controller.mrpController.text.isEmpty) {
                                   ScaffoldMessenger.of(context)
@@ -2163,23 +2002,4 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
 
 ///===>purchase ItemModel , to add data in model.
 
-class ItemModel {
-  final String? category;
-  final String? subCategory;
-  final String? itemName;
-  final String? itemCode;
-  final String? mrp;
-  final String? quantity;
-  final String? total;
-  final String? price;
-  ItemModel({
-    this.category,
-    this.subCategory,
-    this.itemName,
-    this.itemCode,
-    this.mrp,
-    this.quantity,
-    this.total,
-    this.price,
-  });
-}
+// 

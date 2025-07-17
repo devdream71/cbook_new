@@ -525,44 +525,43 @@ class _SalesScreenState extends State<SalesScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceAround,
                                           children: [
-                                            //paid, due amount
+                                            
+                                            // Payment status and due amount
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.end,
                                               children: [
-                                                //paid, unpaid
+                                                // Payment Status
                                                 Container(
                                                   child: Text(
-                                                    sale.transectionMethod
-                                                                .toLowerCase() ==
-                                                            'cash'
+                                                    sale.paymentStatus == 2
                                                         ? 'Paid'
-                                                        : 'Partial',
+                                                        : sale.paymentStatus ==
+                                                                1
+                                                            ? 'Partial'
+                                                            : 'Unpaid',
                                                     style: TextStyle(
-                                                        // fontWeight:
-                                                        //     FontWeight.bold,
-                                                        fontSize: 12,
-                                                        color: sale.transectionMethod
-                                                                    .toLowerCase() ==
-                                                                "cash"
-                                                            ? Colors.green
-                                                            : Colors.amber),
+                                                      fontSize: 12,
+                                                      color: sale.paymentStatus ==
+                                                              2
+                                                          ? Colors.green
+                                                          : sale.paymentStatus ==
+                                                                  1
+                                                              ? Colors.amber
+                                                              : Colors.red,
+                                                    ),
                                                   ),
                                                 ),
 
-                                                sale.transectionMethod
-                                                            .toLowerCase() !=
-                                                        'cash'
-                                                    ? Text(
-                                                        "Due: ${sale.grossTotal} TK", // Show due amount here
-                                                        style: const TextStyle(
-                                                          fontSize: 12,
-                                                          // fontWeight:
-                                                          //     FontWeight.w500,
-                                                          color: Colors.black,
-                                                        ),
-                                                      )
-                                                    : const SizedBox.shrink(),
+                                                // Show due only for Partial or Unpaid
+                                                if (sale.paymentStatus != 2)
+                                                  Text(
+                                                    "Due: ${sale.grossTotal} TK",
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.black,
+                                                    ),
+                                                  )
                                               ],
                                             ),
 

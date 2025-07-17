@@ -65,7 +65,7 @@ class SalesReturnProvider extends ChangeNotifier {
   }
 
   ///sales return delele.
-  Future<void> deleteSalesReturn(int ? id, BuildContext context) async {
+  Future<void> deleteSalesReturn(int? id, BuildContext context) async {
     final url = Uri.parse(
         'https://commercebook.site/api/v1/sales/return/remove/?id=$id');
 
@@ -78,7 +78,9 @@ class SalesReturnProvider extends ChangeNotifier {
         if (responseData['success'] == true) {
           // Optionally show a SnackBar or Toast
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(responseData['message'] ?? 'Deleted')),
+            SnackBar(
+                backgroundColor: Colors.green,
+                content: Text(responseData['message'] ?? 'Deleted')),
           );
 
           // Refresh the list

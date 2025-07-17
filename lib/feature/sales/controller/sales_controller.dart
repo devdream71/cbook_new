@@ -144,6 +144,8 @@ class SalesController extends ChangeNotifier {
   dynamic unitQty = 1.0;
 //bool hasCustomPrice = false;
 
+  String unitIdWithQty = "";
+
   salesControllerItemamount() {
     salesControllerItem();
   }
@@ -217,10 +219,19 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  double get taxAmount2 {
-    double subtotal = double.tryParse(addAmount2()) ?? 0.0;
-    return (subtotal * (_taxPercent / 100));
-  }
+  // double get taxAmount2 {
+  //   double subtotal = double.tryParse(addAmount2()) ?? 0.0;
+  //   return (subtotal * (_taxPercent / 100));
+  // }
+
+  // 🔥 ADDITIONAL FIX: Make sure you have a proper taxAmount2 getter
+double get taxAmount2 {
+  double subtotal = double.tryParse(addAmount()) ?? 0.0; // Use credit amount
+  return (subtotal * (_taxPercent / 100));
+}
+
+// 🔥 ADDITIONAL FIX: Add a method to calculate tax for individual items
+ 
 
   void clearFields() {
     mrpController.clear();
@@ -470,23 +481,38 @@ class SalesController extends ChangeNotifier {
   }
 
   //////credit discount total
+  // String get totalAmount2 {
+  //   double subtotal = double.tryParse(addAmount()) ?? 0.0; // Get subtotal
+  //   debugPrint(subtotal.toString());
+  //   double discount =
+  //       double.tryParse(discountController.text) ?? 0.0; // Get discount
+  //   double total =
+  //       subtotal - discount + taxAmount + totalTaxAmountl; // Calculate total
+
+  //   //notifyListeners();
+  //   debugPrint(
+  //       "credit Subtotal: $subtotal, credit Discount: $discount, credit Total: $total"); //
+
+  //   debugPrint("credit total $total");
+
+  //   return total.toStringAsFixed(2);
+  //   // Format to 2 decimal places
+  // }
+
   String get totalAmount2 {
-    double subtotal = double.tryParse(addAmount()) ?? 0.0; // Get subtotal
-    debugPrint(subtotal.toString());
-    double discount =
-        double.tryParse(discountController.text) ?? 0.0; // Get discount
-    double total =
-        subtotal - discount + taxAmount + totalTaxAmountl; // Calculate total
+  double subtotal = double.tryParse(addAmount()) ?? 0.0; // Get credit subtotal
+  debugPrint("Credit subtotal: $subtotal");
+  
+  double discount = double.tryParse(discountController.text) ?? 0.0; // Get discount
+  
+  // 🔥 FIX: Use taxAmount2 for credit instead of taxAmount
+  double total = subtotal - discount + taxAmount2 + totalTaxAmountl; // Calculate total
 
-    //notifyListeners();
-    debugPrint(
-        "credit Subtotal: $subtotal, credit Discount: $discount, credit Total: $total"); //
+  debugPrint("Credit Subtotal: $subtotal, Credit Discount: $discount, Credit Tax: $taxAmount2, Credit Total: $total");
 
-    debugPrint("credit total $total");
+  return total.toStringAsFixed(2); // Format to 2 decimal places
+}
 
-    return total.toStringAsFixed(2);
-    // Format to 2 decimal places
-  }
 
   updateTotalTaxId(String value) {
     totaltaxPercentValue = value;
@@ -500,7 +526,7 @@ class SalesController extends ChangeNotifier {
 
   //saleItem.clear();
 
-  ///cash
+  ///cash ... need
   addCashItem() {
     debugPrint(
         "cash Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
@@ -580,56 +606,125 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  //////===> credit ===>
-  addCreditItem() {
-    debugPrint(
-        "credit Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
+  //////===> credit ===> need.
+  // addCreditItem() {
+  //   debugPrint(
+  //       "credit Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
 
-    double price = double.tryParse(mrpController.text) ?? 0.0;
-    double quantity = double.tryParse(qtyController.text) ?? 0.0;
-    double demodiscounAmout = double.tryParse(discountAmount.text) ?? 0.0;
+  //   double price = double.tryParse(mrpController.text) ?? 0.0;
+  //   double quantity = double.tryParse(qtyController.text) ?? 0.0;
+  //   double demodiscounAmout = double.tryParse(discountAmount.text) ?? 0.0;
 
-    double itemTotal = ((price * quantity) - demodiscounAmout) + taxAmount;
+  //   double itemTotal = ((price * quantity) - demodiscounAmout) + taxAmount;
 
-    String formattedTaxPercent =
-        "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
+  //   String formattedTaxPercent =
+  //       "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
 
-    itemsCredit.add(ItemModel(
-      category: selectedCategory ?? "Category1",
-      subCategory: selectedSubCategory ?? "Sub Category1",
-      itemName: seletedItemName ?? "Item1",
-      itemCode: codeController.text,
-      unit: selectedUnit ?? "PC",
-      mrp: mrpController.text,
-      quantity: qtyController.text,
-      total: itemTotal.toStringAsFixed(2),
-      discountAmount: discountAmount.text,
-      discountPercentance: discountPercentance.text,
-      vatAmount: taxAmount,
-      vatPerentace: selectedTaxPercent ?? "",
-    ));
+  //   itemsCredit.add(ItemModel(
+  //     category: selectedCategory ?? "Category1",
+  //     subCategory: selectedSubCategory ?? "Sub Category1",
+  //     itemName: seletedItemName ?? "Item1",
+  //     itemCode: codeController.text,
+  //     unit: selectedUnit ?? "PC",
+  //     mrp: mrpController.text,
+  //     quantity: qtyController.text,
+  //     total: itemTotal.toStringAsFixed(2),
+  //     discountAmount: discountAmount.text,
+  //     discountPercentance: discountPercentance.text,
+  //     vatAmount: taxAmount,
+  //     vatPerentace: selectedTaxPercent ?? "",
+  //   ));
 
-    saleItem.add(SaleItemModel(
-      itemId: selcetedItemId,
-      price: mrpController.value.text,
-      qty: qtyController.value.text,
-      subTotal: itemTotal.toStringAsFixed(2),
-      unitId: selectedUnitIdWithName,
-      discountAmount: discountAmount.text,
-      discountPercentage: discountPercentance.text,
-      taxAmount: taxAmount,
-      taxPercent: formattedTaxPercent,
-    ));
+  //   saleItem.add(SaleItemModel(
+  //     itemId: selcetedItemId,
+  //     price: mrpController.value.text,
+  //     qty: qtyController.value.text,
+  //     subTotal: itemTotal.toStringAsFixed(2),
+  //     unitId: selectedUnitIdWithName,
+  //     discountAmount: discountAmount.text,
+  //     discountPercentage: discountPercentance.text,
+  //     taxAmount: taxAmount,
+  //     taxPercent: formattedTaxPercent,
+  //   ));
 
-    codeController.clear();
-    mrpController.clear();
-    qtyController.clear();
-    amountController.clear();
-    unitController.clear();
-    priceController.clear();
+  //   codeController.clear();
+  //   mrpController.clear();
+  //   qtyController.clear();
+  //   amountController.clear();
+  //   unitController.clear();
+  //   priceController.clear();
+  //   notifyListeners();
 
-    notifyListeners();
-  }
+  // }
+
+
+  // 🔥 FIXED: Credit item addition with proper tax calculation
+addCreditItem() {
+  debugPrint("Credit Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
+
+  double price = double.tryParse(mrpController.text) ?? 0.0;
+  double quantity = double.tryParse(qtyController.text) ?? 0.0;
+  double demodiscounAmout = double.tryParse(discountAmount.text) ?? 0.0;
+
+  // 🔥 FIX: Use taxAmount for individual item calculation (this is correct)
+  double itemTotal = ((price * quantity) - demodiscounAmout) + taxAmount;
+
+  double discountAmt = double.tryParse(discountAmount.text) ?? 0.0;
+  double vatAmount = taxAmount;
+
+  String formattedTaxPercent = "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
+
+  // 🔥 FIX: Update total discount and VAT trackers for credit too
+  totalItemDiscounts += discountAmt;
+  totalItemVats += vatAmount;
+
+  debugPrint("✅ Added credit item with:");
+  debugPrint("→ VAT: $vatAmount");
+  debugPrint("→ Discount: $discountAmt");
+  debugPrint("→ Total Discounts (Running): $totalItemDiscounts");
+  debugPrint("→ Total VATs (Running): $totalItemVats");
+
+  itemsCredit.add(ItemModel(
+    category: selectedCategory ?? "Category1",
+    subCategory: selectedSubCategory ?? "Sub Category1",
+    itemName: seletedItemName ?? "Item1",
+    itemCode: codeController.text,
+    unit: selectedUnit ?? "PC",
+    mrp: mrpController.text,
+    quantity: qtyController.text,
+    total: itemTotal.toStringAsFixed(2),
+    discountAmount: discountAmount.text,
+    discountPercentance: discountPercentance.text,
+    vatAmount: taxAmount,
+    vatPerentace: formattedTaxPercent, // 🔥 FIX: Use formattedTaxPercent instead of selectedTaxPercent
+  ));
+
+  saleItem.add(SaleItemModel(
+    itemId: selcetedItemId,
+    price: mrpController.text, // 🔥 FIX: Remove .value
+    qty: qtyController.text,   // 🔥 FIX: Remove .value
+    subTotal: itemTotal.toStringAsFixed(2),
+    unitId: selectedUnitIdWithName,
+    discountAmount: discountAmount.text,
+    discountPercentage: discountPercentance.text,
+    taxAmount: taxAmount,
+    taxPercent: formattedTaxPercent,
+    description: '', // 🔥 FIX: Add missing description
+  ));
+
+  // Clear input fields
+  codeController.clear();
+  mrpController.clear();
+  qtyController.clear();
+  amountController.clear();
+  unitController.clear();
+  priceController.clear();
+  discountAmount.clear();
+  discountPercentance.clear(); // 🔥 FIX: Clear discount percentage too
+  
+  notifyListeners();
+}
+
 
   ///sales store, with stock not found scafault messge
   Future<bool> storeSales(
@@ -746,7 +841,6 @@ class SalesController extends ChangeNotifier {
   }
 
   // bool isOnlineMoneyChecked = false;
-
   void updatedOnlineMoney() {
     isOnlineMoneyChecked = !isOnlineMoneyChecked; // ✅ Toggle value
     notifyListeners(); // ✅ Notify UI to rebuild
@@ -778,6 +872,8 @@ class SalesController extends ChangeNotifier {
     conversionRateController.clear();
     notifyListeners(); // Notify UI listeners to refresh
   }
+
+  
 
   void updateUnit1(String? value) {
     selectedUnit = value;
@@ -904,23 +1000,15 @@ class SalesController extends ChangeNotifier {
     isBillRecipt = !isBillRecipt;
     notifyListeners();
   }
-  //end form setting
+   
 
   String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
-  String get formattedTime => DateTimeHelper.formatTimeOfDay(_selectedTime);
+   
 
   Future<void> pickDate(BuildContext context) async {
     final pickedDate = await DateTimeHelper.pickDate(context, _selectedDate);
     if (pickedDate != null && pickedDate != _selectedDate) {
       _selectedDate = pickedDate;
-      notifyListeners();
-    }
-  }
-
-  Future<void> pickTime(BuildContext context) async {
-    final pickedTime = await DateTimeHelper.pickTime(context, _selectedTime);
-    if (pickedTime != null && pickedTime != _selectedTime) {
-      _selectedTime = pickedTime;
       notifyListeners();
     }
   }
@@ -951,11 +1039,7 @@ class SalesController extends ChangeNotifier {
 
   //===>credit
 
-  void updateWarehouse(String? newValue) {
-    selectedWarehouse = newValue!;
-    notifyListeners();
-  }
-
+ 
   void updateCategory(String? newValue) {
     selectedCategory = newValue!;
     notifyListeners();
@@ -971,6 +1055,7 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
+  ///===> remove cash item.
   void removeCashItem(int index) {
     // Remove the item from the itemsCash list
     itemsCash.removeAt(index);
@@ -982,6 +1067,8 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+  ///===>remove credit item
   void removeCreditItem(int index) {
     // Remove the item from the itemsCash list
     itemsCredit.removeAt(index);
@@ -1005,27 +1092,31 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectedUnitIdWithName(
-      String unitName, List<UnitResponseModel> units) {
-    if (units.isNotEmpty) {
-      for (var unit in units) {
-        if (unit.name.toString() == unitName) {
-          selectedUnitIdWithName = "${unit.id}_${unit.name}";
+ 
 
-          ///${unit.unitQty}
-          break;
-        }
+  void updateSelectedUnitIdWithName(String unitName, List<UnitResponseModel> units) {
+  if (units.isNotEmpty) {
+    for (var unit in units) {
+      if (unit.name.toString() == unitName) {
+        final qtyText = qtyController.text.trim();
+        final qty = qtyText.isNotEmpty ? qtyText : "1";
+        selectedUnitIdWithName = "${unit.id}_${unit.name}_$qty";
+        break;
       }
     }
-    notifyListeners();
   }
+  notifyListeners();
+}
 
+
+  ///tax dropdown
   selectTotalTaxDropdown(double totalAmount, String tax) {
     selectedTotalTaxPercent = double.parse(tax);
     totalTaxAmountl = (totalAmount * selectedTotalTaxPercent) / 100;
     notifyListeners();
   }
 
+  ///credit tax drop down
   selectTotalCreditTaxDropdown(double totalAmount, String tax) {
     selectedTotalTaxPercent = double.parse(tax);
     totalTaxAmountl = (totalAmount * selectedTotalTaxPercent) / 100;

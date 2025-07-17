@@ -298,7 +298,7 @@ class AddItemProvider extends ChangeNotifier {
   }
 
   ////sales sales/return/history
-  Future<void> fetchSaleHistory(int ? itemId) async {
+  Future<void> fetchSaleHistory(int ? itemId, String selectedCustomerID) async {
     isHistoryLoading = true;
     saleHistory = [];
     // _isLoading = true;
@@ -311,7 +311,7 @@ class AddItemProvider extends ChangeNotifier {
     ///customer id should be dynamic
 
     final String url =
-        "https://commercebook.site/api/v1/item/sales/history?customer_id=cash&item_id=$itemId";
+        "https://commercebook.site/api/v1/item/sales/history?customer_id=$selectedCustomerID&item_id=$itemId";
 
     try {
       final response = await http.get(Uri.parse(url));

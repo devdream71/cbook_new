@@ -74,74 +74,6 @@ class SalesProvider with ChangeNotifier {
     _filteredSales = _sales;
     notifyListeners();
   }
-
-
-// class SalesProvider with ChangeNotifier {
-//   List<SaleItem> _sales = [];
-
-//   List<SaleItem> _filteredSales = [];
-//   bool _isLoading = false;
-//   bool _isDeleting = false;
-//   String? _errorMessage;
-
-//    Map<int, String> _itemsMap = {};
-//    Map<int, String> _unitsMap = {}; 
-
-//   // List<SaleItem> get sales => _sales;
-//   List<SaleItem> get sales => _filteredSales;
-//   bool get isLoading => _isLoading;
-//   String? get errorMessage => _errorMessage;
-//   bool get isDeleting => _isDeleting;
-  
-
-//   ///==> show sale data;
-//   Future<void> fetchSales() async {
-//     _isLoading = true;
-//     _errorMessage = null;
-//     notifyListeners();
-
-//     try {
-//       final response = await http.get(
-//         Uri.parse('https://commercebook.site/api/v1/sales/'),
-//       );
-
-//       debugPrint("API called. Status Code: ${response.statusCode}");
-
-//       if (response.statusCode == 200) {
-//         final data = json.decode(response.body);
-//         SalesResponse salesResponse = SalesResponse.fromJson(data);
-//         _sales = salesResponse.data;
-//           _filteredSales = _sales; // Initialize with all sales
-//         debugPrint("Success: ${jsonEncode(data)}");
-//       } else if (response.statusCode == 404) {
-//         _errorMessage = "Error 404: Sales data not found";
-//       } else if (response.statusCode == 500) {
-//         _errorMessage =
-//             "Error 500: Internal Server Error. Please try again later.";
-//       } else {
-//         _errorMessage = "Unexpected Error: ${response.statusCode}";
-//       }
-//     } catch (e) {
-//       _errorMessage = "Exception occurred: $e";
-//     }
-
-//     _isLoading = false;
-//     notifyListeners();
-//   }
-
-//    /// Search function by customerName or "cash"
-//   void filterSales(String query) {
-//     if (query.isEmpty) {
-//       _filteredSales = _sales;
-//     } else {
-//       final lowerQuery = query.toLowerCase();
-//       _filteredSales = _sales.where((sale) {
-//         final customer = sale.customerName == "N/A" ? "Cash" : sale.customerName;
-//         return customer.toLowerCase().contains(lowerQuery);
-//       }).toList();
-//     }
-//     notifyListeners();
-//   }
   
 
   ///Delete sale data 
@@ -207,8 +139,6 @@ class SalesProvider with ChangeNotifier {
     return _itemsMap[itemId] ?? "Unknown Item";
   }
   
-
- 
 
   /// Get unit symbol by ID
   String getUnitSymbol(int unitId) {

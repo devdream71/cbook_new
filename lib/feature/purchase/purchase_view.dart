@@ -756,18 +756,7 @@ class LayoutState extends State<Layout> {
                                                             },
                                                             child: DecoratedBox(
                                                                 decoration: BoxDecoration(
-                                                                    // boxShadow: [
-                                                                    //   BoxShadow(
-                                                                    //     color: Colors
-                                                                    //         .black
-                                                                    //         .withOpacity(0.1),
-                                                                    //     blurRadius:
-                                                                    //         5,
-                                                                    //     offset: const Offset(
-                                                                    //         0,
-                                                                    //         2),
-                                                                    //   ),
-                                                                    // ],
+                                                                     
                                                                     color: const Color(0xfff4f6ff), //0xfff4f6ff
                                                                     borderRadius: BorderRadius.circular(5)),
                                                                 child: Padding(
@@ -828,43 +817,7 @@ class LayoutState extends State<Layout> {
                                                                         ),
                                                                       ),
 
-                                                                      // Column(
-                                                                      //   crossAxisAlignment:
-                                                                      //       CrossAxisAlignment.start,
-                                                                      //   children: [
-                                                                      //     SizedBox(
-                                                                      //       width:
-                                                                      //           150,
-                                                                      //       child:
-                                                                      //           Column(
-                                                                      //         mainAxisAlignment: MainAxisAlignment.start,
-                                                                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                                                                      //         children: [
-                                                                      //           Text(
-                                                                      //             // "${item.itemName!} ${item.category!}",
-                                                                      //             // "${item.itemName!}",
-                                                                      //             "${index + 1}. ${item.itemName!}",
-
-                                                                      //             style: const TextStyle(overflow: TextOverflow.ellipsis, color: Colors.black, fontWeight: FontWeight.w600, fontSize: 14),
-                                                                      //           ),
-                                                                      //         ],
-                                                                      //       ),
-                                                                      //     ),
-                                                                      //   ],
-                                                                      // ),
-                                                                      // Text(
-                                                                      //   // "${item.quantity!} pc x ${item.mrp!} = ${item.total!}",
-                                                                      //   "৳ ${item.mrp!} x ${item.quantity!}  ${item.unit?.split('_').last ?? ''} = ${(int.tryParse(item.quantity!) ?? 0) * (double.tryParse(item.mrp!) ?? 0)}",
-                                                                      //   style:
-                                                                      //       const TextStyle(
-                                                                      //     color:
-                                                                      //         Colors.black,
-                                                                      //     fontSize:
-                                                                      //         14,
-                                                                      //     fontWeight:
-                                                                      //         FontWeight.w600,
-                                                                      //   ),
-                                                                      // ),
+                                                                       
 
                                                                       ///close
                                                                       InkWell(
@@ -932,20 +885,7 @@ class LayoutState extends State<Layout> {
                                                                               color: Colors.green,
                                                                               size: 18),
                                                                         ),
-                                                                        //     const CircleAvatar(
-                                                                        //   radius:
-                                                                        //       12,
-                                                                        //   backgroundColor:
-                                                                        //       Colors.grey,
-                                                                        //   child:
-                                                                        //       Icon(
-                                                                        //     Icons.close,
-                                                                        //     color:
-                                                                        //         Colors.white,
-                                                                        //     size:
-                                                                        //         20,
-                                                                        //   ),
-                                                                        // ),
+                                                                        
                                                                       )
                                                                     ],
                                                                   ),
@@ -1193,38 +1133,7 @@ class LayoutState extends State<Layout> {
                                                                         ),
                                                                       )
 
-                                                                      // Column(
-                                                                      //   crossAxisAlignment:
-                                                                      //       CrossAxisAlignment.start,
-                                                                      //   children: [
-                                                                      //     SizedBox(
-                                                                      //       width:
-                                                                      //           180,
-                                                                      //       child:
-                                                                      //           Column(
-                                                                      //         mainAxisAlignment: MainAxisAlignment.start,
-                                                                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                                                                      //         children: [
-                                                                      //           Text(
-                                                                      //             // item.itemName!,
-                                                                      //             "${index + 1}. ${item.itemName!}",
-                                                                      //             style: const TextStyle(overflow: TextOverflow.ellipsis, color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
-                                                                      //           ),
-                                                                      //         ],
-                                                                      //       ),
-                                                                      //     ),
-                                                                      //   ],
-                                                                      // ),
-                                                                      // Text(
-                                                                      //   "৳ ${item.mrp!} x ${item.quantity!} ${item.unit} = ${(int.tryParse(item.quantity!) ?? 0) * (double.tryParse(item.mrp!) ?? 0)}",
-                                                                      //   style: const TextStyle(
-                                                                      //       color: Colors
-                                                                      //           .black,
-                                                                      //       fontSize:
-                                                                      //           14,
-                                                                      //       fontWeight:
-                                                                      //           FontWeight.bold),
-                                                                      // ),
+                                                                      
                                                                     ],
                                                                   ),
                                                                 ),
@@ -1382,49 +1291,7 @@ class LayoutState extends State<Layout> {
                             ],
                           ),
 
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          //   child: Container(
-                          //     height: 40,
-                          //     width: double.infinity,
-                          //     decoration: BoxDecoration(
-                          //       color: Colors.white,
-                          //       border: Border(
-                          //           top: BorderSide(
-                          //               color: Colors.grey.shade400, width: 1),
-                          //           bottom: BorderSide(
-                          //               color: Colors.grey.shade400, width: 1),
-                          //           left: BorderSide(
-                          //               color: Colors.grey.shade400, width: 1),
-                          //           right: BorderSide(
-                          //               color: Colors.grey.shade400, width: 1)),
-                          //     ),
-                          //     padding: const EdgeInsets.symmetric(horizontal: 8),
-                          //     child: Center(
-                          //       child: TextField(
-                          //         controller: controller.noteController,
-                          //         style: const TextStyle(
-                          //           color: Colors.black,
-                          //           fontSize: 12,
-                          //         ),
-                          //         onChanged: (value) {
-                          //           controller.noteController.text = value;
-                          //         },
-                          //         maxLines: 2,
-                          //         cursorHeight: 12,
-                          //         decoration: InputDecoration(
-                          //           isDense: true,
-                          //           border: InputBorder.none,
-                          //           hintText: "Note",
-                          //           hintStyle: TextStyle(
-                          //             color: Colors.grey.shade400,
-                          //             fontSize: 10,
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
+                  
 
                           ////Note
 
@@ -1495,6 +1362,7 @@ class LayoutState extends State<Layout> {
                                                 width: 75,
                                                 child: AddSalesFormfield(
                                                   labelText: "৳",
+                                                  keyboardType: TextInputType.number,
                                                   controller: controller
                                                       .discountController,
                                                   onChanged: (value) {
@@ -1514,6 +1382,7 @@ class LayoutState extends State<Layout> {
                                                 height: 30,
                                                 width: 75,
                                                 child: AddSalesFormfield(
+                                                  keyboardType: TextInputType.number,
                                                   labelText: "%",
                                                   controller: controller
                                                       .discountAmountController,
@@ -2344,102 +2213,7 @@ class LayoutState extends State<Layout> {
                             SizedBox(height: 5),
                           ]),
 
-                          ///item drop down ==working
-                          // ItemCustomDropDownTextField(
-                          //   controller: itemController,
-                          //   //label: "Select Item",
-                          //   onItemSelected: (selectedItem) async {
-                          //     // This will print the id and name when item is selected
-                          //     debugPrint(
-                          //         "=======> Selected Item: ${selectedItem.name} (ID: ${selectedItem.id})");
-                          //     unitIdsList.clear();
-
-                          //     setState(() {
-                          //       // Save selected item name and id in controller
-                          //       controller.seletedItemName = selectedItem.name;
-                          //       controller.selcetedItemId =
-                          //           selectedItem.id.toString();
-
-                          //       // Fetch stock quantity
-                          //       if (controller.selcetedItemId != null) {
-                          //         fetchStockQuantity.fetchStockQuantity(
-                          //             controller.selcetedItemId!);
-                          //       }
-                          //     });
-
-                          //     // Ensure unitProvider is loaded
-                          //     if (unitProvider.units.isEmpty) {
-                          //       await unitProvider
-                          //           .fetchUnits(); // Ensure units are fetched
-                          //     }
-
-                          //     // Clear previous units
-
-                          //     print(
-                          //         "Selected item unitId: ${selectedItem.unitId}");
-                          //     print(
-                          //         "Selected item secondaryUnitId: ${selectedItem.secondaryUnitId}");
-
-                          //     // Base unit
-                          //     if (selectedItem.unitId != null &&
-                          //         selectedItem.unitId != '') {
-                          //       final unit = unitProvider.units.firstWhere(
-                          //         (unit) =>
-                          //             unit.id.toString() ==
-                          //             selectedItem.unitId.toString(),
-                          //         orElse: () => Unit(
-                          //             id: 0,
-                          //             name: 'Unknown Unit',
-                          //             symbol: '',
-                          //             status: 0),
-                          //       );
-                          //       if (unit.id != 0) {
-                          //         unitIdsList.add(unit.name);
-                          //         controller.selectedUnit = unit.name;
-
-                          //         // Create final unit string like: "24_Pces_1"
-                          //         String finalUnitString =
-                          //             "${unit.id}_${unit.name}"; //"${unit.id}_${unit.name}_1";
-                          //         controller.selectedUnitIdWithNameFunction(
-                          //             finalUnitString);
-                          //       }
-                          //     }
-
-                          //     // Secondary unit
-                          //     if (selectedItem.secondaryUnitId != null &&
-                          //         selectedItem.secondaryUnitId != '') {
-                          //       final secondaryUnit =
-                          //           unitProvider.units.firstWhere(
-                          //         (unit) =>
-                          //             unit.id.toString() ==
-                          //             selectedItem.secondaryUnitId.toString(),
-                          //         orElse: () => Unit(
-                          //             id: 0,
-                          //             name: 'Unknown Unit',
-                          //             symbol: '',
-                          //             status: 0),
-                          //       );
-                          //       if (secondaryUnit.id != 0) {
-                          //         unitIdsList.add(secondaryUnit.name);
-                          //       }
-                          //     }
-
-                          //     if (unitIdsList.isEmpty) {
-                          //       debugPrint(
-                          //           "No valid units found for this item.");
-                          //     } else {
-                          //       debugPrint("Units Available: $unitIdsList");
-                          //     }
-
-                          //     // ✅ Set price BEFORE setState
-                          //     controller.mrpController.text =
-                          //         selectedItem.purchasePrice.toString() ?? "0";
-
-                          //     debugPrint(
-                          //         'purchase price ===> ${controller.mrpController.text}');
-                          //   },
-                          // ),
-
+                          
                           ///new item working for base and secondary unit.
                           ItemCustomDropDownTextField(
                             controller: itemController,
@@ -2552,56 +2326,7 @@ class LayoutState extends State<Layout> {
                                 ],
                               ),
 
-                              //unit <<<<==== working
-                              // Column(
-                              //   mainAxisAlignment: MainAxisAlignment.start,
-                              //   crossAxisAlignment: CrossAxisAlignment.start,
-                              //   children: [
-                              //     const SizedBox(
-                              //       height: 20,
-                              //     ),
-                              //     SizedBox(
-                              //       width: 150,
-                              //       child: CustomDropdownTwo(
-                              //         labelText: "Unit",
-                              //         hint: '',
-                              //         items:
-                              //             unitIdsList, // should be list of symbols like ["KG", "Bag", "PKT"]
-                              //         width: 150,
-                              //         height: 30,
-                              //         selectedItem: unitIdsList.isNotEmpty
-                              //             ? unitIdsList.first
-                              //             : null,
-                              //         onChanged: (selectedUnit) {
-                              //           debugPrint(
-                              //               "Selected Unit: $selectedUnit");
-
-                              //           controller.selectedUnit = selectedUnit;
-
-                              //           // FIX: Match by symbol
-                              //           final selectedUnitObj =
-                              //               unitProvider.units.firstWhere(
-                              //             (unit) => unit.symbol == selectedUnit,
-                              //             orElse: () => Unit(
-                              //                 id: 0,
-                              //                 name: "Unknown Unit",
-                              //                 symbol: "",
-                              //                 status: 0),
-                              //           );
-
-                              //           controller
-                              //               .selectedUnitIdWithNameFunction(
-                              //             "${selectedUnitObj.id}_${selectedUnitObj.symbol}",
-                              //           );
-
-                              //           debugPrint(
-                              //               "🆔 Selected Unit ID: ${selectedUnitObj.id}_${selectedUnitObj.symbol}");
-                              //         },
-                              //       ),
-                              //     ),
-                              //   ],
-                              // )
-
+                              
                               /// new updated code working, for base and secondary unit.
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.start,

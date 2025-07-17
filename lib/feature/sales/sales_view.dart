@@ -574,9 +574,7 @@ class _LayoutState extends State<_Layout> {
                                     //bill person
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
-                                      child: 
-                                      
-                                      Consumer<PaymentVoucherProvider>(
+                                      child: Consumer<PaymentVoucherProvider>(
                                         builder: (context, provider, child) {
                                           return SizedBox(
                                             height: 30,
@@ -1197,130 +1195,7 @@ class _LayoutState extends State<_Layout> {
                                                             ),
                                                           ),
 
-                                                          // DecoratedBox(
-                                                          //   decoration: BoxDecoration(
-                                                          //       color: const Color(
-                                                          //           0xffe1e5f8),
-                                                          //       borderRadius:
-                                                          //           BorderRadius
-                                                          //               .circular(
-                                                          //                   5)),
-                                                          //   child: Padding(
-                                                          //     padding:
-                                                          //         const EdgeInsets
-                                                          //             .all(3),
-                                                          //     child: Row(
-                                                          //       crossAxisAlignment:
-                                                          //           CrossAxisAlignment
-                                                          //               .start,
-                                                          //       mainAxisAlignment:
-                                                          //           MainAxisAlignment
-                                                          //               .spaceBetween,
-                                                          //       children: [
-                                                          //         Column(
-                                                          //           crossAxisAlignment:
-                                                          //               CrossAxisAlignment
-                                                          //                   .start,
-                                                          //           children: [
-                                                          //             SizedBox(
-                                                          //               width:
-                                                          //                   180,
-                                                          //               child:
-                                                          //                   Column(
-                                                          //                 mainAxisAlignment:
-                                                          //                     MainAxisAlignment.start,
-                                                          //                 crossAxisAlignment:
-                                                          //                     CrossAxisAlignment.start,
-                                                          //                 children: [
-                                                          //                   Text(
-                                                          //                     // "${item.itemName!} ${item.category!}",
-                                                          //                     //item.itemName!,
-                                                          //                     "${index + 1}. ${item.itemName!}",
-
-                                                          //                     style: const TextStyle(overflow: TextOverflow.ellipsis, color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
-                                                          //                   ),
-                                                          //                 ],
-                                                          //               ),
-                                                          //             ),
-                                                          //           ],
-                                                          //         ),
-                                                          //         Text(
-                                                          //           //"৳ ${item.mrp!} x ${item.quantity!} ${item.unit}  = ${(int.tryParse(item.quantity!) ?? 0) * (double.tryParse(item.mrp!) ?? 0)}",
-                                                          //           "৳ ${item.mrp!} x ${item.quantity!} ${item.unit}  =  ${item.total}",
-                                                          //           style:
-                                                          //               const TextStyle(
-                                                          //             color: Colors
-                                                          //                 .black,
-                                                          //             fontSize:
-                                                          //                 14,
-                                                          //             fontWeight:
-                                                          //                 FontWeight.bold,
-                                                          //           ),
-                                                          //         ),
-                                                          //       ],
-                                                          //     ),
-                                                          //   ),
-                                                          // ),
-                                                          //   ),
-                                                          // ),
-                                                          // hPad2,
-                                                          // InkWell(
-                                                          //   onTap: () {
-                                                          //     showDialog(
-                                                          //       context: context,
-                                                          //       builder: (BuildContext
-                                                          //           dialogContext) {
-                                                          //         return AlertDialog(
-                                                          //           title: const Text(
-                                                          //               "Remove Item"),
-                                                          //           content:
-                                                          //               const Text(
-                                                          //             "Are you sure you want to remove this item?",
-                                                          //             style: TextStyle(
-                                                          //                 color: Colors
-                                                          //                     .black),
-                                                          //           ),
-                                                          //           actions: [
-                                                          //             TextButton(
-                                                          //               onPressed:
-                                                          //                   () {
-                                                          //                 Navigator.pop(
-                                                          //                     dialogContext); // Close the dialog
-                                                          //               },
-                                                          //               child: const Text(
-                                                          //                   "Cancel"),
-                                                          //             ),
-                                                          //             ElevatedButton(
-                                                          //               onPressed:
-                                                          //                   () {
-                                                          //                 controller
-                                                          //                     .removeCreditItem(index); // Perform the removal action
-                                                          //                 Navigator.pop(
-                                                          //                     dialogContext); // Close the dialog
-                                                          //               },
-                                                          //               style: ElevatedButton.styleFrom(
-                                                          //                   backgroundColor:
-                                                          //                       colorScheme.primary),
-                                                          //               child:
-                                                          //                   const Text(
-                                                          //                 "Remove",
-                                                          //                 style: TextStyle(
-                                                          //                     color:
-                                                          //                         Colors.white),
-                                                          //               ),
-                                                          //             ),
-                                                          //           ],
-                                                          //         );
-                                                          //       },
-                                                          //     );
-                                                          //     setState(() {});
-                                                          //   },
-                                                          //   child: Icon(
-                                                          //     Icons.cancel,
-                                                          //     color: colorScheme
-                                                          //         .primary,
-                                                          //     size: 18,
-                                                          //   ),
+                                                         
                                                         )
                                                       ],
                                                     ),
@@ -1484,382 +1359,6 @@ class _LayoutState extends State<_Layout> {
   }
 
   ///===>>>sales item picked.
-  ///
-
-  // void showSalesDialog(BuildContext context, SalesController controller) async {
-  //   final ColorScheme colorScheme = Theme.of(context).colorScheme;
-  //   final categoryProvider =
-  //       Provider.of<ItemCategoryProvider>(context, listen: false);
-  //   final unitProvider = Provider.of<UnitProvider>(context, listen: false);
-  //   final fetchStockQuantity =
-  //       Provider.of<AddItemProvider>(context, listen: false);
-  //   final taxProvider = Provider.of<TaxProvider>(context, listen: false);
-  //   final salesController =
-  //       Provider.of<SalesController>(context, listen: false);
-
-  //   final TextEditingController itemController = TextEditingController();
-
-  //   String? selectedTaxName;
-  //   String? selectedTaxId;
-
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (_) => const Center(child: CircularProgressIndicator()),
-  //   );
-
-  //   if (categoryProvider.categories.isEmpty) {
-  //     await categoryProvider.fetchCategories();
-  //   }
-
-  //   if (taxProvider.taxList.isEmpty) {
-  //     await taxProvider.fetchTaxes();
-  //   }
-
-  //   Provider.of<AddItemProvider>(context, listen: false).clearStockData();
-  //   controller.clearFields();
-
-  //   Navigator.of(context).pop();
-
-  //   String? selectedCategoryId;
-  //   String? selectedSubCategoryId;
-  //   List<String> unitIdsList = [];
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return StatefulBuilder(builder: (context, setState) {
-  //         WidgetsBinding.instance.addPostFrameCallback((_) {
-  //           final controller =
-  //               Provider.of<SalesController>(context, listen: false);
-  //           controller.addListener(() {
-  //             setState(() {});
-  //           });
-  //         });
-
-  //         bool isLoading =
-  //             categoryProvider.isLoading || fetchStockQuantity.isLoading;
-
-  //         final double screenWidth = MediaQuery.of(context).size.width;
-
-  //         return Dialog(
-  //           backgroundColor: Colors.transparent,
-  //           insetPadding: const EdgeInsets.symmetric(horizontal: 4),
-  //           child: Container(
-  //             height: 380,
-  //             width: screenWidth,
-  //             decoration: BoxDecoration(
-  //               color: const Color(0xffe7edf4),
-  //               borderRadius: BorderRadius.circular(5),
-  //             ),
-  //             child: Column(
-  //               children: [
-  //                 // Add your actual dialog content here
-
-  //                 ///diol;og title and close button.
-  //                 Container(
-  //                   height: 30,
-  //                   color: const Color(0xff278d46),
-  //                   child: Row(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     crossAxisAlignment: CrossAxisAlignment.center,
-  //                     children: [
-  //                       const SizedBox(
-  //                           width:
-  //                               30), // Placeholder for left spacing (can be removed or adjusted)
-
-  //                       // Centered text and icon
-  //                       const Row(
-  //                         mainAxisAlignment: MainAxisAlignment.center,
-  //                         children: [
-  //                           SizedBox(width: 5),
-  //                           Text(
-  //                             "Add Item & service",
-  //                             style: TextStyle(
-  //                                 color: Colors.yellow,
-  //                                 fontWeight: FontWeight.bold),
-  //                           ),
-  //                         ],
-  //                       ),
-
-  //                       InkWell(
-  //                         onTap: () {
-  //                           Navigator.pop(context);
-  //                         },
-  //                         child: Padding(
-  //                           padding:
-  //                               const EdgeInsets.symmetric(horizontal: 4.0),
-  //                           child: CircleAvatar(
-  //                             radius: 10,
-  //                             backgroundColor: Colors.grey.shade100,
-  //                             child: const Icon(
-  //                               Icons.close,
-  //                               size: 18,
-  //                               color: Colors.green,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-
-  //                 ///
-  //                 Padding(
-  //                   padding:
-  //                       const EdgeInsets.only(left: 10.0, right: 10.0, top: 1),
-  //                   child: Column(
-  //                     mainAxisAlignment: MainAxisAlignment.start,
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       const SizedBox(
-  //                         height: 8,
-  //                       ),
-
-  //                       ///new item search, item drop down,
-  //                       Container(
-  //                         child: ItemCustomDropDownTextField(
-  //                           controller: itemController,
-  //                           //label: "Select Item",
-  //                           onItemSelected: (selectedItem) async {
-  //                             // This will print the id and name when item is selected
-  //                             debugPrint(
-  //                                 "=======> Selected Item: ${selectedItem.name} (ID: ${selectedItem.id})");
-
-  //                             setState(() {
-  //                               // Save selected item name and id in controller
-  //                               controller.seletedItemName = selectedItem.name;
-  //                               controller.selcetedItemId =
-  //                                   selectedItem.id.toString();
-
-  //                               // Fetch stock quantity
-  //                               if (controller.selcetedItemId != null) {
-  //                                 fetchStockQuantity.fetchStockQuantity(
-  //                                     controller.selcetedItemId!);
-  //                               }
-  //                             });
-
-  //                             // Ensure unitProvider is loaded
-  //                             if (unitProvider.units.isEmpty) {
-  //                               await unitProvider
-  //                                   .fetchUnits(); // Ensure units are fetched
-  //                             }
-
-  //                             // Clear previous units
-  //                             unitIdsList.clear();
-
-  //                             debugPrint(
-  //                                 "Selected item unitId: ${selectedItem.unitId}");
-  //                             debugPrint(
-  //                                 "Selected item secondaryUnitId: ${selectedItem.secondaryUnitId}");
-
-  //                             // Base unit
-  //                             if (selectedItem.unitId != null &&
-  //                                 selectedItem.unitId != '') {
-  //                               final unit = unitProvider.units.firstWhere(
-  //                                 (unit) =>
-  //                                     unit.id.toString() ==
-  //                                     selectedItem.unitId.toString(),
-  //                                 orElse: () => Unit(
-  //                                     id: 0,
-  //                                     name: 'Unknown Unit',
-  //                                     symbol: '',
-  //                                     status: 0),
-  //                               );
-  //                               if (unit.id != 0) {
-  //                                 unitIdsList.add(unit.name);
-  //                                 controller.selectedUnit = unit.name;
-
-  //                                 // Create final unit string like: "24_Pces_1"
-  //                                 String finalUnitString =
-  //                                     "${unit.id}_${unit.name}_1";
-  //                                 controller.selectedUnitIdWithNameFunction(
-  //                                     finalUnitString);
-  //                               }
-  //                             }
-
-  //                             // Secondary unit
-  //                             if (selectedItem.secondaryUnitId != null &&
-  //                                 selectedItem.secondaryUnitId != '') {
-  //                               final secondaryUnit =
-  //                                   unitProvider.units.firstWhere(
-  //                                 (unit) =>
-  //                                     unit.id.toString() ==
-  //                                     selectedItem.secondaryUnitId.toString(),
-  //                                 orElse: () => Unit(
-  //                                     id: 0,
-  //                                     name: 'Unknown Unit',
-  //                                     symbol: '',
-  //                                     status: 0),
-  //                               );
-  //                               if (secondaryUnit.id != 0) {
-  //                                 unitIdsList.add(secondaryUnit.name);
-  //                               }
-  //                             }
-
-  //                             if (unitIdsList.isEmpty) {
-  //                               debugPrint(
-  //                                   "No valid units found for this item.");
-  //                             } else {
-  //                               debugPrint("Units Available: $unitIdsList");
-  //                             }
-  //                           },
-  //                         ),
-  //                       ),
-
-  //                       ///update stock code , for custome price input
-  //                       ///stock available
-  //                       Container(
-  //                         child: Consumer<AddItemProvider>(
-  //                           builder: (context, stockProvider, child) {
-  //                             final stock = stockProvider.stockData;
-
-  //                             if (stock != null && !controller.hasCustomPrice) {
-  //                               controller.mrpController.text =
-  //                                   stock.price.toString();
-  //                             }
-
-  //                             return stock != null
-  //                                 ? Padding(
-  //                                     padding: const EdgeInsets.only(top: 0.0),
-  //                                     child: Align(
-  //                                       alignment: Alignment.centerLeft,
-  //                                       child: Text(
-  //                                         "   Stock Available: ${stock.unitStocks} ", //৳ ${stock.price}
-  //                                         style: const TextStyle(
-  //                                           fontSize: 10,
-  //                                           fontWeight: FontWeight.bold,
-  //                                           color: Colors.black,
-  //                                         ),
-  //                                       ),
-  //                                     ),
-  //                                   )
-  //                                 : const SizedBox(); // Show nothing if stock is null
-  //                           },
-  //                         ),
-  //                       ),
-
-  //                       ///qty unit
-  //                       Container(
-  //                         // color: Colors.yellow,
-  //                         child: Row(
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                           children: [
-  //                             /// ===>>> Qty field
-  //                             Expanded(
-  //                               flex: 1,
-  //                               child: Column(
-  //                                 children: [
-  //                                   Container(
-  //                                     // color: Colors.purple,
-  //                                     child: AddSalesFormfield(
-  //                                       label: "", // Qty
-  //                                       labelText: "Item Qty",
-  //                                       controller: controller.qtyController,
-  //                                       keyboardType: TextInputType.number,
-  //                                       onChanged: (value) {
-  //                                         setState(() {
-  //                                           controller.calculateSubtotal();
-  //                                         });
-  //                                       },
-  //                                     ),
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ),
-
-  //                             const SizedBox(
-  //                                 width: 8), // Spacing between qty and unit
-
-  //                             /// ===>>> Unit Dropdown
-  //                             Expanded(
-  //                               flex: 1,
-  //                               child: Column(
-  //                                 mainAxisAlignment: MainAxisAlignment.start,
-  //                                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                                 children: [
-  //                                   const SizedBox(height: 20),
-  //                                   SizedBox(
-  //                                     height: 30,
-  //                                     child: CustomDropdownTwo(
-  //                                       hint: '',
-  //                                       items:
-  //                                           unitIdsList, // ["Pces", "Packet", ...]
-  //                                       width: double.infinity,
-  //                                       height: 30,
-  //                                       labelText: 'Unit',
-  //                                       selectedItem: controller.selectedUnit,
-  //                                       onChanged: (selectedUnit) {
-  //                                         print("Selected Unit: $selectedUnit");
-
-  //                                         controller.selectedUnit =
-  //                                             selectedUnit;
-
-  //                                         final selectedUnitObj =
-  //                                             unitProvider.units.firstWhere(
-  //                                           (unit) => unit.name == selectedUnit,
-  //                                           orElse: () => Unit(
-  //                                             id: 0,
-  //                                             name: "Unknown Unit",
-  //                                             symbol: "",
-  //                                             status: 0,
-  //                                           ),
-  //                                         );
-
-  //                                         String finalUnitString = '';
-  //                                         int qty = 1;
-
-  //                                         for (var item
-  //                                             in fetchStockQuantity.items) {
-  //                                           if (item.id.toString() ==
-  //                                               controller.selcetedItemId) {
-  //                                             String unitId =
-  //                                                 selectedUnitObj.id.toString();
-  //                                             String unitName = selectedUnit;
-
-  //                                             if (unitId ==
-  //                                                 item.secondaryUnitId
-  //                                                     .toString()) {
-  //                                               qty = item.secondaryUnitQty ??
-  //                                                   item.unitQty ??
-  //                                                   1;
-  //                                             } else if (unitId ==
-  //                                                 item.unitId.toString()) {
-  //                                               qty = item.unitQty ?? 1;
-  //                                             }
-
-  //                                             finalUnitString =
-  //                                                 "${unitId}_${unitName}_$qty";
-  //                                             controller
-  //                                                 .selectedUnitIdWithNameFunction(
-  //                                                     finalUnitString);
-  //                                             break;
-  //                                           }
-  //                                         }
-
-  //                                         if (finalUnitString.isEmpty) {
-  //                                           finalUnitString =
-  //                                               "${selectedUnitObj.id}_${selectedUnit}_1";
-  //                                           controller
-  //                                               .selectedUnitIdWithNameFunction(
-  //                                                   finalUnitString);
-  //                                         }
-
-  //                                         print(
-  //                                             "🆔 Final Unit ID: $finalUnitString");
-
-  //                                         controller.notifyListeners();
-  //                                       },
-  //                                     ),
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-
   ////show sales diolog.
   void showSalesDialog(BuildContext context, SalesController controller) async {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -1986,135 +1485,10 @@ class _LayoutState extends State<_Layout> {
                       children: [
                         const SizedBox(height: 8),
 
-                        ///Item search dropdown
-                        // Container(
-                        //   child: ItemCustomDropDownTextField(
-                        //     controller: itemController,
-                        //     onItemSelected: (selectedItem) async {
-                        //       debugPrint(
-                        //           "=======> Selected Item: ${selectedItem.name} (ID: ${selectedItem.id})");
-                        //       // Save selected item name and id in controller
-                        //       controller.seletedItemName = selectedItem.name;
-                        //       controller.selcetedItemId =
-                        //           selectedItem.id.toString();
+                        ///Item search dropdown === working.
+                       
 
-                        //       controller.purchasePrice =
-                        //           selectedItem.purchasePrice ?? 0.0;
-                        //       controller.unitQty =
-                        //           (selectedItem.secondaryUnitQty ?? 1)
-                        //               .toDouble();
-                        //       controller.primaryUnitName = unitProvider.units
-                        //               .firstWhere(
-                        //                 (u) =>
-                        //                     u.id.toString() ==
-                        //                     selectedItem.unitId.toString(),
-                        //                 orElse: () => Unit(
-                        //                     id: 0,
-                        //                     name: "Unknown",
-                        //                     symbol: "",
-                        //                     status: 0),
-                        //               )
-                        //               .name ??
-                        //           "";
-
-                        //       controller.secondaryUnitName = unitProvider.units
-                        //               .firstWhere(
-                        //                 (u) =>
-                        //                     u.id.toString() ==
-                        //                     selectedItem.secondaryUnitId
-                        //                         .toString(),
-                        //                 orElse: () => Unit(
-                        //                     id: 0,
-                        //                     name: "Unknown",
-                        //                     symbol: "",
-                        //                     status: 0),
-                        //               )
-                        //               .name ??
-                        //           "";
-
-                        //       // Fetch stock quantity
-                        //       if (controller.selcetedItemId != null) {
-                        //         fetchStockQuantity.fetchStockQuantity(
-                        //             controller.selcetedItemId!);
-                        //       }
-
-                        //       // Ensure unitProvider is loaded
-                        //       if (unitProvider.units.isEmpty) {
-                        //         await unitProvider.fetchUnits();
-                        //       }
-
-                        //       // Clear and reset everything
-                        //       unitIdsList.clear();
-                        //       localSelectedUnit = null;
-                        //       controller.selectedUnit = null;
-
-                        //       debugPrint(
-                        //           "Selected item unitId: ${selectedItem.unitId}");
-                        //       debugPrint(
-                        //           "Selected item secondaryUnitId: ${selectedItem.secondaryUnitId}");
-
-                        //       // Add base unit
-                        //       if (selectedItem.unitId != null &&
-                        //           selectedItem.unitId != '') {
-                        //         final unit = unitProvider.units.firstWhere(
-                        //           (unit) =>
-                        //               unit.id.toString() ==
-                        //               selectedItem.unitId.toString(),
-                        //           orElse: () => Unit(
-                        //               id: 0,
-                        //               name: 'Unknown Unit',
-                        //               symbol: '',
-                        //               status: 0),
-                        //         );
-                        //         if (unit.id != 0) {
-                        //           unitIdsList.add(unit.name);
-                        //           // Set as default selected unit
-                        //           localSelectedUnit = unit.name;
-                        //           controller.selectedUnit = unit.name;
-
-                        //           String finalUnitString =
-                        //               "${unit.id}_${unit.name}_1";
-                        //           controller.selectedUnitIdWithNameFunction(
-                        //               finalUnitString);
-                        //         }
-                        //       }
-
-                        //       // Add secondary unit
-                        //       if (selectedItem.secondaryUnitId != null &&
-                        //           selectedItem.secondaryUnitId != '') {
-                        //         final secondaryUnit =
-                        //             unitProvider.units.firstWhere(
-                        //           (unit) =>
-                        //               unit.id.toString() ==
-                        //               selectedItem.secondaryUnitId.toString(),
-                        //           orElse: () => Unit(
-                        //               id: 0,
-                        //               name: 'Unknown Unit',
-                        //               symbol: '',
-                        //               status: 0),
-                        //         );
-                        //         if (secondaryUnit.id != 0) {
-                        //           unitIdsList.add(secondaryUnit.name);
-                        //         }
-                        //       }
-
-                        //       isItemSelected = true;
-
-                        //       if (unitIdsList.isEmpty) {
-                        //         debugPrint(
-                        //             "No valid units found for this item.");
-                        //       } else {
-                        //         debugPrint("Units Available: $unitIdsList");
-                        //         debugPrint(
-                        //             "Default selected unit: $localSelectedUnit");
-                        //       }
-
-                        //       // Trigger UI rebuild
-                        //       setState(() {});
-                        //     },
-                        //   ),
-                        // ),
-
+                        // Updated Item selection dropdown
                         ItemCustomDropDownTextField(
                           controller: itemController,
                           onItemSelected: (selectedItem) async {
@@ -2173,8 +1547,9 @@ class _LayoutState extends State<_Layout> {
                                 controller.primaryUnitName = unit.name;
                                 controller.selectedUnit = unit.name;
 
+                                // 🔥 SOLUTION 1: Set with default quantity "1" initially
                                 controller.selectedUnitIdWithNameFunction(
-                                    "${unit.id}_${unit.name}");
+                                    "${unit.id}_${unit.name}_1");
                               }
                             }
 
@@ -2235,7 +1610,7 @@ class _LayoutState extends State<_Layout> {
                           ),
                         ),
 
-                        ///Quantity and Unit row
+                        ///Qty and Unit.
                         Container(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2246,6 +1621,8 @@ class _LayoutState extends State<_Layout> {
                                 flex: 1,
                                 child: Column(
                                   children: [
+                                  
+
                                     Container(
                                       child: AddSalesFormfield(
                                         label: "",
@@ -2255,6 +1632,36 @@ class _LayoutState extends State<_Layout> {
                                         onChanged: (value) {
                                           setState(() {
                                             controller.calculateSubtotal();
+
+                                            // 🔥 SOLUTION 2: Directly update selectedUnitIdWithName with quantity
+                                            if (controller
+                                                .selectedUnit!.isNotEmpty) {
+                                              final selectedUnitObj =
+                                                  unitProvider.units.firstWhere(
+                                                (unit) =>
+                                                    unit.name ==
+                                                    controller.selectedUnit,
+                                                orElse: () => Unit(
+                                                    id: 0,
+                                                    name: "Unknown",
+                                                    symbol: "",
+                                                    status: 0),
+                                              );
+
+                                              final qtyText = controller
+                                                  .qtyController.text
+                                                  .trim();
+                                              final qty = qtyText.isNotEmpty
+                                                  ? qtyText
+                                                  : "1";
+
+                                              controller
+                                                  .selectedUnitIdWithNameFunction(
+                                                      "${selectedUnitObj.id}_${selectedUnitObj.symbol}_$qty");
+
+                                              debugPrint(
+                                                  "✅ Updated unit_id after qty change: ${controller.selectedUnitIdWithName}");
+                                            }
                                           });
                                         },
                                       ),
@@ -2266,153 +1673,6 @@ class _LayoutState extends State<_Layout> {
                               const SizedBox(width: 8),
 
                               /// Unit Dropdown
-                              // Expanded(
-                              //   flex: 1,
-                              //   child: Column(
-                              //     mainAxisAlignment: MainAxisAlignment.start,
-                              //     crossAxisAlignment: CrossAxisAlignment.start,
-                              //     children: [
-                              //       const SizedBox(height: 20),
-                              //       SizedBox(
-                              //         height: 30,
-                              //         child:
-                              //         CustomDropdownTwo(
-                              //           key: ValueKey(
-                              //               '${unitIdsList.length}_${localSelectedUnit}_${isItemSelected}'), // Force rebuild when data changes
-                              //           hint: !isItemSelected
-                              //               ? '' //Select item first
-                              //               : unitIdsList.isEmpty
-                              //                   ? 'No units available'
-                              //                   : 'Select unit',
-                              //           items: unitIdsList,
-                              //           width: double.infinity,
-                              //           height: 30,
-                              //           labelText: 'Unit',
-                              //           selectedItem: localSelectedUnit,
-                              //           onChanged: (selectedUnit) {
-                              //             print("Selected Unit: $selectedUnit");
-
-                              //             // Update both local and controller state
-                              //             setState(() {
-                              //               localSelectedUnit = selectedUnit;
-                              //               controller.selectedUnit =
-                              //                   selectedUnit;
-                              //             });
-
-                              //             final selectedUnitObj =
-                              //                 unitProvider.units.firstWhere(
-                              //               (unit) => unit.name == selectedUnit,
-                              //               orElse: () => Unit(
-                              //                 id: 0,
-                              //                 name: "Unknown Unit",
-                              //                 symbol: "",
-                              //                 status: 0,
-                              //               ),
-                              //             );
-
-                              //             String finalUnitString = '';
-                              //             int qty = 1;
-
-                              //             for (var item
-                              //                 in fetchStockQuantity.items) {
-                              //               if (item.id.toString() ==
-                              //                   controller.selcetedItemId) {
-                              //                 String unitId =
-                              //                     selectedUnitObj.id.toString();
-                              //                 String unitName = selectedUnit;
-
-                              //                 if (unitId ==
-                              //                     item.secondaryUnitId
-                              //                         .toString()) {
-                              //                   qty = item.secondaryUnitQty ??
-                              //                       item.unitQty ??
-                              //                       1;
-                              //                 } else if (unitId ==
-                              //                     item.unitId.toString()) {
-                              //                   qty = item.unitQty ?? 1;
-                              //                 }
-
-                              //                 finalUnitString =
-                              //                     "${unitId}_${unitName}_$qty";
-                              //                 controller
-                              //                     .selectedUnitIdWithNameFunction(
-                              //                         finalUnitString);
-                              //                 break;
-                              //               }
-                              //             }
-
-                              //             if (finalUnitString.isEmpty) {
-                              //               finalUnitString =
-                              //                   "${selectedUnitObj.id}_${selectedUnit}_1";
-                              //               controller
-                              //                   .selectedUnitIdWithNameFunction(
-                              //                       finalUnitString);
-                              //             }
-
-                              //             print(
-                              //                 "🆔 Final Unit ID: $finalUnitString");
-
-                              //             controller.notifyListeners();
-                              //           },
-                              //         ),
-
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
-
-                              /// new updated code working, for base and secondary unit.
-                              // Column(
-                              //   mainAxisAlignment: MainAxisAlignment.start,
-                              //   crossAxisAlignment: CrossAxisAlignment.start,
-                              //   children: [
-                              //     const SizedBox(height: 20),
-                              //     SizedBox(
-                              //       width: 150,
-                              //       child: CustomDropdownTwo(
-                              //         labelText: "Unit",
-                              //         hint: '',
-                              //         items: unitIdsList,
-                              //         width: 150,
-                              //         height: 30,
-                              //         selectedItem: controller.selectedUnit,
-                              //         onChanged: (selectedUnit) {
-                              //           controller.selectedUnit = selectedUnit;
-
-                              //           final selectedUnitObj =
-                              //               unitProvider.units.firstWhere(
-                              //             (unit) => unit.name == selectedUnit,
-                              //             orElse: () => Unit(
-                              //                 id: 0,
-                              //                 name: "Unknown",
-                              //                 symbol: "",
-                              //                 status: 0),
-                              //           );
-
-                              //           controller.selectedUnitIdWithNameFunction(
-                              //               "${selectedUnitObj.id}_${selectedUnitObj.symbol}");
-
-                              //           // ✅ Update price based on unit
-                              //           if (selectedUnit ==
-                              //               controller.secondaryUnitName) {
-                              //             double newPrice =
-                              //                 controller.purchasePrice /
-                              //                     controller.unitQty;
-                              //             controller.mrpController.text =
-                              //                 newPrice.toStringAsFixed(2);
-                              //           } else {
-                              //             controller.mrpController.text =
-                              //                 controller.purchasePrice
-                              //                     .toStringAsFixed(2);
-                              //           }
-
-                              //           setState(() {});
-                              //         },
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2420,7 +1680,10 @@ class _LayoutState extends State<_Layout> {
                                   const SizedBox(height: 20),
                                   SizedBox(
                                     width: 150,
-                                    child: CustomDropdownTwo(
+                                    child:
+
+                                        
+                                        CustomDropdownTwo(
                                       labelText: "Unit",
                                       hint: '',
                                       items: unitIdsList,
@@ -2445,8 +1708,14 @@ class _LayoutState extends State<_Layout> {
                                               status: 0),
                                         );
 
+                                        final qtyText = controller
+                                            .qtyController.text
+                                            .trim();
+                                        final qty =
+                                            qtyText.isNotEmpty ? qtyText : "1";
+
                                         controller.selectedUnitIdWithNameFunction(
-                                            "${selectedUnitObj.id}_${selectedUnitObj.symbol}");
+                                            "${selectedUnitObj.id}_${selectedUnitObj.symbol}_$qty");
 
                                         debugPrint(
                                             "🆔 Unit ID: ${selectedUnitObj.id}_${selectedUnitObj.symbol}");
@@ -2478,8 +1747,6 @@ class _LayoutState extends State<_Layout> {
                             ],
                           ),
                         ),
-
-                      
 
                         Container(
                           child: AddSalesFormfield(
@@ -3257,7 +2524,7 @@ class _LayoutState extends State<_Layout> {
                                               }
 
                                               finalUnitString =
-                                                  "${unitId}_${unitName}_$qty";
+                                                  "${unitId}_${unitName}";
                                               controller
                                                   .selectedUnitIdWithNameFunction(
                                                       finalUnitString);
