@@ -4,14 +4,17 @@ import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_paid_form_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
+import 'package:cbook_dt/feature/account/ui/income/model/edit_income_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/recived_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
+import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/paymentout/model/bill_person_list.dart';
 import 'package:cbook_dt/feature/paymentout/provider/payment_out_provider.dart';
 import 'package:cbook_dt/feature/sales/controller/sales_controller.dart';
 import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -44,53 +47,69 @@ class _IncomeEditState extends State<IncomeEdit> {
     voucherNumberController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-
       final providerExpense =
           Provider.of<ExpenseProvider>(context, listen: false);
-          
-      final provider =
-          Provider.of<IncomeProvider>(context, listen: false); // 👈 Add this
+      final incomeProvider =
+          Provider.of<IncomeProvider>(context, listen: false);
+      final paymentVoucherProvider =
+          Provider.of<PaymentVoucherProvider>(context, listen: false);
 
-      /// ✅ First fetch Paid Form List
-      await providerExpense.fetchPaidFormList();
+      // 1. Fetch bill persons for bill person dropdown
+      await paymentVoucherProvider.fetchBillPersons();
 
-      /// ✅ Then fetch Edit Expense
+      await incomeProvider.fetchReceiveFormList();
+
+      // 3. Fetch edit expense data to populate the form
       await providerExpense.fetchEditExpense(widget.incomeId);
 
-      voucherNumberController.text =
-          providerExpense.editExpenseData?.voucherNumber ?? '';
-      billDate = providerExpense.editExpenseData?.voucherDate ?? '';
+      await incomeProvider.fetchEditExpense(widget.incomeId);
 
-      /// Paid to mapping
+      // 4. Map receivedTo to UI text (Cash in Hand / Bank)
       String? paidToApi = providerExpense.editExpenseData?.paidTo;
       if (paidToApi == 'cash') {
         selectedReceivedTo = 'Cash in Hand';
-        await provider.fetchAccounts('cash'); // Fetch related accounts
+        // Fetch accounts of type cash using IncomeProvider (or ExpenseProvider if you have)
+        await incomeProvider.fetchAccounts('cash');
       } else if (paidToApi == 'bank') {
         selectedReceivedTo = 'Bank';
-        await provider.fetchAccounts('bank'); // Fetch related accounts
+        await incomeProvider.fetchAccounts('bank');
+      } else {
+        selectedReceivedTo = null;
       }
 
-      /// ✅ Preselect Account Name based on accountId
-      //int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
-
-      /// ✅ Preselect Account Name based on accountId
+      // 5. Set Account dropdown selection based on accountId from editExpenseData
       int accountIdFromApi = providerExpense.editExpenseData?.accountId ?? 0;
-
-      if (provider.accountModel != null) {
-        final matchingAccount = provider.accountModel!.data.firstWhere(
+      if (incomeProvider.accountModel != null &&
+          incomeProvider.accountModel!.data.isNotEmpty) {
+        final matchingAccount = incomeProvider.accountModel!.data.firstWhere(
           (account) => account.id == accountIdFromApi,
-          orElse: () => provider
-              .accountModel!.data.first, // fallback to first item if not found
+          orElse: () => incomeProvider.accountModel!.data.first,
         );
-
         selectedAccount = matchingAccount.accountName;
         selectedAccountId = matchingAccount.id;
-
-        debugPrint('Selected Account from API: $selectedAccount');
       }
 
-      setState(() {});
+      // 6. Set Bill Person dropdown selection based on billPersonId from editExpenseData
+      final billPersonIdFromApi = providerExpense.editExpenseData?.billPersonId;
+      if (paymentVoucherProvider.billPersons.isNotEmpty &&
+          billPersonIdFromApi != null) {
+        final matchingBillPerson =
+            paymentVoucherProvider.billPersons.firstWhere(
+          (person) => person.id == billPersonIdFromApi,
+          orElse: () => paymentVoucherProvider.billPersons.first,
+        );
+        selectedBillPerson = matchingBillPerson.name;
+        selectedBillPersonId = matchingBillPerson.id;
+        selectedBillPersonData = matchingBillPerson;
+      }
+
+      // 7. Set Bill No and Bill Date
+      billNo = providerExpense.editExpenseData?.voucherNumber ?? '';
+      voucherNumberController.text = billNo;
+
+      billDate = providerExpense.editExpenseData?.voucherDate ?? '';
+
+      setState(() {}); // Update UI
     });
   }
 
@@ -105,6 +124,8 @@ class _IncomeEditState extends State<IncomeEdit> {
     final controller = context.watch<SalesController>();
     //final provider = Provider.of<IncomeProvider>(context);
     final provider = context.watch<IncomeProvider>();
+
+    //final provider = context.watch<IncomeProvider>();
 
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -254,51 +275,52 @@ class _IncomeEditState extends State<IncomeEdit> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           //bill person
-                           
+
                           Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Consumer<PaymentVoucherProvider>(
-                        builder: (context, provider, child) {
-                          return SizedBox(
-                            height: 30,
-                            width: 130,
-                            child: provider.isLoading
-                                ? const Center(
-                                    child: CircularProgressIndicator())
-                                : CustomDropdownTwo(
-                                    hint: '',
-                                    items: provider.billPersonNames,
-                                    width: double.infinity,
-                                    height: 30,
-                                    labelText: 'Bill Person',
-                                    selectedItem: selectedBillPerson,
-                                    onChanged: (value) {
-                                      debugPrint(
-                                          '=== Bill Person Selected: $value ===');
-                                      setState(() {
-                                        selectedBillPerson = value;
-                                        selectedBillPersonData =
-                                            provider.billPersons.firstWhere(
-                                          (person) => person.name == value,
-                                        ); // ✅ Save the whole object globally
-                                        selectedBillPersonId =
-                                            selectedBillPersonData!.id;
-                                      });
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Consumer<PaymentVoucherProvider>(
+                              builder: (context, provider, child) {
+                                return SizedBox(
+                                  height: 30,
+                                  width: 130,
+                                  child: provider.isLoading
+                                      ? const Center(
+                                          child: CircularProgressIndicator())
+                                      : CustomDropdownTwo(
+                                          hint: '',
+                                          items: provider.billPersonNames,
+                                          width: double.infinity,
+                                          height: 30,
+                                          labelText: 'Bill Person',
+                                          selectedItem: selectedBillPerson,
+                                          onChanged: (value) {
+                                            debugPrint(
+                                                '=== Bill Person Selected: $value ===');
+                                            setState(() {
+                                              selectedBillPerson = value;
+                                              selectedBillPersonData = provider
+                                                  .billPersons
+                                                  .firstWhere(
+                                                (person) =>
+                                                    person.name == value,
+                                              ); // ✅ Save the whole object globally
+                                              selectedBillPersonId =
+                                                  selectedBillPersonData!.id;
+                                            });
 
-                                      debugPrint(
-                                          'Selected Bill Person Details:');
-                                      debugPrint(
-                                          '- ID: ${selectedBillPersonData!.id}');
-                                      debugPrint(
-                                          '- Name: ${selectedBillPersonData!.name}');
-                                      debugPrint(
-                                          '- Phone: ${selectedBillPersonData!.phone}');
-                                    }),
-                          );
-                        },
-                      ),
-                    ),
-
+                                            debugPrint(
+                                                'Selected Bill Person Details:');
+                                            debugPrint(
+                                                '- ID: ${selectedBillPersonData!.id}');
+                                            debugPrint(
+                                                '- Name: ${selectedBillPersonData!.name}');
+                                            debugPrint(
+                                                '- Phone: ${selectedBillPersonData!.phone}');
+                                          }),
+                                );
+                              },
+                            ),
+                          ),
 
                           const SizedBox(
                             height: 8,
@@ -307,7 +329,7 @@ class _IncomeEditState extends State<IncomeEdit> {
                           ///bill no, bill person
                           SizedBox(
                             height: 30,
-                            width: 90,
+                            width: 130,
                             child: TextField(
                               style: const TextStyle(
                                 color: Colors.black,
@@ -347,7 +369,7 @@ class _IncomeEditState extends State<IncomeEdit> {
                           ///bill date
                           SizedBox(
                             height: 30,
-                            width: 90,
+                            width: 130,
                             child: InkWell(
                               // onTap: () => controller.pickDate(
                               //     context), // Trigger the date picker
@@ -360,14 +382,16 @@ class _IncomeEditState extends State<IncomeEdit> {
                                 );
 
                                 if (pickedDate != null) {
-                                  // Example: Format the date if needed
                                   String formattedDate =
-                                      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(pickedDate);
 
                                   setState(() {
-                                    billDate =
-                                        formattedDate; // Update the selected date
+                                    billDate = formattedDate;
                                   });
+
+                                  print(
+                                      'Selected date: $formattedDate'); // ✅ Debug print
                                 }
                               },
                               child: InputDecorator(
@@ -420,19 +444,19 @@ class _IncomeEditState extends State<IncomeEdit> {
             height: 8,
           ),
 
-          ///expense item list.
-          if (provider.receiptItems.isNotEmpty)
+          ///vouchere list
+
+          if (provider.editIncomeItems.isNotEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children:
-                  providerExpense.receiptItems.asMap().entries.map((entry) {
+              children: provider.editIncomeItems.asMap().entries.map((entry) {
                 int index = entry.key + 1;
                 var item = entry.value;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: InkWell(
                     onTap: () {
-                      showExpenseUpdateDialog(context, providerExpense, item);
+                      showIncomeUpdateDialog(context, provider, item);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -458,8 +482,9 @@ class _IncomeEditState extends State<IncomeEdit> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // Show purchaseId or map it to a name if you have a function for that
                                 Text(
-                                  providerExpense.getAccountNameById(item
+                                  providerIncome.getAccountNameById(item
                                       .purchaseId), // ✅ show account_name instead of ID
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -468,6 +493,7 @@ class _IncomeEditState extends State<IncomeEdit> {
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
+
                                 const SizedBox(height: 1),
                                 Text(
                                   item.note,
@@ -475,7 +501,6 @@ class _IncomeEditState extends State<IncomeEdit> {
                                     fontSize: 12,
                                     color: Colors.black54,
                                   ),
-                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
@@ -498,8 +523,10 @@ class _IncomeEditState extends State<IncomeEdit> {
                                   child: Icon(Icons.close, size: 20),
                                 ),
                                 onPressed: () {
-                                  providerExpense.receiptItems.remove(item);
-                                  providerExpense.notifyListeners();
+                                  // provider.editIncomeItems.remove(item);
+                                  // provider.notifyListeners();
+
+                                  confirmDeleteItem(context, provider, item);
                                 },
                               ),
                             ],
@@ -516,11 +543,12 @@ class _IncomeEditState extends State<IncomeEdit> {
 
           InkWell(
             onTap: () async {
+              await provider.fetchReceiptFromList();
               await provider
                   .fetchReceiptFromList(); // 🔥 Fetch API before showing dialog
               showIncomeCreateDialog(
                 context,
-                provider,
+                providerIncome,
               ); // Pass provider
             },
             child: Container(
@@ -577,21 +605,17 @@ class _IncomeEditState extends State<IncomeEdit> {
                           fontSize: 16,
                           color: Colors.black),
                     ),
-                    Text(
-                      providerExpense.receiptItems.fold<double>(
-                        0,
-                        (sum, item) {
-                          // parse amount string safely to double
-                          final amt =
-                              double.tryParse(item.amount.toString()) ?? 0.0;
-                          return sum + amt;
-                        },
-                      ).toStringAsFixed(2),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
+                    Consumer<IncomeProvider>(
+                      builder: (context, provider, _) {
+                        return Text(
+                          '৳ ${provider.totalAmount.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -630,7 +654,8 @@ class _IncomeEditState extends State<IncomeEdit> {
                       return;
                     }
 
-                    const date = "2025-06-10";
+                    final date = billDate;
+
                     final receivedTo =
                         (selectedReceivedTo ?? '').toLowerCase().trim() ==
                                 'cash in hand'
@@ -653,23 +678,14 @@ class _IncomeEditState extends State<IncomeEdit> {
                     const notes = 'text';
                     const status = 1;
 
-                    final totalAmount =
-                        providerIncome.receiptItems.fold<double>(
-                      0,
-                      (sum, item) =>
-                          sum + (double.tryParse(item.amount.toString()) ?? 0),
-                    );
+                    // final totalAmount =
+                    //     providerIncome.receiptItems.fold<double>(
+                    //   0,
+                    //   (sum, item) =>
+                    //       sum + (double.tryParse(item.amount.toString()) ?? 0),
+                    // );
 
-                    final List<IncomeItem> incomeItems =
-                        providerIncome.receiptItems.map((item) {
-                      return IncomeItem(
-                        accountId: providerIncome.selectedAccountForUpdate?.id
-                                .toString() ??
-                            '',
-                        narration: item.note,
-                        amount: item.amount.toString(),
-                      );
-                    }).toList();
+                    final totalAmount = provider.totalAmount.toStringAsFixed(2);
 
                     debugPrint('Sending Income Update Data:');
                     debugPrint('User ID: $userId');
@@ -681,8 +697,44 @@ class _IncomeEditState extends State<IncomeEdit> {
                     debugPrint('Total Amount: $totalAmount');
                     debugPrint('Notes: $notes');
                     debugPrint('Status: $status');
-                    debugPrint(
-                        'Income Items: ${incomeItems.map((e) => e.toJson()).toList()}');
+                    // debugPrint(
+                    //     'Income Items: ${incomeItems.map((e) => e.toJson()).toList()}');
+
+                    // final List<IncomeItem> incomeItems =
+                    //     provider.receiptItems.map((item) {
+                    //   return IncomeItem(
+                    //     accountId: item.accountId!,
+                    //     narration: item.note,
+                    //     amount: item.amount.toString(),
+                    //   );
+                    // }).toList();
+                    
+
+                    ///working but new item showing 2 times.
+                    // Combine old editIncomeItems and new receiptItems into one list of IncomeItem
+                    // final List<IncomeItem> incomeItems = [
+                    //   // Map old items from editIncomeItems
+                    //   ...providerIncome.editIncomeItems
+                    //       .map((item) => IncomeItem(
+                    //             accountId: item.purchaseId.toString(),
+                    //             narration: item.note,
+                    //             amount: item.amount.toString(),
+                    //           )),
+                    //   // Map newly added receiptItems
+                    //   ...providerIncome.receiptItems.map((item) => IncomeItem(
+                    //         accountId: item.accountId!,
+                    //         narration: item.note,
+                    //         amount: item.amount.toString(),
+                    //       )),
+                    // ];
+
+                    final List<IncomeItem> incomeItems = provider.editIncomeItems.map((item) {
+  return IncomeItem(
+    accountId: item.purchaseId.toString(), // or correct field mapping
+    narration: item.note,
+    amount: item.amount.toString(),
+  );
+}).toList();
 
                     bool success = await providerIncome.updateIncome(
                       incomeId: incomeId,
@@ -693,7 +745,6 @@ class _IncomeEditState extends State<IncomeEdit> {
                       account: account,
                       totalAmount: totalAmount,
                       notes: notes,
-                      status: status,
                       incomeItems: incomeItems,
                     );
 
@@ -708,7 +759,7 @@ class _IncomeEditState extends State<IncomeEdit> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                const Income()), // Replace with your income page
+                                const HomeView()), // Replace with your income page
                         (Route<dynamic> route) => false,
                       );
                     } else {
@@ -732,307 +783,7 @@ class _IncomeEditState extends State<IncomeEdit> {
     );
   }
 
-  ////expense item create=====>
-  ///
-  void showExpenseCreateDialog(
-    BuildContext context,
-    ExpenseProvider provider,
-  ) async {
-    await provider.fetchPaidFormList();
-
-    // ✅ Move variables OUTSIDE StatefulBuilder
-    TextEditingController amountController = TextEditingController();
-    TextEditingController noteController = TextEditingController();
-    String? selectedPaidTo;
-    PaidFormData? selectedPaidForm;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Dialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.all(6.0),
-                color: Colors.white,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 30,
-                      color: const Color(0xff278d46),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(width: 30),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(width: 5),
-                              Text(
-                                "Paid To",
-                                style: TextStyle(
-                                    color: Colors.yellow,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.grey.shade100,
-                                child: const Icon(Icons.close,
-                                    size: 18, color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      height: 30,
-                      child: provider.isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : CustomDropdownTwo(
-                              hint: '',
-                              items: provider.paidFormList
-                                  .map((e) => e.accountName)
-                                  .toList(),
-                              width: double.infinity,
-                              height: 30,
-                              labelText: 'Paid To',
-                              selectedItem: selectedPaidTo,
-                              onChanged: (selectedItem) {
-                                debugPrint('Selected Paid To: $selectedItem');
-
-                                final matchedAccount = provider.paidFormList
-                                    .firstWhere((element) =>
-                                        element.accountName == selectedItem);
-
-                                setState(() {
-                                  selectedPaidTo = selectedItem;
-                                  selectedPaidForm =
-                                      matchedAccount; // ✅ Track object correctly
-                                });
-                              },
-                            ),
-                    ),
-                    AddSalesFormfield(
-                      label: "",
-                      labelText: "Amount",
-                      controller: amountController,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {},
-                    ),
-                    AddSalesFormfield(
-                      label: "",
-                      labelText: "Note",
-                      controller: noteController,
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) {},
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // TextButton(
-                        //   onPressed: () {},
-                        //   child: const Text('Add & New'),
-                        // ),
-                        TextButton(
-                          onPressed: () {
-                            if (selectedPaidForm != null &&
-                                amountController.text.isNotEmpty) {
-                              provider.addReceiptItem(
-                                ExpenseItem(
-                                  purchaseId: selectedPaidForm!.id,
-                                  receiptFrom: selectedPaidTo!,
-                                  note: noteController.text,
-                                  amount:
-                                      double.tryParse(amountController.text) ??
-                                          0.0,
-                                ),
-                              );
-                              amountController.clear();
-                              noteController.clear();
-                              Navigator.of(context).pop();
-                            } else {
-                              // ✅ Optional: Show warning if not selected
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Please select Paid To'),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text('Add'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  ////expenseItem update
-
-  void showExpenseUpdateDialog(
-    BuildContext context,
-    ExpenseProvider provider,
-    ExpenseItem item, // ✅ Pass the selected item
-  ) async {
-    await provider
-        .fetchPaidFormList(); // ✅ Fetch API data before showing dialog
-
-    TextEditingController amountController =
-        TextEditingController(text: item.amount.toString());
-    TextEditingController noteController =
-        TextEditingController(text: item.note);
-    //String? selectedPaidTo = item.purchaseId.toString(); // ✅ Preselect existing item value
-
-    /// ✅ Preselect account_name instead of ID
-    String? selectedPaidTo = provider.getAccountNameById(item.purchaseId);
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Dialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.all(6.0),
-                color: Colors.white,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 30,
-                      color: const Color(0xff278d46),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(width: 30),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(width: 5),
-                              Text(
-                                "Update Paid Form",
-                                style: TextStyle(
-                                  color: Colors.yellow,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.grey.shade100,
-                                child: const Icon(Icons.close,
-                                    size: 18, color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      height: 30,
-                      child: provider.isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : CustomDropdownTwo(
-                              hint: '',
-                              items: provider.paidFormList
-                                  .map((e) => e.accountName)
-                                  .toList(),
-                              width: double.infinity,
-                              height: 30,
-                              labelText: 'Paid To',
-                              selectedItem: selectedPaidTo,
-                              onChanged: (selectedItem) {
-                                debugPrint('Selected Paid To: $selectedItem');
-                                setState(() {
-                                  selectedPaidTo = selectedItem;
-                                  // providerIncome
-                                  //     .setSelectedReceivedFormForUpdate(
-                                  //         matchedAccount);
-                                });
-                              },
-                            ),
-                    ),
-                    AddSalesFormfield(
-                      label: "",
-                      labelText: "Amount",
-                      controller: amountController,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {},
-                    ),
-                    AddSalesFormfield(
-                      label: "",
-                      labelText: "Note",
-                      controller: noteController,
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) {},
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            if (selectedPaidTo != null &&
-                                amountController.text.isNotEmpty) {
-                              // ✅ Update the item values
-                              item.receiptFrom = selectedPaidTo!;
-                              item.note = noteController.text;
-                              item.amount =
-                                  double.tryParse(amountController.text) ?? 0.0;
-
-                              provider.notifyListeners(); // ✅ Refresh UI
-                              Navigator.of(context).pop();
-
-                              // Optional: Show a success message
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Expense item updated successfully')),
-                              );
-                            }
-                          },
-                          child: const Text('Update'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
+  ///income create.
   void showIncomeCreateDialog(
     BuildContext context,
     IncomeProvider provider,
@@ -1140,34 +891,36 @@ class _IncomeEditState extends State<IncomeEdit> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (selectedReceiptFrom != null &&
                                 amountController.text.isNotEmpty) {
-                              provider.addReceiptItem(ReceiptItem(
+                              // ✅ Get purchaseId mapped to receiptFrom
+                              int selectedReceiptId = provider
+                                      .receiptFromMap[selectedReceiptFrom!] ??
+                                  0;
+
+                              // ✅ Add ReceiptItem with accountId
+                              final newItem = ReceiptItem(
                                 receiptFrom: selectedReceiptFrom!,
                                 amount: amountController.text,
                                 note: noteController.text,
-                              ));
-                              amountController.clear();
-                              noteController.clear();
-                              setState(() {
-                                selectedReceiptFrom = null;
-                              });
-                            }
-                          },
-                          child: const Text('Add & New'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            if (selectedReceiptFrom != null &&
-                                amountController.text.isNotEmpty) {
-                              provider.addReceiptItem(ReceiptItem(
+                                accountId:
+                                    selectedReceiptId.toString(), // 👈 HERE
+                              );
+
+                              provider.addReceiptItem(newItem);
+
+                              // ✅ Add to editIncomeItems too
+                              provider.editIncomeItems.add(EditIncomeItem(
+                                purchaseId: selectedReceiptId,
                                 receiptFrom: selectedReceiptFrom!,
-                                amount: amountController.text,
+                                amount: int.parse(amountController.text),
                                 note: noteController.text,
                               ));
+
+                              Navigator.of(context).pop();
+                              provider.notifyListeners();
                             }
-                            Navigator.of(context).pop();
                           },
                           child: const Text('Add'),
                         ),
@@ -1178,6 +931,189 @@ class _IncomeEditState extends State<IncomeEdit> {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  // ////incomeItem update
+
+  void showIncomeUpdateDialog(
+    BuildContext context,
+    IncomeProvider provider,
+    EditIncomeItem item, // ✅ Pass the selected item
+  ) async {
+    await provider
+        .fetchReceiptFromList(); // ✅ Fetch API data before showing dialog
+
+    TextEditingController amountController =
+        TextEditingController(text: item.amount.toString());
+    TextEditingController noteController =
+        TextEditingController(text: item.note);
+    //String? selectedPaidTo = item.purchaseId.toString(); // ✅ Preselect existing item value
+
+    /// ✅ Preselect account_name instead of ID
+    String? selectedPaidTo = provider.getAccountNameById(item.purchaseId);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              insetPadding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.all(6.0),
+                color: Colors.white,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 30,
+                      color: const Color(0xff278d46),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(width: 30),
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(width: 5),
+                              Text(
+                                "Update Paid Form",
+                                style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.grey.shade100,
+                                child: const Icon(Icons.close,
+                                    size: 18, color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      height: 30,
+                      child: provider.isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : CustomDropdownTwo(
+                              hint: '',
+                              items: provider.receiveFormList
+                                  .map((e) => e.accountName)
+                                  .toList(),
+                              width: double.infinity,
+                              height: 30,
+                              labelText: 'Paid To',
+                              selectedItem: selectedPaidTo,
+                              onChanged: (selectedItem) {
+                                debugPrint('Selected Paid To: $selectedItem');
+                                setState(() {
+                                  selectedPaidTo = selectedItem;
+                                  // providerIncome
+                                  //     .setSelectedReceivedFormForUpdate(
+                                  //         matchedAccount);
+                                });
+                              },
+                            ),
+                    ),
+                    AddSalesFormfield(
+                      label: "",
+                      labelText: "Amount",
+                      controller: amountController,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {},
+                    ),
+                    AddSalesFormfield(
+                      label: "",
+                      labelText: "Note",
+                      controller: noteController,
+                      keyboardType: TextInputType.text,
+                      onChanged: (value) {},
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            if (selectedPaidTo != null &&
+                                amountController.text.isNotEmpty) {
+                              // ✅ Update the item values
+                              item.receiptFrom = selectedPaidTo!;
+                              item.note = noteController.text;
+                              item.amount =
+                                  double.tryParse(amountController.text) ?? 0.0;
+
+                              provider.notifyListeners(); // ✅ Refresh UI
+                              Navigator.of(context).pop();
+
+                              // Optional: Show a success message
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    backgroundColor: Colors.green,
+                                    content: Text(
+                                        'Successfully,Expense item updated.')),
+                              );
+                            }
+                          },
+                          child: const Text('Update'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void confirmDeleteItem(
+      BuildContext context, IncomeProvider provider, EditIncomeItem item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Delete Confirmation"),
+          content: const Text(
+            "Are you sure you want to del ete this item?",
+            style: TextStyle(color: Colors.black),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                provider.editIncomeItems.remove(item); // Delete item
+                provider.notifyListeners(); // Refresh UI if needed
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text(
+                "Delete",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
         );
       },
     );

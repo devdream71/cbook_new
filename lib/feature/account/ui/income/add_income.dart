@@ -795,6 +795,7 @@ class _IncomeCreateState extends State<IncomeCreate> {
                             if (selectedReceiptFrom != null &&
                                 amountController.text.isNotEmpty) {
                               provider.addReceiptItem(ReceiptItem(
+                                
                                 receiptFrom: selectedReceiptFrom!,
                                 amount: amountController.text,
                                 note: noteController.text,

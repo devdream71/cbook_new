@@ -511,15 +511,7 @@ class _ExpenseEditState extends State<ExpenseEdit> {
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                // Text(
-                                //   item.purchaseId.toString(),
-                                //   style: const TextStyle(
-                                //     fontWeight: FontWeight.bold,
-                                //     fontSize: 14,
-                                //     color: Colors.black,
-                                //   ),
-                                //   textAlign: TextAlign.center,
-                                // ),
+                                
                                 const SizedBox(height: 1),
                                 Text(
                                   (item.note ?? ''),

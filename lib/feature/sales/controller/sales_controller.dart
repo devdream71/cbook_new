@@ -219,6 +219,8 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+
   // double get taxAmount2 {
   //   double subtotal = double.tryParse(addAmount2()) ?? 0.0;
   //   return (subtotal * (_taxPercent / 100));

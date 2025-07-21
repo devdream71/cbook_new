@@ -1,7 +1,10 @@
 // income_provider.dart
 import 'dart:convert';
 import 'package:cbook_dt/feature/account/ui/expense/model/income_edit_model.dart';
+import 'package:cbook_dt/feature/account/ui/expense/model/receive_from_model.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/account_model.dart';
+import 'package:cbook_dt/feature/account/ui/income/model/edit_income_item.dart';
+import 'package:cbook_dt/feature/account/ui/income/model/income_edit_model.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_list_model.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/recived_form_model.dart';
@@ -17,6 +20,8 @@ class IncomeProvider with ChangeNotifier {
   List<String> accountNames = [];
   bool isAccountLoading = false;
 
+  Map<String, int> receiptFromMap = {};
+
   // Receipt From API
   ReceiptFromModel? receiptFromModel;
   List<String> receiptFromNames = [];
@@ -26,6 +31,12 @@ class IncomeProvider with ChangeNotifier {
 
   void addReceiptItem(ReceiptItem item) {
     receiptItems.add(item);
+
+    // If it's a new "receiptFrom", add it to the list
+    if (!receiptFromNames.contains(item.receiptFrom)) {
+      receiptFromNames.add(item.receiptFrom);
+    }
+
     notifyListeners();
   }
 
@@ -34,13 +45,11 @@ class IncomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // AccountData? selectedAccountForUpdate;
-
-  // Method to set selected account for update
-  // void setSelectedAccountForUpdate(AccountData? account) {
-  //   selectedAccountForUpdate = account;
-  //   notifyListeners();
-  // }
+  double get totalAmount {
+    return editIncomeItems.fold(0.0, (sum, item) {
+      return sum + (item.amount.toDouble());
+    });
+  }
 
   // Add this property for selected account during updates
   AccountData? selectedAccountForUpdate;
@@ -79,6 +88,13 @@ class IncomeProvider with ChangeNotifier {
         receiptFromModel = ReceiptFromModel.fromJson(data);
         receiptFromNames =
             receiptFromModel!.data.map((e) => e.accountName).toList();
+
+        // Populate map here
+        receiptFromMap = {
+          for (var e in receiptFromModel!.data) e.accountName: e.id,
+        };
+
+        debugPrint('Receipt From Map: $receiptFromMap');
 
         debugPrint('Fetched Receipt From Names: $receiptFromNames');
       } else {
@@ -220,7 +236,6 @@ class IncomeProvider with ChangeNotifier {
     debugPrint(url.toString());
     debugPrint(body.toString());
 
-
     try {
       final response = await http.post(
         url,
@@ -230,7 +245,7 @@ class IncomeProvider with ChangeNotifier {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 200 ) {
+      if (response.statusCode == 200) {
         // You can parse the response if needed
         return true;
       } else {
@@ -243,41 +258,10 @@ class IncomeProvider with ChangeNotifier {
     }
   }
 
-    ///expense update
+  ///edit data
+
+  ///income update
   IncomeEditModel? editIncomeData;
-
-  ///expense update
-  // Future<void> fetchEditExpense(String id) async {
-  //   isLoading = true;
-  //   notifyListeners();
-
-  //   try {
-  //     final response = await http
-  //         .get(Uri.parse('https://commercebook.site/api/v1/income/edit/$id'));
-
-  //     if (response.statusCode == 200) {
-  //       final result = json.decode(response.body);
-  //       editIncomeData = IncomeEditModel.fromJson(result['data']);
-
-  //       // Map API voucher details to receiptItems for showing in UI
-  //       receiptItems = editIncomeData!.voucherDetails.map((detail) {
-  //         return ExpenseItem(
-  //           purchaseId: detail.purchaseId,
-  //           receiptFrom: editIncomeData!.paidTo,
-  //           note: detail.narration,
-  //           amount: detail.amount,
-  //         );
-  //       }).toList();
-  //     } else {
-  //       debugPrint('Failed to load expense edit data');
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error fetching expense edit data: $e');
-  //   }
-
-  //   isLoading = false;
-  //   notifyListeners();
-  // }
 
   ///update income.
   Future<bool> updateIncome({
@@ -287,13 +271,13 @@ class IncomeProvider with ChangeNotifier {
     required String date,
     required String receivedTo,
     required String account,
-    required double totalAmount,
+    required dynamic totalAmount,
     required String notes,
-    required int status,
+    //required int status,
     required List<IncomeItem> incomeItems,
   }) async {
     final url = Uri.parse('https://commercebook.site/api/v1/income/update?'
-        'id=$incomeId&user_id=$userId&invoice_no=$invoiceNo&date=$date&received_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status');
+        'id=$incomeId&user_id=$userId&invoice_no=$invoiceNo&date=$date&received_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes');
 
     final body = IncomeStoreRequest(incomeItems: incomeItems).toJson();
 
@@ -313,7 +297,7 @@ class IncomeProvider with ChangeNotifier {
       debugPrint('Response Status Code: ${response.statusCode}');
       debugPrint('Response Body: ${response.body}');
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200) {
         debugPrint('✅ Income updated successfully');
         return true;
       } else {
@@ -323,6 +307,84 @@ class IncomeProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('❌ Error updating income: $e');
       return false;
+    }
+  }
+
+  ////edit income by id
+  List<EditIncomeItem> editIncomeItems =
+      []; // This avoids the receiptItems conflict
+  IncomeVoucherData? editIncomeDataItem;
+
+  Future<void> fetchEditExpense(String id) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.get(
+        Uri.parse('https://commercebook.site/api/v1/income/edit/$id'),
+      );
+
+      if (response.statusCode == 200) {
+        final result = json.decode(response.body);
+        final responseModel = EditIncomeVoucherResponse.fromJson(result);
+        editIncomeDataItem = responseModel.data;
+
+        if (editIncomeDataItem != null) {
+          // Use a separate list
+          editIncomeItems = editIncomeDataItem!.voucherDetails.map((detail) {
+            return EditIncomeItem(
+              purchaseId: detail.purchaseId,
+              receiptFrom: editIncomeDataItem!.receivedTo,
+              note: detail.narration,
+              amount: detail.amount,
+            );
+          }).toList();
+        }
+      } else {
+        debugPrint('Failed to load expense edit data: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching expense edit data: $e');
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  // ✅ API Fetch Method ///expense Paid From list
+
+  List<ReceiveFromItem> receiveFormList = []; // ✅ Fixed
+
+  Future<void> fetchReceiveFormList() async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await http.get(Uri.parse(
+          'https://commercebook.site/api/v1/income/receive/form/list'));
+
+      if (response.statusCode == 200) {
+        final result = ReceiveFromModel.fromJson(json.decode(response.body));
+        receiveFormList = result.data; // ✅ Now this works correctly
+      } else {
+        debugPrint('Failed to load receive form list');
+      }
+    } catch (e) {
+      debugPrint('Error fetching receive form list: $e');
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  ///getting expemse paid form list
+  String getAccountNameById(int id) {
+    try {
+      return receiveFormList
+          .firstWhere((element) => element.id == id)
+          .accountName;
+    } catch (e) {
+      return 'Unknown'; // fallback if ID not found
     }
   }
 }
