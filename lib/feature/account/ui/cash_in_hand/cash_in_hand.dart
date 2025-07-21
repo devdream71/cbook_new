@@ -1,4 +1,6 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
+import 'package:cbook_dt/feature/account/ui/account_type/account_type_create.dart';
+import 'package:cbook_dt/feature/account/ui/adjust_cash/adjust_cash_create.dart';
 import 'package:cbook_dt/feature/account/ui/cash_in_hand/provider/cash_in_hand.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,7 +29,7 @@ class _CashInHandState extends State<CashInHand> {
         backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
-          centerTitle: true,
+          //centerTitle: true,
           title: const Text(
             'Cash in hand',
             style: TextStyle(
@@ -37,15 +39,66 @@ class _CashInHandState extends State<CashInHand> {
           ),
           iconTheme: const IconThemeData(color: Colors.white),
           automaticallyImplyLeading: true,
+          actions: [
+            Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AdjustCashCreate()));
+                  },
+                  child: const Text(
+                    'Adjust Cash',
+                    style: TextStyle(color: Colors.yellow, fontSize: 15),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AccountTypeCreate()));
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.only(right: 8.0),
+                    child: Row(
+                      children: [
+                        // CircleAvatar(
+                        //     radius: 10,
+                        //     backgroundColor: Colors.white,
+                        //     child: Icon(
+                        //       Icons.add,
+                        //       size: 20,
+                        //       color: Colors.green,
+                        //     )),
+
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'Add New',
+                          style: TextStyle(color: Colors.yellow, fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        body: Consumer<CashInHandProvider>(
+        body: 
+        
+        Consumer<CashInHandProvider>(
           builder: (context, provider, child) {
             if (provider.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
 
             final dataList = provider.cashInHandModel?.data ?? [];
-            
+
             if (dataList.isEmpty) {
               return const Center(child: Text("No Data Found"));
             }
@@ -56,8 +109,7 @@ class _CashInHandState extends State<CashInHand> {
                 final item = dataList[index];
                 return Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(2)
-                  ),
+                      borderRadius: BorderRadius.circular(2)),
                   margin:
                       const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   child: Padding(
@@ -286,9 +338,6 @@ class _CashInHandState extends State<CashInHand> {
       ),
     );
   }
-
-
-
 }
 
 

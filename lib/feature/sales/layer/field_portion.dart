@@ -72,7 +72,7 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-    
+
         /////====> cash discount and percentance.
         controller.isDisocunt &&
                 controller.isCash //controller.isDisocunt == true
@@ -126,11 +126,11 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-    
+
         // const SizedBox(
         //   height: 5,
         // ),
-    
+
         // //cash ////tax and percentace
         controller.isVatTax && controller.isCash
             ? Padding(
@@ -150,7 +150,7 @@ class _FieldPortionState extends State<FieldPortion> {
                                 child:
                                     SizedBox()); //CircularProgressIndicator()
                           }
-    
+
                           if (taxProvider.taxList.isEmpty) {
                             return const Center(
                               child: Text(
@@ -168,78 +168,77 @@ class _FieldPortionState extends State<FieldPortion> {
                                 CustomDropdownTwo(
                                   hint: '', //Select VAT/TAX
                                   items: taxProvider.taxList
-                                      .map((tax) =>
-                                          tax.percent) //${tax.name} -
+                                      .map((tax) => tax.percent) //${tax.name} -
                                       .toList(),
-    
+
                                   width: double.infinity,
                                   height: 30,
                                   selectedItem: selectedTaxName,
-    
+
                                   onChanged: (newValue) {
+                                    setState(() {
+                                      selectedTaxName = newValue;
+
+                                      final nameOnly =
+                                          newValue?.split(" - ").first;
+
+                                      final selected =
+                                          taxProvider.taxList.firstWhere(
+                                        (tax) => tax.name == nameOnly,
+                                        orElse: () => taxProvider.taxList.first,
+                                      );
+
+                                      selectedTaxId = selected.id.toString();
+
+                                      controller.selectedTaxPercent =
+                                          double.tryParse(selected.percent);
+
+                                      controller.taxPercent =
+                                          controller.selectedTaxPercent ?? 0.0;
+
+                                      controller.selectedTaxId =
+                                          selected.id.toString();
+                                      controller.selectedTaxPercent =
+                                          double.tryParse(selected.percent);
+
+                                      // controller.updateTaxPaecentId(
+                                      //     '${selectedTaxId}_${controller.selectedTaxPercent}');
+                                       
+
+                                       /// ✅ Add these lines for calculation:
+                                      controller.calculateTaxCash();
+                                      controller.calculateTotalCash();
 
 
-                                     setState(() {
-                                                selectedTaxName = newValue;
+                                      final taxPercent =
+                                          (controller.selectedTaxPercent ?? 0)
+                                              .toStringAsFixed(0);
+                                      controller.updateTaxPaecentId(
+                                          '${selectedTaxId}_$taxPercent');
 
-                                                final nameOnly = newValue
-                                                    ?.split(" - ")
-                                                    .first;
-
-                                                final selected = taxProvider
-                                                    .taxList
-                                                    .firstWhere(
-                                                  (tax) => tax.name == nameOnly,
-                                                  orElse: () =>
-                                                      taxProvider.taxList.first,
-                                                );
-
-                                                selectedTaxId =
-                                                    selected.id.toString();
-
-                                                controller.selectedTaxPercent =
-                                                    double.tryParse(
-                                                        selected.percent);
-
-                                                controller
-                                                    .taxPercent = controller
-                                                        .selectedTaxPercent ??
-                                                    0.0;
-
-                                                controller.selectedTaxId =
-                                                    selected.id.toString();
-                                                controller.selectedTaxPercent =
-                                                    double.tryParse(
-                                                        selected.percent);
-
-                                                // controller.updateTaxPaecentId(
-                                                //     '${selectedTaxId}_${controller.selectedTaxPercent}');
-
-                                                final taxPercent = (controller
-                                                            .selectedTaxPercent ??
-                                                        0)
-                                                    .toStringAsFixed(0);
-                                                controller.updateTaxPaecentId(
-                                                    '${selectedTaxId}_$taxPercent');
-
-                                                debugPrint(
-                                                    'tax_percent: "${controller.taxPercentValue}"');
-                                                debugPrint(
-                                                    "Selected Tax ID: $selectedTaxId");
-                                                debugPrint(
-                                                    "Selected Tax Percent: ${controller.selectedTaxPercent}");
-                                    
+                                      debugPrint(
+                                          'tax_percent: "${controller.taxPercentValue}"');
+                                      debugPrint(
+                                          "Selected Tax ID: $selectedTaxId");
+                                      debugPrint(
+                                          "Selected Tax Percent: ${controller.selectedTaxPercent}");
+                                      
+                                      controller.selectTotalTaxDropdown(
+                                          double.parse(controller.totalAmount),
+                                          newValue);
+                                      
                                     });
                                   },
-                                ),
+                                ), 
                               ],
                             ),
                           );
                         },
                       ),
                     ),
+
                     const SizedBox(width: 3),
-    
+
                     ///tax/vat amount ==>
                     Consumer<SalesController>(
                       builder: (context, controller, _) {
@@ -265,8 +264,7 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-          
-    
+
         // ///cash /// adjust total
         controller.isDisocunt && controller.isCash
             ? Padding(
@@ -279,7 +277,7 @@ class _FieldPortionState extends State<FieldPortion> {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           totalAmountController.text = controller.totalAmount;
                         });
-    
+
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -303,8 +301,7 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-    
-         
+
         // //==cash ///recived
         controller.isReciptType && controller.isCash
             ? Padding(
@@ -365,9 +362,9 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-    
+
         // hPad10,
-           ////===================///////////
+        ////===================///////////
         ////====> credit amount <<<============
         controller.isCash == false && controller.isPreviousRecipt == true
             ? Padding(
@@ -389,22 +386,21 @@ class _FieldPortionState extends State<FieldPortion> {
                           controller.amountController.text =
                               controller.addAmount();
                         },
-                        controller: TextEditingController(
-                            text: controller.addAmount()),
+                        controller:
+                            TextEditingController(text: controller.addAmount()),
                       ),
                     ),
                   ],
                 ),
               )
             : const SizedBox.shrink(),
-    
+
         ////==============================================>>> credit
-    
+
         // controller.isCash == false ? vPad5 : const SizedBox.shrink(),
-    
+
         // /////credit discount <==============
 
-        
         controller.isCash == false && controller.isDisocunt == true
             ? Padding(
                 padding: const EdgeInsets.only(bottom: 2.0),
@@ -453,11 +449,11 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-    
+
         // const SizedBox(
         //   height: 5,
         // ),
-    
+
         // //controller.isVatTax && controller.isCash
         controller.isCash == false && controller.isVatTax
             ? Padding(
@@ -476,7 +472,7 @@ class _FieldPortionState extends State<FieldPortion> {
                                 child:
                                     SizedBox()); //CircularProgressIndicator()
                           }
-    
+
                           if (taxProvider.taxList.isEmpty) {
                             return const Center(
                               child: Text(
@@ -494,50 +490,47 @@ class _FieldPortionState extends State<FieldPortion> {
                                 CustomDropdownTwo(
                                   hint: '', //Select VAT/TAX
                                   items: taxProvider.taxList
-                                      .map((tax) =>
-                                          tax.percent) //${tax.name} -
+                                      .map((tax) => tax.percent) //${tax.name} -
                                       .toList(),
-    
+
                                   width: double.infinity,
                                   height: 30,
                                   selectedItem: selectedTaxName,
-    
+
                                   onChanged: (newValue) {
                                     debugPrint(
                                         "Selected raw value from dropdown: $newValue");
                                     setState(() {
                                       selectedTaxName = newValue;
-    
+
                                       // Find tax by percent
                                       final selected =
                                           taxProvider.taxList.firstWhere(
                                         (tax) => tax.percent == newValue,
-                                        orElse: () =>
-                                            taxProvider.taxList.first,
+                                        orElse: () => taxProvider.taxList.first,
                                       );
-    
+
                                       // Store ID and Percent
                                       controller.selectedTotalTaxId =
                                           selected.id.toString();
                                       controller.selectedTotalTaxPercent =
                                           double.tryParse(selected.percent)!;
-    
+
                                       // Calculate tax/total
                                       controller.taxPercent =
                                           controller.selectedTotalTaxPercent;
                                       controller.calculateTax();
                                       controller.calculateTotal();
-    
+
                                       // Print required format: tax_percent: "3_12.0"
-    
+
                                       controller.updateTotalTaxId(
                                           '${controller.selectedTotalTaxId}_${controller.selectedTotalTaxPercent}');
                                       debugPrint(
                                           'tax_percent: "${controller.taxPercentValue}"'); // ✅ This is what you want
-    
+
                                       controller.selectTotalCreditTaxDropdown(
-                                          double.parse(
-                                              controller.totalAmount2),
+                                          double.parse(controller.totalAmount2),
                                           newValue);
                                     });
                                   },
@@ -549,7 +542,7 @@ class _FieldPortionState extends State<FieldPortion> {
                       ),
                     ),
                     const SizedBox(width: 3),
-    
+
                     ///tax/vat amount ==>
                     Consumer<SalesController>(
                       builder: (context, controller, _) {
@@ -557,7 +550,7 @@ class _FieldPortionState extends State<FieldPortion> {
                           taxAmountController.text =
                               controller.taxAmount.toStringAsFixed(2);
                         });
-    
+
                         return SizedBox(
                           width: 80,
                           child: AddSalesFormfield(
@@ -576,11 +569,11 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-    
+
         // const SizedBox(
         //   height: 5,
         // ),
-    
+
         // ////====>>> credit adjust toatl <<<<=======
         controller.isCash == false && controller.isBillTotal == true
             ? Padding(
@@ -591,10 +584,9 @@ class _FieldPortionState extends State<FieldPortion> {
                     Consumer<SalesController>(
                       builder: (context, controller, _) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                          totalAmountController.text =
-                              controller.totalAmount2;
+                          totalAmountController.text = controller.totalAmount2;
                         });
-    
+
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -618,11 +610,11 @@ class _FieldPortionState extends State<FieldPortion> {
                 ),
               )
             : const SizedBox.shrink(),
-    
+
         // const SizedBox(
         //   height: 5,
         // ),
-    
+
         // ///credit recived //// need wo
         controller.isCash == false && controller.isReturn == true
             ? Padding(
@@ -660,7 +652,7 @@ class _FieldPortionState extends State<FieldPortion> {
                             ///////======////// need to work.
                             readOnly: controller
                                 .isOnlineMoneyChecked, // ✅ Read-only when checked
-    
+
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
                               if (!controller.isOnlineMoneyChecked) {

@@ -91,49 +91,7 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
 
                   const SizedBox(height: 10),
 
-// 👇 Conditionally show these fields only when 'Bank' is selected
-                  // if (selectedAccountType?.toLowerCase() == 'bank') ...[
-                  //   Padding(
-                  //     padding: const EdgeInsets.only(left: 16.0, right: 16),
-                  //     child: AddSalesFormfield(
-                  //       height: 40,
-                  //       labelText: "Account Holder Name",
-                  //       controller: controller.accountHolderNameController,
-                  //     ),
-                  //   ),
-                  //   const SizedBox(height: 10),
-                  //   Padding(
-                  //     padding: const EdgeInsets.only(left: 16.0, right: 16),
-                  //     child: AddSalesFormfield(
-                  //       height: 40,
-                  //       labelText: "Account No",
-                  //       controller: controller.accountNoController,
-                  //     ),
-                  //   ),
-                  //   const SizedBox(height: 10),
-                  //   Padding(
-                  //     padding: const EdgeInsets.only(left: 16.0, right: 16),
-                  //     child: AddSalesFormfield(
-                  //       height: 40,
-                  //       labelText: "Routing/IFSC Number",
-                  //       controller: controller.routingNumberController,
-                  //     ),
-                  //   ),
-                  //   const SizedBox(height: 10),
-                  //   Padding(
-                  //     padding: const EdgeInsets.only(left: 16.0, right: 16),
-                  //     child: AddSalesFormfield(
-                  //       height: 40,
-                  //       labelText: "Bank Location",
-                  //       controller: controller.bankLocationController,
-                  //     ),
-                  //   ),
-                  //   const SizedBox(height: 10),
-                  // ],
 
-                  // const SizedBox(
-                  //   height: 10,
-                  // ),
                   AddSalesFormfield(
                     height: 40,
                     labelText: "Account Balance",
@@ -142,33 +100,7 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
                   const SizedBox(
                     height: 10,
                   ),
-                  // SizedBox(
-                  //   height: 40,
-                  //   width: double.infinity,
-                  //   child: CustomDropdownTwo(
-                  //     hint: '',
-                  //     items: itemList,
-                  //     width: double.infinity,
-                  //     height: 40,
-                  //     labelText: 'Account Type',
-                  //     selectedItem: selectedAccountType,
-                  //     onChanged: (value) async {
-                  //       setState(() {
-                  //         selectedAccountType = value;
-                  //         selectedAccount = null; // reset account selection
-
-                  //         debugPrint(
-                  //             "selectedAccountType  ${selectedAccountType}");
-                  //       });
-                  //     },
-                  //   ),
-                  // ),
-
-                  // 👇 Your existing dropdown
-
-                  // const SizedBox(
-                  //   height: 10,
-                  // ),
+                 
                   Container(
                     height: 40,
                     width: double.maxFinite,
@@ -322,49 +254,7 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
               width: double.infinity,
               child: ElevatedButton(
                   onPressed: () async {
-                    // SharedPreferences prefs =
-                    //     await SharedPreferences.getInstance();
-                    // String? userId = prefs.getInt('user_id')?.toString();
-
-                    // final provider = Provider.of<AccountTypeProvider>(context,
-                    //     listen: false);
-
-                    // final result = await controller.createAccount(
-                    //   userId: userId.toString(),
-                    //   accountName: controller.accountNameController.text.trim(),
-                    //   accountType: selectedAccountType?.toLowerCase() ?? 'cash',
-                    //   accountGroup:
-                    //       controller.accountGroupController.text.trim(),
-                    //   openingBalance:
-                    //       controller.openBlanceController.text.trim(),
-                    //   date: controller.formattedDate.isNotEmpty
-                    //       ? controller.formattedDate
-                    //       : '2025-07-14',
-                    //   status: selectedStatus,
-                    // );
-
-                    // if (result.success) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(
-                    //     SnackBar(
-                    //         content: Text(result.message),
-                    //         backgroundColor: Colors.green),
-                    //   );
-
-                    //   provider.fetchAccounts();
-
-                    //   Navigator.pop(context);
-
-                    //   controller.accountNameController.clear();
-                    //   controller.accountGroupController.clear();
-                    //   controller.openBlanceController.clear();
-                    // } else {
-                    //   ScaffoldMessenger.of(context).showSnackBar(
-                    //     SnackBar(
-                    //         content: Text(result.message),
-                    //         backgroundColor: Colors.red),
-                    //   );
-                    // }
-
+                     
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     String? userId = prefs.getInt('user_id')?.toString();
