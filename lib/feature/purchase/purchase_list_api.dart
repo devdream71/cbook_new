@@ -18,6 +18,7 @@ class PurchaseListApi extends StatefulWidget {
 
 class _PurchaseListApiState extends State<PurchaseListApi> {
 
+
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
@@ -31,7 +32,8 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
     }
   }
 
-  DateTime selectedStartDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
+  DateTime selectedStartDate =
+      DateTime(DateTime.now().year, DateTime.now().month, 1);
 
   DateTime selectedEndDate = DateTime.now();
 
@@ -45,10 +47,10 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
     }
   }
 
-  final TextEditingController _searchController = TextEditingController();
-
-  bool isSearching = false;
+  TextEditingController _searchController = TextEditingController();
   TextEditingController searchController = TextEditingController();
+  bool isSearching = false;
+  
 
   @override
   void initState() {
@@ -376,8 +378,8 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
 
                       return InkWell(
                         onLongPress: () {
-                          editDeleteDiolog(
-                              context, purchaseId, transactionMethod, paymentStatus);
+                          editDeleteDiolog(context, purchaseId,
+                              transactionMethod, paymentStatus);
                         },
                         onTap: () {
                           Navigator.push(
@@ -485,7 +487,6 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
-                                            
                                             Text(
                                               purchase.paymentStatus == 2
                                                   ? 'Paid'
@@ -504,7 +505,6 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                                         : Colors.red,
                                               ),
                                             ),
-
                                             purchase.transactionMethod!
                                                         .toLowerCase() ==
                                                     'customer'
@@ -557,122 +557,119 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
     );
   }
 
+  Future<dynamic> editDeleteDiolog(
+    BuildContext context,
+    String purchaseId,
+    String transactionMethod,
+    int paymentStatus,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
 
- Future<dynamic> editDeleteDiolog(
-  BuildContext context,
-  String purchaseId,
-  String transactionMethod,
-  int paymentStatus,
-) {
-  final colorScheme = Theme.of(context).colorScheme;
+    // ✅ Only disable if paymentStatus is 1 (partial)
+    final disableActions = paymentStatus == 2;
 
-  // ✅ Only disable if paymentStatus is 1 (partial)
-  final disableActions = paymentStatus == 2;
-
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Select Action',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey, width: 1),
-                        borderRadius: BorderRadius.circular(50),
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Select Action',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
-                      child: Center(
-                        child: Icon(
-                          Icons.close,
-                          size: 20,
-                          color: colorScheme.primary,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: colorScheme.primary,
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 16),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16),
 
-              // ✅ Edit Button
-              InkWell(
-                onTap: disableActions
-                    ? null
-                    : () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PurchaseUpdateScreen(
-                              purchaseId: int.parse(purchaseId),
+                // ✅ Edit Button
+                InkWell(
+                  onTap: disableActions
+                      ? null
+                      : () {
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PurchaseUpdateScreen(
+                                purchaseId: int.parse(purchaseId),
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Text(
-                    'Edit',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: disableActions ? Colors.grey : Colors.blue,
+                          );
+                        },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                      'Edit',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: disableActions ? Colors.grey : Colors.blue,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              // ✅ Delete Button
-              InkWell(
-                onTap: disableActions
-                    ? null
-                    : () {
-                        Navigator.of(context).pop();
-                        _showDeleteDialog(context, purchaseId);
-                      },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Text(
-                    'Delete',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: disableActions ? Colors.grey : Colors.red,
+                // ✅ Delete Button
+                InkWell(
+                  onTap: disableActions
+                      ? null
+                      : () {
+                          Navigator.of(context).pop();
+                          _showDeleteDialog(context, purchaseId);
+                        },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                      'Delete',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: disableActions ? Colors.grey : Colors.red,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
- 
- 
+        );
+      },
+    );
+  }
 
   ////delete recived item from list
   void _showDeleteDialog(BuildContext context, String purchaseId) {
@@ -698,11 +695,23 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.of(context).pop(); // Close dialog first
+              // Navigator.of(context).pop(); // Close dialog first
+
+              final provider =
+                  Provider.of<PurchaseProvider>(context, listen: false);
 
               // ✅ Call delete from Provider
-              await Provider.of<PurchaseProvider>(context, listen: false)
-                  .deletePurchase(context, int.parse(purchaseId));
+              await provider.deletePurchase(int.parse(purchaseId));
+
+              provider.fetchPurchases();
+
+              Navigator.of(context).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text("Successfully!, Purchase voucher Deleted.")),
+              );
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),

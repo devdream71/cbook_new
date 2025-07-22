@@ -23,6 +23,7 @@ class PurchaseProvider with ChangeNotifier {
         var data = json.decode(response.body);
         _purchaseData = PurchaseViewModel.fromJson(data); 
          _filteredData = _purchaseData;
+          notifyListeners();
         debugPrint(data);
         debugPrint(_purchaseData.toString());
       } 
@@ -48,38 +49,61 @@ class PurchaseProvider with ChangeNotifier {
 
 
     /// ✅ Delete purchase method (NEW)
-  Future<void> deletePurchase(BuildContext context, int purchaseId) async {
-    final url = Uri.parse(
-        'https://commercebook.site/api/v1/purchase/remove?id=$purchaseId');
+  // Future<void> deletePurchase( int purchaseId) async {
+  //   final url = Uri.parse(
+  //       'https://commercebook.site/api/v1/purchase/remove?id=$purchaseId');
 
-    try {
-      final response = await http.post(url);
-      if (response.statusCode == 200) {
-        var data = json.decode(response.body);
-        if (data['success'] == true) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-              duration: Duration(seconds: 2),
-              content: Text("Purchase deleted successfully"),
-            ),
-          );
-          await fetchPurchases(); // refresh list
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to delete purchase")),
-          );
-        }
+  //   try {
+  //     final response = await http.post(url);
+  //     if (response.statusCode == 200) {
+  //       var data = json.decode(response.body);
+  //       if (data['success'] == true) {
+          
+  //         await fetchPurchases(); // refresh list
+  //       } else {
+           
+  //       }
+  //     } else {
+  //       throw Exception('Failed to delete purchase');
+  //     }
+  //   } catch (error) {
+      
+  //   }
+
+  //     notifyListeners();
+  // }
+
+
+  Future<void> deletePurchase(int purchaseId) async {
+  final url = Uri.parse(
+      'https://commercebook.site/api/v1/purchase/remove?id=$purchaseId');
+
+  try {
+    final response = await http.post(url);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      if (data['success'] == true) {
+        // ✅ Remove the deleted item locally if _purchaseData is stored
+        _purchaseData?.data?.removeWhere(
+          (item) => item.purchaseDetails?.first.purchaseId == purchaseId,
+        );
+
+        notifyListeners(); // ✅ This updates the UI
+
+        // Optionally refresh from API (optional but slower)
+        // await fetchPurchases();
       } else {
-        throw Exception('Failed to delete purchase');
+        // Handle API response indicating failure
+        debugPrint('Failed to delete: ${data['message']}');
       }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error deleting purchase: $error')),
-      );
+    } else {
+      throw Exception('Failed to delete purchase');
     }
+  } catch (error) {
+    debugPrint('Delete error: $error');
   }
+}
+
 
   List<PurchaseItemModel> _purchaseItems = [];
   List<PurchaseItemModel> get purchaseItems => _purchaseItems;

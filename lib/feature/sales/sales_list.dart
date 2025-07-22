@@ -16,6 +16,8 @@ class SalesScreen extends StatefulWidget {
 }
 
 class _SalesScreenState extends State<SalesScreen> {
+
+
   @override
   void initState() {
     super.initState();
@@ -64,18 +66,21 @@ class _SalesScreenState extends State<SalesScreen> {
   }
 
   final TextEditingController _searchController = TextEditingController();
-
-  bool isSearching = false;
   TextEditingController searchController = TextEditingController();
+   bool isSearching = false;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return ChangeNotifierProvider(
-      create: (_) => SalesProvider()
-        ..fetchSales()
-        ..fetchItems(),
-      builder: (context, child) => Scaffold(
+    return 
+    
+    // ChangeNotifierProvider(
+    //   create: (_) => SalesProvider()
+    //     ..fetchSales()
+    //     ..fetchItems(),
+    //   builder: (context, child) =>
+      
+       Scaffold(
         backgroundColor: AppColors.sfWhite,
         appBar: AppBar(
           title: isSearching
@@ -525,7 +530,6 @@ class _SalesScreenState extends State<SalesScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceAround,
                                           children: [
-                                            
                                             // Payment status and due amount
                                             Column(
                                               crossAxisAlignment:
@@ -582,8 +586,8 @@ class _SalesScreenState extends State<SalesScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
+    //);
   }
 
   ///show edit and delete list from alart diolog
@@ -703,20 +707,23 @@ class _SalesScreenState extends State<SalesScreen> {
           TextButton(
             onPressed: () async {
               // Close dialog after deletion, not before
+
               final provider =
                   Provider.of<SalesProvider>(context, listen: false);
 
               await provider.deleteSale(int.parse(salesID)); // ⬅️ AWAIT this
 
-              provider.fetchSales();
-
-              Navigator.pop(context);
+              await provider.fetchSales();
 
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                     backgroundColor: Colors.green,
-                    content: Text("successfully!, Received voucher Deleted.")),
+                    content: Text("successfully!, Sales voucher Deleted.")),
               );
+
+              //provider.fetchSales();
+
+              Navigator.pop(context);
 
               // ⬅️ Close after update
             },

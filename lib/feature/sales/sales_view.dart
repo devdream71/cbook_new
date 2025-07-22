@@ -81,6 +81,7 @@ class _Layout extends StatefulWidget {
 }
 
 class _LayoutState extends State<_Layout> {
+
   TextEditingController customerNameController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -93,20 +94,12 @@ class _LayoutState extends State<_Layout> {
 
   Customer? selectedCustomerObject;
 
-  // String? selectedCustomer;
-  // int? selectedCategoryId;
   int? selectedSubCategoryId;
 
   String? selectedCustomer;
   String? selectedCustomerId;
 
-  // String? selectedCustomerId;
-
   String? selectedItemNameInvoice;
-
-  // dynamic? qty;
-  // dynamic? unit;
-  // dynamic? price;
 
   List<String> unitIdsList = [];
 

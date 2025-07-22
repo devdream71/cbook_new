@@ -120,6 +120,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
 
     widget.provider.priceController.addListener(calculateSubtotal);
     widget.provider.qtyController.addListener(calculateSubtotal);
+    
     return Scaffold(
       backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
@@ -133,324 +134,321 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ////==>Item
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ////==>Item
 
-            SizedBox(
-              width: double.infinity,
-              child: CustomDropdownTwo(
-                labelText: 'Item',
-                items: widget.itemMap.isNotEmpty
-                    ? widget.itemMap.values.toList()
-                    : ['No Items Available'], // Show a default message if empty
-                hint: selectedItemName ?? 'Select Item', // ✅ Show selected item
-                selectedItem: selectedItemName,
-                width: double.infinity,
-                height: 30,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedItemName = newValue;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(height: 5),
-
-            ///==>Item Stock
-            Consumer<AddItemProvider>(
-              builder: (context, stockProvider, child) {
-                //controller.mrpController.text = stockProvider.stockData!.price.toString();
-                if (stockProvider.stockData != null) {
-                  controller.mrpController.text =
-                      stockProvider.stockData!.price.toString();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Stock Available:  ${stockProvider.stockData!.unitStocks} ৳ ${stockProvider.stockData!.price} ",
-                        //"   Stock Available: ${stockProvider.stockData!.stocks} (${stockProvider.stockData!.unitStocks}) ৳ ${stockProvider.stockData!.price} ",
-
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return const Padding(
-                  padding: EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    "   ", // Updated message for empty stock
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomDropdownTwo(
+                      labelText: 'Item',
+                      items: widget.itemMap.isNotEmpty
+                          ? widget.itemMap.values.toList()
+                          : [
+                              'No Items Available'
+                            ], // Show a default message if empty
+                      hint: selectedItemName ??
+                          'Select Item', // ✅ Show selected item
+                      selectedItem: selectedItemName,
+                      width: double.infinity,
+                      height: 30,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedItemName = newValue;
+                        });
+                      },
                     ),
                   ),
-                );
-              },
-            ),
+                  const SizedBox(height: 5),
 
-            const SizedBox(height: 5),
+                  ///==>Item Stock
+                  Consumer<AddItemProvider>(
+                    builder: (context, stockProvider, child) {
+                      //controller.mrpController.text = stockProvider.stockData!.price.toString();
+                      if (stockProvider.stockData != null) {
+                        controller.mrpController.text =
+                            stockProvider.stockData!.price.toString();
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Stock Available:  ${stockProvider.stockData!.unitStocks} ৳ ${stockProvider.stockData!.price} ",
+                              //"   Stock Available: ${stockProvider.stockData!.stocks} (${stockProvider.stockData!.unitStocks}) ৳ ${stockProvider.stockData!.price} ",
 
-            //=>Qty , unit
-            Row(
-              children: [
-                //qty
-                Expanded(
-                  child: AddSalesFormfield(
-                      labelText: 'QTY',
-                      //label: "Qty",
-                      controller: widget.provider.qtyController),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "   ", // Updated message for empty stock
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
 
-                //unit
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 5),
+
+                  //=>Qty , unit
+                  Row(
                     children: [
-                      SizedBox(
-                        child: CustomDropdownTwo(
-                          labelText: 'Unit',
-                          items: widget.unitMap.isNotEmpty
-                              ? widget.unitMap.values.toList()
-                              : [
-                                  'No Units Available'
-                                ], // Show a default message if empty
-                          hint: selectedUnitName ??
-                              'Select Unit', // Show selected unit or default hint
-                          width: double.infinity,
-                          selectedItem: selectedUnitName,
-                          height: 30,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedUnitName = newValue;
-                            });
-                          },
+                      //qty
+                      Expanded(
+                        child: AddSalesFormfield(
+                            labelText: 'QTY',
+                            //label: "Qty",
+                            controller: widget.provider.qtyController),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+
+                      //unit
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              child: CustomDropdownTwo(
+                                labelText: 'Unit',
+                                items: widget.unitMap.isNotEmpty
+                                    ? widget.unitMap.values.toList()
+                                    : [
+                                        'No Units Available'
+                                      ], // Show a default message if empty
+                                hint: selectedUnitName ??
+                                    'Select Unit', // Show selected unit or default hint
+                                width: double.infinity,
+                                selectedItem: selectedUnitName,
+                                height: 30,
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    selectedUnitName = newValue;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
 
-            const SizedBox(
-              height: 8,
-            ),
+                  const SizedBox(
+                    height: 8,
+                  ),
 
-            //price
-            AddSalesFormfield(
-                labelText: "Price",
-                //label: "Price",
-                controller: widget.provider.priceController),
+                  //price
+                  AddSalesFormfield(
+                      labelText: "Price",
+                      //label: "Price",
+                      controller: widget.provider.priceController),
 
-            const SizedBox(
-              height: 8,
-            ),
+                  const SizedBox(
+                    height: 8,
+                  ),
 
-            //discout amount, discount percentance
-            Row(children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    //discount percentance
-                    AddSalesFormfield(
-                      labelText: "Discount (%)",
-                      //label: "Discount (%)",
-                      controller: widget.provider.updateDiscountPercentance,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        widget.provider.lastChanged = 'percent';
-                        widget.provider.calculateSubtotal();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              //discount amount
-              Expanded(
-                child: Column(
-                  children: [
-                    AddSalesFormfield(
-                      labelText: "Discount (Amount)",
-                      controller: widget.provider.updateDiscountAmount,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        widget.provider.lastChanged = 'amount';
-                        widget.provider.calculateSubtotal();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ]),
-
-            const SizedBox(
-              height: 10,
-            ),
-
-            // ✅ VAT/TAX Dropdown Row
-            Row(
-              children: [
-                // Dropdown
-                Expanded(
-                  child: Consumer<TaxProvider>(
-                    builder: (context, taxProvider, child) {
-                      if (taxProvider.isLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (taxProvider.taxList.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            'No tax options available.',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        );
-                      }
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  //discout amount, discount percentance
+                  Row(children: [
+                    Expanded(
+                      child: Column(
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ///tax
-
-                              CustomDropdownTwo(
-                                labelText: 'Vat/Tax',
-                                //hint: 'Select VAT/TAX',
-                                items: taxProvider.taxList
-                                    .map((tax) =>
-                                        "${tax.name} - (${tax.percent})")
-                                    .toList(),
-                                width: double.infinity,
-                                height: 30,
-                                selectedItem: selectedTaxName,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    selectedTaxName = newValue;
-
-                                    final nameOnly =
-                                        newValue?.split(" - ").first;
-
-                                    final selected =
-                                        taxProvider.taxList.firstWhere(
-                                      (tax) => tax.name == nameOnly,
-                                      orElse: () => taxProvider.taxList.first,
-                                    );
-
-                                    selectedTaxId = selected.id.toString();
-
-                                    widget.provider.selectedTaxPercent =
-                                        double.tryParse(selected.percent);
-
-                                    // controller.setTaxPercent(selectedTaxPercent ?? 0.0); // 👈 Call controller
-                                    widget.provider.taxPercent =
-                                        widget.provider.selectedTaxPercent ??
-                                            0.0;
-
-                                    widget.provider.updateTaxPaecentId(
-                                        '${selectedTaxId}_${widget.provider.selectedTaxPercent}');
-
-                                    print(
-                                        'tax_percent: "${controller.taxPercentValue}"');
-
-                                    //controller.calculateSubtotal();
-
-                                    debugPrint(
-                                        "Selected Tax ID: $selectedTaxId");
-                                    debugPrint(
-                                        "Selected Tax Percent: ${controller.selectedTaxPercent}");
-                                  });
-                                },
-                              ),
-                            ],
-                          )
+                          //discount percentance
+                          AddSalesFormfield(
+                            labelText: "Discount (%)",
+                            //label: "Discount (%)",
+                            controller:
+                                widget.provider.updateDiscountPercentance,
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                              widget.provider.lastChanged = 'percent';
+                              widget.provider.calculateSubtotal();
+                            },
+                          ),
                         ],
-                      );
-                    },
-                  ),
-                ),
-
-                const SizedBox(width: 8),
-
-                ///tax amount
-                Expanded(
-                  child: AddSalesFormfield(
-                    labelText: "TAX amount",
-                    controller: TextEditingController(
-                      text: widget.provider.taxAmount
-                          .toStringAsFixed(2), // 👈 show calculated tax
+                      ),
                     ),
-                    keyboardType: TextInputType.number,
-                    //readOnly: true, // 👈 prevent manual editing
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    //discount amount
+                    Expanded(
+                      child: Column(
+                        children: [
+                          AddSalesFormfield(
+                            labelText: "Discount (Amount)",
+                            controller: widget.provider.updateDiscountAmount,
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                              widget.provider.lastChanged = 'amount';
+                              widget.provider.calculateSubtotal();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+
+                  const SizedBox(
+                    height: 10,
                   ),
-                ),
-              ],
+
+                  // ✅ VAT/TAX Dropdown Row
+                  Row(
+                    children: [
+                      // Dropdown
+                      Expanded(
+                        child: Consumer<TaxProvider>(
+                          builder: (context, taxProvider, child) {
+                            if (taxProvider.isLoading) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+
+                            if (taxProvider.taxList.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  'No tax options available.',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              );
+                            }
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ///tax
+
+                                    CustomDropdownTwo(
+                                      labelText: 'Vat/Tax',
+                                      //hint: 'Select VAT/TAX',
+                                      items: taxProvider.taxList
+                                          .map((tax) =>
+                                              "${tax.name} - (${tax.percent})")
+                                          .toList(),
+                                      width: double.infinity,
+                                      height: 30,
+                                      selectedItem: selectedTaxName,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          selectedTaxName = newValue;
+
+                                          final nameOnly =
+                                              newValue?.split(" - ").first;
+
+                                          final selected =
+                                              taxProvider.taxList.firstWhere(
+                                            (tax) => tax.name == nameOnly,
+                                            orElse: () =>
+                                                taxProvider.taxList.first,
+                                          );
+
+                                          selectedTaxId =
+                                              selected.id.toString();
+
+                                          widget.provider.selectedTaxPercent =
+                                              double.tryParse(selected.percent);
+
+                                          // controller.setTaxPercent(selectedTaxPercent ?? 0.0); // 👈 Call controller
+                                          widget.provider.taxPercent = widget
+                                                  .provider
+                                                  .selectedTaxPercent ??
+                                              0.0;
+
+                                          widget.provider.updateTaxPaecentId(
+                                              '${selectedTaxId}_${widget.provider.selectedTaxPercent}');
+
+                                          print(
+                                              'tax_percent: "${controller.taxPercentValue}"');
+
+                                          //controller.calculateSubtotal();
+
+                                          debugPrint(
+                                              "Selected Tax ID: $selectedTaxId");
+                                          debugPrint(
+                                              "Selected Tax Percent: ${controller.selectedTaxPercent}");
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(width: 8),
+
+                      ///tax amount
+                      Expanded(
+                        child: AddSalesFormfield(
+                          labelText: "TAX amount",
+                          controller: TextEditingController(
+                            text: widget.provider.taxAmount
+                                .toStringAsFixed(2), // 👈 show calculated tax
+                          ),
+                          keyboardType: TextInputType.number,
+                          //readOnly: true, // 👈 prevent manual editing
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  AddSalesFormfield(
+                      readOnly: true,
+                      labelText: "Subtotal",
+                      controller: widget.provider.subTotalController),
+                  const SizedBox(height: 20),
+                  const SizedBox(width: 5),
+                ],
+              ),
             ),
-
-            const SizedBox(height: 8),
-
-            AddSalesFormfield(
-                readOnly: true,
-                labelText: "Subtotal",
-                controller: widget.provider.subTotalController),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.red, // Red color for delete button
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: () {}, // Ensure this function is implemented
-                    child: const Text(
-                      "Delete",
-                      style: TextStyle(color: Colors.white),
-                    ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  updateItem();
+                  widget.provider
+                      .updateSaleDetail(widget.index); // global update
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue, // Blue color for update button
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      updateItem();
-                      widget.provider
-                          .updateSaleDetail(widget.index); // global update
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.blue, // Blue color for update button
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text(
-                      "Update   ",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                child: const Text(
+                  "Update Sale",
+                  style: TextStyle(color: Colors.white),
                 ),
-              ],
-            )
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),

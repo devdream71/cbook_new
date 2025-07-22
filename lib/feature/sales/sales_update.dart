@@ -1088,78 +1088,85 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                         }
                                         //provider.notifyListeners();
                                       },
-                                      child: Card(
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 8),
-                                        elevation: 3,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "Item ${index + 1}",
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black),
-                                              ),
-                                              Text(
-                                                "Item: ${provider.itemMap[int.tryParse(detail.itemId) ?? 0] ?? "Unknown"}  (${provider.unitMap[int.tryParse(detail.unitId.split("_")[0]) ?? 0] ?? "Unknown"})",
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        "Qty: ${detail.qty}",
-                                                        style: const TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 12),
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      Text(
-                                                        "Price: ৳ ${detail.price}",
-                                                        style: const TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 12),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Text(
-                                                    "Subtotal: ৳ ${detail.subTotal}",
-                                                    style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ],
-                                              ),
-                                              Text(
-                                                "Discount: ${detail.salesUpdateDiscountAmount}৳ , ${detail.salesUpdateDiscountPercentace} %  ",
-                                                style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12),
-                                              ),
-                                              Text(
-                                                "Tax: ${detail.salesUpdateVATTAXAmount}৳, ${detail.salesUpdateVATTAXPercentance} %",
-                                                style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                      child: 
+
+                                      Card(
+  margin: const EdgeInsets.symmetric(vertical: 8),
+  elevation: 3,
+  child: Padding(
+    padding: const EdgeInsets.all(12),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "${index + 1}.   ",
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// LEFT SECTION - Item Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Item: ${provider.itemMap[int.tryParse(detail.itemId) ?? 0] ?? "Unknown"}  (${provider.unitMap[int.tryParse(detail.unitId.split("_")[0]) ?? 0] ?? "Unknown"})",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 13,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Qty: ${detail.qty}",
+                          style: const TextStyle(color: Colors.black, fontSize: 12),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          "Price: ৳ ${detail.price}",
+                          style: const TextStyle(color: Colors.black, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      "Discount: ${detail.salesUpdateDiscountAmount}৳ , ${detail.salesUpdateDiscountPercentace} %",
+                      style: const TextStyle(color: Colors.black, fontSize: 12),
+                    ),
+                    Text(
+                      "Tax: ${detail.salesUpdateVATTAXAmount}৳, ${detail.salesUpdateVATTAXPercentance} %",
+                      style: const TextStyle(color: Colors.black, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+
+              /// RIGHT SECTION - Subtotal
+              Text(
+                "Subtotal: ৳ ${detail.subTotal}",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
+                                      
+                                     
+                                    
                                     );
                                   },
                                 )

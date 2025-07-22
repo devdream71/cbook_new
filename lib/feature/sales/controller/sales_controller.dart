@@ -489,24 +489,7 @@ class SalesController extends ChangeNotifier {
     return "$finalTotal "; //(${total.toStringAsFixed(2)})
   }
 
-  //////credit discount total
-  // String get totalAmount2 {
-  //   double subtotal = double.tryParse(addAmount()) ?? 0.0; // Get subtotal
-  //   debugPrint(subtotal.toString());
-  //   double discount =
-  //       double.tryParse(discountController.text) ?? 0.0; // Get discount
-  //   double total =
-  //       subtotal - discount + taxAmount + totalTaxAmountl; // Calculate total
 
-  //   //notifyListeners();
-  //   debugPrint(
-  //       "credit Subtotal: $subtotal, credit Discount: $discount, credit Total: $total"); //
-
-  //   debugPrint("credit total $total");
-
-  //   return total.toStringAsFixed(2);
-  //   // Format to 2 decimal places
-  // }
 
   String get totalAmount2 {
     double subtotal =
@@ -618,56 +601,7 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  //////===> credit ===> need.
-  // addCreditItem() {
-  //   debugPrint(
-  //       "credit Add Item Clicked $selectedCategory $selectedSubCategory $seletedItemName ${codeController.text} ${mrpController.text} ${qtyController.text} ${amountController.text}");
 
-  //   double price = double.tryParse(mrpController.text) ?? 0.0;
-  //   double quantity = double.tryParse(qtyController.text) ?? 0.0;
-  //   double demodiscounAmout = double.tryParse(discountAmount.text) ?? 0.0;
-
-  //   double itemTotal = ((price * quantity) - demodiscounAmout) + taxAmount;
-
-  //   String formattedTaxPercent =
-  //       "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
-
-  //   itemsCredit.add(ItemModel(
-  //     category: selectedCategory ?? "Category1",
-  //     subCategory: selectedSubCategory ?? "Sub Category1",
-  //     itemName: seletedItemName ?? "Item1",
-  //     itemCode: codeController.text,
-  //     unit: selectedUnit ?? "PC",
-  //     mrp: mrpController.text,
-  //     quantity: qtyController.text,
-  //     total: itemTotal.toStringAsFixed(2),
-  //     discountAmount: discountAmount.text,
-  //     discountPercentance: discountPercentance.text,
-  //     vatAmount: taxAmount,
-  //     vatPerentace: selectedTaxPercent ?? "",
-  //   ));
-
-  //   saleItem.add(SaleItemModel(
-  //     itemId: selcetedItemId,
-  //     price: mrpController.value.text,
-  //     qty: qtyController.value.text,
-  //     subTotal: itemTotal.toStringAsFixed(2),
-  //     unitId: selectedUnitIdWithName,
-  //     discountAmount: discountAmount.text,
-  //     discountPercentage: discountPercentance.text,
-  //     taxAmount: taxAmount,
-  //     taxPercent: formattedTaxPercent,
-  //   ));
-
-  //   codeController.clear();
-  //   mrpController.clear();
-  //   qtyController.clear();
-  //   amountController.clear();
-  //   unitController.clear();
-  //   priceController.clear();
-  //   notifyListeners();
-
-  // }
 
   // 🔥 FIXED: Credit item addition with proper tax calculation
   addCreditItem() {
