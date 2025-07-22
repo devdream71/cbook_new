@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cbook_dt/feature/account/ui/adjust_bank/model/adjust_bank_model.dart';
 import 'package:cbook_dt/feature/account/ui/adjust_bank/model/adjust_bank_response_model.dart';
+import 'package:cbook_dt/feature/account/ui/adjust_cash/model/bank_adjustment_model.dart';
 import 'package:cbook_dt/utils/date_time_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -100,4 +101,61 @@ class BankAdjustProvider with ChangeNotifier {
       return null;
     }
   }
+
+
+
+  ///delete bank
+  Future<bool> deleteBankVoucher(int bankId) async {
+  final url =
+      Uri.parse('https://commercebook.site/api/v1/account/bank/remove/?id=$bankId');
+
+  try {
+    final response = await http.post(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['success'] == true) {
+        await fetchBankAccounts(); // Refresh list after delete
+        return true;
+      } else {
+        debugPrint("Delete failed: ${data['message']}");
+        return false;
+      }
+    } else {
+      debugPrint("Failed to delete: ${response.statusCode}");
+      return false;
+    }
+  } catch (e) {
+    debugPrint("Error deleting bank voucher: $e");
+    return false;
+  }
+}
+
+
+///accounht bank
+  
+  BankAdjustmentResponse? bankAdjustmentModel;
+
+  Future<void> fetchBankAdjustments() async {
+    _isLoading = true;
+    notifyListeners();
+
+    const url = 'https://commercebook.site/api/v1/accounts/bank';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        bankAdjustmentModel = BankAdjustmentResponse.fromJson(jsonData);
+      }
+    } catch (e) {
+      debugPrint("BankAdjustmentProvider error: $e");
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+
+
 }

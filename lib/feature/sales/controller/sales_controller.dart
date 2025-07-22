@@ -168,13 +168,10 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-
   void calculateTaxCash() {
     _taxAmount = (_subtotal * _taxPercent) / 100;
     notifyListeners();
   }
-
-
 
   ///credit tax total
   void calculateTotal() {
@@ -185,8 +182,7 @@ class SalesController extends ChangeNotifier {
     notifyListeners(); // 👈 Important
   }
 
-
-  ///cash 
+  ///cash
   void calculateTotalCash() {
     double subtotal = double.tryParse(addAmount()) ?? 0.0;
     double discount = double.tryParse(discountController.text) ?? 0.0;
@@ -555,7 +551,7 @@ class SalesController extends ChangeNotifier {
     double demodiscounAmout = double.tryParse(discountAmount.text) ?? 0.0;
     double itemTotal = ((price * quantity) - demodiscounAmout) + taxAmount;
 
-    double discountAmt = double.tryParse(discountAmount.text) ?? 0.0;
+    double discountAmt = double.tryParse(discountAmount.text) ?? 0.0; ///discountAmount
     double vatAmount = taxAmount;
 
     //   double itemSubTotal = (price * quantity) - discountAmt;
@@ -756,6 +752,7 @@ class SalesController extends ChangeNotifier {
     required String discount,
     required String discountPercent,
     required saleType,
+    required int paymentOut,
   }) async {
     try {
       debugPrint('bill number: $billNo');
@@ -775,16 +772,25 @@ class SalesController extends ChangeNotifier {
       String encodedDate = Uri.encodeComponent(formattedDate);
 
       final String note = saleNoteController.text;
-
+       
+      debugPrint('date $encodedDate'); 
       debugPrint("Cash Subtotal: ${addAmount2()}");
       debugPrint("Cash Total (after discount): $totalAmount");
-      debugPrint("discountPercent: $discountPercent");
-      debugPrint("taxAmount: $taxAmount");
+      debugPrint("discountPercent: ${percentController.text}"); //discountController
+      debugPrint("discount amount: ${discountController.text}"); //percentController
+      debugPrint("taxAmount: $totalTaxAmountl ");  ///$taxAmount
       debugPrint("taxPercent: $taxPercent");
-      debugPrint("discount amount: $discount");
+      
+      debugPrint("note $note");
+      debugPrint("total amount $totalAmount");
+
+      final paymentAmount = isCash ? totalAmount.toString() : receivedAmountController.text;
 
       String formattedTaxPercent =
           "${selectedTaxId ?? '0'}_${(selectedTaxPercent ?? 0).toStringAsFixed(0)}";
+
+      debugPrint("payment out  true or false-  $paymentOut"); 
+      debugPrint("payment Amount -  ${paymentAmount}");
 
       final url = "https://commercebook.site/api/v1/sales/store"
           "?user_id=${prefs.getInt("user_id").toString()}"
@@ -792,15 +798,19 @@ class SalesController extends ChangeNotifier {
           "&bill_number=$billNo"
           "&sale_date=$encodedDate"
           "&details_notes=$note"
-          "&discount=${discount.isEmpty ? '0' : discount}"
-          "&total_item_discounts=${totalItemDiscounts.toStringAsFixed(2)}"
-          "&discount_percent="
-          "&tax=$taxAmount"
-          "&tax_percents=$formattedTaxPercent"
-          "&total_item_vats=${totalItemVats.toStringAsFixed(2)}"
+
+          "&discount=${discountController.text}"
+          "&discount_percent=${percentController.text}"
+
+          "&total_item_discounts=${totalItemDiscounts.toStringAsFixed(2)}"  ///total item discount
+          "&total_item_vats=${totalItemVats.toStringAsFixed(2)}"   ///total item vats (ok)
+          
+          "&tax=$totalTaxAmountl" ///tax amount
+          "&tax_percents=$formattedTaxPercent" ///tax percentance 
+          
           "&gross_total=$totalAmount"
-          "&payment_out=1"
-          "&payment_amount=${totalAmount}"; // ✅ Only send integer
+          "&payment_out=$paymentOut"
+          "&payment_amount=$paymentAmount"; // ✅ Only send integer
 
       debugPrint("API URL: $url");
 
@@ -809,6 +819,10 @@ class SalesController extends ChangeNotifier {
       };
 
       debugPrint("Request Body: $requestBody");
+
+      debugPrint('====Stop=====');
+
+      debugPrint('====Stop 2=====');
 
       final response = await http.post(
         Uri.parse(url),
@@ -949,12 +963,10 @@ class SalesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  //date controller
-  TextEditingController dateAddItemController = TextEditingController();
-  TextEditingController statusAddItemController = TextEditingController();
+
 
   DateTime _selectedDate = DateTime.now();
-  TimeOfDay _selectedTime = TimeOfDay.now();
+  
 
   void updateIsAmount() {
     isAmount = !isAmount;

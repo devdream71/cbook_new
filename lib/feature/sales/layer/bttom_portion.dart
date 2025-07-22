@@ -372,6 +372,17 @@ class BottomPortion extends StatelessWidget {
                   debugPrint(
                       "amount =========>>>>====> ${controller.billController.text}");
 
+                  int paymentOutValue = 0;
+
+                  if (controller.isCash) {
+                    paymentOutValue = 1;
+                  } else if (controller.isReturn &&
+                      controller.isOnlineMoneyChecked) {
+                    paymentOutValue = 1;
+                  } else {
+                    paymentOutValue = 0;
+                  }
+
                   if (controller.saleItem.isEmpty ||
                       controller.billController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -386,9 +397,8 @@ class BottomPortion extends StatelessWidget {
                       date: date,
                       amount: amount,
                       // customerId: customerId ?? "cash",
-                       customerId: controller.getCustomerId(context),
-                       
-                      
+                      customerId: controller.getCustomerId(context),
+
                       saleType: saleType,
                       billNo: controller.billController.text,
                       total: total,
@@ -396,6 +406,7 @@ class BottomPortion extends StatelessWidget {
                       discountPercent: controller.discountPercentance.text,
                       taxAmount: controller.totalAmount,
                       taxPercent: controller.taxPercent,
+                      paymentOut: paymentOutValue,
                     );
 
                     if (isSuccess) {

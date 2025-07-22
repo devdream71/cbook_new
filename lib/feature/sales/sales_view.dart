@@ -1361,13 +1361,19 @@ class _LayoutState extends State<_Layout> {
   ///===>>>sales item picked.
   ////show sales diolog.
   void showSalesDialog(BuildContext context, SalesController controller) async {
+
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     final categoryProvider =
         Provider.of<ItemCategoryProvider>(context, listen: false);
+
     final unitProvider = Provider.of<UnitProvider>(context, listen: false);
+
     final fetchStockQuantity =
         Provider.of<AddItemProvider>(context, listen: false);
+
     final taxProvider = Provider.of<TaxProvider>(context, listen: false);
+
     final salesController =
         Provider.of<SalesController>(context, listen: false);
 
@@ -1486,7 +1492,6 @@ class _LayoutState extends State<_Layout> {
                         const SizedBox(height: 8),
 
                         ///Item search dropdown === working.
-                       
 
                         // Updated Item selection dropdown
                         ItemCustomDropDownTextField(
@@ -1657,7 +1662,7 @@ class _LayoutState extends State<_Layout> {
 
                                               controller
                                                   .selectedUnitIdWithNameFunction(
-                                                      "${selectedUnitObj.id}_${selectedUnitObj.symbol}_$qty");
+                                                      "${selectedUnitObj.id}_${selectedUnitObj.name}_$qty");
 
                                               debugPrint(
                                                   "✅ Updated unit_id after qty change: ${controller.selectedUnitIdWithName}");
@@ -1715,10 +1720,10 @@ class _LayoutState extends State<_Layout> {
                                             qtyText.isNotEmpty ? qtyText : "1";
 
                                         controller.selectedUnitIdWithNameFunction(
-                                            "${selectedUnitObj.id}_${selectedUnitObj.symbol}_$qty");
+                                            "${selectedUnitObj.id}_${selectedUnitObj.name}_$qty");
 
                                         debugPrint(
-                                            "🆔 Unit ID: ${selectedUnitObj.id}_${selectedUnitObj.symbol}");
+                                            "🆔 Unit ID: ${selectedUnitObj.id}_${selectedUnitObj.name}");
 
                                         // ✅ Price update logic
                                         if (selectedUnit ==

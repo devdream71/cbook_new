@@ -18,6 +18,7 @@ class CashInHandModel {
 }
 
 class CashInHandData {
+  final int? id;
   final String? date;
   final String? billType;
   final String? billNumber;
@@ -25,6 +26,7 @@ class CashInHandData {
   final String? amount;
 
   CashInHandData({
+    this.id,
     this.date,
     this.billType,
     this.billNumber,
@@ -34,6 +36,7 @@ class CashInHandData {
 
   factory CashInHandData.fromJson(Map<String, dynamic> json) {
     return CashInHandData(
+      id: json['id'],
       date: json['date'],
       billType: json['bill_type'],
       billNumber: json['bill_number'],

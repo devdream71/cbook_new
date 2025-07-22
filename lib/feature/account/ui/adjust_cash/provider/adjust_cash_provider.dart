@@ -93,29 +93,7 @@ class AdjustCashProvider with ChangeNotifier {
 }
 
 
-///accounht bank
-  
-  BankAdjustmentResponse? bankAdjustmentModel;
 
-  Future<void> fetchBankAdjustments() async {
-    _isLoading = true;
-    notifyListeners();
-
-    const url = 'https://commercebook.site/api/v1/accounts/bank';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        bankAdjustmentModel = BankAdjustmentResponse.fromJson(jsonData);
-      }
-    } catch (e) {
-      debugPrint("BankAdjustmentProvider error: $e");
-    }
-
-    _isLoading = false;
-    notifyListeners();
-  }
 
   
   }

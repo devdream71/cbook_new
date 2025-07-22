@@ -203,12 +203,10 @@ class _FieldPortionState extends State<FieldPortion> {
 
                                       // controller.updateTaxPaecentId(
                                       //     '${selectedTaxId}_${controller.selectedTaxPercent}');
-                                       
 
-                                       /// ✅ Add these lines for calculation:
+                                      /// ✅ Add these lines for calculation:
                                       controller.calculateTaxCash();
                                       controller.calculateTotalCash();
-
 
                                       final taxPercent =
                                           (controller.selectedTaxPercent ?? 0)
@@ -222,14 +220,13 @@ class _FieldPortionState extends State<FieldPortion> {
                                           "Selected Tax ID: $selectedTaxId");
                                       debugPrint(
                                           "Selected Tax Percent: ${controller.selectedTaxPercent}");
-                                      
+
                                       controller.selectTotalTaxDropdown(
                                           double.parse(controller.totalAmount),
                                           newValue);
-                                      
                                     });
                                   },
-                                ), 
+                                ),
                               ],
                             ),
                           );
@@ -323,6 +320,7 @@ class _FieldPortionState extends State<FieldPortion> {
                                     if (value == true) {
                                       controller.isReceived = true;
                                       controller.notifyListeners();
+                                      debugPrint("cash recived. ${controller.isReceived}");
                                     }
                                   } else {
                                     // Allow normal toggling when not cash
@@ -348,7 +346,7 @@ class _FieldPortionState extends State<FieldPortion> {
                           height: 30,
                           width: 163,
                           child: AddSalesFormfield(
-                            //readOnly: true,
+                            readOnly: true,
                             onChanged: (value) {
                               Provider.of(context)<SalesController>();
                             },

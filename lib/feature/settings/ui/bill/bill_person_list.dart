@@ -115,8 +115,8 @@ class _BillPersonListState extends State<BillPersonList> {
                     editDeleteDiolog(context, billPersonId.toString());
                   },
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300, // Optional: background color
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 241, 240, 240), // Optional: background color
                     ),
                     child: ListTile(
                       dense: true, // 🔥 Makes the tile more compact
@@ -209,7 +209,8 @@ class _BillPersonListState extends State<BillPersonList> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditBillPerson(billPersonId: billPersonId),
+                        builder: (context) =>
+                            EditBillPerson(billPersonId: billPersonId),
                       ),
                     );
                   },
@@ -241,57 +242,56 @@ class _BillPersonListState extends State<BillPersonList> {
 
   ///delete bill person.
   void _showDeleteDialog(BuildContext context, String billPersonId) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text(
-        'Delete Bill Person',
-        style: TextStyle(
-            color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
-      ),
-      content: const Text(
-        'Are you sure you want to delete this Bill Person?',
-        style: TextStyle(color: Colors.black, fontSize: 12),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(); // Close dialog
-          },
-          child: const Text('Cancel'),
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Delete Bill Person',
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
         ),
-        TextButton(
-          onPressed: () async {
-            final provider =
-                Provider.of<BillPersonProvider>(context, listen: false);
-
-            bool success = await provider.deleteBillPerson(billPersonId);
-
-            Navigator.of(context).pop(); // Close dialog
-
-            if (success) {
-              await provider.fetchBillPersons(); // ✅ Reload updated list
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: Colors.green,
-                  content: Text('Bill Person deleted successfully.'),
-                ),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.red,
-                  content: Text(provider.errorMessage),
-                ),
-              );
-            }
-          },
-          child: const Text('Delete', style: TextStyle(color: Colors.red)),
+        content: const Text(
+          'Are you sure you want to delete this Bill Person?',
+          style: TextStyle(color: Colors.black, fontSize: 12),
         ),
-      ],
-    ),
-  );
-}
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final provider =
+                  Provider.of<BillPersonProvider>(context, listen: false);
 
+              bool success = await provider.deleteBillPerson(billPersonId);
+
+              Navigator.of(context).pop(); // Close dialog
+
+              if (success) {
+                await provider.fetchBillPersons(); // ✅ Reload updated list
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text('Bill Person deleted successfully.'),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Text(provider.errorMessage),
+                  ),
+                );
+              }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -20,6 +20,7 @@ class BankAdjustmentResponse {
 }
 
 class BankAdjustmentData {
+  final int ? id;
   final String? date;
   final String? billType;
   final String? billNumber;
@@ -27,6 +28,7 @@ class BankAdjustmentData {
   final String? amount;
 
   BankAdjustmentData({
+    this.id,
     this.date,
     this.billType,
     this.billNumber,
@@ -36,6 +38,7 @@ class BankAdjustmentData {
 
   factory BankAdjustmentData.fromJson(Map<String, dynamic> json) {
     return BankAdjustmentData(
+      id: json['id'],
       date: json['date'],
       billType: json['bill_type'],
       billNumber: json['bill_number'],
