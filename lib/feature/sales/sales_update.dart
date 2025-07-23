@@ -29,6 +29,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class SaleUpdateProvider extends ChangeNotifier {
+
   TextEditingController qtyController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController subTotalController = TextEditingController();
@@ -39,33 +40,56 @@ class SaleUpdateProvider extends ChangeNotifier {
   TextEditingController itemController = TextEditingController();
   TextEditingController unitController = TextEditingController();
   TextEditingController saleUpdateNoteController = TextEditingController();
-  bool hasCustomer = false;
 
+  TextEditingController updateDiscountAmount = TextEditingController();
+  TextEditingController updateDiscountPercentance = TextEditingController();
+
+  TextEditingController itemDiscountPercentance = TextEditingController();
+  TextEditingController itemDiscountAmount = TextEditingController();
+
+  TextEditingController itemTaxVatAmount = TextEditingController();
+  TextEditingController itemTaxVatPercentance = TextEditingController();
+
+  
+  String taxPercentValue = "";
+  String totaltaxPercentValue = "";
+  String selctedUnitId = "";
+
+  bool hasCustomer = false;
   bool isLoading = false;
+
   int? purchaseId;
   int? itemId;
   int? customerId;
   String? selectedItem;
-
   String? selectedItemNameInvoice;
+  String? selectedItemName;
+  String? selectedUnitName; // Selected unit name for UI
+  double? selectedTaxPercent;
 
   Map<int, String> itemMap = {}; // Store item IDs and names
-  List<String> itemNames = []; // Store only item names for dropdown
-  String? selectedItemName; // Selected item name for UI
-
   Map<int, String> unitMap = {}; // Store unit ID → unit Name
+
+  List<String> itemNames = []; // Store only item names for dropdown
   List<String> unitNames = []; // Store only unit names for dropdown
-  String? selectedUnitName; // Selected unit name for UI
-
   List<dynamic> purchaseDetailsList = [];
-
   List<DemoUnitModel> unitResponseModel = [];
-
   List<SaleUpdateModel> saleUpdateList = [];
+  List<dynamic> _itemList = [];
 
-  // List<SaleUpdateModel> saleUpdateList = [];
+  List<dynamic> get itemList => _itemList;
 
-  String selctedUnitId = "";
+  SalesEditResponse saleEditResponse = SalesEditResponse();
+
+  String lastChanged = '';
+  double _subtotal = 0.0;
+  double get subtotal => _subtotal;
+
+  double _taxAmount = 0.0;
+  double get taxPercent => _taxPercent;
+  double get taxAmount => _taxAmount;
+  double _taxPercent = 0.0;
+
 
   selectedDropdownUnitId(String value) {
     unitResponseModel.forEach((e) {
@@ -104,6 +128,11 @@ class SaleUpdateProvider extends ChangeNotifier {
     }
   }
 
+  void setItemList(List<dynamic> newList) {
+    _itemList = newList;
+    notifyListeners();
+  }
+
   ///fetch item
   Future<void> fetchItems() async {
     const url = "https://commercebook.site/api/v1/items";
@@ -116,6 +145,8 @@ class SaleUpdateProvider extends ChangeNotifier {
         itemMap.clear();
         itemNames.clear();
 
+        _itemList = data['data'];
+
         /// ✅ Corrected `forEach` loop
         for (var item in data['data']) {
           itemMap[item['id']] = item['name'];
@@ -126,8 +157,6 @@ class SaleUpdateProvider extends ChangeNotifier {
       }
     }
   }
-
-  SalesEditResponse saleEditResponse = SalesEditResponse();
 
   ///fetchb unit date.
   Future<void> fetchSaleData(int id) async {
@@ -143,22 +172,22 @@ class SaleUpdateProvider extends ChangeNotifier {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       saleEditResponse = SalesEditResponse.fromJson(response.body);
+
       saleUpdateList.clear();
+
+
       saleEditResponse.data!.salesDetails!.forEach((e) {
+
         saleUpdateList.add(SaleUpdateModel(
           itemId: e.itemId.toString(),
           price: e.price.toString(),
-          //purchaseDetailsId: e.id.toString(),
-          //purchaseQty: e.qty.toString(),
           qty: e.qty.toString(),
           subTotal: e.subTotal.toString(),
-          // unitId: "${e.unitId.toString()}_${getUnitName(e.unitId.toString())}",
           unitId:
-              "${e.unitId.toString()}_${getUnitName(e.unitId.toString())}_1",
+              "${e.unitId.toString()}_${getUnitName(e.unitId.toString())}_${e.qty.toString()}",
           salesUpdateDiscountPercentace: e.discountPercentage.toString(),
           salesUpdateDiscountAmount: e.discountAmount.toString(),
           salesUpdateVATTAXAmount: e.taxAmount.toString(),
-          // salesUpdateVATTAXPercentance: e.taxPercent.toString(),
           salesUpdateVATTAXPercentance: "${e.taxid}_${(e.taxPercent ?? 0)}",
         ));
       });
@@ -173,15 +202,29 @@ class SaleUpdateProvider extends ChangeNotifier {
 
         purchaseDetailsList = purchaseData.salesDetails ?? [];
         billNumberController.text = purchaseData.billNumber ?? "";
+        // updateDiscountAmount.text = purchaseData.discount ?? '0.00';
+        updateDiscountAmount.text = purchaseData.discount?.toString() ?? '0.00';
         purchaseDateController.text = purchaseData.salesDate ?? "";
         grossTotalController.text = purchaseData.grossTotal?.toString() ?? "";
-
         grossTotalController.text = getGrossTotalAfterDiscount();
-
         customerController.text = purchaseData.customerId?.toString() ?? "";
-
         hasCustomer =
             purchaseData.customerId != null && purchaseData.customerId != 0;
+
+        updateDiscountPercentance.text = purchaseData.discountPercent ?? "";    
+
+        
+        ///item discoumt amount and item discount percentane.
+        itemDiscountAmount.text =
+            purchaseData.salesDetails!.first.discountAmount ?? '';
+        itemDiscountPercentance.text =
+            purchaseData.salesDetails!.first.discountPercentage ?? '';
+
+        itemTaxVatAmount.text =  purchaseData.salesDetails!.first.taxAmount ?? '';
+        itemTaxVatPercentance.text =  purchaseData.salesDetails!.first.taxPercent ?? '';   
+
+
+
       }
     }
 
@@ -233,7 +276,7 @@ class SaleUpdateProvider extends ChangeNotifier {
     for (var e in saleUpdateList) {
       subTotal += double.tryParse(e.subTotal) ?? 0.0;
     }
-    return subTotal.toString();
+    return subTotal.toStringAsFixed(2);
   }
 
   /// gross total after giving discount amount.
@@ -420,7 +463,8 @@ class SaleUpdateProvider extends ChangeNotifier {
         itemId: id.toString(),
         qty: qty.toString(),
         //purchaseQty: "0",
-        unitId: "${unitId.toString()}_${getUnitName(unitId.toString())}",
+        unitId:
+            "${unitId.toString()}_${getUnitName(unitId.toString())}_${qty.toString()}",
         price: price.toString(),
         subTotal: subTotal.toString(),
         salesUpdateDiscountPercentace: null,
@@ -430,12 +474,6 @@ class SaleUpdateProvider extends ChangeNotifier {
 
     notifyListeners();
   }
-
-  TextEditingController updateDiscountAmount = TextEditingController();
-  TextEditingController updateDiscountPercentance = TextEditingController();
-  String lastChanged = '';
-  double _subtotal = 0.0;
-  double get subtotal => _subtotal;
 
   ///calculate subtotal
   void calculateSubtotal() {
@@ -493,20 +531,11 @@ class SaleUpdateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  double? selectedTaxPercent;
-  String taxPercentValue = "";
-  String totaltaxPercentValue = "";
-
   ///updated total tax id
   updateTotalTaxId(String value) {
     totaltaxPercentValue = value;
     notifyListeners();
   }
-
-  double _taxAmount = 0.0;
-  double get taxPercent => _taxPercent;
-  double get taxAmount => _taxAmount;
-  double _taxPercent = 0.0;
 
   set taxPercent(double value) {
     _taxPercent = value;
@@ -676,7 +705,9 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<SalesController>();
+
     final updateController = context.watch<SaleUpdateProvider>();
+
     final categoryProvider =
         Provider.of<ItemCategoryProvider>(context, listen: true);
 
@@ -1080,6 +1111,11 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                               // itemDetail: detail,
                                               itemMap: provider.itemMap,
                                               unitMap: provider.unitMap,
+                                              itemList: provider.itemList,
+                                              itemDiscoumtAmount: provider.itemDiscountAmount,
+                                              itemDiscountPercentance: provider.itemDiscountPercentance,
+                                              ItemtaxAmount : provider.itemTaxVatAmount,
+                                              ItemtaxPercentance: provider.itemTaxVatPercentance,
                                             ),
                                           ),
                                         );
@@ -1088,85 +1124,102 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                         }
                                         //provider.notifyListeners();
                                       },
-                                      child: 
+                                      child: Card(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        elevation: 3,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${index + 1}.   ",
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    /// LEFT SECTION - Item Info
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            "Item: ${provider.itemMap[int.tryParse(detail.itemId) ?? 0] ?? "Unknown"}  (${provider.unitMap[int.tryParse(detail.unitId.split("_")[0]) ?? 0] ?? "Unknown"})",
+                                                            style:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 13,
+                                                            ),
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Text(
+                                                                "Qty: ${detail.qty}",
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 5),
+                                                              Text(
+                                                                "Price: ৳ ${detail.price}",
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        12),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Text(
+                                                            "Discount: ${detail.salesUpdateDiscountAmount}৳ , ${detail.salesUpdateDiscountPercentace} %",
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 12),
+                                                          ),
+                                                          Text(
+                                                            "Tax: ${detail.salesUpdateVATTAXAmount}৳, ${detail.salesUpdateVATTAXPercentance} %",
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 12),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
 
-                                      Card(
-  margin: const EdgeInsets.symmetric(vertical: 8),
-  elevation: 3,
-  child: Padding(
-    padding: const EdgeInsets.all(12),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "${index + 1}.   ",
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// LEFT SECTION - Item Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Item: ${provider.itemMap[int.tryParse(detail.itemId) ?? 0] ?? "Unknown"}  (${provider.unitMap[int.tryParse(detail.unitId.split("_")[0]) ?? 0] ?? "Unknown"})",
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Qty: ${detail.qty}",
-                          style: const TextStyle(color: Colors.black, fontSize: 12),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          "Price: ৳ ${detail.price}",
-                          style: const TextStyle(color: Colors.black, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      "Discount: ${detail.salesUpdateDiscountAmount}৳ , ${detail.salesUpdateDiscountPercentace} %",
-                      style: const TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                    Text(
-                      "Tax: ${detail.salesUpdateVATTAXAmount}৳, ${detail.salesUpdateVATTAXPercentance} %",
-                      style: const TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-
-              /// RIGHT SECTION - Subtotal
-              Text(
-                "Subtotal: ৳ ${detail.subTotal}",
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  ),
-),
-
-                                      
-                                     
-                                    
+                                                    /// RIGHT SECTION - Subtotal
+                                                    Text(
+                                                      "Subtotal: ৳ ${detail.subTotal}",
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     );
                                   },
                                 )
@@ -1422,10 +1475,12 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 0.0),
-                                                child: SizedBox(
+                                                child:
+
+                                                    ///discount amount.
+                                                    SizedBox(
                                                   width: 95,
                                                   child: AddSalesFormfield(
-                                                    //label: "Discount (AMT)",
                                                     labelText: "DIS AMT",
                                                     controller: updateController
                                                         .updateDiscountAmount,
@@ -1456,10 +1511,12 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 8.0),
-                                                child: SizedBox(
+                                                child:
+
+                                                    /// discount percentance
+                                                    SizedBox(
                                                   width: 95,
                                                   child: AddSalesFormfield(
-                                                    // label: "Discount (%)",
                                                     labelText: 'DIS (%)',
                                                     controller: updateController
                                                         .updateDiscountPercentance,
@@ -1518,12 +1575,7 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                // const Text("VAT/TAX (%)",
-                                                //     style: TextStyle(
-                                                //         color: Colors.black,
-                                                //         fontSize: 14)),
                                                 CustomDropdownTwo(
-                                                  //hint: 'Select VAT/TAX',
                                                   labelText: 'VAT/TAX',
                                                   items: taxProvider.taxList
                                                       .map((tax) =>

@@ -501,11 +501,26 @@ class _SalesScreenState extends State<SalesScreen> {
                                                   ),
 
                                                   //amount
-                                                  Text(
-                                                    '${sale.grossTotal} TK',
-                                                    style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 12),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        '${sale.grossTotal} TK, ',
+                                                        style: const TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 12),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(bottom: 2.0),
+                                                        child: Text(
+                                                          'Rcpt: ${sale.receipt} TK',
+                                                          style: const TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               )
@@ -560,7 +575,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                                 // Show due only for Partial or Unpaid
                                                 if (sale.paymentStatus != 2)
                                                   Text(
-                                                    "Due: ${sale.grossTotal} TK",
+                                                    "Due: ${sale.due} TK",
                                                     style: const TextStyle(
                                                       fontSize: 12,
                                                       color: Colors.black,

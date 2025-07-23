@@ -13,6 +13,7 @@ class UpdatePurchaseItemView extends StatefulWidget {
   final PurchaseUpdateModel itemDetail;
   final Map<int, String> itemMap;
   final Map<int, String> unitMap;
+  final List<dynamic> itemList;
 
   const UpdatePurchaseItemView({
     super.key,
@@ -21,6 +22,7 @@ class UpdatePurchaseItemView extends StatefulWidget {
     required this.provider,
     required this.itemMap,
     required this.unitMap,
+    required this.itemList,
   });
 
   @override
@@ -28,6 +30,40 @@ class UpdatePurchaseItemView extends StatefulWidget {
 }
 
 class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
+
+
+  
+
+  List<String> getFilteredUnitsForSelectedItem() {
+  if (selectedItemId == null) return [];
+
+  final item = widget.itemList.firstWhere(
+    (element) => element['id'] == selectedItemId,
+    orElse: () => null,
+  );
+
+  if (item == null) return [];
+
+  final primaryUnitId = item['unit_id'];
+  final secondaryUnitId = item['secondary_unit_id'];
+
+  final unitNames = <String>[];
+
+  // Use unitMap to convert unitId → name (e.g., 5 → "Pc")
+  if (primaryUnitId != null && widget.unitMap.containsKey(primaryUnitId)) {
+    unitNames.add(widget.unitMap[primaryUnitId]!);
+  }
+
+  if (secondaryUnitId != null && widget.unitMap.containsKey(secondaryUnitId)) {
+    unitNames.add(widget.unitMap[secondaryUnitId]!);
+  }
+
+  return unitNames;
+} 
+
+
+
+
   ///variable declear for unit name, unit id, item, item id,
   
   String? selectedItemName;
@@ -62,6 +98,8 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
     selectedUnitName = widget.itemDetail != null
         ? widget.unitMap[widget.itemDetail.unitId] ?? 'Pc'
         : 'No Units Available';
+
+    selectedItemId = int.tryParse(widget.itemDetail.itemId);    
   }
 
   void updateItem() {
@@ -162,36 +200,42 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ///item dropdown.
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomDropdownTwo(
-                      labelText: 'Item',
-                      items: widget.itemMap.isNotEmpty
-                          ? widget.itemMap.values.toList()
-                          : [
-                              'No Items Available'
-                            ], // Show a default message if empty
-                      hint: selectedItemName ??
-                          'Select Item', // ✅ Show selected item
-                      selectedItem: selectedItemName,
-                      width: double.infinity,
-                      height: 30,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedItemName = newValue;
-
-                          // Reverse lookup item ID from name
-                          selectedItemId = widget.itemMap.entries
-                              .firstWhere(
-                                (entry) => entry.value == newValue,
-                                orElse: () => const MapEntry(-1, ''),
-                              )
-                              .key;
-
-                          debugPrint("Selected Item Name: $selectedItemName");
-                          debugPrint("Selected Item ID: $selectedItemId");
-                        });
-                      },
+                  Opacity(
+                    opacity: 0.6,
+                    child: IgnorePointer(
+                      ignoring: true,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: CustomDropdownTwo(
+                          labelText: 'Item',
+                          items: widget.itemMap.isNotEmpty
+                              ? widget.itemMap.values.toList()
+                              : [
+                                  'No Items Available'
+                                ], // Show a default message if empty
+                          hint: selectedItemName ??
+                              'Select Item', // ✅ Show selected item
+                          selectedItem: selectedItemName,
+                          width: double.infinity,
+                          height: 30,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedItemName = newValue;
+                      
+                              // Reverse lookup item ID from name
+                              selectedItemId = widget.itemMap.entries
+                                  .firstWhere(
+                                    (entry) => entry.value == newValue,
+                                    orElse: () => const MapEntry(-1, ''),
+                                  )
+                                  .key;
+                      
+                              debugPrint("Selected Item Name: $selectedItemName");
+                              debugPrint("Selected Item ID: $selectedItemId");
+                            });
+                          },
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -200,11 +244,15 @@ class _UpdatePurchaseItemViewState extends State<UpdatePurchaseItemView> {
                   SizedBox(
                     child: CustomDropdownTwo(
                       labelText: 'Unit',
-                      items: widget.unitMap.isNotEmpty
-                          ? widget.unitMap.values.toList()
-                          : [
-                              'No Units Available'
-                            ], // Show a default message if empty
+                      // items: widget.unitMap.isNotEmpty
+                      //     ? widget.unitMap.values.toList()
+                      //     : [
+                      //         'No Units Available'
+                      //       ], // Show a default message if empty
+
+                      items: getFilteredUnitsForSelectedItem().isNotEmpty
+    ? getFilteredUnitsForSelectedItem()
+    : ['No Units Available'],
                       hint: selectedUnitName ??
                           'Select Unit', // Show selected unit or default hint
                       width: double.infinity,

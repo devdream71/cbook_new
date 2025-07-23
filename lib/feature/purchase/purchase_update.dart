@@ -39,11 +39,40 @@ class PurchaseUpdateProvider extends ChangeNotifier {
   TextEditingController customerController = TextEditingController();
   TextEditingController itemController = TextEditingController();
   TextEditingController unitController = TextEditingController();
-  List<PurchaseUpdateModel> purchaseUpdateList = [];
   TextEditingController grossTotalController = TextEditingController();
   TextEditingController discountTotalController = TextEditingController();
 
+  List<PurchaseUpdateModel> purchaseUpdateList = [];
+  List<String> itemNames = [];
+  List<String> unitNames = [];
+  List<dynamic> purchaseDetailsList = [];
+  List<DemoUnitModel> unitResponseModel = [];
+
+  Map<int, String> itemMap = {};
+  Map<int, String> unitMap = {};
+
   int? customerId;
+  String? selectedBillPerson;
+  int? purchaseId;
+  int? itemId;
+  String? selectedItem;
+  String? selectedItemNameInvoice;
+  String? selectedItemName;
+  String? selectedUnitName;
+
+  String selctedUnitId = "";
+
+  bool isLoading = false;
+  bool isCash = true;
+
+  List<dynamic> _itemList = [];
+
+  List<dynamic> get itemList => _itemList;
+
+  void setItemList(List<dynamic> newList) {
+    _itemList = newList;
+    notifyListeners();
+  }
 
   String getSubTotal() {
     double subTotal = 0.00;
@@ -66,30 +95,6 @@ class PurchaseUpdateProvider extends ChangeNotifier {
     grossTotalController.text = getGrossTotal(); // Update field
     notifyListeners();
   }
-
-  String? selectedBillPerson;
-
-  bool isLoading = false;
-  int? purchaseId;
-  int? itemId;
-
-  String? selectedItem;
-
-  String? selectedItemNameInvoice;
-
-  Map<int, String> itemMap = {};
-  List<String> itemNames = [];
-  String? selectedItemName;
-
-  Map<int, String> unitMap = {};
-  List<String> unitNames = [];
-  String? selectedUnitName;
-
-  List<dynamic> purchaseDetailsList = [];
-
-  List<DemoUnitModel> unitResponseModel = [];
-
-  String selctedUnitId = "";
 
   void removeItemAt(int index) {
     if (index >= 0 && index < purchaseUpdateList.length) {
@@ -146,6 +151,8 @@ class PurchaseUpdateProvider extends ChangeNotifier {
       if (data['success']) {
         itemMap.clear();
         itemNames.clear();
+
+        _itemList = data['data']; // ✅ Set itemList here
 
         /// ✅ Corrected `forEach` loop
         for (var item in data['data']) {
@@ -321,13 +328,11 @@ class PurchaseUpdateProvider extends ChangeNotifier {
     String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
     debugPrint("purchase_date=$formattedDate");
 
-//String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-
-    //debugPrint('_selectedDate $_selectedDate');
-
     final url =
-        "https://commercebook.site/api/v1/purchase/update?id=${purchaseEditResponse.data!.purchaseDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${purchaseEditResponse.data!.customerId}&bill_number=${billNumberController.text}&purchase_date=$formattedDate&details_notes=notes&gross_total=${getSubTotal()}&discount=${discountTotalController.text}&payment_out=true&payment_amount=${getGrossTotal()}&bill_person_id=$billPersonID";
-    debugPrint(url);
+        "https://commercebook.site/api/v1/purchase/update?id=${purchaseEditResponse.data!.purchaseDetails![0].purchaseId}&user_id=${prefs.getInt("user_id")}&customer_id=${purchaseEditResponse.data!.customerId}&bill_number=${billNumberController.text}&purchase_date=$formattedDate&details_notes=notes&gross_total=${getSubTotal()}&discount=${discountTotalController.text}&payment_out=${isCash ? 1 : 0}&payment_amount=${getGrossTotal()}&bill_person_id=$billPersonID";
+
+    debugPrint("url  ===> ${url}");
+
     // Prepare request body
     final requestBody = {"purchase_items": purchaseUpdateList};
 
@@ -342,6 +347,10 @@ class PurchaseUpdateProvider extends ChangeNotifier {
       );
 
       debugPrint("API response: ${response.body}"); // Debugging
+
+      debugPrint("=====>Stop<===== ");
+
+      debugPrint("=====>Stop<===== ");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -396,6 +405,7 @@ class PurchaseUpdateProvider extends ChangeNotifier {
   }
 }
 
+///====> purchase update UI
 ///====>Purchase update Screen UI
 class PurchaseUpdateScreen extends StatefulWidget {
   final int purchaseId;
@@ -862,6 +872,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                               // itemDetail: detail,
                                               itemMap: provider.itemMap,
                                               unitMap: provider.unitMap,
+                                              itemList: provider.itemList,
                                             ),
                                           ),
                                         );
@@ -1353,7 +1364,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                                       fontSize: 16,
                                                       color: Colors.black)),
                                               const SizedBox(width: 5),
-
                                               AddSalesFormfield(
                                                 controller: controller
                                                     .receivedAmountController,
@@ -1368,54 +1378,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                                   }
                                                 },
                                               ),
-
-                                              // SizedBox(
-                                              //   height: 25,
-                                              //   width: 150,
-                                              //   child: TextField(
-                                              //     controller: controller
-                                              //         .receivedAmountController,
-                                              //     style: const TextStyle(
-                                              //         fontSize: 15,
-                                              //         color: Colors.black),
-                                              //     readOnly: controller
-                                              //         .isOnlineMoneyChecked, // ✅ Read-only when checked
-                                              //     decoration: InputDecoration(
-                                              //       fillColor: Colors.white,
-                                              //       enabledBorder:
-                                              //           UnderlineInputBorder(
-                                              //         borderSide: BorderSide(
-                                              //             color: Colors
-                                              //                 .grey.shade400,
-                                              //             width: 1),
-                                              //       ),
-                                              //       focusedBorder:
-                                              //           UnderlineInputBorder(
-                                              //         borderSide: BorderSide(
-                                              //             color: Colors
-                                              //                 .grey.shade400,
-                                              //             width: 1),
-                                              //       ),
-                                              //       contentPadding:
-                                              //           const EdgeInsets
-                                              //               .symmetric(
-                                              //         vertical: 12,
-                                              //         horizontal: 2,
-                                              //       ),
-                                              //     ),
-                                              //     keyboardType:
-                                              //         TextInputType.number,
-                                              //     onChanged: (value) {
-                                              //       if (!controller
-                                              //           .isOnlineMoneyChecked) {
-                                              //         controller
-                                              //                 .receivedAmountController
-                                              //                 .text =
-                                              //             value; // ✅ Allow manual input
-                                              //       }
-                                              //     },
-                                              //   ),
-                                              // ),
                                             ],
                                           )
                                         ],
@@ -1432,12 +1394,26 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                               width: double.maxFinite,
                               child: ElevatedButton(
                                 onPressed: () async {
+                                  if (selectedBillPersonData == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'Please select a bill person.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return; // Stop further execution
+                                  }
+
                                   int billPersonID = selectedBillPersonData!.id;
+
                                   await provider.updatePurchase(
                                       context, billPersonID);
 
                                   debugPrint(
                                       'bill number ${billController.text}');
+
+                                  
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
@@ -1715,11 +1691,6 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                   const SizedBox(
                                     height: 20,
                                   ),
-                                  // const Text(
-                                  //   "Unit",
-                                  //   style: TextStyle(
-                                  //       fontSize: 14, color: Colors.black),
-                                  // ),
                                   SizedBox(
                                     width: 150,
                                     child: CustomDropdownTwo(
@@ -1862,7 +1833,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                       .notifyListeners();
                                 });
 
-                                ////clear item n ame
+                                ////clear item name
                                 setState(() {
                                   controller.seletedItemName = null;
 

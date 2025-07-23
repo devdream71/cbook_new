@@ -298,43 +298,7 @@ class _ItemCustomDropDownTextFieldState
               ),
             ),
 
-            // SizedBox(
-            //   height: 30,
-            //   child: TextFormField(
-            //     controller: widget.controller,
-            //     focusNode: _focusNode,
-            //     onChanged: (value) => _onChanged(value, itemProvider),
-            //     cursorHeight: 14,
-            //     style: const TextStyle(
-            //       color: Colors.black,
-            //       fontSize: 12,
-            //       //fontWeight: FontWeight.bold
-            //     ),
-            //     decoration: InputDecoration(
-            //       fillColor: Colors.white,
-            //       labelText: "Item",
-            //       labelStyle: const TextStyle(fontSize: 12, color: Colors.grey),
-            //       floatingLabelStyle:
-            //           const TextStyle(color: Colors.green, fontSize: 12),
-            //       filled: true,
-            //       contentPadding:
-            //           const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-            //       enabledBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(3),
-            //         borderSide:
-            //             BorderSide(color: Colors.grey.shade400, width: 1),
-            //       ),
-            //       border: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(3),
-            //         borderSide:
-            //             BorderSide(color: Colors.grey.shade400, width: 1),
-            //       ),
-            //       focusedBorder: const OutlineInputBorder(
-            //         borderSide: BorderSide(color: Colors.green),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+             
           ],
         );
       },

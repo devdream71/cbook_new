@@ -94,25 +94,51 @@ class LayoutState extends State<Layout> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+
+    Future.microtask(() async {
+      ///fetch customer.
       Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr();
+
+      ///fetch category.
       Provider.of<ItemCategoryProvider>(context, listen: false)
           .fetchCategories();
+
+      ///fetch item.
       Provider.of<AddItemProvider>(context, listen: false).fetchItems();
+
+      
+      ///fetch stock quantity.
       Provider.of<AddItemProvider>(context, listen: false)
           .fetchPurchaseStockQuantity(
               "1"); // Pass a default itemId or handle it later
+
+      ///fetch customer.
       Future.microtask(() =>
           Provider.of<CustomerProvider>(context, listen: false)
               .fetchCustomsr());
 
+      ///fetch bill person.
       Future.microtask(() =>
           Provider.of<PaymentVoucherProvider>(context, listen: false)
               .fetchBillPersons());
+
+    ///clear saved data from controller. 
+    // final controller = Provider.of<PurchaseController>(context, listen: false);
+    // controller.updateCash();
+
     });
   }
 
-  bool _isExpanded = false;
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+
+  //   final controller = Provider.of<PurchaseController>(context, listen: false);
+
+  //   controller.updateCash();
+
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -755,10 +781,12 @@ class LayoutState extends State<Layout> {
                                                               //setState(() {});
                                                             },
                                                             child: DecoratedBox(
-                                                                decoration: BoxDecoration(
-                                                                     
-                                                                    color: const Color(0xfff4f6ff), //0xfff4f6ff
-                                                                    borderRadius: BorderRadius.circular(5)),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                        color: const Color(
+                                                                            0xfff4f6ff), //0xfff4f6ff
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(5)),
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
@@ -816,8 +844,6 @@ class LayoutState extends State<Layout> {
                                                                           ],
                                                                         ),
                                                                       ),
-
-                                                                       
 
                                                                       ///close
                                                                       InkWell(
@@ -885,7 +911,6 @@ class LayoutState extends State<Layout> {
                                                                               color: Colors.green,
                                                                               size: 18),
                                                                         ),
-                                                                        
                                                                       )
                                                                     ],
                                                                   ),
@@ -1074,7 +1099,6 @@ class LayoutState extends State<Layout> {
                                                                           ],
                                                                         ),
                                                                       ),
-
                                                                       InkWell(
                                                                         onTap:
                                                                             () {
@@ -1132,8 +1156,6 @@ class LayoutState extends State<Layout> {
                                                                           ),
                                                                         ),
                                                                       )
-
-                                                                      
                                                                     ],
                                                                   ),
                                                                 ),
@@ -1291,8 +1313,6 @@ class LayoutState extends State<Layout> {
                             ],
                           ),
 
-                  
-
                           ////Note
 
                           /// ===========>  amount , discount, total amount ====>
@@ -1362,7 +1382,8 @@ class LayoutState extends State<Layout> {
                                                 width: 75,
                                                 child: AddSalesFormfield(
                                                   labelText: "৳",
-                                                  keyboardType: TextInputType.number,
+                                                  keyboardType:
+                                                      TextInputType.number,
                                                   controller: controller
                                                       .discountController,
                                                   onChanged: (value) {
@@ -1373,7 +1394,8 @@ class LayoutState extends State<Layout> {
                                                         .discountController
                                                         .text = value;
                                                     controller
-                                                        .updateDiscount(value);
+                                                        .updateDiscountcash(
+                                                            value);
                                                   },
                                                 ),
                                               ),
@@ -1382,10 +1404,16 @@ class LayoutState extends State<Layout> {
                                                 height: 30,
                                                 width: 75,
                                                 child: AddSalesFormfield(
-                                                  keyboardType: TextInputType.number,
+                                                  keyboardType:
+                                                      TextInputType.number,
                                                   labelText: "%",
                                                   controller: controller
                                                       .discountAmountController,
+                                                  onChanged: (value){
+
+                                                    controller.updateDiscountPercentageCash(value);;
+
+                                                  },    
                                                   decoration: InputDecoration(
                                                     hintText: "%",
                                                     hintStyle: TextStyle(
@@ -1570,15 +1598,21 @@ class LayoutState extends State<Layout> {
                                                         .discountController
                                                         .text = value;
                                                     controller
-                                                        .updateDiscount(value);
+                                                        .updateDiscountCredit(
+                                                            value);
                                                   },
                                                 ),
                                               ),
                                               hPad2,
+
+                                              ///
                                               SizedBox(
                                                 height: 30,
                                                 width: 75,
                                                 child: AddSalesFormfield(
+                                                  onChanged: (value){
+                                                     controller.updateDiscountPercentageCredit(value);
+                                                  },
                                                   controller: controller
                                                       .discountAmountController,
                                                 ),
@@ -1839,13 +1873,13 @@ class LayoutState extends State<Layout> {
                                 ? controller.totalAmount
                                 : controller.totalAmount2;
 
-                           String ? payment = controller.receivedAmountController.text;     
+                            String? payment =
+                                controller.receivedAmountController.text;
 
                             debugPrint("amount =========>>>>====> $amount");
 
-                            debugPrint("selectedBillPersonData!.id =========>>>>====> $selectedBillPersonData!.id");
-
-
+                            debugPrint(
+                                "selectedBillPersonData!.id =========>>>>====> $selectedBillPersonData!.id");
 
                             debugPrint(
                                 "note  =========>>>>====> ${controller.noteController.text}");
@@ -1861,26 +1895,25 @@ class LayoutState extends State<Layout> {
                               ));
                             } else {
                               bool isSuccess = await controller.storePurchase(
-                                  context,
-                                  date: date,
-                                  amount: amount,
-                                  customerId: controller.isCash
-                                      ? "cash"
-                                      : Provider.of<CustomerProvider>(context,
-                                                  listen: false)
-                                              .selectedCustomer
-                                              ?.id
-                                              .toString() ??
-                                          "cash",
-                                  saleType:
-                                      controller.isCash ? "cash" : "credit",
-                                  discount: discount,
-                                  note: controller.noteController.text,
-                                  billNo: billController.text,
-                                  total: total,
-                                  paymnetAmount : payment,
-                                  billPersonId : selectedBillPersonData!.id,
-                                  );
+                                context,
+                                date: date,
+                                amount: amount,
+                                customerId: controller.isCash
+                                    ? "cash"
+                                    : Provider.of<CustomerProvider>(context,
+                                                listen: false)
+                                            .selectedCustomer
+                                            ?.id
+                                            .toString() ??
+                                        "cash",
+                                saleType: controller.isCash ? "cash" : "credit",
+                                discount: discount,
+                                note: controller.noteController.text,
+                                billNo: billController.text,
+                                total: total,
+                                paymnetAmount: payment,
+                                billPersonId: selectedBillPersonData!.id,
+                              );
 
                               if (isSuccess) {
                                 // Clear all controllers and purchase items
@@ -2213,7 +2246,6 @@ class LayoutState extends State<Layout> {
                             SizedBox(height: 5),
                           ]),
 
-                          
                           ///new item working for base and secondary unit.
                           ItemCustomDropDownTextField(
                             controller: itemController,
@@ -2326,7 +2358,6 @@ class LayoutState extends State<Layout> {
                                 ],
                               ),
 
-                              
                               /// new updated code working, for base and secondary unit.
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.start,

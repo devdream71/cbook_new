@@ -9,7 +9,6 @@ import '../../sales/sales_view.dart';
 import 'package:http/http.dart' as http;
 
 class PurchaseController extends ChangeNotifier {
-
   TextEditingController mrpController = TextEditingController();
   TextEditingController qtyController = TextEditingController();
   TextEditingController noteController = TextEditingController();
@@ -37,47 +36,40 @@ class PurchaseController extends ChangeNotifier {
       TextEditingController();
   TextEditingController discountPercentageCreditController =
       TextEditingController();
-  TextEditingController purchaseNoteController =
-      TextEditingController();    
-
-    TextEditingController controller = TextEditingController(text: "Cash");
-
+  TextEditingController purchaseNoteController = TextEditingController();
   TextEditingController receivedAmountController = TextEditingController();
+  TextEditingController discountController = TextEditingController();
 
-  TextEditingController discountController =
-      TextEditingController();     
+   TextEditingController controller = TextEditingController(text: "Cash");
 
   List<ItemModel> itemsCash = [];
   List<ItemModel> itemsCredit = [];
   List<PurchaseItemModel> purchaseItem = [];
   List<String> unitIdsList = [];
-  bool isOnlineMoneyChecked = false;
-  bool isCash = true;
-  bool isReceived = true;
+  
   String text = "Cash";
+
   String? selectedCategory;
   String? selectedSubCategory;
   String? selectedUnit;
   String? selectedWarehouse;
   String? selectedReceiptType;
   String? seletedItemName;
-  String selcetedItemId = "";
   bool isCreditSale = true;
+  
+  double purchasePrice = 0.0;
+  int onlinePaymentValue = 0;
+  double _subtotalItemDialog = 0.0;
+
+  int unitQty = 1;
+
+  String primaryUnitName = '';
+  String secondaryUnitName = '';
   String customerName = "";
   String phone = "";
   String email = "";
   String address = "";
-  bool isAmount = true;
-  bool isDisocunt = true;
-  bool isAdditionalCost = true;
-  bool isSubTotoal = true;
-  bool isReciptType = true;
-  bool isRecivedMoney = true;
-  bool isReturn = true;
-  double purchasePrice = 0.0;
-  int unitQty = 1;
-  String primaryUnitName = '';
-  String secondaryUnitName = '';
+  String selcetedItemId = "";
 
   bool isAmountCredit = true;
   bool isDiscountCredit = true;
@@ -88,15 +80,20 @@ class PurchaseController extends ChangeNotifier {
   bool isAdvance = true;
   bool isBillTotal = true;
   bool isDue = true;
+  bool isAmount = true;
+  bool isDisocunt = true;
+  bool isAdditionalCost = true;
+  bool isSubTotoal = true;
+  bool isReciptType = true;
+  bool isRecivedMoney = true;
+  bool isReturn = true;
+  bool _isListenerAttached = false;
+  bool isOnlineMoneyChecked = false;
+  bool isCash = true;
+  bool isReceived = true;
 
-  int onlinePaymentValue = 0;
-
-
-
-  double _subtotalItemDialog = 0.0;
   double get subtotalItemDiolog => _subtotalItemDialog;
 
-   bool _isListenerAttached = false;
 
   void dialogtotalController() {
     if (_isListenerAttached) return;
@@ -126,38 +123,88 @@ class PurchaseController extends ChangeNotifier {
 
 // Ensure discount input is controlled
 
-  void updateDiscount(String value) {
-    discountController.text = value;
+  
+  ///cash...discount amount and percentance
+  void updateDiscountcash(String value) {
+    double discountAmount = double.tryParse(value) ?? 0.0;
+    double subtotal = double.tryParse(addAmount2()) ?? 0.0;
+
+    if (subtotal > 0) {
+      double percentage = (discountAmount / subtotal) * 100;
+      discountAmountController.text = percentage.toStringAsFixed(2);
+    } else {
+      discountAmountController.text = "0.00";
+    }
+
+    // No need to reassign value to discountController.text again
     notifyListeners();
   }
 
+  ///cash.  upadte discount percentanct
+  void updateDiscountPercentageCash(String value) {
+  double percentage = double.tryParse(value) ?? 0.0;
+  double subtotal = double.tryParse(addAmount2()) ?? 0.0;
 
-  ///working but need to store, check value , true or false.
-  // void updateOnlineMoney() {
-  //   isOnlineMoneyChecked = !isOnlineMoneyChecked;
-  //   if (isOnlineMoneyChecked) {
-  //     receivedAmountController.text =
-  //         totalAmount2; // ✅ Set total amount when checked
-  //   } else {
-  //     receivedAmountController.clear(); // ✅ Clear value when unchecked
-  //   }
-  //   notifyListeners();
-  // }
-
-  void updateOnlineMoney() {
-  isOnlineMoneyChecked = !isOnlineMoneyChecked;
-
-  // Set value: 0=unpaid;1=partial;2=paid
-  onlinePaymentValue = isOnlineMoneyChecked ? 2 : 1;
-
-  if (isOnlineMoneyChecked) {
-    receivedAmountController.text = totalAmount2;
+  if (subtotal > 0) {
+    double discount = (percentage / 100) * subtotal;
+    discountController.text = discount.toStringAsFixed(2);
   } else {
-    receivedAmountController.clear();
+    discountController.text = "0.00";
   }
 
   notifyListeners();
 }
+
+
+  
+  ///credit...discount amount and percentance 
+  void updateDiscountCredit(String value) {
+    double discountAmount = double.tryParse(value) ?? 0.0;
+    double subtotal = double.tryParse(addAmount()) ?? 0.0;
+
+    if (subtotal > 0) {
+      double percentage = (discountAmount / subtotal) * 100;
+      discountAmountController.text = percentage.toStringAsFixed(2);
+    } else {
+      discountAmountController.text = "0.00";
+    }
+
+    // No need to reassign value to discountController.text again
+    notifyListeners();
+  }
+
+
+  ///credit discount percentace to amount calculation.
+   void updateDiscountPercentageCredit(String value) {
+  double percentage = double.tryParse(value) ?? 0.0;
+  double subtotal = double.tryParse(addAmount()) ?? 0.0;
+
+  if (subtotal > 0) {
+    double discount = (percentage / 100) * subtotal;
+    discountController.text = discount.toStringAsFixed(2);
+  } else {
+    discountController.text = "0.00";
+  }
+
+  notifyListeners();
+}
+
+
+
+  void updateOnlineMoney() {
+    isOnlineMoneyChecked = !isOnlineMoneyChecked;
+
+    // Set value: 0=unpaid;1=partial;2=paid
+    onlinePaymentValue = isOnlineMoneyChecked ? 2 : 1;
+
+    if (isOnlineMoneyChecked) {
+      receivedAmountController.text = totalAmount2;
+    } else {
+      receivedAmountController.clear();
+    }
+
+    notifyListeners();
+  }
 
   void updateCash() {
     isCash = !isCash;
@@ -166,6 +213,7 @@ class PurchaseController extends ChangeNotifier {
     discountController.clear();
     itemsCash.clear();
     itemsCredit.clear();
+    discountAmountController.clear();
     notifyListeners();
   }
 
@@ -372,7 +420,6 @@ class PurchaseController extends ChangeNotifier {
 
     return total.toStringAsFixed(2);
   }
-  
 
   ///===>credit total
   String get totalAmount2 {
@@ -417,10 +464,9 @@ class PurchaseController extends ChangeNotifier {
     required saleType,
     required String customerId,
     required String billNo,
-    String ? note,
-    String ? paymnetAmount,
-    int ? billPersonId,
-
+    String? note,
+    String? paymnetAmount,
+    int? billPersonId,
   }) async {
     // Notify UI about loading state
 
@@ -442,7 +488,7 @@ class PurchaseController extends ChangeNotifier {
 
       debugPrint('$noteController');
 
-      onlinePaymentValue; 
+      onlinePaymentValue;
 
       final String note = noteController.text;
 
@@ -486,7 +532,7 @@ class PurchaseController extends ChangeNotifier {
         "purchase_items": purchaseItem.map((item) => item.toJson()).toList(),
         // "details_notes": note ?? "",
       };
-      
+
       debugPrint("Request Body: $requestBody");
 
       final response = await http.post(
@@ -609,8 +655,6 @@ class PurchaseController extends ChangeNotifier {
 
     notifyListeners();
   }
-
-  
 
   addCashItem() {
     debugPrint(

@@ -16,6 +16,11 @@ class UpdateSaleItemView extends StatefulWidget {
   final SaleUpdateModel itemDetail;
   final Map<int, String> itemMap;
   final Map<int, String> unitMap;
+  final List<dynamic> itemList;
+  final dynamic itemDiscoumtAmount;
+  final dynamic itemDiscountPercentance;
+  final dynamic ItemtaxAmount;
+  final dynamic ItemtaxPercentance;
 
   const UpdateSaleItemView({
     Key? key,
@@ -24,6 +29,11 @@ class UpdateSaleItemView extends StatefulWidget {
     required this.provider,
     required this.itemMap,
     required this.unitMap,
+    required this.itemList,
+    this.itemDiscountPercentance,
+    this.itemDiscoumtAmount,
+    this.ItemtaxAmount,
+    this.ItemtaxPercentance,
   }) : super(key: key);
 
   @override
@@ -31,6 +41,36 @@ class UpdateSaleItemView extends StatefulWidget {
 }
 
 class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
+  int? selectedItemId;
+
+  List<String> getFilteredUnitsForSelectedItem() {
+    if (selectedItemId == null) return [];
+
+    final item = widget.itemList.firstWhere(
+      (element) => element['id'] == selectedItemId,
+      orElse: () => null,
+    );
+
+    if (item == null) return [];
+
+    final primaryUnitId = item['unit_id'];
+    final secondaryUnitId = item['secondary_unit_id'];
+
+    final unitNames = <String>[];
+
+    // Use unitMap to convert unitId → name (e.g., 5 → "Pc")
+    if (primaryUnitId != null && widget.unitMap.containsKey(primaryUnitId)) {
+      unitNames.add(widget.unitMap[primaryUnitId]!);
+    }
+
+    if (secondaryUnitId != null &&
+        widget.unitMap.containsKey(secondaryUnitId)) {
+      unitNames.add(widget.unitMap[secondaryUnitId]!);
+    }
+
+    return unitNames;
+  }
+
   TextEditingController qtyController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController subTotalController = TextEditingController();
@@ -60,6 +100,8 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
     // unitId is in the format: "5_Packet_1" => we only need the first part
     final unitIdOnly = int.tryParse(widget.itemDetail.unitId.split("_")[0]);
     selectedUnitName = widget.unitMap[unitIdOnly] ?? 'Select Unit';
+
+    selectedItemId = int.tryParse(widget.itemDetail.itemId);  
 
     widget.provider.saveData(
       itemId: widget.itemDetail != null
@@ -120,7 +162,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
 
     widget.provider.priceController.addListener(calculateSubtotal);
     widget.provider.qtyController.addListener(calculateSubtotal);
-    
+
     return Scaffold(
       backgroundColor: AppColors.sfWhite,
       appBar: AppBar(
@@ -142,25 +184,31 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                 children: [
                   ////==>Item
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomDropdownTwo(
-                      labelText: 'Item',
-                      items: widget.itemMap.isNotEmpty
-                          ? widget.itemMap.values.toList()
-                          : [
-                              'No Items Available'
-                            ], // Show a default message if empty
-                      hint: selectedItemName ??
-                          'Select Item', // ✅ Show selected item
-                      selectedItem: selectedItemName,
-                      width: double.infinity,
-                      height: 30,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedItemName = newValue;
-                        });
-                      },
+                  Opacity(
+                    opacity: 0.6,
+                    child: IgnorePointer(
+                      ignoring: true,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: CustomDropdownTwo(
+                          labelText: 'Item',
+                          items: widget.itemMap.isNotEmpty
+                              ? widget.itemMap.values.toList()
+                              : [
+                                  'No Items Available'
+                                ], // Show a default message if empty
+                          hint: selectedItemName ??
+                              'Select Item', // ✅ Show selected item
+                          selectedItem: selectedItemName,
+                          width: double.infinity,
+                          height: 30,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedItemName = newValue;
+                            });
+                          },
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -227,11 +275,15 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                             SizedBox(
                               child: CustomDropdownTwo(
                                 labelText: 'Unit',
-                                items: widget.unitMap.isNotEmpty
-                                    ? widget.unitMap.values.toList()
-                                    : [
-                                        'No Units Available'
-                                      ], // Show a default message if empty
+                                // items: widget.unitMap.isNotEmpty
+                                //     ? widget.unitMap.values.toList()
+                                //     : [
+                                //         'No Units Available'
+                                //       ], // Show a default message if empty
+                                items:
+                                    getFilteredUnitsForSelectedItem().isNotEmpty
+                                        ? getFilteredUnitsForSelectedItem()
+                                        : ['No Units Available'],
                                 hint: selectedUnitName ??
                                     'Select Unit', // Show selected unit or default hint
                                 width: double.infinity,
@@ -274,7 +326,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                             labelText: "Discount (%)",
                             //label: "Discount (%)",
                             controller:
-                                widget.provider.updateDiscountPercentance,
+                                widget.provider.itemDiscountPercentance,
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
                               widget.provider.lastChanged = 'percent';
@@ -293,7 +345,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                         children: [
                           AddSalesFormfield(
                             labelText: "Discount (Amount)",
-                            controller: widget.provider.updateDiscountAmount,
+                            controller: widget.provider.itemDiscountAmount,
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
                               widget.provider.lastChanged = 'amount';
@@ -348,7 +400,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                                           .toList(),
                                       width: double.infinity,
                                       height: 30,
-                                      selectedItem: selectedTaxName,
+                                      selectedItem: widget.provider.itemTaxVatPercentance.text,  //selectedTaxName,
                                       onChanged: (newValue) {
                                         setState(() {
                                           selectedTaxName = newValue;
@@ -405,8 +457,7 @@ class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
                         child: AddSalesFormfield(
                           labelText: "TAX amount",
                           controller: TextEditingController(
-                            text: widget.provider.taxAmount
-                                .toStringAsFixed(2), // 👈 show calculated tax
+                            text: widget.provider.itemTaxVatAmount.text, // 👈 show calculated tax
                           ),
                           keyboardType: TextInputType.number,
                           //readOnly: true, // 👈 prevent manual editing
