@@ -6,6 +6,7 @@ import 'package:cbook_dt/common/feature_not_available.dart';
 import 'package:cbook_dt/feature/Received/received_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/expense_list.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
+import 'package:cbook_dt/feature/dashboard_report/provider/dashbord_report_provider.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/dashboard/dashboard_controller.dart';
 import 'package:cbook_dt/feature/home/presentation/widget/reusable_box.dart';
 import 'package:cbook_dt/feature/paymentout/payment_out_list.dart';
@@ -30,15 +31,67 @@ class DashboardView extends StatefulWidget {
 class DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => DashboardController(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DashboardController()),
+        ChangeNotifierProvider(create: (_) => DashboardReportProvider()),
+      ],
       child: const _Layout(),
     );
   }
 }
 
-class _Layout extends StatelessWidget {
+class _Layout extends StatefulWidget {
   const _Layout();
+
+  @override
+  State<_Layout> createState() => _LayoutState();
+}
+
+class _LayoutState extends State<_Layout> with SingleTickerProviderStateMixin  {
+
+  List<double> salesValues = [];
+    late AnimationController _controller;
+  late Animation<double> _animation;
+
+
+  @override
+  void initState() {
+    super.initState();
+   
+
+    final provider =
+        Provider.of<DashboardReportProvider>(context, listen: false);
+    Future.microtask(() async {
+      await provider.fetchCustomerTransaction();
+      await provider.fetchSupplierTransaction();
+      await provider.fetchCashInHandTransaction();
+      await provider.fetchBankBalance();
+      await provider.fetchVoucherSummary();
+
+
+    });
+
+    
+  provider.fetchSalesLast30Days().then((_) {
+    setState(() {
+      salesValues = provider.salesLast30Days.map((e) => e.sales.toDouble()).toList();
+      _controller.forward();
+    });
+  });
+
+  _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 2),
+  );
+
+  _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeOutQuart,
+  );
+
+     
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +110,7 @@ class _Layout extends StatelessWidget {
         color: AppColors.primaryColor,
         child: SafeArea(
           child: Scaffold(
-             //backgroundColor: colorScheme.surface,
+            //backgroundColor: colorScheme.surface,
             backgroundColor: AppColors.sfWhite,
             floatingActionButton: Padding(
               padding:
@@ -107,7 +160,7 @@ class _Layout extends StatelessWidget {
                 ],
               ),
             ),
-           
+
             body: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
@@ -186,172 +239,187 @@ class _Layout extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           hPad5,
+                           
                           Expanded(
-                            child: ReusableBox(
-                              icon: Icons.monetization_on,
-                              label: "Cash",
-                              value: "৳ 12,500,000",
-                              borderColor: colorScheme.primary,
-                              textColor: Colors.black,
-                              iconColor: colorScheme.primary,
+                            child: Consumer<DashboardReportProvider>(
+                              builder: (context, provider, _) {
+                                if (provider.isLoading) {
+                                  return const Center(
+                                      child: SizedBox());
+                                } else if (provider.error != null) {
+                                  return Text("Error: ${provider.error}");
+                                } else {
+                                  return ReusableBox(
+                                    icon: Icons.monetization_on,
+                                    label: "Cash",
+                                    value:
+                                        "৳ ${provider.customerTransaction ?? 0}",
+                                    borderColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    textColor: Colors.black,
+                                    iconColor:
+                                        Theme.of(context).colorScheme.primary,
+                                  );
+                                }
+                              },
                             ),
                           ),
                           hPad5,
+
                           Expanded(
-                            child: ReusableBox(
-                              icon: Icons.account_balance,
-                              label: "Bank",
-                              value: "৳ 25,000,009",
-                              borderColor: Colors.black,
-                              textColor: Colors.black,
-                              iconColor: colorScheme.primary,
+                            child: Consumer<DashboardReportProvider>(
+                              builder: (context, provider, _) {
+                                if (provider.isLoading) {
+                                  return const Center(
+                                      child: SizedBox());
+                                } else if (provider.error != null) {
+                                  return Text("Error: ${provider.error}");
+                                } else {
+                                  return ReusableBox(
+                                    icon: Icons.pie_chart,
+                                    label: "Supplier",
+                                    value:
+                                        "৳ ${provider.supplierTransaction ?? 0}",
+                                    borderColor: Colors.black,
+                                    textColor: Colors.black,
+                                    iconColor:
+                                        Theme.of(context).colorScheme.primary,
+                                  );
+                                }
+                              },
                             ),
                           ),
+
                           hPad5,
+
                           Expanded(
-                            child: ReusableBox(
-                              icon: Icons.person_3_outlined,
-                              label: "Customer",
-                              value: "৳ 80,200.000",
-                              borderColor: Colors.black,
-                              textColor: Colors.black,
-                              iconColor: colorScheme.primary,
-                            ),
-                          ),
+  child: Consumer<DashboardReportProvider>(
+    builder: (context, provider, _) {
+      if (provider.isLoading) {
+        return const Center(child: SizedBox());
+      } else if (provider.error != null) {
+        return Text("Error: ${provider.error}");
+      } else {
+        return ReusableBox(
+          icon: Icons.wallet,
+          label: "Cash in Hand",
+          value: "৳ ${provider.cashInHand ?? 0}",
+          borderColor: Theme.of(context).colorScheme.primary,
+          textColor: Colors.black,
+          iconColor: Theme.of(context).colorScheme.primary,
+        );
+      }
+    },
+  ),
+),
+
+    hPad5,
+
+ 
+
+Expanded(
+  child: Consumer<DashboardReportProvider>(
+    builder: (context, provider, _) {
+      if (provider.isLoading) {
+        return const Center(child: SizedBox());
+      } else if (provider.error != null) {
+        return Text("Error: ${provider.error}");
+      } else {
+        return ReusableBox(
+          icon: Icons.account_balance,
+          label: "Bank Balance",
+          value: "৳ ${provider.bankBalance ?? 0}",
+          borderColor: Colors.green,
+          textColor: Colors.black,
+          iconColor: Colors.green,
+        );
+      }
+    },
+  ),
+),
+
+                          // Expanded(
+                          //   child: ReusableBox(
+                          //     icon: Icons.account_balance,
+                          //     label: "Bank",
+                          //     value: "৳ 25,000,009",
+                          //     borderColor: Colors.black,
+                          //     textColor: Colors.black,
+                          //     iconColor: colorScheme.primary,
+                          //   ),
+                          // ),
+                          // hPad5,
+                          // Expanded(
+                          //   child: ReusableBox(
+                          //     icon: Icons.person_3_outlined,
+                          //     label: "Customer",
+                          //     value: "৳ 80,200.000",
+                          //     borderColor: Colors.black,
+                          //     textColor: Colors.black,
+                          //     iconColor: colorScheme.primary,
+                          //   ),
+                          // ),
                           hPad5,
-                          Expanded(
-                            child: ReusableBox(
-                              icon: Icons.pie_chart,
-                              label: "Suppiler",
-                              value: "৳ 47,300,000",
-                              borderColor: Colors.black,
-                              textColor: Colors.black,
-                              iconColor: colorScheme.primary,
-                            ),
-                          ),
+
+                          // Expanded(
+                          //   child: Consumer<DashboardReportProvider>(
+                          //     builder: (context, provider, _) {
+                          //       if (provider.isLoading) {
+                          //         return const Center(
+                          //             child: CircularProgressIndicator());
+                          //       } else if (provider.error != null) {
+                          //         return Text("Error: ${provider.error}");
+                          //       } else {
+                          //         return ReusableBox(
+                          //           icon: Icons.wallet,
+                          //           label: "Cash in Hand",
+                          //           value: "৳ ${provider.cashInHand ?? 0}",
+                          //           borderColor:
+                          //               Theme.of(context).colorScheme.primary,
+                          //           textColor: Colors.black,
+                          //           iconColor:
+                          //               Theme.of(context).colorScheme.primary,
+                          //         );
+                          //       }
+                          //     },
+                          //   ),
+                          // ),
+
                           hPad5,
+
+//                                          hPad5,
                         ],
                       ),
 
-                      // Row(
-                      //   children: [
-                      //     hPad5,
-                      //     Expanded(
-                      //       child: Padding(
-                      //         padding: const EdgeInsets.all(2.0),
-                      //         child: CustomDashboardStats(
-                      //           title: "Receipt",
-                      //           value: "৳ 10,550",
-                      //           titleBackgroundColor: colorScheme.primary,
-                      //           titleTextColor: colorScheme.secondary,
-                      //           valueBackgroundColor: Colors.grey.shade400,
-                      //           valueTextColor: Colors.black,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     Expanded(
-                      //       child: Padding(
-                      //         padding: const EdgeInsets.all(2.0),
-                      //         child: CustomDashboardStats(
-                      //           title: "Payment",
-                      //           value: "৳ 10,550",
-                      //           titleBackgroundColor: colorScheme.primary,
-                      //           titleTextColor: colorScheme.secondary,
-                      //           valueBackgroundColor: Colors.grey.shade400,
-                      //           valueTextColor: Colors.black,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     Expanded(
-                      //       child: Padding(
-                      //         padding: const EdgeInsets.all(2.0),
-                      //         child: CustomDashboardStats(
-                      //           title: "Expense",
-                      //           value: "৳ 10,550",
-                      //           titleBackgroundColor: colorScheme.primary,
-                      //           titleTextColor: colorScheme.secondary,
-                      //           valueBackgroundColor: Colors.grey.shade100,
-                      //           valueTextColor: Colors.black,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     Expanded(
-                      //       child: Padding(
-                      //         padding: const EdgeInsets.all(2.0),
-                      //         child: CustomDashboardStats(
-                      //           title: "Income",
-                      //           value: "৳ 10,550",
-                      //           titleBackgroundColor: colorScheme.primary,
-                      //           titleTextColor: colorScheme.secondary,
-                      //           valueBackgroundColor: Colors.grey.shade400,
-                      //           valueTextColor: Colors.black,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     hPad5,
-                      //   ],
-                      // ),
+                      Consumer<DashboardReportProvider>(
+  builder: (context, provider, _) {
+    if (provider.isLoading) {
+      return const Center(child: SizedBox());
+    } else if (provider.error != null) {
+      return Text('Error: ${provider.error}');
+    } else if (provider.voucherSummary == null) {
+      return const Text('No data available');
+    } else {
+      final summary = provider.voucherSummary!;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Received: ৳${summary.received}", style: TextStyle(fontSize: 12, color: Colors.black)),
+          Text("Payment: ৳${summary.payment}", style: TextStyle(fontSize: 12, color: Colors.black)),
+          Text("Income: ৳${summary.income}", style: TextStyle(fontSize: 12, color: Colors.black)),
+          Text("Expense: ৳${summary.expense}", style: TextStyle(fontSize: 12, color: Colors.black)),
+        ],
+      );
+    }
+  },
+),
 
+                      
                       const SizedBox(
                         height: 8,
                       ),
 
-                      // Text(
-                      //   "Today Stock Information",
-                      //   style: GoogleFonts.notoSansPhagsPa(
-                      //       color: AppColors.primaryColor,
-                      //       fontWeight: FontWeight.w600,
-                      //       fontSize: 16),
-                      // ),
-
-                      // const SizedBox(
-                      //   height: 8,
-                      // ),
-
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      //   child: Table(
-                      //     border: TableBorder.all(
-                      //         color: Colors.grey.shade300, width: 1),
-                      //     children:
-                      //         controller.data.asMap().entries.map((entry) {
-                      //       int index = entry.key;
-                      //       var item = entry.value;
-                      //       return TableRow(
-                      //         decoration: BoxDecoration(
-                      //           color: index % 2 == 0
-                      //               ? const Color(0xffdfe8f4)
-                      //               : Colors.white, // Red for odd rows
-                      //         ),
-                      //         children: [
-                      //           Padding(
-                      //             padding: const EdgeInsets.all(8.0),
-                      //             child: Text(
-                      //               item["label"]!,
-                      //               style: GoogleFonts.notoSansPhagsPa(
-                      //                 fontSize: 12,
-                      //                 // fontWeight: FontWeight.w500,
-                      //                 color: Colors.black.withOpacity(0.8),
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Padding(
-                      //             padding: const EdgeInsets.all(8.0),
-                      //             child: Text(
-                      //               item["value"]!,
-                      //               textAlign: TextAlign.end,
-                      //               style: GoogleFonts.notoSansPhagsPa(
-                      //                 fontSize: 12,
-                      //                 // fontWeight: FontWeight.w700,
-                      //                 color: Colors.black.withOpacity(0.8),
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       );
-                      //     }).toList(),
-                      //   ),
-                      // ),
+                       
                     ],
                   ),
 
@@ -532,8 +600,6 @@ Widget _buildBottomSheetContent(BuildContext context) {
                             context,
                             MaterialPageRoute(
                                 builder: (_) => const ReceivedList()));
-
-                        
                       },
                       child: _buildIconWithLabel(
                           Icons.receipt, "Receipt In", context)),
@@ -615,9 +681,9 @@ Widget _buildBottomSheetContent(BuildContext context) {
                         //     builder: (context) =>
                         //         const FeatureNotAvailableDialog());
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const PaymentOutList()));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const PaymentOutList()));
                       },
                       child: _buildIconWithLabel(
                           Icons.tab, "Payment\nOut", context)),

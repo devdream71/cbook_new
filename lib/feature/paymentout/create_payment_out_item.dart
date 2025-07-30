@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
@@ -14,6 +15,7 @@ import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentOutCreateItem extends StatefulWidget {
@@ -24,8 +26,19 @@ class PaymentOutCreateItem extends StatefulWidget {
 }
 
 class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
+  TextEditingController billController = TextEditingController();
+
   String? selectedReceivedTo;
   String? selectedAccount;
+
+  //String? selectedReceivedTo;     // e.g. 'Cash in Hand'
+  String? internalReceivedTo;
+
+  String getReceivedToValue(String label) {
+    if (label == 'Cash in Hand') return 'cash';
+    if (label == 'Bank') return 'bank';
+    return ''; // fallback if needed
+  }
 
   int? selectedAccountId;
 
@@ -81,12 +94,148 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
 
-    Future.microtask(() =>
-        Provider.of<PaymentVoucherProvider>(context, listen: false)
-            .fetchBillPersons());
+    Future.microtask(() async {
+      Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr();
+
+      Provider.of<PaymentVoucherProvider>(context, listen: false)
+          .fetchBillPersons();
+
+      await fetchAndSetBillNumber();
+    });
+
+    // Future.microtask(() =>
+    //     Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
+
+    // Future.microtask(() =>
+    //     Provider.of<PaymentVoucherProvider>(context, listen: false)
+    //         .fetchBillPersons());
+  }
+
+  // Updated fetchAndSetBillNumber with more debugging:
+  // Future<void> fetchAndSetBillNumber() async {
+  //   debugPrint('fetchAndSetBillNumber called');
+
+  //   final url = Uri.parse(
+  //     'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=voucher&type=payment-out&code=PAY&bill_number=100&with_nick_name=1',
+  //   );
+
+  //   debugPrint('API URL: $url');
+
+  //   try {
+  //     debugPrint('Making API call...');
+  //     final response = await http.get(url);
+  //     debugPrint('API Response Status: ${response.statusCode}');
+  //     debugPrint('API Response Body: ${response.body}');
+
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       debugPrint('Parsed data: $data');
+
+  //       if (data['success'] == true && data['data'] != null) {
+  //         String billFromApi = data['data'].toString(); // Ensure it's a string
+  //         debugPrint('Bill from API: $billFromApi');
+
+  //         //String newBill = _incrementBillNumber(billFromApi);
+
+  //         String newBill = billFromApi;
+
+  //         debugPrint('New bill after increment: $newBill');
+
+  //         // Update the controller and trigger UI rebuild
+  //         if (mounted) {
+  //           setState(() {
+  //             billController.text = newBill;
+  //             debugPrint('Bill controller updated to: ${billController.text}');
+  //           });
+  //         }
+  //       } else {
+  //         debugPrint('API success false or data null');
+  //         // Handle API error
+  //         if (mounted) {
+  //           setState(() {
+  //             billController.text = "PAY-100"; // Default fallback
+  //             debugPrint('Set fallback bill: ${billController.text}');
+  //           });
+  //         }
+  //       }
+  //     } else {
+  //       debugPrint('Failed to fetch bill number: ${response.statusCode}');
+  //       // Set fallback bill number
+  //       if (mounted) {
+  //         setState(() {
+  //           billController.text = "PAY-100";
+  //           debugPrint(
+  //               'Set fallback bill due to status code: ${billController.text}');
+  //         });
+  //       }
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error fetching bill number: $e');
+  //     // Set fallback bill number
+  //     if (mounted) {
+  //       setState(() {
+  //         billController.text = "PAY-100";
+  //         debugPrint('Set fallback bill due to exception: ${billController.text}');
+  //       });
+  //     }
+  //   }
+  // }
+
+  ///updated bill nunber json respoonse
+  Future<void> fetchAndSetBillNumber() async {
+    debugPrint('fetchAndSetBillNumber called');
+
+    final url = Uri.parse(
+      'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=voucher&type=payment&code=PAY&bill_number=100&with_nick_name=1',
+    );
+
+    try {
+      debugPrint('Making API call...');
+      final response = await http.get(url);
+      debugPrint('API Response Status: ${response.statusCode}');
+      debugPrint('API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint('Parsed data: $data');
+
+        if (data['success'] == true && data['data'] != null) {
+          final billFromApi =
+              data['data']['bill_number']?.toString().trim() ?? "";
+
+          debugPrint('Bill from API: $billFromApi');
+
+          // Optional: extract only number from "PAY-100"
+          final billOnlyNumber = billFromApi;
+
+          if (mounted) {
+            setState(() {
+              billController.text = billOnlyNumber;
+              debugPrint('Bill controller updated to: ${billController.text}');
+            });
+          }
+        } else {
+          debugPrint('API success false or data missing');
+          _setFallback();
+        }
+      } else {
+        debugPrint('Failed to fetch bill number: ${response.statusCode}');
+        _setFallback();
+      }
+    } catch (e) {
+      debugPrint('Error fetching bill number: $e');
+      _setFallback();
+    }
+  }
+
+  void _setFallback() {
+    if (mounted) {
+      setState(() {
+        billController.text = "PAY-100"; // or any default you want
+        debugPrint('Fallback bill set: ${billController.text}');
+      });
+    }
   }
 
   TextEditingController billNoController = TextEditingController();
@@ -206,23 +355,50 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       labelText: 'Payment From',
                       selectedItem: selectedReceivedTo,
                       onChanged: (value) async {
+                        // debugPrint('=== Received To Selected: $value ===');
+
+                        // setState(() {
+                        //   selectedReceivedTo = value;
+                        //   selectedAccount = null; // reset account selection
+                        // });
+
+                        // if (value == 'Cash in Hand') {
+                        //   debugPrint('Fetching Cash accounts...');
+                        //   await provider.fetchAccounts('cash');
+                        // } else if (value == 'Bank') {
+                        //   debugPrint('Fetching Bank accounts...');
+                        //   await provider.fetchAccounts('bank');
+                        // }
+
+                        // debugPrint(
+                        //     'Fetched Account Names: ${provider.accountNames}');
+                        // debugPrint ("selectedReceivedTo ===> ${selectedReceivedTo}<======");
+                        //
+                        //
                         debugPrint('=== Received To Selected: $value ===');
 
                         setState(() {
                           selectedReceivedTo = value;
-                          selectedAccount = null; // reset account selection
+                          selectedAccount = null;
+
+                          internalReceivedTo =
+                              value == 'Cash in Hand' ? 'cash' : 'bank';
                         });
 
-                        if (value == 'Cash in Hand') {
+                        if (internalReceivedTo == 'cash') {
                           debugPrint('Fetching Cash accounts...');
                           await provider.fetchAccounts('cash');
-                        } else if (value == 'Bank') {
+                        } else if (internalReceivedTo == 'bank') {
                           debugPrint('Fetching Bank accounts...');
                           await provider.fetchAccounts('bank');
                         }
 
                         debugPrint(
                             'Fetched Account Names: ${provider.accountNames}');
+                        debugPrint(
+                            'selectedReceivedTo ===> $selectedReceivedTo <======');
+                        debugPrint(
+                            'internalReceivedTo (to use/send) ===> $internalReceivedTo');
                       },
                     ),
                   ),
@@ -328,16 +504,26 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                   ),
 
                   ///bill no, bill person
+                  // SizedBox(
+                  //   height: 30,
+                  //   width: 130,
+                  //   child: AddSalesFormfield(
+                  //     labelText: "Voucher NO",
+                  //     controller: billNoController,
+
+                  //     onChanged: (value) {
+                  //       billNo = value;
+                  //     }, // Match cursor height to text size
+                  //   ),
+                  // ),
+
                   SizedBox(
                     height: 30,
                     width: 130,
                     child: AddSalesFormfield(
-                      labelText: "Voucher NO",
-                      controller: billNoController,
-
-                      onChanged: (value) {
-                        billNo = value;
-                      }, // Match cursor height to text size
+                      labelText: "Bill No",
+                      controller: billController,
+                      readOnly: true, // Prevent manual editing
                     ),
                   ),
 
@@ -396,35 +582,45 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
             height: 8,
           ),
 
-          ///2 section
-          InkWell(
-            onTap: () async {},
-            child: Container(
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                borderRadius: BorderRadius.circular(3),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Payment To",
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
+          const Center(
+            child: Text(
+              "Payment To",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold),
             ),
           ),
+
+          ///2 section
+          // InkWell(
+          //   onTap: () async {},
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       color: colorScheme.primary,
+          //       borderRadius: BorderRadius.circular(3),
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color: Colors.black.withOpacity(0.2),
+          //           blurRadius: 5,
+          //           offset: const Offset(0, 3),
+          //         ),
+          //       ],
+          //     ),
+          //     child: const Padding(
+          //       padding: EdgeInsets.all(4.0),
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           Text(
+          //             "Payment To",
+          //             style: TextStyle(color: Colors.white, fontSize: 14),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
           const SizedBox(height: 6),
 
@@ -816,17 +1012,24 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       debugPrint('No customer selected.');
                     }
 
+                    String receivedToValue =
+                        getReceivedToValue(selectedReceivedTo!);
+
+                    print("Send to API: $receivedToValue");
+
                     int userId = int.parse(userIdStr);
                     int customerId = selectedCustomer?.id ??
                         0; // from your selected customer object
                     int voucherPerson = selectedBillPersonData?.id ?? 0;
-                    String voucherNumber = billNoController.text.trim();
+                    String voucherNumber = billController.text.trim();
                     String voucherDate =
                         DateFormat('yyyy-MM-dd').format(DateTime.now());
                     String voucherTime =
                         DateFormat('HH:mm:ss').format(DateTime.now());
-                    String paymentForm = selectedReceivedTo ??
-                        "cash".toLowerCase(); // adapt this accordingly
+
+                    ///payment bank or cash
+                    String paymentForm =
+                        receivedToValue; // adapt this accordingly
                     int accountId = selectedAccountId ?? 0;
                     int paymentTo = selectedAccountId ?? 0; // or payment to id
                     String percent =
@@ -876,8 +1079,7 @@ class _PaymentOutCreateItemState extends State<PaymentOutCreateItem> {
                       voucherNumber: voucherNumber,
                       voucherDate: voucherDate,
                       voucherTime: voucherTime,
-                      paymentForm: (selectedReceivedTo ?? "cash")
-                          .toLowerCase(), // ✅ FIXED paymentForm,
+                      paymentForm: paymentForm, // ✅ FIXED paymentForm,
                       accountId: accountId,
                       paymentTo: paymentTo,
                       percent: percent,

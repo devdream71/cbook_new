@@ -8,6 +8,7 @@ class FieldPortion extends StatefulWidget {
 }
 
 class _FieldPortionState extends State<FieldPortion> {
+  
   late TextEditingController taxAmountController;
   TextEditingController totalAmountController = TextEditingController();
 

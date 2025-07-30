@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SupplierCustomerPriceTwoPage extends StatefulWidget {
+  const SupplierCustomerPriceTwoPage({super.key});
+
   @override
-  _SupplierCustomerPriceTwoState createState() =>
-      _SupplierCustomerPriceTwoState();
+  SupplierCustomerPriceTwoState createState() =>
+      SupplierCustomerPriceTwoState();
 }
 
-class _SupplierCustomerPriceTwoState
+class SupplierCustomerPriceTwoState
     extends State<SupplierCustomerPriceTwoPage> {
   final Map<String, bool> _selected = {
     'Sale Price': false,

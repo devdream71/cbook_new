@@ -64,7 +64,7 @@ class _ExpanseDetailsState extends State<ExpanseDetails> {
         ),
         
       ),
-      body: Column(
+      body: const Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_list_model.dart';
 import 'package:flutter/material.dart';
 
 class CustomDropdownFour extends StatefulWidget {

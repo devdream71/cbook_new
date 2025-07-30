@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/close_button_icon.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/customer_create/customer_create.dart';
-import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_list_model.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/invoice/invoice_model.dart';
 import 'package:cbook_dt/feature/item/provider/item_category.dart';
@@ -21,6 +23,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../common/give_information_dialog.dart';
 import '../../sales/widget/add_sales_formfield.dart';
+import 'package:http/http.dart' as http;
 part '../layer/purchase_return_field_portion.dart';
 
 class PurchaseReturnView extends StatefulWidget {
@@ -54,6 +57,8 @@ class _LayoutState extends State<_Layout> {
   TextEditingController customerNameController = TextEditingController();
 
   final TextEditingController itemController = TextEditingController();
+
+  TextEditingController billController = TextEditingController();
 
   String? localSelectedUnit;
   bool isItemSelected = false;
@@ -99,6 +104,79 @@ class _LayoutState extends State<_Layout> {
             .fetchBillPersons());
 
     Provider.of<PurchaseReturnController>(context, listen: false).clearAll();
+
+    Future.microtask(() async => await fetchAndSetBillNumber());
+
+  }
+
+  // Updated fetchAndSetBillNumber with more debugging:
+  Future<void> fetchAndSetBillNumber() async {
+    debugPrint('fetchAndSetBillNumber called');
+
+    final url = Uri.parse(
+      'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=purchase&type=purchase-return&code=PURR&bill_number=100&with_nick_name=1',
+    );
+
+    debugPrint('API URL: $url');
+
+    try {
+      debugPrint('Making API call...');
+      final response = await http.get(url);
+      debugPrint('API Response Status: ${response.statusCode}');
+      debugPrint('API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint('Parsed data: $data');
+
+        if (data['success'] == true && data['data'] != null) {
+          String billFromApi = data['data'].toString(); // Ensure it's a string
+          debugPrint('Bill from API: $billFromApi');
+
+          //String newBill = _incrementBillNumber(billFromApi);
+
+          String newBill = billFromApi;
+
+          debugPrint('New bill after increment: $newBill');
+
+          // Update the controller and trigger UI rebuild
+          if (mounted) {
+            setState(() {
+              billController.text = newBill;
+              debugPrint('Bill controller updated to: ${billController.text}');
+            });
+          }
+        } else {
+          debugPrint('API success false or data null');
+          // Handle API error
+          if (mounted) {
+            setState(() {
+              billController.text = "PURR-100"; // Default fallback
+              debugPrint('Set fallback bill: ${billController.text}');
+            });
+          }
+        }
+      } else {
+        debugPrint('Failed to fetch bill number: ${response.statusCode}');
+        // Set fallback bill number
+        if (mounted) {
+          setState(() {
+            billController.text = "PURR-100";
+            debugPrint(
+                'Set fallback bill due to status code: ${billController.text}');
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching bill number: $e');
+      // Set fallback bill number
+      if (mounted) {
+        setState(() {
+          billController.text = "PURR-100";
+          debugPrint('Set fallback bill due to exception: ${billController.text}');
+        });
+      }
+    }
   }
 
   @override
@@ -467,14 +545,26 @@ class _LayoutState extends State<_Layout> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   // Bill No Field
+                                  // SizedBox(
+                                  //   height: 30,
+                                  //   width: 127,
+                                  //   child: AddSalesFormfield(
+                                  //     controller: controller.billNoController,
+                                  //     labelText: "Bill No",
+                                  //   ),
+                                  // ),
+
+
                                   SizedBox(
-                                    height: 30,
-                                    width: 127,
-                                    child: AddSalesFormfield(
-                                      controller: controller.billNoController,
-                                      labelText: "Bill No",
+                                      height: 30,
+                                      width: 130,
+                                      child: AddSalesFormfield(
+                                        labelText: "Bill No",
+                                        controller: billController,
+                                        readOnly:
+                                            true, // Prevent manual editing
+                                      ),
                                     ),
-                                  ),
 
                                   SizedBox(
                                     height: 25,
@@ -871,8 +961,7 @@ class _LayoutState extends State<_Layout> {
                                                             },
                                                           );
                                                         },
-                                                        child: 
-                                                        Container(
+                                                        child: Container(
                                                           width: 20,
                                                           height: 20,
                                                           decoration:
@@ -998,59 +1087,57 @@ class _LayoutState extends State<_Layout> {
                                                       ),
                                                       hPad2,
                                                       InkWell(
-                                                        onTap: () {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext
-                                                                dialogContext) {
-                                                              return AlertDialog(
-                                                                title: const Text(
-                                                                    "Remove Item"),
-                                                                content:
-                                                                    const Text(
-                                                                  "Are you sure you want to remove this item?",
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          dialogContext); // Close the dialog
-                                                                    },
-                                                                    child: const Text(
-                                                                        "Cancel"),
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext
+                                                                  dialogContext) {
+                                                                return AlertDialog(
+                                                                  title: const Text(
+                                                                      "Remove Item"),
+                                                                  content:
+                                                                      const Text(
+                                                                    "Are you sure you want to remove this item?",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .black),
                                                                   ),
-                                                                  ElevatedButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      controller
-                                                                          .removeCreditItem(
-                                                                              index); // Perform the removal action
-                                                                      Navigator.pop(
-                                                                          dialogContext); // Close the dialog
-                                                                    },
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor:
-                                                                            colorScheme.primary),
-                                                                    child:
-                                                                        const Text(
-                                                                      "Remove",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.white),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            dialogContext); // Close the dialog
+                                                                      },
+                                                                      child: const Text(
+                                                                          "Cancel"),
                                                                     ),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                        child: 
-                                                        const CloseButtonIconNew()
-                                                      )
+                                                                    ElevatedButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        controller
+                                                                            .removeCreditItem(index); // Perform the removal action
+                                                                        Navigator.pop(
+                                                                            dialogContext); // Close the dialog
+                                                                      },
+                                                                      style: ElevatedButton.styleFrom(
+                                                                          backgroundColor:
+                                                                              colorScheme.primary),
+                                                                      child:
+                                                                          const Text(
+                                                                        "Remove",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.white),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          child:
+                                                              const CloseButtonIconNew())
                                                     ],
                                                   ),
                                                 );

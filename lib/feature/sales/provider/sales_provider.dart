@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 
 
 class SalesProvider with ChangeNotifier {
+
+
   List<SaleItem> _sales = [];
   List<SaleItem> _filteredSales = [];
 
@@ -19,6 +21,9 @@ class SalesProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isDeleting => _isDeleting;
+
+  SalesSummary? _summary;
+  SalesSummary? get summary => _summary;
 
   /// Fetch sales from API
   Future<void> fetchSales() async {
@@ -38,6 +43,10 @@ class SalesProvider with ChangeNotifier {
         SalesResponse salesResponse = SalesResponse.fromJson(data);
         _sales = salesResponse.data;
         _filteredSales = _sales; // Initialize with all sales
+
+        _sales = salesResponse.data;
+        _summary = salesResponse.summary;
+
         debugPrint("Success: ${jsonEncode(data)}");
       } else if (response.statusCode == 404) {
         _errorMessage = "Error 404: Sales data not found";

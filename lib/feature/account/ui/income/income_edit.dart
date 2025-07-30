@@ -1,9 +1,6 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
-import 'package:cbook_dt/feature/account/ui/expense/model/expence_item.dart';
-import 'package:cbook_dt/feature/account/ui/expense/model/expense_paid_form_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/provider/expense_provider.dart';
-import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/edit_income_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/recived_item.dart';
@@ -27,6 +24,7 @@ class IncomeEdit extends StatefulWidget {
 }
 
 class _IncomeEditState extends State<IncomeEdit> {
+
   String? selectedReceivedTo;
 
   String? selectedAccount;
@@ -44,13 +42,16 @@ class _IncomeEditState extends State<IncomeEdit> {
   @override
   void initState() {
     super.initState();
+    
     voucherNumberController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final providerExpense =
           Provider.of<ExpenseProvider>(context, listen: false);
+
       final incomeProvider =
           Provider.of<IncomeProvider>(context, listen: false);
+
       final paymentVoucherProvider =
           Provider.of<PaymentVoucherProvider>(context, listen: false);
 
@@ -62,7 +63,7 @@ class _IncomeEditState extends State<IncomeEdit> {
       // 3. Fetch edit expense data to populate the form
       await providerExpense.fetchEditExpense(widget.incomeId);
 
-      await incomeProvider.fetchEditExpense(widget.incomeId);
+      await incomeProvider.fetchEditIncome(widget.incomeId);
 
       // 4. Map receivedTo to UI text (Cash in Hand / Bank)
       String? paidToApi = providerExpense.editExpenseData?.paidTo;
@@ -116,6 +117,10 @@ class _IncomeEditState extends State<IncomeEdit> {
   @override
   void dispose() {
     voucherNumberController.dispose();
+      final providerIncome = Provider.of<IncomeProvider>(context, listen: true);
+
+       providerIncome.editIncomeItems = [];
+
     super.dispose();
   }
 
@@ -495,6 +500,7 @@ class _IncomeEditState extends State<IncomeEdit> {
                                 ),
 
                                 const SizedBox(height: 1),
+                                ///note.
                                 Text(
                                   item.note,
                                   style: const TextStyle(
@@ -505,6 +511,7 @@ class _IncomeEditState extends State<IncomeEdit> {
                               ],
                             ),
                           ),
+                          ///amount.
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -697,44 +704,17 @@ class _IncomeEditState extends State<IncomeEdit> {
                     debugPrint('Total Amount: $totalAmount');
                     debugPrint('Notes: $notes');
                     debugPrint('Status: $status');
-                    // debugPrint(
-                    //     'Income Items: ${incomeItems.map((e) => e.toJson()).toList()}');
+                   
 
-                    // final List<IncomeItem> incomeItems =
-                    //     provider.receiptItems.map((item) {
-                    //   return IncomeItem(
-                    //     accountId: item.accountId!,
-                    //     narration: item.note,
-                    //     amount: item.amount.toString(),
-                    //   );
-                    // }).toList();
-                    
-
-                    ///working but new item showing 2 times.
-                    // Combine old editIncomeItems and new receiptItems into one list of IncomeItem
-                    // final List<IncomeItem> incomeItems = [
-                    //   // Map old items from editIncomeItems
-                    //   ...providerIncome.editIncomeItems
-                    //       .map((item) => IncomeItem(
-                    //             accountId: item.purchaseId.toString(),
-                    //             narration: item.note,
-                    //             amount: item.amount.toString(),
-                    //           )),
-                    //   // Map newly added receiptItems
-                    //   ...providerIncome.receiptItems.map((item) => IncomeItem(
-                    //         accountId: item.accountId!,
-                    //         narration: item.note,
-                    //         amount: item.amount.toString(),
-                    //       )),
-                    // ];
-
-                    final List<IncomeItem> incomeItems = provider.editIncomeItems.map((item) {
-  return IncomeItem(
-    accountId: item.purchaseId.toString(), // or correct field mapping
-    narration: item.note,
-    amount: item.amount.toString(),
-  );
-}).toList();
+                    final List<IncomeItem> incomeItems =
+                        provider.editIncomeItems.map((item) {
+                      return IncomeItem(
+                        accountId: item.purchaseId
+                            .toString(), // or correct field mapping
+                        narration: item.note,
+                        amount: item.amount.toString(),
+                      );
+                    }).toList();
 
                     bool success = await providerIncome.updateIncome(
                       incomeId: incomeId,
@@ -936,8 +916,7 @@ class _IncomeEditState extends State<IncomeEdit> {
     );
   }
 
-  // ////incomeItem update
-
+  // ////incomeItem update.
   void showIncomeUpdateDialog(
     BuildContext context,
     IncomeProvider provider,
@@ -1084,6 +1063,7 @@ class _IncomeEditState extends State<IncomeEdit> {
     );
   }
 
+  ///delete item.
   void confirmDeleteItem(
       BuildContext context, IncomeProvider provider, EditIncomeItem item) {
     showDialog(

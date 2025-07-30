@@ -29,7 +29,7 @@ class IncomeVoucherData {
   final String receivedTo;
   final int accountId;
   final int totalAmount;
-  final String? notes;
+  final dynamic notes;
   final List<VoucherDetail> voucherDetails;
 
   IncomeVoucherData({
@@ -71,7 +71,7 @@ class VoucherDetail {
   final String type;
   final int voucherId;
   final int purchaseId;
-  final String narration;
+  final dynamic narration;
   final int amount;
   final String? deletedAt;
   final String createdAt;

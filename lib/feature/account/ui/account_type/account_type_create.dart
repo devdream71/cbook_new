@@ -53,6 +53,8 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
             Expanded(
               child: Column(
                 children: [
+
+                  ///account name
                   AddSalesFormfield(
                     height: 40,
                     labelText: "Account Name",
@@ -61,12 +63,9 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
                   const SizedBox(
                     height: 10,
                   ),
-                  // AddSalesFormfield(
-                  //   height: 40,
-                  //   labelText: "Account Group",
-                  //   controller: controller.accountGroupController,
-                  // ),
+                  
 
+                  ///account type
                   SizedBox(
                     height: 40,
                     width: double.infinity,
@@ -83,7 +82,7 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
                           selectedAccount = null; // reset account selection
 
                           debugPrint(
-                              "selectedAccountType  ${selectedAccountType}");
+                              "selectedAccountType  $selectedAccountType");
                         });
                       },
                     ),
@@ -92,6 +91,7 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
                   const SizedBox(height: 10),
 
 
+                  ///acount balance
                   AddSalesFormfield(
                     height: 40,
                     labelText: "Account Balance",
@@ -101,6 +101,8 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
                     height: 10,
                   ),
                  
+                  
+                  ///date
                   Container(
                     height: 40,
                     width: double.maxFinite,
@@ -154,6 +156,8 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
                       ),
                     ),
                   ),
+
+                  
                   const SizedBox(
                     height: 10,
                   ),
@@ -270,9 +274,13 @@ class _AccountTypeCreateState extends State<AccountTypeCreate> {
                           controller.accountGroupController.text.trim(),
                       openingBalance:
                           controller.openBlanceController.text.trim(),
+                      
+                      
                       date: controller.formattedDate.isNotEmpty
                           ? controller.formattedDate
                           : '2025-07-14',
+
+
                       status: selectedStatus,
 
                       // 🔁 pass only if type is bank

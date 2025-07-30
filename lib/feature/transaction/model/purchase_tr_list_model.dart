@@ -1,29 +1,77 @@
+// class PurchaseViewModel {
+//   bool? success;
+//   String? message;
+//   List<Data>? data;
+
+//   PurchaseViewModel({this.success, this.message, this.data});
+
+//   PurchaseViewModel.fromJson(Map<String, dynamic> json) {
+//     success = json['success'];
+//     message = json['message'];
+//     if (json['data'] != null) {
+//       data = <Data>[];
+//       json['data'].forEach((v) {
+//         data!.add(new Data.fromJson(v));
+//       });
+//     }
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = Map<String, dynamic>();
+//     data['success'] = success;
+//     data['message'] = message;
+//     if (this.data != null) {
+//       data['data'] = this.data!.map((v) => v.toJson()).toList();
+//     }
+//     return data;
+//   }
+// }
+
+
 class PurchaseViewModel {
   bool? success;
   String? message;
   List<Data>? data;
+  PurchaseSummary? summary;
 
-  PurchaseViewModel({this.success, this.message, this.data});
+  PurchaseViewModel({this.success, this.message, this.data, this.summary});
 
   PurchaseViewModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
-      });
+    data = <Data>[];
+    List<dynamic> rawList = json['data'];
+
+    for (var item in rawList) {
+      if (item is Map<String, dynamic> &&
+          item.containsKey("total_pruchase") &&
+          item.containsKey("total_payment") &&
+          item.containsKey("total_due")) {
+        summary = PurchaseSummary.fromJson(item);
+      } else {
+        data!.add(Data.fromJson(item));
+      }
     }
   }
+}
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['success'] = success;
-    data['message'] = message;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    return data;
+class PurchaseSummary {
+  final String totalPurchase;
+  final String totalPayment;
+  final dynamic totalDue;
+
+  PurchaseSummary({
+    required this.totalPurchase,
+    required this.totalPayment,
+    required this.totalDue,
+  });
+
+  factory PurchaseSummary.fromJson(Map<String, dynamic> json) {
+    return PurchaseSummary(
+      totalPurchase: json['total_pruchase'] ?? '0',
+      totalPayment: json['total_payment'] ?? '0',
+      totalDue: json['total_due'] ?? 0,
+    );
   }
 }
 

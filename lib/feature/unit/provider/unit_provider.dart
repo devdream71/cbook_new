@@ -194,7 +194,7 @@ class UnitDTProvider extends ChangeNotifier {
         // Instead of navigating, refresh the unit list in the same page
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: const Text(
+            content: Text(
               "Unit updated successfully",
               style: TextStyle(color: Colors.white),
             ),

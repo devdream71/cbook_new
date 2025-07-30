@@ -565,9 +565,7 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                           Consumer<PurchaseUpdateProvider>(
                                             builder:
                                                 (context, provider, child) {
-                                              return (provider.customerId ==
-                                                          null ||
-                                                      provider.customerId == 0)
+                                              return (provider.customerId != null  )
                                                   ? Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -585,8 +583,9 @@ class _PurchaseUpdateScreenState extends State<PurchaseUpdateScreen> {
                                                             SizedBox(
                                                               height: 58,
                                                               width: 180,
-                                                              child: controller
-                                                                      .isCash
+                                                              child: provider.customerId ==
+                                                          null ||
+                                                      provider.customerId ==0 
                                                                   ? InkWell(
                                                                       onTap:
                                                                           () {

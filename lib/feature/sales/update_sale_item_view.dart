@@ -41,6 +41,7 @@ class UpdateSaleItemView extends StatefulWidget {
 }
 
 class _UpdateSaleItemViewState extends State<UpdateSaleItemView> {
+  
   int? selectedItemId;
 
   List<String> getFilteredUnitsForSelectedItem() {

@@ -13,7 +13,39 @@ class PurchaseReturnProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
 
+  double _totalReturn = 0;
+  double get totalReturn => _totalReturn;
+
   ///purchase return list show.
+  // Future<void> fetchPurchaseReturns() async {
+  //   const url = "https://commercebook.site/api/v1/purchase/return";
+
+  //   try {
+  //     _isLoading = true;
+  //     _errorMessage = '';
+  //     notifyListeners();
+
+  //     final response = await http.get(Uri.parse(url));
+
+  //     if (response.statusCode == 200) {
+  //       final data = PurchaseReturnResponse.fromJson(response.body);
+  //       _purchaseReturns = data.data;
+
+  //       await _fetchItemNames();
+  //     } else {
+  //       _errorMessage = "Failed to load data: ${response.statusCode}";
+  //       debugPrint("API Error: ${response.statusCode} - ${response.body}");
+  //     }
+  //   } catch (e) {
+  //     _errorMessage = "Something went wrong: $e";
+  //     debugPrint("Exception: $e");
+  //   } finally {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
+
+
   Future<void> fetchPurchaseReturns() async {
     const url = "https://commercebook.site/api/v1/purchase/return";
 
@@ -25,17 +57,14 @@ class PurchaseReturnProvider with ChangeNotifier {
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final data = PurchaseReturnResponse.fromJson(response.body);
-        _purchaseReturns = data.data;
-
-        await _fetchItemNames();
+        final result = PurchaseReturnResponse.fromJson(response.body);
+        _purchaseReturns = result.data;
+        _totalReturn = result.totalReturn;
       } else {
         _errorMessage = "Failed to load data: ${response.statusCode}";
-        debugPrint("API Error: ${response.statusCode} - ${response.body}");
       }
     } catch (e) {
       _errorMessage = "Something went wrong: $e";
-      debugPrint("Exception: $e");
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -84,7 +113,7 @@ class PurchaseReturnProvider with ChangeNotifier {
     }
   }
 
-  Map<int, String> _itemsMap = {};
+  final Map<int, String> _itemsMap = {};
 
   String getItemName(int itemId) {
     return _itemsMap[itemId] ?? "Unknown Item";

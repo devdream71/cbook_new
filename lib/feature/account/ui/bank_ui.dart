@@ -91,7 +91,7 @@ class _BankState extends State<Bank> {
             final dataList = provider.bankAdjustmentModel?.data ?? [];
 
             if (dataList.isEmpty) {
-              return const Center(child: Text("No Data Found"));
+              return const Center(child: Text("No Data Found", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),));
             }
 
             return ListView.builder(

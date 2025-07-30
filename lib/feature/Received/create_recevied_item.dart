@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/Received/model/create_recived_voucher.dart';
@@ -15,6 +17,7 @@ import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ReceivedCreateItem extends StatefulWidget {
@@ -97,15 +100,90 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
     );
   }
 
+  TextEditingController billController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
 
-    Future.microtask(() =>
-        Provider.of<PaymentVoucherProvider>(context, listen: false)
-            .fetchBillPersons());
+    Future.microtask(() async {
+      Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr();
+
+      Provider.of<PaymentVoucherProvider>(context, listen: false)
+          .fetchBillPersons();
+
+      await fetchAndSetBillNumber();
+    });
+  }
+
+  // Updated fetchAndSetBillNumber with more debugging:
+  Future<void> fetchAndSetBillNumber() async {
+    debugPrint('fetchAndSetBillNumber called');
+
+    final url = Uri.parse(
+      'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=voucher&type=receive-in&code=REC&bill_number=100&with_nick_name=1',
+    );
+
+    debugPrint('API URL: $url');
+
+    try {
+      debugPrint('Making API call...');
+      final response = await http.get(url);
+      debugPrint('API Response Status: ${response.statusCode}');
+      debugPrint('API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint('Parsed data: $data');
+
+        if (data['success'] == true && data['data'] != null) {
+          String billFromApi = data['data'].toString(); // Ensure it's a string
+          debugPrint('Bill from API: $billFromApi');
+
+          //String newBill = _incrementBillNumber(billFromApi);
+
+          String newBill = billFromApi;
+
+          debugPrint('New bill after increment: $newBill');
+
+          // Update the controller and trigger UI rebuild
+          if (mounted) {
+            setState(() {
+              billController.text = newBill;
+              debugPrint('Bill controller updated to: ${billController.text}');
+            });
+          }
+        } else {
+          debugPrint('API success false or data null');
+          // Handle API error
+          if (mounted) {
+            setState(() {
+              billController.text = "REC-100"; // Default fallback
+              debugPrint('Set fallback bill: ${billController.text}');
+            });
+          }
+        }
+      } else {
+        debugPrint('Failed to fetch bill number: ${response.statusCode}');
+        // Set fallback bill number
+        if (mounted) {
+          setState(() {
+            billController.text = "REC-100";
+            debugPrint(
+                'Set fallback bill due to status code: ${billController.text}');
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching bill number: $e');
+      // Set fallback bill number
+      if (mounted) {
+        setState(() {
+          billController.text = "REC-100";
+          debugPrint('Set fallback bill due to exception: ${billController.text}');
+        });
+      }
+    }
   }
 
   @override
@@ -286,17 +364,27 @@ class _ReceivedCreateItemState extends State<ReceivedCreateItem> {
                   ),
 
                   ///bill no, bill person
+                  // SizedBox(
+                  //   height: 30,
+                  //   width: 130,
+                  //   child: AddSalesFormfield(
+                  //     labelText: "Bill No",
+
+                  //     controller: billNoController,
+
+                  //     onChanged: (value) {
+                  //       billNo = value;
+                  //     }, // Match cursor height to text size
+                  //   ),
+                  // ),
+
                   SizedBox(
                     height: 30,
                     width: 130,
                     child: AddSalesFormfield(
                       labelText: "Bill No",
-
-                      controller: billNoController,
-
-                      onChanged: (value) {
-                        billNo = value;
-                      }, // Match cursor height to text size
+                      controller: billController,
+                      readOnly: true, // Prevent manual editing
                     ),
                   ),
 

@@ -361,6 +361,8 @@ class BottomPortion extends StatelessWidget {
                       ? controller.addAmount2()
                       : controller.addAmount();
 
+                  debugPrint(' cash or credit ===>  ${controller.isCash}');  
+
                   String discount = controller.discountController.toString();
 
                   String total = controller.isCash

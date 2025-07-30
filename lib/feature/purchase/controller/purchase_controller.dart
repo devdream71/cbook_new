@@ -475,16 +475,16 @@ class PurchaseController extends ChangeNotifier {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       // Check if bill_number exists, if not, set an initial value
-      if (!prefs.containsKey("bill_number")) {
-        await prefs.setInt("bill_number", 521444); // Set default bill number
-      }
+      // if (!prefs.containsKey("bill_number")) {
+      //   await prefs.setInt("bill_number", 521444); // Set default bill number
+      // }
 
       // Get the last bill number and increment it
-      int lastBillNumber = prefs.getInt("bill_number") ?? 521444;
-      int newBillNumber = lastBillNumber + 1;
+      //int lastBillNumber = prefs.getInt("bill_number") ?? 521444;
+      //int newBillNumber = lastBillNumber + 1;
 
       // Save the updated bill number
-      await prefs.setInt("bill_number", newBillNumber);
+      //await prefs.setInt("bill_number", newBillNumber);
 
       debugPrint('$noteController');
 
@@ -534,6 +534,10 @@ class PurchaseController extends ChangeNotifier {
       };
 
       debugPrint("Request Body: $requestBody");
+
+
+      debugPrint("Stop === > ");
+
 
       final response = await http.post(
         Uri.parse(url),

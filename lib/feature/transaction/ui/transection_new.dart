@@ -18,6 +18,8 @@ class TableView extends StatelessWidget {
     ["12/12/2024", "EX-35213", "Rohim", "200"],
   ];
 
+   TableView({super.key});
+
   TableRow buildHeaderRow() {
     return TableRow(
       decoration: const BoxDecoration(color: Colors.green),

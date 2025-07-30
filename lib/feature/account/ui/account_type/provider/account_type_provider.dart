@@ -4,6 +4,7 @@ import 'package:cbook_dt/feature/account/ui/account_type/model/account_type_mode
 import 'package:cbook_dt/utils/date_time_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class AccountTypeProvider with ChangeNotifier {
   final TextEditingController accountNameController = TextEditingController();
@@ -16,12 +17,32 @@ class AccountTypeProvider with ChangeNotifier {
   final TextEditingController routingNumberController = TextEditingController();
   final TextEditingController bankLocationController = TextEditingController();
 
+  // DateTime _selectedDate = DateTime.now();
+
+  // String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
+
+  // Future<void> pickDate(BuildContext context) async {
+  //   final pickedDate = await DateTimeHelper.pickDate(context, _selectedDate);
+  //   if (pickedDate != null && pickedDate != _selectedDate) {
+  //     _selectedDate = pickedDate;
+  //     notifyListeners();
+  //   }
+  // }
+  
+
+  // Date
   DateTime _selectedDate = DateTime.now();
 
-  String get formattedDate => DateTimeHelper.formatDate(_selectedDate);
+  String get formattedDate => DateFormat('yyyy-MM-dd').format(_selectedDate);
 
   Future<void> pickDate(BuildContext context) async {
-    final pickedDate = await DateTimeHelper.pickDate(context, _selectedDate);
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
     if (pickedDate != null && pickedDate != _selectedDate) {
       _selectedDate = pickedDate;
       notifyListeners();
@@ -90,42 +111,7 @@ class AccountTypeProvider with ChangeNotifier {
     }
   }
 
-  ///create account type
-  // Future<AccountCreateResponseModel> createAccount({
-  //   required String userId,
-  //   required String accountName,
-  //   required String accountType,
-  //   required String accountGroup,
-  //   required String openingBalance,
-  //   required String date,
-  //   required String status,
-  // }) async {
-  //   final uri = Uri.parse(
-  //     'https://commercebook.site/api/v1/account/store'
-  //     '?user_id=$userId'
-  //     '&account_name=$accountName'
-  //     '&account_type=$accountType'
-  //     '&account_group=$accountGroup'
-  //     '&opening_balance=$openingBalance'
-  //     '&date=$date'
-  //     '&status=$status',
-  //   );
 
-  //   try {
-  //     final response = await http.post(uri);
-  //     final jsonData = json.decode(response.body);
-  //     debugPrint("✅ Sent URL: $uri");
-  //     debugPrint("📥 Response: $jsonData");
-
-  //     return AccountCreateResponseModel.fromJson(jsonData);
-  //   } catch (e) {
-  //     debugPrint("❌ Error: $e");
-  //     return AccountCreateResponseModel(
-  //       success: false,
-  //       message: 'Exception: $e',
-  //     );
-  //   }
-  // }
 
   Future<AccountCreateResponseModel> createAccount({
     required String userId,
@@ -162,6 +148,11 @@ class AccountTypeProvider with ChangeNotifier {
       '/api/v1/account/store',
       queryParameters,
     );
+
+    debugPrint('uri $uri');
+
+    debugPrint('====Stopppppp=======');
+
 
     try {
       final response = await http.post(uri);

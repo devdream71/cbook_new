@@ -4,9 +4,10 @@ class Customer {
   final String name;
   final String proprietorName;
   final double due;
-  final String ? address;
-  final String ? phone;
-  final String ? type;
+  final String? address;
+  final String? phone;
+  final String? type;
+  final String? avatar;
   final List<Purchase> purchases;
 
   Customer({
@@ -16,8 +17,9 @@ class Customer {
     required this.proprietorName,
     required this.due,
     this.type,
-      this.address,
-      this.phone,
+    this.address,
+    this.phone,
+    this.avatar,
     required this.purchases,
   });
 
@@ -33,8 +35,12 @@ class Customer {
       proprietorName: json['proprietor_name'] ?? '',
       address: json['address'] ?? '',
       phone: json['phone'] ?? '',
+      avatar: json['avatar'],
       due: parsedDue,
-      purchases: (json['purchase'] as List?)?.map((e) => Purchase.fromJson(e)).toList() ?? [],
+      purchases: (json['purchase'] as List?)
+              ?.map((e) => Purchase.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 }
@@ -98,10 +104,9 @@ class CustomerResponse {
     return CustomerResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: (json['data'] as List?)?.map((e) => Customer.fromJson(e)).toList() ?? [],
+      data:
+          (json['data'] as List?)?.map((e) => Customer.fromJson(e)).toList() ??
+              [],
     );
   }
 }
-
-
- 

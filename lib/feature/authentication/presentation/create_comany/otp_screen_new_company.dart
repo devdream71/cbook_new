@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cbook_dt/common/otp_field.dart';
 import 'package:cbook_dt/feature/authentication/presentation/create_comany/roll_page.dart';
 import 'package:cbook_dt/feature/authentication/provider/otp_provider.dart';
@@ -13,10 +12,10 @@ class OtpScreenNewCompany extends StatefulWidget {
   const OtpScreenNewCompany({super.key, required this.id, required this.email});
 
   @override
-  _OtpScreenNewCompanyState createState() => _OtpScreenNewCompanyState();
+  OtpScreenNewCompanyState createState() => OtpScreenNewCompanyState();
 }
 
-class _OtpScreenNewCompanyState extends State<OtpScreenNewCompany> {
+class OtpScreenNewCompanyState extends State<OtpScreenNewCompany> {
   final List<TextEditingController> _otpControllers =
       List.generate(6, (index) => TextEditingController());
   bool _isSubmitting = false;

@@ -8,8 +8,10 @@ import 'package:cbook_dt/feature/account/ui/income/provider/income_api.dart';
 import 'package:cbook_dt/feature/authentication/provider/login_provider.dart';
 import 'package:cbook_dt/feature/authentication/provider/otp_provider.dart';
 import 'package:cbook_dt/feature/authentication/provider/reg_provider.dart';
+import 'package:cbook_dt/feature/bill_voucher_settings/provider/bill_settings_provider.dart';
 import 'package:cbook_dt/feature/category/provider/category_provider.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
+import 'package:cbook_dt/feature/dashboard_report/provider/dashbord_report_provider.dart';
 import 'package:cbook_dt/feature/home/provider/profile_provider.dart';
 import 'package:cbook_dt/feature/item/provider/item_category.dart';
 import 'package:cbook_dt/feature/item/provider/item_save_provider.dart';
@@ -126,6 +128,12 @@ void main() async {
           ChangeNotifierProvider(create: (_) => CashInHandProvider()),
           ChangeNotifierProvider(create: (_) => AdjustCashProvider()),
           ChangeNotifierProvider(create: (_) => BankAdjustProvider()),
+          ChangeNotifierProvider(
+              create: (_) => BillSettingsProvider()..fetchSettings()),
+          ChangeNotifierProvider(
+            create: (_) =>
+                DashboardReportProvider()..fetchCustomerTransaction(),
+          ),
         ],
         child: const MyApp(),
       ),

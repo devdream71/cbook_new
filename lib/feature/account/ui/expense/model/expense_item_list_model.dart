@@ -2,14 +2,33 @@ class ExpenseListModel {
   bool success;
   String message;
   List<ExpenseData> data;
+  String totalExpense;
 
-  ExpenseListModel({required this.success, required this.message, required this.data});
+  ExpenseListModel({
+    required this.success,
+    required this.message,
+    required this.data,
+    required this.totalExpense,
+  });
 
   factory ExpenseListModel.fromJson(Map<String, dynamic> json) {
+    List<dynamic> rawData = json['data'] ?? [];
+    List<ExpenseData> expenseDataList = [];
+    String total = '0.00';
+
+    for (var item in rawData) {
+      if (item is Map<String, dynamic> && item.containsKey('id')) {
+        expenseDataList.add(ExpenseData.fromJson(item));
+      } else if (item is Map<String, dynamic> && item.containsKey('total_expense')) {
+        total = item['total_expense'] ?? '0.00';
+      }
+    }
+
     return ExpenseListModel(
-      success: json['success'],
-      message: json['message'],
-      data: List<ExpenseData>.from(json['data'].map((x) => ExpenseData.fromJson(x))),
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data: expenseDataList,
+      totalExpense: total,
     );
   }
 }

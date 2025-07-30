@@ -46,10 +46,10 @@ class _PurchaseDetailsPageState extends State<PurchaseDetailsPage> {
       appBar: AppBar(
         backgroundColor: colorScheme.primary,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           "Purchase Details - ${widget.purchase.billNumber}",
-          style: TextStyle(color: Colors.yellow, fontSize: 16),
+          style: const TextStyle(color: Colors.yellow, fontSize: 16),
         ),
       ),
       body: Padding(

@@ -4,11 +4,13 @@ import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_mode
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_item_list_popup.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/expense_paid_form_list.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/update_expense_model.dart';
+import 'package:cbook_dt/feature/account/ui/income/model/account_type_name_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ExpenseProvider with ChangeNotifier {
   List<PaidFormData> paidFormList = [];
+
   List<ExpenseItem> receiptItems = [];
 
   ExpenseListModel? expenseModel;
@@ -41,6 +43,8 @@ class ExpenseProvider with ChangeNotifier {
     }
   }
 
+  String totalExpense = '0.00';
+
   ///expense list api call
   Future<void> fetchExpenseList() async {
     isLoading = true;
@@ -53,6 +57,8 @@ class ExpenseProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final result = ExpenseListModel.fromJson(json.decode(response.body));
         expenseList = result.data;
+
+        totalExpense = result.totalExpense;
       } else {
         expenseList = [];
         debugPrint('Failed to load expense list');
@@ -63,6 +69,47 @@ class ExpenseProvider with ChangeNotifier {
     }
 
     isLoading = false;
+    notifyListeners();
+  }
+
+  ///acount type list bas on recived to , cash or bank
+
+  Map<int, String> _accountNameMap = {};
+
+  Map<int, String> get accountNameMap => _accountNameMap;
+
+  /// Fetch accounts for both bank and cash once (or based on demand)
+  Future<void> fetchAccountNames() async {
+    try {
+      final bankUrl =
+          'https://commercebook.site/api/v1/receive/form/account?type=bank';
+      final cashUrl =
+          'https://commercebook.site/api/v1/receive/form/account?type=cash';
+
+      final bankResponse = await http.post(Uri.parse(bankUrl));
+      final cashResponse = await http.post(Uri.parse(cashUrl));
+
+      if (bankResponse.statusCode == 200) {
+        final data = json.decode(bankResponse.body);
+        final accounts = List<AccountTypeNameModel>.from(
+            data['data'].map((e) => AccountTypeNameModel.fromJson(e)));
+        for (var acc in accounts) {
+          _accountNameMap[acc.id] = acc.name;
+        }
+      }
+
+      if (cashResponse.statusCode == 200) {
+        final data = json.decode(cashResponse.body);
+        final accounts = List<AccountTypeNameModel>.from(
+            data['data'].map((e) => AccountTypeNameModel.fromJson(e)));
+        for (var acc in accounts) {
+          _accountNameMap[acc.id] = acc.name;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching accounts: $e');
+    }
+
     notifyListeners();
   }
 
@@ -159,13 +206,15 @@ class ExpenseProvider with ChangeNotifier {
     required List<ExpenseItemPopUp> expenseItems,
   }) async {
     final url = Uri.parse('https://commercebook.site/api/v1/expense/store?'
-        'user_id=$userId&invoice_no=$invoiceNo&date=$date&paid_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status&bill_person_id=$billPersonId');
+        'user_id=$userId&expence_no=$invoiceNo&date=$date&paid_to=$receivedTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status&bill_person_id=$billPersonId');
 
     final body = ExpenseStoreRequest(expenseItems: expenseItems).toJson();
 
     debugPrint('url ${url.toString()}');
 
     debugPrint("body ${body.toString()}");
+
+    debugPrint('===== STOP =====>');
 
     try {
       final response = await http.post(
@@ -208,7 +257,7 @@ class ExpenseProvider with ChangeNotifier {
     final url = Uri.parse(
         'https://commercebook.site/api/v1/expense/update?id=$expenseId&user_id=$userId&expence_no=$invoiceNo&date=$date&paid_to=$paidTo&account=$account&total_amount=$totalAmount&notes=$notes&status=$status&bill_person_id=$billPersonId');
 
-    debugPrint("url ====> ${url}");
+    debugPrint("url ====> $url");
 
     final body = json.encode({
       'expense_items': expenseItems.map((e) => e.toJson()).toList(),

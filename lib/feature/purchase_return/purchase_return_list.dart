@@ -88,6 +88,24 @@ class _PurchaseReturnListState extends State<PurchaseReturnList> {
         padding: const EdgeInsets.symmetric(horizontal: 0),
         child: Column(
           children: [
+
+            Consumer<PurchaseReturnProvider>(
+  builder: (context, provider, child) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Text(
+        'Total Purchase Return: ৳${provider.totalReturn.toStringAsFixed(2)}',
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+    );
+  },
+),
+
+
             Expanded(
               child: Consumer<PurchaseReturnProvider>(
                 builder: (context, provider, child) {

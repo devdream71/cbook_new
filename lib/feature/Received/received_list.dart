@@ -88,6 +88,28 @@ class _ReceivedListState extends State<ReceivedList> {
                     height: 5,
                   ),
 
+
+                  Consumer<ReceiveVoucherProvider>(
+  builder: (context, provider, child) {
+    if (provider.isLoading) {
+      return const Center(child: Text(''));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Text(
+        'Total Received: ৳${provider.totalReceived.toStringAsFixed(2)}',
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+    );
+  },
+),
+
+
                   Consumer<ReceiveVoucherProvider>(
                     builder: (context, provider, child) {
                       if (provider.isLoading) {
@@ -248,8 +270,6 @@ class _ReceivedListState extends State<ReceivedList> {
                       );
                     },
                   ),
-
-                   
                 ],
               ),
 
@@ -404,6 +424,4 @@ class _ReceivedListState extends State<ReceivedList> {
       ),
     );
   }
-
-
 }

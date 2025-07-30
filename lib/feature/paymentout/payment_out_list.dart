@@ -81,9 +81,40 @@ class _PaymentOutListState extends State<PaymentOutList> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 5,
-                  ),
+
+                  Consumer<PaymentVoucherProvider>(
+  builder: (context, provider, child) {
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Text(
+            'Total Payment: ৳${provider.totalPayment.toStringAsFixed(2)}',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+        ),
+        provider.vouchers.isEmpty
+            ? const Text('No Payment Vouchers Found.', style: TextStyle(color: Colors.black),)
+            : ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: provider.vouchers.length,
+                itemBuilder: (context, index) {
+                  final voucher = provider.vouchers[index];
+                  // existing card UI
+                },
+              )
+      ],
+    );
+  },
+),
+
+
+                   
                   Consumer<PaymentVoucherProvider>(
                       builder: (context, provider, child) {
                     if (provider.isLoading) {

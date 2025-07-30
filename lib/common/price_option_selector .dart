@@ -41,7 +41,8 @@ class PriceOptionSelector extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
+                    SizedBox
+                    (
                      // color: Colors.brown,
                       child: Radio<String>(
                         value: "blank",
@@ -51,13 +52,13 @@ class PriceOptionSelector extends StatelessWidget {
                         },
                       ),
                     ),
-                    Container(
+                     const SizedBox(
                       //color: Colors.amber,
-                      child: const Text("Blank Price", style: TextStyle(color: Colors.black, fontSize: 12))),
+                      child:   Text("Blank Price", style: TextStyle(color: Colors.black, fontSize: 12))),
                   ],
                 ),
               /// Sales/Purchase Price Option
-              Container(
+              SizedBox(
                 //color: Colors.red,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

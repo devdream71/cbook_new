@@ -70,132 +70,164 @@ class _SalesReturnScreenState extends State<SalesReturnScreen> {
           )
         ],
       ),
-      body: provider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : provider.salesReturns.isEmpty
-              ? const Center(
-                  child: Text(
-                    "No sales return data available.",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black),
+      body: Column(
+        children: [
+          Consumer<SalesReturnProvider>(
+            builder: (context, provider, child) {
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Text(
+                  'Total Sales Return: ৳${provider.totalReturn.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                )
-              : Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: ListView.builder(
-                    itemCount: provider.salesReturns.length,
-                    itemBuilder: (context, index) {
-                      final item = provider.salesReturns[index];
+                ),
+              );
+            },
+          ),
+          Expanded(
+            child: provider.isLoading
+                ? Consumer<SalesReturnProvider>(
+                    builder: (context, provider, child) {
+                    return const Center(child: CircularProgressIndicator());
+                  })
+                : provider.salesReturns.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "No sales return data available.",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: ListView.builder(
+                          itemCount: provider.salesReturns.length,
+                          itemBuilder: (context, index) {
+                            final item = provider.salesReturns[index];
 
-                      final salesReturnId = provider.salesReturns[index].id;
+                            final salesReturnId =
+                                provider.salesReturns[index].id;
 
-                      return InkWell(
-                        onLongPress: () {
-                          editDeleteDiolog(context, salesReturnId.toString());
-                        },
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  SalesReturnDetailsPage(salesReturn: item),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          color: const Color(0xfff4f6ff),
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 90,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                            return InkWell(
+                              onLongPress: () {
+                                editDeleteDiolog(
+                                    context, salesReturnId.toString());
+                              },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => SalesReturnDetailsPage(
+                                        salesReturn: item),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                color: const Color(0xfff4f6ff),
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        item.purchaseDate != null
-                                            ? item.purchaseDate!
-                                            : 'No Date',
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
+                                      SizedBox(
+                                        width: 90,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.purchaseDate != null
+                                                  ? item.purchaseDate!
+                                                  : 'No Date',
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              "${item.billNumber}",
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Text(
-                                        "${item.billNumber}",
-                                        style: const TextStyle(
-                                            color: Colors.black, fontSize: 12),
+
+                                      // Divider
+                                      Container(
+                                        height: 45,
+                                        width: 2,
+                                        color: Colors.green.shade200,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 6),
+                                      ),
+
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.supplierName == "N/A"
+                                                ? "Cash"
+                                                : item.supplierName,
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "৳ ${item.grossTotal}",
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+
+                                      const Spacer(),
+
+                                      // Unpaid tag
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 4, horizontal: 6),
+                                            child: const Text(
+                                              'Unpaid',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                  color: Colors.amber),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 ),
-
-                                // Divider
-                                Container(
-                                  height: 45,
-                                  width: 2,
-                                  color: Colors.green.shade200,
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 6),
-                                ),
-
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.supplierName == "N/A"
-                                          ? "Cash"
-                                          : item.supplierName,
-                                      style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "৳ ${item.grossTotal}",
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-
-                                const Spacer(),
-
-                                // Unpaid tag
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 4, horizontal: 6),
-                                      child: const Text(
-                                        'Unpaid',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12,
-                                            color: Colors.amber),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
+                      ),
+          ),
+        ],
+      ),
     );
   }
 

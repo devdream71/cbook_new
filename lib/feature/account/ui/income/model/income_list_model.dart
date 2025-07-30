@@ -2,23 +2,37 @@ class IncomeListModel {
   bool success;
   String message;
   List<IncomeData> data;
+  String totalIncome;
 
   IncomeListModel({
     required this.success,
     required this.message,
     required this.data,
+    required this.totalIncome,
   });
 
   factory IncomeListModel.fromJson(Map<String, dynamic> json) {
+    List<dynamic> rawData = json['data'] ?? [];
+    List<IncomeData> dataList = [];
+    String total = '0.00';
+
+    for (var item in rawData) {
+      if (item is Map<String, dynamic> && item.containsKey('id')) {
+        dataList.add(IncomeData.fromJson(item));
+      } else if (item is Map<String, dynamic> && item.containsKey('total_income')) {
+        total = item['total_income'] ?? '0.00';
+      }
+    }
+
     return IncomeListModel(
-      success: json['success'],
-      message: json['message'],
-      data: json['data'] != null
-          ? List<IncomeData>.from(json['data'].map((e) => IncomeData.fromJson(e)))
-          : [],
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data: dataList,
+      totalIncome: total,
     );
   }
 }
+
 
 class IncomeData {
   int id;

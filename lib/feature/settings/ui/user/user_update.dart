@@ -317,7 +317,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                                   .id;
 
                                               debugPrint(
-                                                  'selectedBillPersonId ${selectedBillPersonId}');
+                                                  'selectedBillPersonId $selectedBillPersonId');
                                             });
                                           },
                                         );
@@ -349,7 +349,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                                       .id;
 
                                               debugPrint(
-                                                  'selectedBillPersonId ${selectedDefaultBillPersonId}');
+                                                  'selectedBillPersonId $selectedDefaultBillPersonId');
                                             });
                                           },
                                         );
@@ -626,7 +626,7 @@ class _UserUpdateState extends State<UserUpdate> {
                         final result = await provider.updateUser(
                           id: widget.userId,
                           userType:
-                              '${selectedRoleName.toLowerCase()}_${selectedRoleId}',
+                              '${selectedRoleName.toLowerCase()}_$selectedRoleId',
                           //roleId: selectedRoleId,
                           designation: selectedDesignationId ?? 0,
                           password: provider.passwordController.text.trim(),

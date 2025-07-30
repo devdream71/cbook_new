@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/feature/account/ui/income/income_list.dart';
@@ -11,6 +13,7 @@ import 'package:cbook_dt/feature/sales/widget/add_sales_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class IncomeCreate extends StatefulWidget {
@@ -33,27 +36,11 @@ class _IncomeCreateState extends State<IncomeCreate> {
   int? selectedBillPersonId;
   BillPersonModel? selectedBillPersonData;
 
-  TextEditingController billNoController = TextEditingController();
   String billNo = '';
-
   String formattedDate = '';
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   Future.microtask(() =>
-  //       Provider.of<PaymentVoucherProvider>(context, listen: false)
-  //           .fetchBillPersons());
-
-  //   //final controller = context.watch<SalesController>();
-
-  //   // If the date is empty, set it to today
-  //   if (controller.formattedDate2.isEmpty) {
-  //     final now = DateTime.now();
-  //     controller.formattedDate2 =
-  //         "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-  //   }
-  // }
+  TextEditingController billController = TextEditingController();
+  // TextEditingController billNoController = TextEditingController();
 
   @override
   void initState() {
@@ -77,7 +64,194 @@ class _IncomeCreateState extends State<IncomeCreate> {
         setState(() {}); // 👈 make sure UI updates
       }
     });
+
+    Future.microtask(() async {
+      fetchAndSetBillNumber();
+    });
   }
+
+  // Updated fetchAndSetBillNumber with more debugging:
+  // Future<void> fetchAndSetBillNumber() async {
+  //   print('fetchAndSetBillNumber called');
+
+  //   final url = Uri.parse(
+  //     'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=voucher&type=indirect_income&code=IN&bill_number=100&with_nick_name=1',
+  //   );
+
+  //   print('API URL: $url');
+
+  //   try {
+  //     print('Making API call...');
+  //     final response = await http.get(url);
+  //     print('API Response Status: ${response.statusCode}');
+  //     print('API Response Body: ${response.body}');
+
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       print('Parsed data: $data');
+
+  //       if (data['success'] == true && data['data'] != null) {
+  //         String billFromApi = data['data'].toString(); // Ensure it's a string
+  //         print('Bill from API: $billFromApi');
+
+  //         //String newBill = _incrementBillNumber(billFromApi);
+
+  //         String newBill = billFromApi;
+
+  //         print('New bill after increment: $newBill');
+
+  //         // Update the controller and trigger UI rebuild
+  //         if (mounted) {
+  //           setState(() {
+  //             billController.text = newBill;
+  //             print('Bill controller updated to: ${billController.text}');
+  //           });
+  //         }
+  //       } else {
+  //         print('API success false or data null');
+  //         // Handle API error
+  //         if (mounted) {
+  //           setState(() {
+  //             billController.text = "IN-101"; // Default fallback
+  //             print('Set fallback bill: ${billController.text}');
+  //           });
+  //         }
+  //       }
+  //     } else {
+  //       print('Failed to fetch bill number: ${response.statusCode}');
+  //       // Set fallback bill number
+  //       if (mounted) {
+  //         setState(() {
+  //           billController.text = "IN-101";
+  //           print(
+  //               'Set fallback bill due to status code: ${billController.text}');
+  //         });
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching bill number: $e');
+  //     // Set fallback bill number
+  //     if (mounted) {
+  //       setState(() {
+  //         billController.text = "IN-101";
+  //         print('Set fallback bill due to exception: ${billController.text}');
+  //       });
+  //     }
+  //   }
+  // }
+
+
+
+  ////=====> this is working. properly. plain text fetching the bill number fixed.
+  
+  // Future<void> fetchAndSetBillNumber() async {
+  //   debugPrint('fetchAndSetBillNumber called');
+
+  //   final url = Uri.parse(
+  //     'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=voucher&type=indirect_income&code=IN&bill_number=100&with_nick_name=1',
+  //   );
+
+  //   debugPrint('API URL: $url');
+
+  //   try {
+  //     debugPrint('Making API call...');
+  //     final response = await http.get(url);
+  //     debugPrint('API Response Status: ${response.statusCode}');
+  //     debugPrint('API Response Body: ${response.body}');
+
+  //     if (response.statusCode == 200) {
+  //       final String billFromApi = response.body.trim(); // Just use plain text
+  //       debugPrint('Bill from API: $billFromApi');
+
+  //       if (billFromApi.isNotEmpty) {
+  //         // Optional: extract only the number part
+  //         String newBillNumber = billFromApi; //billFromApi.split('-').last.trim(); // "102"
+
+  //         if (mounted) {
+  //           setState(() {
+  //             billController.text = newBillNumber;
+  //             debugPrint('Bill controller updated to: ${billController.text}');
+  //           });
+  //         }
+  //       } else {
+  //         _setFallback();
+  //       }
+  //     } else {
+  //       debugPrint('Failed to fetch bill number: ${response.statusCode}');
+  //       _setFallback();
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error fetching bill number: $e');
+  //     _setFallback();
+  //   }
+  // }
+
+  // void _setFallback() {
+  //   if (mounted) {
+  //     setState(() {
+  //       billController.text = "100"; // Fallback number only
+  //       debugPrint('Set fallback bill due to error: ${billController.text}');
+  //     });
+  //   }
+  // }
+
+
+
+  ///updated bill nunber json respoonse
+  Future<void> fetchAndSetBillNumber() async {
+  print('fetchAndSetBillNumber called');
+
+  final url = Uri.parse(
+    'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=voucher&type=indirect_income&code=IN&bill_number=100&with_nick_name=1',
+  );
+
+  try {
+    print('Making API call...');
+    final response = await http.get(url);
+    print('API Response Status: ${response.statusCode}');
+    print('API Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print('Parsed data: $data');
+
+      if (data['success'] == true && data['data'] != null) {
+        final billFromApi = data['data']['bill_number']?.toString().trim() ?? "";
+
+        print('Bill from API: $billFromApi');
+
+        // Optional: extract only number from "IN-102"
+        final billOnlyNumber =  billFromApi;
+
+        if (mounted) {
+          setState(() {
+            billController.text = billOnlyNumber;
+            print('Bill controller updated to: ${billController.text}');
+          });
+        }
+      } else {
+        print('API success false or data missing');
+        _setFallback();
+      }
+    } else {
+      print('Failed to fetch bill number: ${response.statusCode}');
+      _setFallback();
+    }
+  } catch (e) {
+    print('Error fetching bill number: $e');
+    _setFallback();
+  }
+}
+
+void _setFallback() {
+  if (mounted) {
+    setState(() {
+      billController.text = "101"; // or any default you want
+      print('Fallback bill set: ${billController.text}');
+    });
+  }
+}
+
 
   @override
   void dispose() {
@@ -276,16 +450,26 @@ class _IncomeCreateState extends State<IncomeCreate> {
                     ),
 
                     ///bill no,
+                    // SizedBox(
+                    //   height: 30,
+                    //   width: 130,
+                    //   child: AddSalesFormfield(
+                    //     labelText: "Bill No",
+                    //     controller: billNoController,
+
+                    //     onChanged: (value) {
+                    //       billNo = value;
+                    //     }, // Match cursor height to text size
+                    //   ),
+                    // ),
+
                     SizedBox(
                       height: 30,
                       width: 130,
                       child: AddSalesFormfield(
                         labelText: "Bill No",
-                        controller: billNoController,
-
-                        onChanged: (value) {
-                          billNo = value;
-                        }, // Match cursor height to text size
+                        controller: billController,
+                        readOnly: true, // Prevent manual editing
                       ),
                     ),
 
@@ -567,9 +751,9 @@ class _IncomeCreateState extends State<IncomeCreate> {
                         return;
                       }
 
-                      final invoiceNo = billNoController.text.trim();
-                      const date =
-                          "2025-06-10"; // your date string like '2025-06-10'
+                      final invoiceNo = billController.text.trim();
+                      // const date =
+                      //     "2025-06-10"; // your date string like '2025-06-10'
 
                       final receivedTo =
                           (selectedReceivedTo ?? '').toLowerCase();
@@ -795,7 +979,6 @@ class _IncomeCreateState extends State<IncomeCreate> {
                             if (selectedReceiptFrom != null &&
                                 amountController.text.isNotEmpty) {
                               provider.addReceiptItem(ReceiptItem(
-                                
                                 receiptFrom: selectedReceiptFrom!,
                                 amount: amountController.text,
                                 note: noteController.text,

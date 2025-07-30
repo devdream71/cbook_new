@@ -344,8 +344,8 @@ class _ItemViewState extends State<ItemView> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        ItemDetailsView(itemId: item.id, item: item),
+                                    builder: (context) => ItemDetailsView(
+                                        itemId: item.id, item: item),
                                   ),
                                 );
                               },
@@ -433,14 +433,23 @@ class _ItemViewState extends State<ItemView> {
                                                       color: Colors.blue,
                                                     ),
                                                   ),
-                                                  Text(
-                                                    "Stock: ${item.openingStock} $unitName",
-                                                    style: GoogleFonts
-                                                        .notoSansPhagsPa(
-                                                      fontSize: 11,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
+                                                  item.openingStock == null
+                                                      ? Text(
+                                                          'Stock: 0 $unitName',
+                                                          style: GoogleFonts
+                                                              .notoSansPhagsPa(
+                                                            fontSize: 11,
+                                                            color: Colors.black,
+                                                          ),
+                                                        )
+                                                      : Text(
+                                                          "Stock: ${item.openingStock} $unitName",
+                                                          style: GoogleFonts
+                                                              .notoSansPhagsPa(
+                                                            fontSize: 11,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
                                                 ],
                                               ),
 
@@ -455,23 +464,46 @@ class _ItemViewState extends State<ItemView> {
                                                       CrossAxisAlignment.end,
                                                   children: [
                                                     FittedBox(
-                                                      child: Text(
-                                                        "S. Price: ${item.salesPrice}",
-                                                        style: GoogleFonts
-                                                            .notoSansPhagsPa(
-                                                          fontSize: 12,
-                                                          color: Colors.black87,
-                                                        ),
-                                                      ),
+                                                      child: item.salesPrice ==
+                                                              null
+                                                          ? Text(
+                                                              'S.Price N/A',
+                                                              style: GoogleFonts
+                                                                  .notoSansPhagsPa(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
+                                                            )
+                                                          : Text(
+                                                              "S. Price: ${item.salesPrice}",
+                                                              style: GoogleFonts
+                                                                  .notoSansPhagsPa(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .black87,
+                                                              ),
+                                                            ),
                                                     ),
-                                                    Text(
-                                                      "Purchase: ${item.purchasePrice}",
-                                                      style: GoogleFonts
-                                                          .notoSansPhagsPa(
-                                                        fontSize: 12,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
+                                                    item.purchasePrice == null
+                                                        ? Text(
+                                                            'Purchase N/A',
+                                                            style: GoogleFonts
+                                                                .notoSansPhagsPa(
+                                                              fontSize: 12,
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
+                                                          )
+                                                        : Text(
+                                                            "Purchase: ${item.purchasePrice}",
+                                                            style: GoogleFonts
+                                                                .notoSansPhagsPa(
+                                                              fontSize: 12,
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
+                                                          ),
                                                   ],
                                                 ),
                                               ),

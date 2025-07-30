@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/common/item_dropdown_custom.dart';
-import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_list_model.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/invoice/invoice.dart';
@@ -56,6 +58,7 @@ class Layout extends StatefulWidget {
 }
 
 class LayoutState extends State<Layout> {
+
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -89,11 +92,15 @@ class LayoutState extends State<Layout> {
   int? selectedBillPersonId;
   BillPersonModel? selectedBillPersonData;
 
-  // String? selectedItem;
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize with loading text
+  billController.text = "Loading...";
+  print('Bill controller initialized with: ${billController.text}');
+
 
     Future.microtask(() async {
       ///fetch customer.
@@ -106,7 +113,6 @@ class LayoutState extends State<Layout> {
       ///fetch item.
       Provider.of<AddItemProvider>(context, listen: false).fetchItems();
 
-      
       ///fetch stock quantity.
       Provider.of<AddItemProvider>(context, listen: false)
           .fetchPurchaseStockQuantity(
@@ -122,23 +128,127 @@ class LayoutState extends State<Layout> {
           Provider.of<PaymentVoucherProvider>(context, listen: false)
               .fetchBillPersons());
 
-    ///clear saved data from controller. 
-    // final controller = Provider.of<PurchaseController>(context, listen: false);
-    // controller.updateCash();
+      // await fetchAndSetBillNumber();
+
+       print('About to fetch bill number...');
+    await fetchAndSetBillNumber();
+    print('Bill number fetch completed. Current value: ${billController.text}');
 
     });
   }
 
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
 
-  //   final controller = Provider.of<PurchaseController>(context, listen: false);
+  // Updated fetchAndSetBillNumber with more debugging:
+Future<void> fetchAndSetBillNumber() async {
+  debugPrint('fetchAndSetBillNumber called');
+  
+  final url = Uri.parse(
+    'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=purchase&type=purchase&code=PUR&bill_number=100&with_nick_name=1',
+  );
 
-  //   controller.updateCash();
+  debugPrint('API URL: $url');
 
-  //   super.dispose();
-  // }
+  try {
+    debugPrint('Making API call...');
+    final response = await http.get(url);
+    debugPrint('API Response Status: ${response.statusCode}');
+    debugPrint('API Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      debugPrint('Parsed data: $data');
+
+      if (data['success'] == true && data['data'] != null) {
+        String billFromApi = data['data'].toString(); // Ensure it's a string
+        debugPrint('Bill from API: $billFromApi');
+        
+        //String newBill = _incrementBillNumber(billFromApi);
+
+        String newBill = billFromApi;
+
+        debugPrint('New bill after increment: $newBill');
+        
+        // Update the controller and trigger UI rebuild
+        if (mounted) {
+          setState(() {
+            billController.text = newBill;
+            debugPrint('Bill controller updated to: ${billController.text}');
+          });
+        }
+      } else {
+        debugPrint('API success false or data null');
+        // Handle API error
+        if (mounted) {
+          setState(() {
+            billController.text = "PUR-102"; // Default fallback
+            debugPrint('Set fallback bill: ${billController.text}');
+          });
+        }
+      }
+    } else {
+      debugPrint('Failed to fetch bill number: ${response.statusCode}');
+      // Set fallback bill number
+      if (mounted) {
+        setState(() {
+          billController.text = "PUR-102";
+          debugPrint('Set fallback bill due to status code: ${billController.text}');
+        });
+      }
+    }
+  } catch (e) {
+    debugPrint('Error fetching bill number: $e');
+    // Set fallback bill number
+    if (mounted) {
+      setState(() {
+        billController.text = "PUR-102";
+        debugPrint('Set fallback bill due to exception: ${billController.text}');
+      });
+    }
+  }
+}
+
+// Your increment function looks correct, but here's a slightly improved version:
+// String _incrementBillNumber(String bill) {
+//   try {
+//     print('_incrementBillNumber called with: $bill');
+    
+//     // Handle format like "PUR-101"
+//     final parts = bill.trim().split('-');
+//     print('Split parts: $parts');
+    
+//     if (parts.length == 2) {
+//       final prefix = parts[0].trim(); // "PUR"
+//       final numberPart = parts[1].trim();
+//       final currentNumber = int.tryParse(numberPart) ?? 100;
+//       final nextNumber = currentNumber + 1;
+//       final result = '$prefix-$nextNumber';
+      
+//       print('Successfully incremented: $bill -> $result');
+//       return result;
+//     }
+    
+//     // Fallback: if format is unexpected, try to find and increment any number
+//     print('Trying fallback regex method...');
+//     final regex = RegExp(r'(\D*)(\d+)(.*)');
+//     final match = regex.firstMatch(bill);
+//     if (match != null) {
+//       final prefix = match.group(1) ?? '';
+//       final currentNumber = int.tryParse(match.group(2) ?? '100') ?? 100;
+//       final suffix = match.group(3) ?? '';
+//       final nextNumber = currentNumber + 1;
+//       final result = '$prefix$nextNumber$suffix';
+      
+//       print('Fallback incremented: $bill -> $result');
+//       return result;
+//     }
+//   } catch (e) {
+//     print('Error in _incrementBillNumber: $e');
+//   }
+  
+//   // Ultimate fallback
+//   print('Using ultimate fallback: PUR-102');
+//   return 'PUR-102';
+// }
 
   @override
   Widget build(BuildContext context) {
@@ -485,14 +595,18 @@ class LayoutState extends State<Layout> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    // Bill No Field
+                                    // Bill No Field,, it should be auto. fill.
+                                     
+                                   
+
                                     SizedBox(
                                       height: 30,
                                       width: 130,
                                       child: AddSalesFormfield(
                                         labelText: "Bill No",
                                         controller: billController,
-                                        // Match cursor height to text size
+                                        readOnly:
+                                            true, // Prevent manual editing
                                       ),
                                     ),
 
@@ -1409,11 +1523,12 @@ class LayoutState extends State<Layout> {
                                                   labelText: "%",
                                                   controller: controller
                                                       .discountAmountController,
-                                                  onChanged: (value){
-
-                                                    controller.updateDiscountPercentageCash(value);;
-
-                                                  },    
+                                                  onChanged: (value) {
+                                                    controller
+                                                        .updateDiscountPercentageCash(
+                                                            value);
+                                                    ;
+                                                  },
                                                   decoration: InputDecoration(
                                                     hintText: "%",
                                                     hintStyle: TextStyle(
@@ -1610,8 +1725,10 @@ class LayoutState extends State<Layout> {
                                                 height: 30,
                                                 width: 75,
                                                 child: AddSalesFormfield(
-                                                  onChanged: (value){
-                                                     controller.updateDiscountPercentageCredit(value);
+                                                  onChanged: (value) {
+                                                    controller
+                                                        .updateDiscountPercentageCredit(
+                                                            value);
                                                   },
                                                   controller: controller
                                                       .discountAmountController,

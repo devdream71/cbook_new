@@ -17,7 +17,10 @@ class _IncomeState extends State<Income> {
   @override
   void initState() {
     super.initState();
+
+    //final incomeProvider = Provider.of(context)<IncomeProvider>(context, listen: false);
     Provider.of<IncomeProvider>(context, listen: false).fetchIncomeList();
+    Provider.of<IncomeProvider>(context, listen: false).fetchAccountNames();
   }
 
   @override
@@ -29,7 +32,7 @@ class _IncomeState extends State<Income> {
         appBar: AppBar(
           backgroundColor: colorScheme.primary,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           automaticallyImplyLeading: true,
           title: const Column(
             children: [
@@ -71,12 +74,27 @@ class _IncomeState extends State<Income> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ///top date start , end and dropdown
-
             Column(
               children: [
                 const SizedBox(
                   height: 5,
                 ),
+                Consumer<IncomeProvider>(
+                  builder: (context, provider, _) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Total Income: ৳ ${provider.totalIncome}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
                 Consumer<IncomeProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
@@ -103,6 +121,10 @@ class _IncomeState extends State<Income> {
                       itemBuilder: (context, index) {
                         final income = incomes[index];
                         final incomeId = income.id.toString();
+
+                        final accountName =
+                            provider.accountNameMap[income.accountId ?? 0] ??
+                                'Account Not Found';
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(
@@ -155,12 +177,25 @@ class _IncomeState extends State<Income> {
                                             fontSize: 12,
                                           ),
                                         ),
+
+                                        //income.receivedTo == 'bank' ?
+                                        // Text(
+                                        //   income.accountId.toString(),
+                                        //   style: const TextStyle(
+                                        //     color: Colors.black,
+                                        //     fontSize: 12,
+                                        //   ),
+                                        // ),
+
                                         Text(
-                                          income.accountId == 1
-                                              ? 'Cash'
-                                              : income.accountId == 12
-                                                  ? 'Cash A'
-                                                  : '${income.accountId}',
+                                          income.receivedTo.toLowerCase() ==
+                                                      'cash' ||
+                                                  income.receivedTo
+                                                          .toLowerCase() ==
+                                                      'bank'
+                                              ? accountName
+                                              : income.accountId
+                                                  .toString(), // fallback
                                           style: const TextStyle(
                                             color: Colors.black,
                                             fontSize: 12,
@@ -168,6 +203,7 @@ class _IncomeState extends State<Income> {
                                         ),
                                       ],
                                     ),
+
                                     const Spacer(),
 
                                     /// Right side
@@ -218,6 +254,7 @@ class _IncomeState extends State<Income> {
         ));
   }
 
+  ///delete and edit show
   Future<dynamic> editDeleteDiolog(BuildContext context, String incomeId) {
     final colorScheme = Theme.of(context).colorScheme;
     return showDialog(
@@ -306,6 +343,7 @@ class _IncomeState extends State<Income> {
     );
   }
 
+  ///delete
   void _showDeleteDialog(BuildContext context, String incomeId) {
     showDialog(
       context: context,
@@ -333,8 +371,8 @@ class _IncomeState extends State<Income> {
               await provider.deleteIncome(incomeId.toString());
               await provider
                   .fetchReceiptFromList(); // ✅ Re-fetch the latest list
-               
-              Navigator.of(context).pop(); 
+
+              Navigator.of(context).pop();
 
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

@@ -165,7 +165,7 @@ class _EditBillPersonState extends State<EditBillPerson> {
     if (success) {
       Navigator.pop(context, true);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
             content: Text("Successfully, Update Bill Person"), backgroundColor: Colors.green),
       );
       

@@ -28,6 +28,9 @@ class _ExpanseState extends State<Expanse> {
 
     ///fetch expense list.
     Provider.of<ExpenseProvider>(context, listen: false).fetchExpenseList();
+
+    ///fetch acccount name.
+    Provider.of<ExpenseProvider>(context, listen: false).fetchAccountNames();
   }
 
   @override
@@ -83,6 +86,21 @@ class _ExpanseState extends State<Expanse> {
               ),
               Consumer<ExpenseProvider>(
                 builder: (context, provider, child) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Total Expense: ৳ ${provider.totalExpense}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Consumer<ExpenseProvider>(
+                builder: (context, provider, child) {
                   if (provider.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -103,6 +121,11 @@ class _ExpanseState extends State<Expanse> {
                       final expense = provider.expenseList[index];
 
                       final expenseId = expense.id.toString();
+
+                      final accountName =
+                          provider.accountNameMap[expense.accountID ?? 0] ??
+                              'Account Not Found';
+
                       return InkWell(
                         onLongPress: () {
                           editDeleteDiolog(context, expenseId);
@@ -141,7 +164,7 @@ class _ExpanseState extends State<Expanse> {
                                     ),
                                     const SizedBox(height: 2),
 
-                                    /// Date and Time
+                                    ///
                                     Text(
                                       expense.receivedTo,
                                       style: const TextStyle(
@@ -149,6 +172,7 @@ class _ExpanseState extends State<Expanse> {
                                         color: Colors.black87,
                                       ),
                                     ),
+
                                     const SizedBox(height: 2),
 
                                     /// Paid To
@@ -164,21 +188,37 @@ class _ExpanseState extends State<Expanse> {
                                     //   ),
                                     // ),
 
-                                    Text(
-                                      expense.accountID == 1
-                                          ? 'Cash'
-                                          : expense.accountID == 11
-                                              ? 'Cash A'
-                                              : expense.accountID == 2
-                                                  ? 'Bank'
-                                                  : expense.accountID == 13
-                                                      ? 'Bank A'
-                                                      : '${expense.accountID ?? 'Unknown'}',
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   expense.accountID == 1
+                                    //       ? 'Cash'
+                                    //       : expense.accountID == 11
+                                    //           ? 'Cash A'
+                                    //           : expense.accountID == 2
+                                    //               ? 'Bank'
+                                    //               : expense.accountID == 13
+                                    //                   ? 'Bank A'
+                                    //                   : '${expense.accountID ?? 'Unknown'}',
+                                    //   style: const TextStyle(
+                                    //     color: Colors.black,
+                                    //     fontSize: 12,
+                                    //   ),
+                                    // ),
+
+                                    ////======>
+                                    // Text(
+                                    //   expense.receivedTo.toLowerCase() ==
+                                    //               'cash' ||
+                                    //           expense.receivedTo
+                                    //                   .toLowerCase() ==
+                                    //               'bank'
+                                    //       ? accountName
+                                    //       : expense.accountID
+                                    //           .toString(), // fallback
+                                    //   style: const TextStyle(
+                                    //     color: Colors.black,
+                                    //     fontSize: 12,
+                                    //   ),
+                                    // ),
 
                                     const SizedBox(height: 2),
                                   ],

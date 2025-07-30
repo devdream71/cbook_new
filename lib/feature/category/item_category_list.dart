@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ItemCategoryView extends StatefulWidget {
+  const ItemCategoryView({super.key});
+
   @override
-  _ItemCategoryViewState createState() => _ItemCategoryViewState();
+  ItemCategoryViewState createState() => ItemCategoryViewState();
 }
 
-class _ItemCategoryViewState extends State<ItemCategoryView> {
+class ItemCategoryViewState extends State<ItemCategoryView> {
   @override
   void initState() {
     super.initState();

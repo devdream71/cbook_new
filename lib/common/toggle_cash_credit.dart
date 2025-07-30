@@ -4,13 +4,13 @@ class PaymentToggle extends StatefulWidget {
   final bool isCash;
   final Function(bool) onToggle;
 
-  const PaymentToggle({Key? key, required this.isCash, required this.onToggle}) : super(key: key);
+  const PaymentToggle({super.key, required this.isCash, required this.onToggle});
 
   @override
-  _PaymentToggleState createState() => _PaymentToggleState();
+  PaymentToggleState createState() => PaymentToggleState();
 }
 
-class _PaymentToggleState extends State<PaymentToggle> {
+class PaymentToggleState extends State<PaymentToggle> {
   late bool isCash;
 
   @override

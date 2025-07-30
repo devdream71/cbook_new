@@ -11,15 +11,15 @@ class SupplierUpdate extends StatefulWidget {
   final SupplierData supplier;
 
   const SupplierUpdate({
-    Key? key,
+    super.key,
     required this.supplier,
-  }) : super(key: key);
+  });
 
   @override
-  _SupplierUpdateState createState() => _SupplierUpdateState();
+  SupplierUpdateState createState() => SupplierUpdateState();
 }
 
-class _SupplierUpdateState extends State<SupplierUpdate> {
+class SupplierUpdateState extends State<SupplierUpdate> {
   late TextEditingController nameController;
   late TextEditingController proprietorController;
   late TextEditingController emailController;

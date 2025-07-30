@@ -5,6 +5,7 @@ import 'package:cbook_dt/feature/suppliers/model/suppliers_list.dart';
 import 'package:cbook_dt/utils/date_time_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SupplierProvider extends ChangeNotifier {
@@ -84,69 +85,142 @@ class SupplierProvider extends ChangeNotifier {
   
   ///  **create supplier**
   
-  Future<void> createSupplier({
-    required String name,
-    required String email,
-    required String phone,
-    required String address,
-    required String status, // Expecting '1' or '0' as strings
-    required String proprietorName,
-    required String openingBalance,
-  }) async {
-    isLoading = true;
-    errorMessage = "";
-    notifyListeners();
+  // Future<void> createSupplier({
+  //   required String name,
+  //   required String email,
+  //   required String phone,
+  //   required String address,
+  //   required String status, // Expecting '1' or '0' as strings
+  //   required String proprietorName,
+  //   required String openingBalance,
+  //   XFile? avatarImage,
+  // }) async {
+  //   isLoading = true;
+  //   errorMessage = "";
+  //   notifyListeners();
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userId = prefs.getInt('user_id')?.toString();
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? userId = prefs.getInt('user_id')?.toString();
 
-    if (userId == null || userId.isEmpty) {
-      errorMessage = "User ID is missing. Please log in again.";
-      isLoading = false;
-      notifyListeners();
-      return;
-    }
+  //   if (userId == null || userId.isEmpty) {
+  //     errorMessage = "User ID is missing. Please log in again.";
+  //     isLoading = false;
+  //     notifyListeners();
+  //     return;
+  //   }
 
-    final url = Uri.parse('https://commercebook.site/api/v1/supplier/store');
+  //   final url = Uri.parse('https://commercebook.site/api/v1/supplier/store');
 
-    final response = await http.post(
-      url,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {
-        'user_id':
-            userId, // ✅ Fix: Send user_id in the body instead of query params
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'address': address,
-        'status': status, // ✅ Ensure '1' or '0' is passed
-        'proprietor_name': proprietorName,
-        'opening_balance': openingBalance,
-      },
-    );
+  //   final response = await http.post(
+  //     url,
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/x-www-form-urlencoded',
+  //     },
+  //     body: {
+  //       'user_id':
+  //           userId, // ✅ Fix: Send user_id in the body instead of query params
+  //       'name': name,
+  //       'email': email,
+  //       'phone': phone,
+  //       'address': address,
+  //       'status': status, // ✅ Ensure '1' or '0' is passed
+  //       'proprietor_name': proprietorName,
+  //       'opening_balance': openingBalance,
+  //     },
+  //   );
 
-    try {
-      final data = jsonDecode(response.body);
-      debugPrint("Create Response: $data");
+  //   try {
+  //     final data = jsonDecode(response.body);
+  //     debugPrint("Create Response: $data");
 
-      if (response.statusCode == 200 && data["success"] == true) {
-        debugPrint("Supplier Created: ${data['data']['name']}");
-      } else {
-        errorMessage = data['message'] ?? "Failed to create supplier";
-      }
-    } catch (e) {
-      errorMessage = "Error: $e";
-      debugPrint("Error: $e");
-    }
+  //     if (response.statusCode == 200 && data["success"] == true) {
+  //       debugPrint("Supplier Created: ${data['data']['name']}");
+  //     } else {
+  //       errorMessage = data['message'] ?? "Failed to create supplier";
+  //     }
+  //   } catch (e) {
+  //     errorMessage = "Error: $e";
+  //     debugPrint("Error: $e");
+  //   }
 
-    isLoading = false;
-    notifyListeners();
-  }
+  //   isLoading = false;
+  //   notifyListeners();
+  // }
 
   
+  ///with avatar
+  Future<void> createSupplier({
+  required String name,
+  required String email,
+  required String phone,
+  required String address,
+  required String status,
+  required String proprietorName,
+  required String openingBalance,
+  XFile? avatarImage,
+}) async {
+  isLoading = true;
+  errorMessage = "";
+  notifyListeners();
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? userId = prefs.getInt('user_id')?.toString();
+
+  if (userId == null || userId.isEmpty) {
+    errorMessage = "User ID is missing. Please log in again.";
+    isLoading = false;
+    notifyListeners();
+    return;
+  }
+
+  final url = Uri.parse('https://commercebook.site/api/v1/supplier/store');
+
+  try {
+    var request = http.MultipartRequest('POST', url);
+
+    request.fields.addAll({
+      'user_id': userId,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'address': address,
+      'status': status,
+      'proprietor_name': proprietorName,
+      'opening_balance': openingBalance,
+    });
+
+    // ✅ Add avatar file if available
+    if (avatarImage != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('avatar', avatarImage.path),
+      );
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    debugPrint("Status Code: ${response.statusCode}");
+    debugPrint("Response Body: ${response.body}");
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && data["success"] == true) {
+      debugPrint("Supplier Created: ${data['data']['name']}");
+    } else {
+      errorMessage = data['message'] ?? "Failed to create supplier";
+    }
+  } catch (e) {
+    errorMessage = "Error: $e";
+    debugPrint("Error: $e");
+  }
+
+  isLoading = false;
+  notifyListeners();
+}
+
+
+   
   /// **featch supplier by id**
   Future<SupplierData?> fetchSupplierById(int supplierId) async {
     final url =

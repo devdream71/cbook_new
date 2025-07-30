@@ -121,6 +121,8 @@ class FieldPortion extends StatelessWidget {
                                 TextStyle(color: Colors.green, fontSize: 12)),
                       ],
                     ),
+
+                    ///payment
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -149,7 +151,7 @@ class FieldPortion extends StatelessWidget {
           height: 4,
         ),
 
-        ///====================== creadit =================================///
+        ///====================== credit =================================///
 
         ////===> sell return credit ////amount
         controller.isCash == false && controller.isAmountCredit
@@ -195,8 +197,11 @@ class FieldPortion extends StatelessWidget {
                       labelText: 'Discount',
                       controller: controller.discountController,
                       onChanged: (value) {
-                        TextEditingController(text: controller.totalAmount());
+                        // Update discount controller
                         controller.discountController.text = value;
+                        
+                        // Update credit payment calculation
+                        controller.updateCreditPaymentFromDiscount();
                       },
                       //style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
@@ -211,7 +216,7 @@ class FieldPortion extends StatelessWidget {
 
         ///sell return payment /// credit
 
-        controller.isCash == false && controller.isSubTotalCredit
+        controller.isCash == false
             ? Padding(
                 padding: const EdgeInsets.only(bottom: 2.0),
                 child: Row(
@@ -222,23 +227,15 @@ class FieldPortion extends StatelessWidget {
                         Container(
                           //color: Colors.pink,
                           child: SizedBox(
-                              height: 30,
-                              child: Checkbox(
-                                value: controller.isDisocunt,
-                                onChanged: (bool? value) {
-                                  if (controller.isCash) {
-                                    // Allow checking, but prevent unchecking
-                                    if (value == true) {
-                                      controller.isDisocunt = true;
-                                      controller.notifyListeners();
-                                    }
-                                  } else {
-                                    // Allow normal toggling when not cash
-                                    controller.isDisocunt = value ?? false;
-                                    controller.notifyListeners();
-                                  }
-                                },
-                              )),
+                            height: 30,
+                            child: Checkbox(
+                              value: controller.isSubTotalCredit,
+                              onChanged: (bool? value) {
+                                controller.isSubTotalCredit = value ?? false;
+                                controller.notifyListeners();
+                              },
+                            ),
+                          ),
                         ),
                         const Text("",
                             style:
@@ -259,8 +256,7 @@ class FieldPortion extends StatelessWidget {
                             labelText: 'Payment',
                             //readOnly: true,
                             onChanged: (value) {},
-                            controller: TextEditingController(
-                                text: controller.totalAmount()),
+                            controller: TextEditingController(text: controller.getCreditPaymentAmount()),
                           ),
                         ),
                       ],
@@ -273,3 +269,4 @@ class FieldPortion extends StatelessWidget {
     );
   }
 }
+

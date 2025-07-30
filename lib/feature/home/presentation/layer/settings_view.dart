@@ -1,4 +1,5 @@
 import 'package:cbook_dt/app_const/app_colors.dart';
+import 'package:cbook_dt/feature/bill_voucher_settings/screen/bill_settings_view.dart';
 import 'package:cbook_dt/feature/home/presentation/layer/profile_view.dart';
 import 'package:cbook_dt/feature/settings/ui/bill_invoice_create_form.dart';
 import 'package:cbook_dt/feature/settings/ui/bill_invoice_print.dart';
@@ -57,9 +58,14 @@ class SettingsView extends StatelessWidget {
         destination: UserCeate(), //SalesFormSetting
       ),
       const FormSettingMeta(
-        name: 'Bill Persion',
+        name: 'Bill Person',
         iconPath: 'assets/image/profile.svg',
         destination: BillPersonList(), //SalesFormSetting
+      ),
+      const FormSettingMeta(
+        name: 'Bill Settings',
+        iconPath: 'assets/image/profile.svg',
+        destination: BillSettingsView(), //SalesFormSetting
       ),
     ];
 

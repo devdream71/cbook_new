@@ -9,10 +9,10 @@ class CreateNewCompany extends StatefulWidget {
   const CreateNewCompany({super.key});
 
   @override
-  _CreateNewCompanyState createState() => _CreateNewCompanyState();
+  CreateNewCompanyState createState() => CreateNewCompanyState();
 }
 
-class _CreateNewCompanyState extends State<CreateNewCompany> {
+class CreateNewCompanyState extends State<CreateNewCompany> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();

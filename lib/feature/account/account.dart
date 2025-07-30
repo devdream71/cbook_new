@@ -81,7 +81,7 @@ class Account extends StatelessWidget {
           itemBuilder: (context, index) {
             final form = forms[index];
             return ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 8),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
               dense: true,
               visualDensity: VisualDensity.compact,
               title: Text(

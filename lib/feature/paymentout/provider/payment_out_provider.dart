@@ -16,7 +16,47 @@ class PaymentVoucherProvider with ChangeNotifier {
   List<BillPersonModel> get billPersons => _billPersons;
   List<String> get billPersonNames => _billPersons.map((e) => e.name).toList();
 
+  double _totalPayment = 0.0;
+  double get totalPayment => _totalPayment;
+
   /////show payment voucher
+  // Future<void> fetchPaymentVouchers() async {
+  //   isLoading = true;
+  //   notifyListeners();
+
+  //   final url = Uri.parse('https://commercebook.site/api/v1/payment-vouchers');
+
+  //   try {
+  //     final response = await http.get(url);
+  //     debugPrint('API STATUS CODE: ${response.statusCode}');
+  //     debugPrint('API RESPONSE: ${response.body}');
+
+  //     if (response.statusCode == 200) {
+  //       final extractedData = json.decode(response.body);
+  //       if (extractedData['success'] == true && extractedData['data'] != null) {
+  //         final List<dynamic> data = extractedData['data'];
+  //         debugPrint('DATA LENGTH: ${data.length}');
+
+  //         _vouchers = data
+  //             .map((voucher) => PaymentVoucherModel.fromJson(voucher))
+  //             .toList();
+  //       } else {
+  //         debugPrint('Data key is null or API success false');
+  //         _vouchers = [];
+  //       }
+  //     } else {
+  //       debugPrint('HTTP ERROR');
+  //       _vouchers = [];
+  //     }
+  //   } catch (error) {
+  //     debugPrint('EXCEPTION: $error');
+  //     _vouchers = [];
+  //   } finally {
+  //     isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
+
   Future<void> fetchPaymentVouchers() async {
     isLoading = true;
     notifyListeners();
@@ -30,24 +70,32 @@ class PaymentVoucherProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final extractedData = json.decode(response.body);
+
         if (extractedData['success'] == true && extractedData['data'] != null) {
           final List<dynamic> data = extractedData['data'];
-          debugPrint('DATA LENGTH: ${data.length}');
 
-          _vouchers = data
-              .map((voucher) => PaymentVoucherModel.fromJson(voucher))
-              .toList();
+          // Remove the last element and check if it's total_payment
+          final lastItem = data.last;
+          if (lastItem is Map<String, dynamic> && lastItem.containsKey('total_payment')) {
+            _totalPayment = double.tryParse(lastItem['total_payment'].toString()) ?? 0.0;
+            data.removeLast(); // remove total_payment from list
+          } else {
+            _totalPayment = 0.0;
+          }
+
+          _vouchers = data.map((voucher) => PaymentVoucherModel.fromJson(voucher)).toList();
         } else {
-          debugPrint('Data key is null or API success false');
           _vouchers = [];
+          _totalPayment = 0.0;
         }
       } else {
-        debugPrint('HTTP ERROR');
         _vouchers = [];
+        _totalPayment = 0.0;
       }
     } catch (error) {
       debugPrint('EXCEPTION: $error');
       _vouchers = [];
+      _totalPayment = 0.0;
     } finally {
       isLoading = false;
       notifyListeners();
@@ -131,6 +179,10 @@ void clearBillPersons() {
       debugPrint('Request URL: $uri');
       debugPrint('Request Body JSON: $bodyJson');
       debugPrint('-----------------------------------');
+
+      
+
+      debugPrint('-------stop----------');
 
       final response = await http.post(
         uri,

@@ -17,8 +17,6 @@ class PurchaseListApi extends StatefulWidget {
 }
 
 class _PurchaseListApiState extends State<PurchaseListApi> {
-
-
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
@@ -50,7 +48,6 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
   TextEditingController _searchController = TextEditingController();
   TextEditingController searchController = TextEditingController();
   bool isSearching = false;
-  
 
   @override
   void initState() {
@@ -255,7 +252,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 2 ),
                             Text("-",
                                 style: GoogleFonts.notoSansPhagsPa(
                                     fontSize: 14, color: Colors.black)),
@@ -271,7 +268,7 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                                   });
                                 }),
                                 child: Container(
-                                  height: 30,
+                                  height: 30 ,
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 8),
                                   decoration: BoxDecoration(
@@ -314,23 +311,55 @@ class _PurchaseListApiState extends State<PurchaseListApi> {
                     ),
 
                     //amount, due
-                    const Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          "Amount: 12,50,36,589.00",
-                          style: TextStyle(color: Colors.black, fontSize: 12),
-                        ),
-                        Text(
-                          "Due: 10,85,99,782.00",
-                          style: TextStyle(color: Colors.black, fontSize: 12),
-                        )
-                      ],
-                    )
+                    // const Column(
+                    //   mainAxisAlignment: MainAxisAlignment.start,
+                    //   crossAxisAlignment: CrossAxisAlignment.end,
+                    //   children: [
+                    //     Text(
+                    //       "Amount: 12,50,36,589.00",
+                    //       style: TextStyle(color: Colors.black, fontSize: 12),
+                    //     ),
+                    //     Text(
+                    //       "Due: 10,85,99,782.00",
+                    //       style: TextStyle(color: Colors.black, fontSize: 12),
+                    //     )
+                    //   ],
+                    // )
+                     
+                     Consumer<PurchaseProvider>(
+  builder: (context, provider, child) {
+    final summary = provider.summary;
+
+    if (summary == null) {
+      return const SizedBox(); // or show loading text
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Total Purchase: ৳${summary.totalPurchase}",
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black),
+        ),
+        Text(
+          "Total Payment: ৳${summary.totalPayment}",
+          style: const TextStyle(fontSize: 12, color: Colors.black),
+        ),
+        Text(
+          "Total Due: ৳${summary.totalDue}",
+          style: const TextStyle(fontSize: 12, color: Colors.black),
+        ),
+      ],
+    );
+  },
+),
                   ],
                 ),
               ),
+            ),
+
+            const SizedBox(
+              height: 1,
             ),
 
             const SizedBox(

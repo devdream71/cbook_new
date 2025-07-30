@@ -66,7 +66,7 @@ class _SalesDetailsState extends State<SalesDetails> {
             ),
             customRowSales(
               "Transaction Method:",
-              widget.sale.transectionMethod,
+              widget.sale.transactionMethod,
             ),
 
             customRowSales(
@@ -117,12 +117,12 @@ class _SalesDetailsState extends State<SalesDetails> {
                                 color: Colors.black, fontSize: 12),
                           ),
                           Text(
-                            'Discount: ${detail.discountAmount} ৳,  ${detail.discountPercenmtace} %',
+                            'Discount: ${detail.discountAmount} ৳,  ${detail.discountPercentage} %',
                             style: const TextStyle(
                                 color: Colors.black, fontSize: 12),
                           ),
                           Text(
-                            'Tax: ${detail.taxAmount} ৳,   ${detail.taxPercentace} %',
+                            'Tax: ${detail.taxAmount} ৳,   ${detail.taxPercentage} %',
                             style: const TextStyle(
                                 color: Colors.black, fontSize: 12),
                           ),

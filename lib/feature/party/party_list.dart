@@ -2,7 +2,7 @@ import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/feature/customer_create/customer_details.dart';
 import 'package:cbook_dt/feature/customer_create/customer_update.dart';
 import 'package:cbook_dt/feature/customer_create/model/customer_create.dart';
-import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_list_model.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/party/party_intro_page.dart';
 import 'package:cbook_dt/feature/suppliers/provider/suppliers_list.dart';
@@ -315,12 +315,34 @@ class _PartyState extends State<Party> {
                                       ),
                                     ],
                                   ),
-                                  child: ClipRRect(
+                                  child:
+
+                                      // ClipRRect(
+                                      //   borderRadius: BorderRadius.circular(12),
+                                      //   child:
+
+                                      //   NetworkImage(customers.avater),
+
+                                      //   // Image.asset(
+                                      //   //   //scale: 1,
+                                      //   //   "assets/image/partytwo.png",
+                                      //   //   fit: BoxFit.cover, // adapt as needed
+                                      //   // ),
+
+                                      // ),
+
+                                      ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: Image.asset(
-                                      //scale: 1,
-                                      "assets/image/partytwo.png",
-                                      fit: BoxFit.cover, // adapt as needed
+                                    child: Image.network(
+                                      'https://commercebook.site/${customers.avatar ?? ''}',
+                                      fit: BoxFit.cover,
+                                      height: 50,
+                                      width: 50,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Icon(
+                                            Icons.person); // fallback
+                                      },
                                     ),
                                   ),
                                 ),
@@ -649,6 +671,4 @@ class _PartyState extends State<Party> {
       ),
     );
   }
-
-
 }

@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/common/item_dropdown_custom.dart';
 import 'package:cbook_dt/feature/customer_create/customer_create.dart';
-import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_list_model.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/invoice/invoice_model.dart';
 import 'package:cbook_dt/feature/item/model/unit_model.dart';
@@ -24,6 +25,7 @@ import '../../utils/custom_padding.dart';
 import 'controller/sales_controller.dart';
 import 'widget/add_sales_formfield.dart';
 import 'layer/bttom_portion.dart';
+import 'package:http/http.dart' as http;
 part 'layer/field_portion.dart';
 part 'layer/give_information.dart';
 
@@ -36,33 +38,6 @@ class SalesView extends StatefulWidget {
 
 class SalesViewState extends State<SalesView> {
   // TextEditingController for managing the text field content
-
-  late TextEditingController customerController;
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() =>
-        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
-
-    Future.microtask(() =>
-        Provider.of<ItemCategoryProvider>(context, listen: false)
-            .fetchCategories());
-
-    Provider.of<AddItemProvider>(context, listen: false).fetchItems();
-
-    Future.microtask(() =>
-        Provider.of<PaymentVoucherProvider>(context, listen: false)
-            .fetchBillPersons());
-
-    customerController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    customerController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,6 +86,109 @@ class _LayoutState extends State<_Layout> {
   int? selectedBillPersonId;
   BillPersonModel? selectedBillPersonData;
 
+  late TextEditingController customerController;
+
+
+
+  @override
+  void initState()   {
+    super.initState();
+    Future.microtask(() =>
+        Provider.of<CustomerProvider>(context, listen: false).fetchCustomsr());
+
+    Future.microtask(() =>
+        Provider.of<ItemCategoryProvider>(context, listen: false)
+            .fetchCategories());
+
+    Provider.of<AddItemProvider>(context, listen: false).fetchItems();
+
+    Future.microtask(() =>
+        Provider.of<PaymentVoucherProvider>(context, listen: false)
+            .fetchBillPersons()
+            );
+
+      Future.microtask(() async { 
+
+         await fetchAndSetBillNumber(); 
+
+
+      });         
+
+    customerController = TextEditingController();
+  }
+
+
+   Future<void> fetchAndSetBillNumber() async {
+  debugPrint('fetchAndSetBillNumber called');
+  
+  final url = Uri.parse(
+    'https://commercebook.site/api/v1/app/setting/bill/number?voucher_type=purchase&type=sales&code=SAL&bill_number=100&with_nick_name=1',
+  );
+
+  debugPrint('API URL: $url');
+
+  try {
+    debugPrint('Making API call...');
+    final response = await http.get(url);
+    debugPrint('API Response Status: ${response.statusCode}');
+    debugPrint('API Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      debugPrint('Parsed data: $data');
+
+      if (data['success'] == true && data['data'] != null) {
+        String billFromApi = data['data'].toString(); // Ensure it's a string
+        debugPrint('Bill from API: $billFromApi');
+        
+        //String newBill = _incrementBillNumber(billFromApi);
+
+        String newBill = billFromApi;
+
+        debugPrint('New bill after increment: $newBill');
+        
+        // Update the controller and trigger UI rebuild
+        if (mounted) {
+          setState(() {
+            billController.text = newBill;
+            debugPrint('Bill controller updated to: ${billController.text}');
+          });
+        }
+      } else {
+        debugPrint('API success false or data null');
+        // Handle API error
+        if (mounted) {
+          setState(() {
+            billController.text = "SAL-100"; // Default fallback
+            debugPrint('Set fallback bill: ${billController.text}');
+          });
+        }
+      }
+    } else {
+      debugPrint('Failed to fetch bill number: ${response.statusCode}');
+      // Set fallback bill number
+      if (mounted) {
+        setState(() {
+          billController.text = "SAL-100";
+          debugPrint('Set fallback bill due to status code: ${billController.text}');
+        });
+      }
+    }
+  } catch (e) {
+    debugPrint('Error fetching bill number: $e');
+    // Set fallback bill number
+    if (mounted) {
+      setState(() {
+        billController.text = "SAL-100";
+        debugPrint('Set fallback bill due to exception: ${billController.text}');
+      });
+    }
+  }
+}
+
+
+
+
   void _onCancel() {
     Navigator.pop(context);
   }
@@ -141,7 +219,7 @@ class _LayoutState extends State<_Layout> {
         color: AppColors.primaryColor,
         child: SafeArea(
           child: Scaffold(
-            resizeToAvoidBottomInset: true, //keybord hold up the content.
+           resizeToAvoidBottomInset: true, //keybord hold up the content.
             backgroundColor: AppColors.sfWhite,
 
             ///app bar
@@ -204,7 +282,7 @@ class _LayoutState extends State<_Layout> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
+                              Expanded( 
                                 flex: 2,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -504,13 +582,25 @@ class _LayoutState extends State<_Layout> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     ///bill no,
+                                    // SizedBox(
+                                    //   height: 30,
+                                    //   width: 130,
+                                    //   child: AddSalesFormfield(
+                                    //     controller: controller.billController,
+                                    //     labelText: "Bill NO",
+                                    //     // Match cursor height to text size
+                                    //   ),
+                                    // ),
+
+
                                     SizedBox(
                                       height: 30,
                                       width: 130,
                                       child: AddSalesFormfield(
-                                        controller: controller.billController,
-                                        labelText: "Bill NO",
-                                        // Match cursor height to text size
+                                        labelText: "Bill No",
+                                        controller: billController,
+                                        readOnly:
+                                            true, // Prevent manual editing
                                       ),
                                     ),
 

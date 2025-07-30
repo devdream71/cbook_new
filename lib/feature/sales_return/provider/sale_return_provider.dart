@@ -7,8 +7,10 @@ class SalesReturnProvider extends ChangeNotifier {
   List<SalesReturnData> salesReturns = [];
   bool isLoading = false;
 
-  Map<int, String> _itemIdNameMap = {};
+  final Map<int, String> _itemIdNameMap = {};
   Map<int, String> get itemIdNameMap => _itemIdNameMap;
+
+   double totalReturn = 0.0;
 
   ///items get.
   Future<void> fetchItems() async {
@@ -38,6 +40,33 @@ class SalesReturnProvider extends ChangeNotifier {
   }
 
   ///sales return list.
+  // Future<void> fetchSalesReturn() async {
+  //   isLoading = true;
+  //   notifyListeners();
+
+  //   const String url = "https://commercebook.site/api/v1/sales/return";
+
+  //   try {
+  //     final response = await http.get(Uri.parse(url));
+
+  //     if (response.statusCode == 200) {
+  //       final data = SalesReturnResponse.fromJson(response.body);
+  //       salesReturns = data.data;
+
+  //       fetchItems();
+  //       debugPrint(salesReturns.toString());
+  //     } else {
+  //       throw Exception("Failed to load sales return data");
+  //     }
+  //   } catch (error) {
+  //     debugPrint("Error fetching sales return: $error");
+  //   } finally {
+  //     isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
+
+
   Future<void> fetchSalesReturn() async {
     isLoading = true;
     notifyListeners();
@@ -46,13 +75,10 @@ class SalesReturnProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(Uri.parse(url));
-
       if (response.statusCode == 200) {
         final data = SalesReturnResponse.fromJson(response.body);
-        salesReturns = data.data;
-
-        fetchItems();
-        debugPrint(salesReturns.toString());
+        salesReturns = data.salesReturns;
+        totalReturn = data.totalReturn;
       } else {
         throw Exception("Failed to load sales return data");
       }

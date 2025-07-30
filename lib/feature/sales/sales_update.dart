@@ -2,7 +2,7 @@ import 'package:cbook_dt/app_const/app_colors.dart';
 import 'package:cbook_dt/common/custome_dropdown_two.dart';
 import 'package:cbook_dt/common/give_information_dialog.dart';
 import 'package:cbook_dt/common/item_dropdown_custom.dart';
-import 'package:cbook_dt/feature/customer_create/model/customer_list.dart';
+import 'package:cbook_dt/feature/customer_create/model/customer_list_model.dart';
 import 'package:cbook_dt/feature/customer_create/provider/customer_provider.dart';
 import 'package:cbook_dt/feature/home/presentation/home_view.dart';
 import 'package:cbook_dt/feature/item/model/unit_model.dart';
@@ -50,7 +50,6 @@ class SaleUpdateProvider extends ChangeNotifier {
   TextEditingController itemTaxVatAmount = TextEditingController();
   TextEditingController itemTaxVatPercentance = TextEditingController();
 
-  
   String taxPercentValue = "";
   String totaltaxPercentValue = "";
   String selctedUnitId = "";
@@ -90,7 +89,6 @@ class SaleUpdateProvider extends ChangeNotifier {
   double get taxAmount => _taxAmount;
   double _taxPercent = 0.0;
 
-
   selectedDropdownUnitId(String value) {
     unitResponseModel.forEach((e) {
       if (e.name == value) {
@@ -100,6 +98,7 @@ class SaleUpdateProvider extends ChangeNotifier {
     });
     notifyListeners();
   }
+  
 
   /// fetch unit.
   Future<void> fetchUnits() async {
@@ -158,9 +157,10 @@ class SaleUpdateProvider extends ChangeNotifier {
     }
   }
 
-  ///fetchb unit date.
+  ///fetch unit date.
   Future<void> fetchSaleData(int id) async {
     isLoading = true;
+
     notifyListeners();
 
     await fetchItems();
@@ -175,9 +175,7 @@ class SaleUpdateProvider extends ChangeNotifier {
 
       saleUpdateList.clear();
 
-
       saleEditResponse.data!.salesDetails!.forEach((e) {
-
         saleUpdateList.add(SaleUpdateModel(
           itemId: e.itemId.toString(),
           price: e.price.toString(),
@@ -188,7 +186,7 @@ class SaleUpdateProvider extends ChangeNotifier {
           salesUpdateDiscountPercentace: e.discountPercentage.toString(),
           salesUpdateDiscountAmount: e.discountAmount.toString(),
           salesUpdateVATTAXAmount: e.taxAmount.toString(),
-          salesUpdateVATTAXPercentance: "${e.taxid}_${(e.taxPercent ?? 0)}",
+          salesUpdateVATTAXPercentance: "${(e.taxPercent ?? 0)}",
         ));
       });
 
@@ -208,23 +206,14 @@ class SaleUpdateProvider extends ChangeNotifier {
         grossTotalController.text = purchaseData.grossTotal?.toString() ?? "";
         grossTotalController.text = getGrossTotalAfterDiscount();
         customerController.text = purchaseData.customerId?.toString() ?? "";
-        hasCustomer =
-            purchaseData.customerId != null && purchaseData.customerId != 0;
-
-        updateDiscountPercentance.text = purchaseData.discountPercent ?? "";    
-
-        
+        hasCustomer = purchaseData.customerId != null && purchaseData.customerId != 0;
+        updateDiscountPercentance.text = purchaseData.discountPercent ?? "";
         ///item discoumt amount and item discount percentane.
-        itemDiscountAmount.text =
-            purchaseData.salesDetails!.first.discountAmount ?? '';
-        itemDiscountPercentance.text =
-            purchaseData.salesDetails!.first.discountPercentage ?? '';
+        itemDiscountAmount.text = purchaseData.salesDetails!.first.discountAmount ?? '';
+        itemDiscountPercentance.text = purchaseData.salesDetails!.first.discountPercentage ?? '';
 
-        itemTaxVatAmount.text =  purchaseData.salesDetails!.first.taxAmount ?? '';
-        itemTaxVatPercentance.text =  purchaseData.salesDetails!.first.taxPercent ?? '';   
-
-
-
+        itemTaxVatAmount.text = purchaseData.salesDetails!.first.taxAmount ?? '';
+        itemTaxVatPercentance.text = purchaseData.salesDetails!.first.taxPercent ?? '';
       }
     }
 
@@ -232,11 +221,79 @@ class SaleUpdateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+  ///show customer list.
+  CustomerResponse? customerResponse;
+
+  String errorMessage = "";
+
+  ///show supplier
+  Future<void> fetchCustomsr() async {
+    isLoading = true;
+    errorMessage = "";
+    notifyListeners(); // Notify listeners that data is being fetched
+
+    //final url = Uri.parse('https://commercebook.site/api/v1/customers/list');
+
+    final url = Uri.parse(
+        'https://commercebook.site/api/v1/all/customers/'); //api/v1/all/customers/
+
+    try {
+      final response = await http.get(url);
+      final data = jsonDecode(response.body);
+
+      // Print the entire response in the terminal
+      debugPrint("API Response: $data");
+
+      if (response.statusCode == 200 && data["success"] == true) {
+        customerResponse = CustomerResponse.fromJson(data);
+        // Print the parsed data for debugging
+        debugPrint("Parsed Supplier Data: ${customerResponse!.data}");
+      } else {
+        errorMessage = "Failed to fetch suppliers";
+        debugPrint("Error: $errorMessage");
+      }
+    } catch (e) {
+      errorMessage = "Error: $e";
+      debugPrint("Error: $e");
+    }
+
+    isLoading = false;
+    notifyListeners(); // Notify after data fetch is completed
+  }
+
+
+ 
+
+Customer? selectedCustomer;
+
+void setCustomerFromSale(int saleCustomerId) {
+  if (customerResponse != null) {
+    try {
+      selectedCustomer = customerResponse!.data.firstWhere(
+        (c) => c.id == saleCustomerId,
+        orElse: () => Customer(
+          id: 0,
+          userId: 0,
+          name: "Unknown",
+          proprietorName: "",
+          due: 0.0,
+          purchases: [],
+        ),
+      );
+      notifyListeners();
+    } catch (e) {
+      print("Error selecting customer: $e");
+    }
+  }
+}
+
+
   // Method to add a new item to the list
   void addSaleItem(SaleUpdateModel newItem) {
     saleUpdateList.add(newItem);
     notifyListeners();
-    debugPrint("New item added to the list");
+    debugPrint("=====>>>New item added to the list");
   }
 
   ///update selcted item.
@@ -270,9 +327,7 @@ class SaleUpdateProvider extends ChangeNotifier {
   ///get sub total
   String getSubTotal() {
     double subTotal = 0.00;
-    // saleUpdateList.forEach((e) {
-    //   subTotal = subTotal + double.parse(e.subTotal);
-    // });
+     
     for (var e in saleUpdateList) {
       subTotal += double.tryParse(e.subTotal) ?? 0.0;
     }
@@ -290,6 +345,8 @@ class SaleUpdateProvider extends ChangeNotifier {
     return grossTotal.toStringAsFixed(2);
   }
 
+  
+  ///update discount amount updted 2
   void updateDiscountAmountUpdate2(String value) {
     lastChanged = 'amount';
     updateDiscountAmount.text = value;
@@ -311,6 +368,8 @@ class SaleUpdateProvider extends ChangeNotifier {
     notifyListeners(); // ✅ Important!
   }
 
+  
+  ///update discount percent
   void updateDiscountPercent(String value) {
     lastChanged = 'percent';
     updateDiscountPercentance.text = value;
@@ -335,6 +394,8 @@ class SaleUpdateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+  ///final gross total with tax.
   String calculateFinalGrossTotalWithTax() {
     double subtotal = double.tryParse(getSubTotal()) ?? 0.0;
     double discount = double.tryParse(updateDiscountAmount.text) ?? 0.0;
@@ -346,7 +407,7 @@ class SaleUpdateProvider extends ChangeNotifier {
     return grossTotal.toStringAsFixed(2);
   }
 
-  //List<PurchaseUpdateModel> purchaseUpdateList = [];
+  
 
   ///updated cash item sales updated
   addCashItemSaleUpdate(
@@ -366,7 +427,6 @@ class SaleUpdateProvider extends ChangeNotifier {
         price: price,
         qty: qty,
         subTotal: (double.parse(price) * double.parse(qty)).toString(),
-        //unitId: selectedUnitIdWithName ?? 'pc',
         unitId: '5_Packet_1',
         salesUpdateDiscountPercentace: discountpercentace,
         salesUpdateDiscountAmount: discountAmount,
@@ -377,7 +437,8 @@ class SaleUpdateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSaleDetail(int index) {
+    ///update sales details.
+    void updateSaleDetail(int index) {
     final updatedPrice = double.tryParse(priceController.text);
     final updatedQty = double.tryParse(qtyController.text);
     final updatedDiscountAmount = double.tryParse(updateDiscountAmount.text);
@@ -402,6 +463,8 @@ class SaleUpdateProvider extends ChangeNotifier {
         salesUpdateVATTAXAmount: updatedTaxAmount.toStringAsFixed(2),
         salesUpdateVATTAXPercentance: taxPercentValue,
       );
+
+
 
       notifyListeners();
     } else {
@@ -459,10 +522,10 @@ class SaleUpdateProvider extends ChangeNotifier {
     ));
 
     saleUpdateList.add((SaleUpdateModel(
-        //purchaseDetailsId: "0",
+         
         itemId: id.toString(),
         qty: qty.toString(),
-        //purchaseQty: "0",
+         
         unitId:
             "${unitId.toString()}_${getUnitName(unitId.toString())}_${qty.toString()}",
         price: price.toString(),
@@ -575,13 +638,22 @@ class SaleUpdateProvider extends ChangeNotifier {
 
       debugPrint("API URL: $url");
 
-      final requestBody = {"sales_items": saleUpdateList};
+      //final requestBody = {"sales_items": saleUpdateList};
+
+      final requestBody = {
+  "sales_details": saleUpdateList.map((e) => e.toJson()).toList(),
+  // other fields here...
+};
+
+      print(requestBody.length);
 
       //final requestBody = {"sales_items": salesItems};
 
       if (requestBody.isEmpty) return;
 
       debugPrint("Request Body: ${jsonEncode(requestBody)}");
+
+      debugPrint("Stop === Stop");
 
       final response = await http.post(
         Uri.parse(url),
@@ -658,26 +730,8 @@ class salesUpdateScreen extends StatefulWidget {
 }
 
 class _salesUpdateScreenState extends State<salesUpdateScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ItemCategoryProvider>(context, listen: false)
-          .fetchCategories();
-      Provider.of<AddItemProvider>(context, listen: false).fetchItems();
 
-      Future.microtask(() =>
-          Provider.of<PaymentVoucherProvider>(context, listen: false)
-              .fetchBillPersons());
 
-      Future.microtask(() =>
-          Provider.of<CustomerProvider>(context, listen: false)
-              .fetchCustomsr());
-
-      Provider.of<SaleUpdateProvider>(context, listen: false)
-          .fetchSaleData(widget.salesId);
-    });
-  }
 
   String? selectedTaxName;
   String? selectedTaxId;
@@ -701,6 +755,42 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
   void _onCancel() {
     Navigator.pop(context);
   }
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ItemCategoryProvider>(context, listen: false)
+          .fetchCategories();
+      Provider.of<AddItemProvider>(context, listen: false).fetchItems();
+
+      Future.microtask(() =>
+          Provider.of<PaymentVoucherProvider>(context, listen: false)
+              .fetchBillPersons());
+
+      Future.microtask(() =>
+          Provider.of<CustomerProvider>(context, listen: false)
+              .fetchCustomsr());
+
+      Provider.of<SaleUpdateProvider>(context, listen: false)
+          .fetchSaleData(widget.salesId);
+
+      
+      // Set the selected customer based on sale data
+    final saleUpdateProvider =
+        Provider.of<SaleUpdateProvider>(context, listen: false);
+
+    if (saleUpdateProvider.saleEditResponse.data != null) {
+      saleUpdateProvider.setCustomerFromSale(
+          saleUpdateProvider.saleEditResponse.data!.customerId ?? 0);
+    }
+          
+    });
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -818,150 +908,147 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                           Row(
                                             children: [
                                               SizedBox(
-                                                height: 58,
-                                                width: 180,
-                                                // Adjusted height for cursor visibility
-                                                child: controller.isCash
-                                                    ? InkWell(
-                                                        onTap: () {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (context) =>
-                                                                    Dialog(
-                                                              child:
-                                                                  ReusableForm(
-                                                                nameController:
-                                                                    nameController,
-                                                                phoneController:
-                                                                    phoneController,
-                                                                emailController:
-                                                                    emailController,
-                                                                addressController:
-                                                                    addressController,
-                                                                primaryColor: Theme.of(
-                                                                        context)
-                                                                    .primaryColor,
-                                                                onCancel:
-                                                                    _onCancel,
-                                                                onSubmit: () {
-                                                                  setState(() {
+                                                  height: 58,
+                                                  width: 180,
+                                                  // Adjusted height for cursor visibility
+                                                  child: provider.hasCustomer
+                                                      //controller.isCash
+                                                      ? Column(
+                                                          children: [
+                                                            AddSalesFormfieldTwo(
+                                                                controller:
                                                                     controller
-                                                                        .updatedCustomerInfomation(
-                                                                      nameFrom:
-                                                                          nameController
-                                                                              .text,
-                                                                      phoneFrom:
-                                                                          phoneController
-                                                                              .text,
-                                                                      emailFrom:
-                                                                          emailController
-                                                                              .text,
-                                                                      addressFrom:
-                                                                          addressController
-                                                                              .text,
-                                                                    );
-                                                                  });
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: const Text(
-                                                          "Cash",
-                                                          style: TextStyle(
-                                                            fontSize: 12,
-                                                            color: Colors.blue,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : Column(
-                                                        children: [
-                                                          AddSalesFormfieldTwo(
-                                                              controller: controller
-                                                                  .codeController,
-                                                              //label: "Customer",
-                                                              customerorSaleslist:
-                                                                  "Showing supplieer list",
-                                                              customerOrSupplierButtonLavel:
-                                                                  "Add new supplier",
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                const SuppliersCreate()));
-                                                              }),
-                                                          Consumer<
-                                                              CustomerProvider>(
-                                                            builder: (context,
-                                                                customerProvider,
-                                                                child) {
-                                                              final customerList =
-                                                                  customerProvider
-                                                                          .customerResponse
-                                                                          ?.data ??
-                                                                      [];
+                                                                        .codeController,
+                                                                //label: "Customer",
+                                                                customerorSaleslist:
+                                                                    "Showing supplieer list",
+                                                                customerOrSupplierButtonLavel:
+                                                                    "Add new supplier",
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              const SuppliersCreate()));
+                                                                }),
+                                                            Consumer<
+                                                                CustomerProvider>(
+                                                              builder: (context,
+                                                                  customerProvider,
+                                                                  child) {
+                                                                final customerList =
+                                                                    customerProvider
+                                                                            .customerResponse
+                                                                            ?.data ??
+                                                                        [];
 
-                                                              return Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  // If the customer list is empty, show a SizedBox
-                                                                  if (customerList
-                                                                      .isEmpty)
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            2), // Adjust height as needed
+                                                                return Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    // If the customer list is empty, show a SizedBox
+                                                                    if (customerList
+                                                                        .isEmpty)
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2), // Adjust height as needed
 
-                                                                  // Otherwise, show the dropdown with customers
-                                                                  if (customerList
-                                                                      .isNotEmpty)
+                                                                    // Otherwise, show the dropdown with customers
+                                                                    if (customerList
+                                                                        .isNotEmpty)
 
-                                                                    // Check if the selected customer is valid
-                                                                    if (customerProvider.selectedCustomer !=
-                                                                            null &&
-                                                                        customerProvider.selectedCustomer!.id !=
-                                                                            -1)
-                                                                      Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 10,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: customerProvider.selectedCustomer!.type == 'customer' ? Colors.green : Colors.red,
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.only(top: 2.0),
-                                                                            child:
-                                                                                Text(
-                                                                              "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
-                                                                              style: const TextStyle(
+                                                                      // Check if the selected customer is valid
+                                                                      if (customerProvider.selectedCustomer !=
+                                                                              null &&
+                                                                          customerProvider.selectedCustomer!.id !=
+                                                                              -1)
+                                                                        Row(
+                                                                          children: [
+                                                                            Text(
+                                                                              "${customerProvider.selectedCustomer!.type == 'customer' ? 'Receivable' : 'Payable'}: ",
+                                                                              style: TextStyle(
                                                                                 fontSize: 10,
                                                                                 fontWeight: FontWeight.bold,
-                                                                                color: Colors.black,
+                                                                                color: customerProvider.selectedCustomer!.type == 'customer' ? Colors.green : Colors.red,
                                                                               ),
                                                                             ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                ],
-                                                              );
-                                                            },
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.only(top: 2.0),
+                                                                              child: Text(
+                                                                                "৳ ${customerProvider.selectedCustomer!.due.toStringAsFixed(2)}",
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 10,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  color: Colors.black,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : InkWell(
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) =>
+                                                                      Dialog(
+                                                                child:
+                                                                    ReusableForm(
+                                                                  nameController:
+                                                                      nameController,
+                                                                  phoneController:
+                                                                      phoneController,
+                                                                  emailController:
+                                                                      emailController,
+                                                                  addressController:
+                                                                      addressController,
+                                                                  primaryColor:
+                                                                      Theme.of(
+                                                                              context)
+                                                                          .primaryColor,
+                                                                  onCancel:
+                                                                      _onCancel,
+                                                                  onSubmit: () {
+                                                                    setState(
+                                                                        () {
+                                                                      controller
+                                                                          .updatedCustomerInfomation(
+                                                                        nameFrom:
+                                                                            nameController.text,
+                                                                        phoneFrom:
+                                                                            phoneController.text,
+                                                                        emailFrom:
+                                                                            emailController.text,
+                                                                        addressFrom:
+                                                                            addressController.text,
+                                                                      );
+                                                                    });
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: const Text(
+                                                            "Cash",
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color:
+                                                                  Colors.blue,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
                                                           ),
-                                                        ],
-                                                      ),
-                                              ),
+                                                        )),
 
                                               hPad3, // Space between TextField and Icon
                                             ],
@@ -1085,16 +1172,13 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                   height: 5,
                                 ),
 
-                                ///===>item list
+                                ///===>item list , api item and new item added.
 
                                 ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  // itemCount: provider.saleEditResponse.data!.salesDetails!.length,
                                   itemCount: provider.saleUpdateList.length,
-
                                   itemBuilder: (context, index) {
-                                    // final detail = provider.saleEditResponse.data!.salesDetails![index];
                                     final detail =
                                         provider.saleUpdateList![index];
 
@@ -1112,10 +1196,14 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                               itemMap: provider.itemMap,
                                               unitMap: provider.unitMap,
                                               itemList: provider.itemList,
-                                              itemDiscoumtAmount: provider.itemDiscountAmount,
-                                              itemDiscountPercentance: provider.itemDiscountPercentance,
-                                              ItemtaxAmount : provider.itemTaxVatAmount,
-                                              ItemtaxPercentance: provider.itemTaxVatPercentance,
+                                              itemDiscoumtAmount:
+                                                  provider.itemDiscountAmount,
+                                              itemDiscountPercentance: provider
+                                                  .itemDiscountPercentance,
+                                              ItemtaxAmount:
+                                                  provider.itemTaxVatAmount,
+                                              ItemtaxPercentance: provider
+                                                  .itemTaxVatPercentance,
                                             ),
                                           ),
                                         );
@@ -1271,8 +1359,6 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                                     InkWell(
                                                       onTap: () {
                                                         showSalesDialog(
-                                                          //context, controller, provider,
-
                                                           context,
                                                           controller,
                                                           provider,
@@ -2573,6 +2659,8 @@ class _salesUpdateScreenState extends State<salesUpdateScreen> {
                                       '',
                                     )
                                   : controller.addCreditItem();
+
+
 
                               controller.addAmount();
 

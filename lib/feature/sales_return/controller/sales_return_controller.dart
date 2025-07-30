@@ -3,8 +3,6 @@ import 'package:cbook_dt/feature/item/model/items_show.dart';
 import 'package:cbook_dt/feature/purchase/model/purchase_item_model.dart';
 import 'package:cbook_dt/feature/sales_return/model/sales_return_history_model.dart';
 import 'package:cbook_dt/feature/sales_return/model/sales_return_store_model.dart';
-import 'package:cbook_dt/feature/unit/model/unit_response_model.dart';
-import 'package:cbook_dt/feature/unit/provider/unit_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,12 +10,14 @@ import 'package:http/http.dart' as http;
 import '../../../utils/date_time_helper.dart';
 
 class SalesReturnController extends ChangeNotifier {
+
   String? selectedUnit;
   String? selectedCategory;
   String? selectedSubCategory;
   String? selectedWarehouse;
 
   List<SalesReturnStoreModel> saleItemReturn = [];
+  
   List<ItemModel> itemsCashReuturn = [];
   List<ItemModel> itemsCreditReturn = [];
 
@@ -119,6 +119,8 @@ class SalesReturnController extends ChangeNotifier {
     }
   }
 
+  
+  ///cash.
   void updatePaymentFromDiscount() {
   double amount = double.tryParse(addAmount2()) ?? 0.0;
   double discount = double.tryParse(discountController.text) ?? 0.0;
@@ -173,6 +175,51 @@ required String unitQty,
     return true;
   }
 
+  saveReturnCreditDateXYZ () async {
+    itemsCreditReturn = demoPurchaseReturnModelList;
+    notifyListeners();
+    return true;
+  }
+
+
+   // Add this new TextEditingController for credit payment
+  TextEditingController creditPaymentController = TextEditingController();
+
+  // ... existing code ...
+
+  // Add this method for credit payment calculation
+  void updateCreditPaymentFromDiscount() {
+    double amount = double.tryParse(addAmount()) ?? 0.0;
+    double discount = double.tryParse(discountController.text) ?? 0.0;
+    
+    if (discount > 0) {
+      // If discount is given, auto uncheck and show discounted amount
+      isSubTotalCredit = false;
+      creditPaymentController.text = (amount - discount).toStringAsFixed(2);
+    } else {
+      // If no discount, show full amount and auto check
+      isSubTotalCredit = true;
+      creditPaymentController.text = amount.toStringAsFixed(2);
+    }
+    
+    notifyListeners();
+  }
+
+
+
+  // Update the existing totalAmount2 method to use the credit payment controller
+  String getCreditPaymentAmount() {
+    if (isSubTotalCredit) {
+      // If checkbox is checked, return full amount
+      return addAmount();
+    } else {
+      // If checkbox is unchecked, return discounted amount
+      double amount = double.tryParse(addAmount()) ?? 0.0;
+      double discount = double.tryParse(discountController.text) ?? 0.0;
+      return (amount - discount).toStringAsFixed(2);
+    }
+  }
+
   ///store sales store.
   Future<String> storeSalesReturen({
     required String amount,
@@ -219,6 +266,12 @@ required String unitQty,
       });
 
       debugPrint("Request Body: $requestBody");
+
+      debugPrint("Stop === Stop:  ");
+
+
+      debugPrint("Stop: ");
+
 
       final response = await http.post(
         Uri.parse(url),
@@ -411,7 +464,9 @@ required String unitQty,
       notifyListeners();
     }
   }
+  
 
+  ///cash
   String totalAmount() {
     double subtotal = double.tryParse(addAmount2()) ?? 0.0;
     double discount = double.tryParse(discountController.text) ?? 0.0;

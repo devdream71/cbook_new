@@ -85,7 +85,7 @@ class BankAdjustProvider with ChangeNotifier {
         '&details=$details');
 
 
-        debugPrint(' url ${url}');
+        debugPrint(' url $url');
 
     try {
       final response = await http.post(url);

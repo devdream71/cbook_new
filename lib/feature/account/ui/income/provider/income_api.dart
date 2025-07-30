@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cbook_dt/feature/account/ui/expense/model/income_edit_model.dart';
 import 'package:cbook_dt/feature/account/ui/expense/model/receive_from_model.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/account_model.dart';
+import 'package:cbook_dt/feature/account/ui/income/model/account_type_name_model.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/edit_income_item.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_edit_model.dart';
 import 'package:cbook_dt/feature/account/ui/income/model/income_item.dart';
@@ -176,6 +177,11 @@ class IncomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+
+    
+  String totalIncome = '0.00';
+
+
   ///income list. all
   Future<void> fetchIncomeList() async {
     isLoading = true;
@@ -188,6 +194,7 @@ class IncomeProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         incomeModel = IncomeListModel.fromJson(data);
+        totalIncome = incomeModel?.totalIncome ?? '0.00';
       }
     } catch (e) {
       debugPrint('Error: $e');
@@ -196,6 +203,47 @@ class IncomeProvider with ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
+   
+   ///acount type list bas on recived to , cash or bank
+   Map<int, String> _accountNameMap = {};
+
+Map<int, String> get accountNameMap => _accountNameMap;
+
+/// Fetch accounts for both bank and cash once (or based on demand)
+Future<void> fetchAccountNames() async {
+  try {
+    final bankUrl = 'https://commercebook.site/api/v1/receive/form/account?type=bank';
+    final cashUrl = 'https://commercebook.site/api/v1/receive/form/account?type=cash';
+
+    final bankResponse = await http.post(Uri.parse(bankUrl));
+    final cashResponse = await http.post(Uri.parse(cashUrl));
+
+    if (bankResponse.statusCode == 200) {
+      final data = json.decode(bankResponse.body);
+      final accounts = List<AccountTypeNameModel>.from(data['data'].map((e) => AccountTypeNameModel.fromJson(e)));
+      for (var acc in accounts) {
+        _accountNameMap[acc.id] = acc.name;
+      }
+    }
+
+    if (cashResponse.statusCode == 200) {
+      final data = json.decode(cashResponse.body);
+      final accounts = List<AccountTypeNameModel>.from(data['data'].map((e) => AccountTypeNameModel.fromJson(e)));
+      for (var acc in accounts) {
+        _accountNameMap[acc.id] = acc.name;
+      }
+    }
+  } catch (e) {
+    debugPrint('Error fetching accounts: $e');
+  }
+
+  notifyListeners();
+}
+
+
+
+
 
   ///delete income. ====>>>>>>><<<<<<
   Future<void> deleteIncome(String id) async {
@@ -315,7 +363,7 @@ class IncomeProvider with ChangeNotifier {
       []; // This avoids the receiptItems conflict
   IncomeVoucherData? editIncomeDataItem;
 
-  Future<void> fetchEditExpense(String id) async {
+  Future<void> fetchEditIncome(String id) async {
     isLoading = true;
     notifyListeners();
 

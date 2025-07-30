@@ -153,9 +153,9 @@ class BottomPortionSaleReturn extends StatelessWidget {
               InkWell(
                 onTap: () async {
                   debugPrint(
-                      "item length ====== > ${controller.demoPurchaseReturnModelList.length}");
+                      "item length demoPurchaseReturnModelList ====== > ${controller.demoPurchaseReturnModelList.length}");
                   debugPrint(
-                      "item length ====== > ${controller.itemsCashReuturn.length}");
+                      "item length itemsCashReuturn ====== > ${controller.itemsCashReuturn.length}");
                   debugPrint(
                       "item length ====== > ${controller.itemsCash.length}");
 
@@ -177,8 +177,20 @@ class BottomPortionSaleReturn extends StatelessWidget {
                         ? controller.totalAmount()
                         : controller.totalAmount2();
 
-                    if (controller.itemsCashReuturn.isEmpty ||
-                        controller.itemsCashReuturn.isEmpty) {
+
+                    //  final isSuccess = await controller.storeSalesReturen(
+                    //       //date: date,
+                    //       amount: amount,
+                    //       customerId: customerId ?? "cash",
+                    //       saleType: saleType,
+                    //       discount: discount,
+                    //       billNo: controller.billNoController.text,
+                    //       total: total);    
+
+                     ///controller.demoPurchaseReturnModelList.length
+                    
+                    if (controller.itemsCashReuturn.isNotEmpty ||  ////controller.itemsCashReuturn.isEmpty ///it was. ///modified.
+                        controller.itemsCashReuturn.isNotEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text(
                           'No item added',

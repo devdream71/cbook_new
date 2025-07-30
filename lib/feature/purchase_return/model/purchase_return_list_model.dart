@@ -1,20 +1,60 @@
 import 'dart:convert';
 
+// class PurchaseReturnResponse {
+//   final bool success;
+//   final String message;
+//   final List<PurchaseReturn> data;
+
+//   PurchaseReturnResponse({required this.success, required this.message, required this.data});
+
+//   factory PurchaseReturnResponse.fromJson(String str) =>
+//       PurchaseReturnResponse.fromMap(json.decode(str));
+
+//   factory PurchaseReturnResponse.fromMap(Map<String, dynamic> json) => PurchaseReturnResponse(
+//         success: json["success"],
+//         message: json["message"] ?? '',
+//         data: List<PurchaseReturn>.from(json["data"].map((x) => PurchaseReturn.fromMap(x))),
+//       );
+// }
+
+
 class PurchaseReturnResponse {
   final bool success;
   final String message;
   final List<PurchaseReturn> data;
+  final double totalReturn;
 
-  PurchaseReturnResponse({required this.success, required this.message, required this.data});
+  PurchaseReturnResponse({
+    required this.success,
+    required this.message,
+    required this.data,
+    required this.totalReturn,
+  });
 
   factory PurchaseReturnResponse.fromJson(String str) =>
       PurchaseReturnResponse.fromMap(json.decode(str));
 
-  factory PurchaseReturnResponse.fromMap(Map<String, dynamic> json) => PurchaseReturnResponse(
-        success: json["success"],
-        message: json["message"] ?? '',
-        data: List<PurchaseReturn>.from(json["data"].map((x) => PurchaseReturn.fromMap(x))),
-      );
+  factory PurchaseReturnResponse.fromMap(Map<String, dynamic> json) {
+    final List<dynamic> rawList = json["data"];
+    double totalReturn = 0;
+    List<PurchaseReturn> parsedData = [];
+
+    for (var item in rawList) {
+      // total_return object
+      if (item is Map<String, dynamic> && item.containsKey("total_return")) {
+        totalReturn = double.tryParse(item["total_return"].toString()) ?? 0.0;
+      } else {
+        parsedData.add(PurchaseReturn.fromMap(item));
+      }
+    }
+
+    return PurchaseReturnResponse(
+      success: json["success"],
+      message: json["message"] ?? '',
+      data: parsedData,
+      totalReturn: totalReturn,
+    );
+  }
 }
 
 
@@ -50,9 +90,9 @@ class PurchaseReturn {
   });
 
   factory PurchaseReturn.fromMap(Map<String, dynamic> json) => PurchaseReturn(
-        id: json["id"] as int?,
-        userId: json["user_id"] as int?, // safely nullable
-        supplierId: json["supplier_id"] as int?,
+        id: json["id"] ,
+        userId: json["user_id"], // safely nullable
+        supplierId: json["supplier_id"] ,
         supplierName: json["supplier_name"],
         transactionMethod: json["transection_method"],
         billNumber: json["bill_number"],

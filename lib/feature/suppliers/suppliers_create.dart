@@ -74,6 +74,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
         phone.isNotEmpty &&
         address.isNotEmpty &&
         openingBalance.isNotEmpty) {
+
       await supplierProvider.createSupplier(
         name: name,
         email: email,
@@ -82,6 +83,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
         status: status,
         proprietorName: proprietorName,
         openingBalance: openingBalance,
+        avatarImage: _imageFile,
       );
 
       if (supplierProvider.errorMessage.isEmpty) {
@@ -90,7 +92,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              "Supplier Created",
+              "Supplier Create",
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.green,
@@ -166,7 +168,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
               AddSalesFormfield(
                 labelText: "Supplier Name",
                 height: 40,
-               
+
                 controller: _nameController,
                 //validator: _validateRequired,
               ),
@@ -176,18 +178,17 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
               AddSalesFormfield(
                 labelText: "Proprietor Name",
                 height: 40,
-              
+
                 controller: _proprietorController,
                 //validator: _validateRequired,
               ),
-
               const SizedBox(
                 height: 12,
               ),
               AddSalesFormfield(
                 labelText: "Phone",
                 height: 40,
-               
+
                 controller: _phoneController,
                 keyboardType: TextInputType.number,
                 //validator: _validateRequired,
@@ -198,18 +199,17 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
               AddSalesFormfield(
                 labelText: "Email",
                 height: 40,
-               
+
                 controller: _emailController,
                 //validator: _validateRequired,
               ),
-              
               const SizedBox(
                 height: 12,
               ),
               AddSalesFormfield(
                 labelText: "Address",
                 height: 40,
-                
+
                 controller: _addressController,
                 //validator: _validateRequired,
               ),
@@ -223,7 +223,7 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                       keyboardType: TextInputType.number,
                       labelText: "Opening Balance",
                       height: 40,
-                    
+
                       controller: _opiningBanglaceController,
                       //validator: _validateRequired,
                     ),
@@ -236,7 +236,6 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                       
                         Container(
                           height: 40,
                           width: double.maxFinite,
@@ -351,71 +350,69 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                         ),
                       ),
                       const Text(
-                        " Business Logo",
+                        "Upload Image ",
                         style: TextStyle(color: Colors.black, fontSize: 13),
                       ),
                     ],
                   ),
 
                   //company/ customer
-                  Column(
-                    children: [
-                      Center(
-                        child: Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            Container(
-                              width: 90,
-                              height: 90,
-                              decoration: BoxDecoration(
-                                color: Colors.green[100],
-                                borderRadius: BorderRadius.circular(8),
-                                image: DecorationImage(
-                                  image: _imageFile2 != null
-                                      ? FileImage(File(_imageFile2!.path))
-                                      : const AssetImage(
-                                          "assets/image/image_upload_green.png",
-                                        ),
-                                  fit: BoxFit.fitWidth,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 4,
-                              right: 4,
-                              child: GestureDetector(
-                                onTap: () {
-                                  _showImageSourceActionSheet2(context);
-                                },
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                  ),
-                                  padding: const EdgeInsets.all(6),
-                                  child: const Icon(
-                                    Icons.camera_alt,
-                                    size: 20,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Text(
-                        "Company/Customer Logo",
-                        style: TextStyle(color: Colors.black, fontSize: 13),
-                      ),
-                    ],
-                  ),
+                  // Column(
+                  //   children: [
+                  //     Center(
+                  //       child: Stack(
+                  //         alignment: Alignment.bottomRight,
+                  //         children: [
+                  //           Container(
+                  //             width: 90,
+                  //             height: 90,
+                  //             decoration: BoxDecoration(
+                  //               color: Colors.green[100],
+                  //               borderRadius: BorderRadius.circular(8),
+                  //               image: DecorationImage(
+                  //                 image: _imageFile2 != null
+                  //                     ? FileImage(File(_imageFile2!.path))
+                  //                     : const AssetImage(
+                  //                         "assets/image/image_upload_green.png",
+                  //                       ),
+                  //                 fit: BoxFit.fitWidth,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           Positioned(
+                  //             bottom: 4,
+                  //             right: 4,
+                  //             child: GestureDetector(
+                  //               onTap: () {
+                  //                 _showImageSourceActionSheet2(context);
+                  //               },
+                  //               child: Container(
+                  //                 decoration: const BoxDecoration(
+                  //                   shape: BoxShape.circle,
+                  //                   color: Colors.white,
+                  //                 ),
+                  //                 padding: const EdgeInsets.all(6),
+                  //                 child: const Icon(
+                  //                   Icons.camera_alt,
+                  //                   size: 20,
+                  //                   color: Colors.black,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     const Text(
+                  //       "Company/Customer Logo",
+                  //       style: TextStyle(color: Colors.black, fontSize: 13),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               const SizedBox(height: 8),
-
               const Spacer(),
-              
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -432,8 +429,9 @@ class _SuppliersCreateState extends State<SuppliersCreate> {
                       style: TextStyle(color: Colors.white)),
                 ),
               ),
-
-               const SizedBox(height: 50,)
+              const SizedBox(
+                height: 50,
+              )
             ],
           ),
         ),

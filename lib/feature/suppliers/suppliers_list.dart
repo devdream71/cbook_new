@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 
 
 class SupplierListScreen extends StatefulWidget {
+  const SupplierListScreen({super.key});
+
   @override
   SupplierListScreenState createState() => SupplierListScreenState();
 }

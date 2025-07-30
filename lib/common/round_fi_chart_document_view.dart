@@ -2,11 +2,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class DonutChartViewRound extends StatefulWidget {
+  const DonutChartViewRound({super.key});
+
   @override
-  _DonutChartViewRoundState createState() => _DonutChartViewRoundState();
+  DonutChartViewRoundState createState() => DonutChartViewRoundState();
 }
 
-class _DonutChartViewRoundState extends State<DonutChartViewRound>
+class DonutChartViewRoundState extends State<DonutChartViewRound>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;

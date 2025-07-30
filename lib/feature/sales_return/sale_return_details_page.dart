@@ -127,6 +127,9 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                         //color: Colors.white70,
                         color: const Color(0xfff4f6ff),
                         margin: const EdgeInsets.symmetric(vertical: 4),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(3.0),
                           child: Row(
@@ -135,63 +138,83 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Text(history.purchaseDate,
+                                      style: const TextStyle(
+                                          fontSize: 13, color: Colors.black)),
                                   Text("Bill: ${history.billNumber}",
                                       style: const TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black)),
-                                  Text("Date: ${history.purchaseDate}",
-                                      style: const TextStyle(
-                                          fontSize: 13, color: Colors.black)),
-                                  Text("Bill Qty: ${history.billQty}",
-                                      style: const TextStyle(
-                                          fontSize: 13, color: Colors.black)),
-                                  Text("Rate: ${history.rate}",
-                                      style: const TextStyle(
-                                          fontSize: 13, color: Colors.black)),
-                                  Text("Unit Qty: ${history.unitQty}",
-                                      style: const TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold)),
+
+                                  // Text("Bill Qty: ${history.billQty}",
+                                  //     style: const TextStyle(
+                                  //         fontSize: 13, color: Colors.black)),
+                                  Text(
+                                    "Bill Qty: ${history.billQty.split('=').first.trim()}",
+                                    style: const TextStyle(
+                                        fontSize: 13, color: Colors.black),
+                                  ),
+
                                   Text("Unit Price: ${history.unitPrice}",
                                       style: const TextStyle(
                                           fontSize: 13, color: Colors.black)),
-                                  const Text("Reduction Qty",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.black)),
+
+                                  Text("Unit : ${unit.name}",
+                                      style: const TextStyle(
+                                          fontSize: 13, color: Colors.black)),
+
+                                  // Text("Rate: ${history.rate}",
+                                  //     style: const TextStyle(
+                                  //         fontSize: 13, color: Colors.black)),
+
+                                  Text(
+                                    "Rate: ${history.rate.split('=').last.split('(').first}",
+                                    style: const TextStyle(
+                                        fontSize: 13, color: Colors.black),
+                                  ),
+
+                                  // Text("Unit Qty: ${history.unitQty}",
+                                  //     style: const TextStyle(
+                                  //         fontSize: 13,
+                                  //         color: Colors.black,
+                                  //         fontWeight: FontWeight.bold)),
+
+                                  // const Text("Reduction Qty",
+                                  //     style: TextStyle(
+                                  //         fontSize: 12, color: Colors.black)),
                                   const SizedBox(height: 3),
                                 ],
                               ),
                               Column(
                                 children: [
                                   // Unit Price
-                                  SizedBox(
-                                    width: 100,
-                                    child: AddSalesFormfield(
-                                      height: 30,
-                                      labelText: "Price",
-                                      controller: TextEditingController(
-                                        text: history.unitPrice,
-                                      ),
-                                      readOnly: true,
-                                    ),
-                                  ),
+                                  // SizedBox(
+                                  //   width: 100,
+                                  //   child: AddSalesFormfield(
+                                  //     height: 30,
+                                  //     labelText: "Price",
+                                  //     controller: TextEditingController(
+                                  //       text: history.unitPrice,
+                                  //     ),
+                                  //     readOnly: true,
+                                  //   ),
+                                  // ),
                                   const SizedBox(height: 6),
 
                                   // ✅ Unit Name
-                                  SizedBox(
-                                    width: 100,
-                                    child: AddSalesFormfield(
-                                      height: 30,
-                                      labelText: "Unit",
-                                      controller: TextEditingController(
-                                        text: unit.name,
-                                      ),
-                                      readOnly: true,
-                                      onChanged: (value) {},
-                                    ),
-                                  ),
+                                  // SizedBox(
+                                  //   width: 100,
+                                  //   child: AddSalesFormfield(
+                                  //     height: 30,
+                                  //     labelText: "Unit",
+                                  //     controller: TextEditingController(
+                                  //       text: unit.name,
+                                  //     ),
+                                  //     readOnly: true,
+                                  //     onChanged: (value) {},
+                                  //   ),
+                                  // ),
                                   const SizedBox(height: 6),
 
                                   // Reduction Qty
@@ -204,27 +227,86 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                                           controller.reductionQtyList[index],
                                       keyboardType: TextInputType.number,
                                       onChanged: (value) {
-                                        calculateTotalReductionQty();
-                                        ();
+                                        // calculateTotalReductionQty();
+                                        // ();
 
-                                        controller.saveSaleReturn(
-                                          itemId: history.itemID.toString(),
-                                          qty: value,
-                                          index: index,
-                                          price: history.unitPrice.toString(),
-                                          purchaseDetailsId:
-                                              history.salesDetailsID.toString(),
-                                          itemName:
-                                              Provider.of<AddItemProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .getItemName(history.itemID),
-                                          // unitName: unit.name,
-                                          unitId: unit.id
-                                              .toString(), // 👈 from `UnitResponseModel`
-                                          unitName: unit.name,
-                                          unitQty: history.unitQty.toString(),
-                                        );
+                                        // controller.saveSaleReturn(
+                                        //   itemId: history.itemID.toString(),
+                                        //   qty: value,
+                                        //   index: index,
+                                        //   price: history.unitPrice.toString(),
+                                        //   purchaseDetailsId:
+                                        //       history.salesDetailsID.toString(),
+                                        //   itemName:
+                                        //       Provider.of<AddItemProvider>(
+                                        //               context,
+                                        //               listen: false)
+                                        //           .getItemName(history.itemID),
+                                        //   // unitName: unit.name,
+                                        //   unitId: unit.id
+                                        //       .toString(), // 👈 from `UnitResponseModel`
+                                        //   unitName: unit.name,
+                                        //   unitQty: history.unitQty.toString(),
+                                        // );
+
+                                        // onChanged:
+                                        // (value) {
+                                          double inputQty =
+                                              double.tryParse(value) ?? 0;
+                                          double billQty = double.tryParse(
+                                                  history.billQty
+                                                      .split('=')
+                                                      .first
+                                                      .trim()) ??
+                                              0;
+
+                                          if (inputQty > billQty) {
+                                            // Prevent larger value
+                                            controller.reductionQtyList[index]
+                                                    .text =
+                                                billQty.toStringAsFixed(2);
+                                            controller.reductionQtyList[index]
+                                                    .selection =
+                                                TextSelection.fromPosition(
+                                              TextPosition(
+                                                  offset: controller
+                                                      .reductionQtyList[index]
+                                                      .text
+                                                      .length),
+                                            );
+
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    "Reduction Qty cannot be greater than Bill Qty."),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          calculateTotalReductionQty();
+
+                                          controller.saveSaleReturn(
+                                            itemId: history.itemID.toString(),
+                                            qty: value,
+                                            index: index,
+                                            price: history.unitPrice.toString(),
+                                            purchaseDetailsId: history
+                                                .salesDetailsID
+                                                .toString(),
+                                            itemName:
+                                                Provider.of<AddItemProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .getItemName(
+                                                        history.itemID),
+                                            unitId: unit.id.toString(),
+                                            unitName: unit.name,
+                                            unitQty: history.unitQty.toString(),
+                                          );
+                                       
                                       },
                                     ),
                                   ),
@@ -260,7 +342,7 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -282,7 +364,7 @@ class SaleReturnDetailsPageState extends State<SaleReturnDetailsPage> {
                         style: TextStyle(color: Colors.white)),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 60),
               ],
             ),
           ),
